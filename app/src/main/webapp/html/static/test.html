@@ -1,0 +1,31 @@
+<html>
+<head>
+  <title>Dojo: Hello World!</title>
+
+  <!-- SECTION 1 -->
+  </style>
+	<script type="text/javascript">
+		var dojoConfig = { parseOnLoad : true };
+	</script>
+  <script type="text/javascript" src="http://localhost:8080/dojo/1.7.2/dojo/dojo.js"></script>
+	<script type="text/javascript">
+		dojo.require("dijit.Dialog");
+	</script>
+	
+</head>
+
+<body class="claro">
+	<!--<div id="newExamDialog" data-dojo-type="dijit.Dialog" title="Créer un nouvel examen">
+		Nom de l'examen<br />
+		<input type="text" />
+	</div>-->
+	<script type="text/javascript">
+		function createNewExam() {
+			var dialog = new dijit.Dialog({title: "Programmatic Dialog Creation", style: "width: 300px"});
+			dialog.set("content", "Test");
+			dialog.show();
+		};
+	</script>
+	<button onclick="createNewExam()">Test</button>
+</body>
+</html>

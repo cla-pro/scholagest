@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<script type="text/javascript">
+        var dojoConfig = {
+            parseOnLoad: true
+        };
+    </script>
+	<script type="text/javascript" src="http://localhost:8080/dojo/1.7.2/dojo/dojo.js"></script>
+	<script type="text/javascript">
+		dojo.require("dijit.Dialog");
+		dojo.require("dijit.Tree");
+		dojo.require("dijit.tree.dndSource");
+		dojo.require("dojo.data.ItemFileWriteStore");
+		dojo.require("dojo.data.ItemFileReadStore");
+	</script>
+	
+	<link href="dialog.css" rel="stylesheet" type="text/css">
+	<link href="template.css" rel="stylesheet" type="text/css">
+	<title>Title</title>
+</head>
+<body class="claro">
+	<div class="header">
+		<img src="images/" class="app-logo" alt="Application logo" />
+		<img src="images/" class="school-logo" alt="School logo" />
+		<span class="app-name">Application Name</span>
+	</div>
+	
+	<!-- Main menu -->
+    <!--
+        1. Students (list)
+        2. Grads (according to students and courses)
+        3. Generate docs
+        4. Personal data
+    -->
+	<div id="main-menu" class="main-menu">
+		<button class="main-menu-item">Notes</button>
+		<button class="main-menu-item">Documents</button>
+		<button class="main-menu-item">Elèves</button>
+		<button class="main-menu-item">Volée</button>
+		<button class="main-menu-item main-menu-selected">Professeurs</button>
+		<button class="main-menu-item">Réglages</button>
+		
+		<button id="logout" class="main-menu-item logout">Logout</button>
+	</div>
+	
+	<div class="menu-element">
+		<table style="width: 100%; height: 100%">
+			<tr>
+				<td valign="top" style="width: 20%; height: 100%">
+					<div id="student-search" class="vertical-search">
+						<div id="newTeacherDialog" data-dojo-type="dijit.Dialog" title="Nouveau professeur">
+							<table style="width: 100%">
+								<tr><td>Type</td><td><select style="width: 100%"><option>Normal</option><option>Principal</option></select</td></tr>
+								<tr><td>Nom</td><td><input type="text" style="width: 100%" /></td></tr>
+								<tr><td>Préom</td><td><input type="text" style="width: 100%" /></td></tr>
+								<tr><td>email</td><td><input type="text" style="width: 100%" /></td></tr>
+								<tr><td>N° de tél</td><td><input style="width: 100%" type="text" /></td></tr>
+								<tr><td>Adresse</td><td><input style="width: 100%" type="text" /></td></tr>
+								<tr><td align="center"><button>Ok</button></td><td align="center"><button>Annuler</button></td>
+								</tr>
+							</table>
+						</div>
+						<div id="removeTeacherDialog" data-dojo-type="dijit.Dialog" title="Supprimer un professeur"><table style="width: 100%">
+								<tr>
+									<td colspan="2">Choisissez le professeur à supprimer<br />(Le compte utilisateur uniquement est supprimé)</td>
+								</tr><tr>
+									<td colspan="2">
+										<select name="thelist" style="width: 100%">
+										  <option>Professeur 1</option>
+										  <option>Professeur 2</option>
+										  <option>Charlène Dupont</option>
+										</select> </td>
+								</tr><tr>
+									<td align="center"><button>Ok</button></td><td align="center"><button>Annuler</button></td>
+								</tr>
+							</table>
+						</div>
+						<script type="text/javascript">
+							function createNewTeacher() {
+								dijit.byId("newTeacherDialog").show();
+							};
+							function deleteTeacher() {
+								dijit.byId("removeTeacherDialog").show();
+							};
+						</script>
+						<button onclick="createNewTeacher()">Ajouter un professeur</button>
+						<button onclick="deleteTeacher()">Supprimer un professeur</button>
+						<input type="text" class="search-textbox" placeholder="Nom du professeur" /><button>Go</button>
+						<hr />
+						<div id="search-list" class="search-list">
+							<ul class="search-list">
+								<li class="search-list-item">Professeur 1</li>
+								<li class="search-list-item">Professeur 2</li>
+								<li class="search-list-item-selected">Charlène Dupont</li>
+							</ul>
+						</div>
+					</div>
+				</td>
+				<td valign="top" style="width: 80%">
+					<h1>Charlène Dupont</h1>
+					<table style="width: 100%">
+						<tr><td style="width: 150px">Nom</td><td><input style="width: 100%" type="text" value="Dupont" /></td></tr>
+						<tr><td>Prénom</td><td><input style="width: 100%" type="text" value="Charlène" /></td></tr>
+						<tr><td>Email</td><td><input style="width: 100%" type="text" value="myemail@gmail.com" /></td></tr>
+						<tr><td>N° de tél</td><td><input style="width: 100%" type="text" value="+415646879846546546546" /></td></tr>
+						<tr><td>Adresse</td><td><input style="width: 100%" type="text" value="Rue de la boustifaille 42" /></td></tr>
+						<tr><td valign="top">Classes</td><td>
+							<ul>
+								<li><a href="#">2011-2012 Classe 3P B</a></li>
+								<li><a href="#">2010-2011 Classe 2P B</a></li>
+								<li><a href="#">2009-2010 Classe 4P C</a></li>
+							</ul>
+						</td></tr>
+						<tr><td colspan=2><button>Enregistrer</button></td></tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</div>
+</body>

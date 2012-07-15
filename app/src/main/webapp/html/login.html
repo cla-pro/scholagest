@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<script type="text/javascript">
+    var dojoConfig = {
+        parseOnLoad: true
+    };
+</script>
+<script src="http://localhost:8080/dojo/1.7.2/dojo/dojo.js"></script>
+<script type="text/javascript">
+	dojo.require("dojo.cookie");
+</script>
+<title>Scholagest</title>
+</head>
+<body>
+	<div class="header">
+		<img src="images/" class="app-logo" />
+		<img src="images/" class="school-logo" />
+		<span class="app-name">Application Name</span>
+	</div>
+	
+	<script type="text/javascript">
+		function authenticate() {
+			var username = document.getElementById('txtUsername').value;
+			var password = document.getElementById('txtPassword').value;
+			
+			var xhrArgs = {
+			    url: "http://localhost:8080/scholagest-app/services/user/authenticate",
+			    preventCash: true,
+			    content: {username: username, password: password},
+			    handleAs: "json",
+			    load: function(data) {
+			    	if (data.errorCode == null) {
+			    		dojo.cookie("scholagest-token", data.token);
+			    		window.location = unescape(data.nextpage.replace(/\+/g, " "));
+			    	}
+			    	else
+			    		alert("Error during authentication: ("
+			    				+ data.errorCode + ") " + data.message);
+			    },
+			    error: function(error) {
+			    	alert("error = " + error);
+			    }
+			}
+			
+			var deferred = dojo.xhrGet(xhrArgs);
+		}
+	</script>
+	<div align="center">
+		<table style="border: solid 1px black">
+			<tr>
+				<td>Nom d'utilisateur</td><td><input id="txtUsername" type="text" /></td>
+			</tr><tr>
+				<td>Mot de passe</td><td><input id="txtPassword" type="password" /></td>
+			</tr><tr>
+				<td colspan="2" align="right"><button onclick="authenticate()">Login</button></td>
+			</tr>
+		</table>
+	</div>
+</body>

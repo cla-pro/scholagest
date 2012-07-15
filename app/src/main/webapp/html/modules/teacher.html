@@ -1,0 +1,96 @@
+<div id="menu-element-teachers" data-dojo-type="dijit.layout.ContentPane" title="Professeurs" updateFunction="updateTeacherList" selected="true">
+	<script type="text/javascript">
+		dojo.ready(function() {
+			var tabs = dijit.byId("tabMenu");
+			dojo.connect(tabs, "selectChild", function(page) {
+				alert(page);
+			});
+			tabs.startup();
+			loadTeachers();
+		});
+	</script>
+	<table id="teacherTable" style="width: 100%; height: 100%">
+		<tr>
+			<td valign="top" style="width: 20%; height: 100%">
+				<div id="teacher-search" class="vertical-search">
+					<div id="newTeacherDialog" data-dojo-type="dijit.Dialog"
+						title="Nouveau professeur">
+						<table style="width: 100%">
+							<tr>
+								<td>Type</td>
+								<td>
+									<select style="width: 100%">
+										<option>Normal</option>
+										<option>Principal</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td>Nom</td>
+								<td><input id="txtNewTeacherLastName" propertyName="pTeacherLastName" type="text" style="width: 100%" /></td>
+							</tr>
+							<tr>
+								<td>Prénom</td>
+								<td><input id="txtNewTeacherFirstName" propertyName="pTeacherFirstName" type="text" style="width: 100%" /></td>
+							</tr>
+							<tr>
+								<td>Email</td>
+								<td><input id="txtNewTeacherMail" propertyName="pTeacherMail" type="text" style="width: 100%" /></td>
+							</tr>
+							<tr>
+								<td>N° de tél</td>
+								<td><input id="txtNewTeacherPhone" propertyName="pTeacherPhone" style="width: 100%" type="text" /></td>
+							</tr>
+							<tr>
+								<td>Adresse</td>
+								<td><input id="txtNewTeacherAddress" propertyName="pTeacherAddress" style="width: 100%" type="text" /></td>
+							</tr>
+							<tr>
+								<td align="center"><button
+									onclick="createTeacher('newTeacherDialog', ['txtNewTeacherLastName', 'txtNewTeacherFirstName', 'txtNewTeacherMail', 'txtNewTeacherPhone', 'txtNewTeacherAddress'])">Ok</button></td>
+								<td align="center"><button onclick="dijit.byId('newTeacherDialog').hide()">Annuler</button></td>
+							</tr>
+						</table>
+					</div>
+					<div id="removeTeacherDialog" data-dojo-type="dijit.Dialog"
+						title="Supprimer un professeur">
+						<table style="width: 100%">
+							<tr>
+								<td colspan="2">Choisissez le professeur à supprimer<br />(Le
+									compte utilisateur uniquement est supprimé)
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2"><select name="teacher-list"
+									style="width: 100%">
+								</select></td>
+							</tr>
+							<tr>
+								<td align="center"><button>Ok</button></td>
+								<td align="center"><button>Annuler</button></td>
+							</tr>
+						</table>
+					</div>
+					<script type="text/javascript">
+						function createNewTeacher() {
+							dijit.byId("newTeacherDialog").show();
+						};
+						function deleteTeacher() {
+							dijit.byId("removeTeacherDialog").show();
+						};
+					</script>
+					<button onclick="createNewTeacher()">Ajouter un professeur</button>
+					<button onclick="deleteTeacher()">Supprimer un professeur</button>
+					<input type="text" class="search-textbox"
+						placeholder="Nom du professeur" />
+					<button>Go</button>
+					<hr />
+					<div id="teacher-search-list" class="search-list"></div>
+				</div>
+			</td>
+			<td valign="top" style="width: 80%">
+				<div id="teacher-data"></div>
+			</td>
+		</tr>
+	</table>
+</div>

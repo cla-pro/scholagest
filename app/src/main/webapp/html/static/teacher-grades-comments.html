@@ -1,0 +1,166 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<script type="text/javascript">
+        var dojoConfig = {
+            parseOnLoad: true
+        };
+    </script>
+	<script type="text/javascript" src="http://localhost:8080/dojo/1.7.2/dojo/dojo.js"></script>
+	<script type="text/javascript">
+		dojo.require("dijit.Dialog");
+		dojo.require("dijit.layout.TabContainer");
+		dojo.require("dijit.layout.ContentPane");
+	</script>
+	
+	<link href="template.css" rel="stylesheet" type="text/css">
+	<link href="dialog.css" rel="stylesheet" type="text/css">
+	<title>Title</title>
+</head>
+<body class="claro">
+	<div class="header">
+		<img src="images/" class="app-logo" alt="Application logo" />
+		<img src="images/" class="school-logo" alt="School logo" />
+		<span class="app-name">Application Name</span>
+	</div>
+	
+	<!-- Main menu -->
+    <!--
+        1. Students (list)
+        2. Grads (according to students and courses)
+        3. Generate docs
+        4. Personal data
+    -->
+	<div id="main-menu" class="main-menu">
+		<button class="main-menu-item main-menu-selected">Notes</button>
+		<button class="main-menu-item">Documents</button>
+		<button class="main-menu-item">Elèves</button>
+		<button class="main-menu-item">Volée</button>
+		<button class="main-menu-item">Professeurs</button>
+		<button class="main-menu-item">Réglages</button>
+		
+		<button id="logout" class="main-menu-item logout">Logout</button>
+	</div>
+	
+	<div class="menu-element">
+		<table style="width: 100%; height: 100%">
+			<tr>
+				<td valign="top" style="width: 20%; height: 100%">
+					<div id="student-search" class="vertical-search">
+						<button type="text" class="new-class">Nouvelle branche</button>
+						<button type="text" class="remove-class">Supprimer une branche</button>
+						<hr />
+						<div id="search-list" class="search-list">
+							<ul class="search-list">
+								<li class="search-list-item-selected">Commentaires</li>
+								<li><hr /></li>
+								<li class="search-list-item">Français</li>
+								<li class="search-list-item">Mathématiques</li>
+								<li class="search-list-item">Histoire</li>
+								<li class="search-list-item">Géographie</li>
+								<li class="search-list-item">Allemand</li>
+							</ul>
+						</div>
+					</div>
+				</td>
+				<td valign="top" style="width: 80%">
+					<div id="branch-content" class="branch-content" style="height:100%">
+						<div id="newExamDialog" data-dojo-type="dijit.Dialog" title="Nouvel examen">
+							<table style="width: 100%">
+								<tr>
+									<td colspan="2">Nom de l'examen</td>
+								</tr><tr>
+									<td colspan="2"><input type="text" style="width:100%" /></td>
+								</tr><tr>
+									<td align="center"><button>Ok</button></td><td align="center"><button>Annuler</button></td>
+								</tr>
+							</table>
+						</div>
+						<div id="removeExamDialog" data-dojo-type="dijit.Dialog" title="Supprimer un examen">
+							<table style="width: 100%">
+								<tr>
+									<td colspan="2">Choisissez l'examen à supprimer</td>
+								</tr><tr>
+									<td colspan="2">
+										<select name="thelist" style="width: 100%">
+										  <option>Trimestre 1</option>
+										  <option>Trimestre 2</option>
+										  <option>Trimestre 3</option>
+										</select> </td>
+								</tr><tr>
+									<td align="center"><button>Ok</button></td><td align="center"><button>Annuler</button></td>
+								</tr>
+							</table>
+						</div>
+						<script type="text/javascript">
+							function createNewExam() {
+								dijit.byId("newExamDialog").show();
+							};
+							function deleteExam() {
+								dijit.byId("removeExamDialog").show();
+							};
+						</script>
+						<div style="height: 10%; width: 100%"><h1>Commentaires</h1></div>
+						<div id="student-grade-tree" style="height: 85%">
+							<div data-dojo-type="dijit.layout.TabContainer" style="width: 100%; height: 100%;">
+								<div data-dojo-type="dijit.layout.ContentPane" title="Trimestre 1" selected="true">
+									<table>
+										<tr>
+											<td>Elève 1</td>
+											<td><textarea style="border: 1px solid black; height: 50px; width: 700px; resize:none">Cet élève est très doué mais un peu inattentif.</textarea></td>
+										</tr>
+										<tr>
+											<td>Elève 2</td>
+											<td><textarea style="border: 1px solid black; height: 50px; width: 700px; resize:none"></textarea></td>
+										</tr>
+										<tr>
+											<td>Elève 3</td>
+											<td><textarea style="border: 1px solid black; height: 50px; width: 700px; resize:none"></textarea></td>
+										</tr>
+										<tr>
+											<td>Elève 4</td>
+											<td><textarea style="border: 1px solid black; height: 50px; width: 700px; resize:none"></textarea></td>
+										</tr>
+										<tr>
+											<td>Elève 5</td>
+											<td><textarea style="border: 1px solid black; height: 50px; width: 700px; resize:none"></textarea></td>
+										</tr>
+										<tr>
+											<td colspan="2"><button>Enregistrer</button></td>
+										</tr>
+									</table>
+								</div>
+								<div data-dojo-type="dijit.layout.ContentPane" title="Trimestre 2" selected="true">
+								</div>
+								<div data-dojo-type="dijit.layout.ContentPane" title="Trimestre 3" selected="true">
+								</div>
+								<!--<div data-dojo-type="dijit.layout.ContentPane" title="Résumé" selected="true">
+									<table>
+										<tr>
+											<td>Elève</td><td>Trimestre 1</td><td>Trimestre 2</td><td>Trimestre 3</td><td>Moyenne</td>
+										</tr>
+										<tr>
+											<td>Elève 1</td><td align="center">4</td><td></td><td></td><td align="center">4</td>
+										</tr>
+										<tr>
+											<td>Elève 2</td><td align="center">2</td><td></td><td></td><td align="center">2</td>
+										</tr>
+										<tr>
+											<td>Elève 3</td><td align="center">6</td><td></td><td></td><td align="center">6</td>
+										</tr>
+										<tr>
+											<td>Elève 4</td><td align="center">4</td><td></td><td></td><td align="center">4</td>
+										</tr>
+										<tr>
+											<td>Elève 5</td><td align="center">2</td><td></td><td></td><td align="center">2</td>
+										</tr>
+									</table>
+								</div>-->
+							</div>
+						</div>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</div>
+</body>

@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<script type="text/javascript">
+        var dojoConfig = {
+            parseOnLoad: true
+        };
+    </script>
+	<script type="text/javascript" src="http://localhost:8080/dojo/1.7.2/dojo/dojo.js"></script>
+	<script type="text/javascript">
+		dojo.require("dijit.Dialog");
+		dojo.require("dijit.Tree");
+		dojo.require("dijit.tree.dndSource");
+		dojo.require("dojo.data.ItemFileWriteStore");
+		dojo.require("dojo.data.ItemFileReadStore");
+	</script>
+	
+	<link href="template.css" rel="stylesheet" type="text/css">
+	<link href="dialog.css" rel="stylesheet" type="text/css">
+	<title>Title</title>
+</head>
+<body class="claro">
+	<div class="header">
+		<img src="images/" class="app-logo" alt="Application logo" />
+		<img src="images/" class="school-logo" alt="School logo" />
+		<span class="app-name">Application Name</span>
+	</div>
+	
+	<!-- Main menu -->
+    <!--
+        1. Students (list)
+        2. Grads (according to students and courses)
+        3. Generate docs
+        4. Personal data
+    -->
+	<div id="main-menu" class="main-menu">
+		<button class="main-menu-item">Volée</button>
+		<button class="main-menu-item">Elèves</button>
+		<button class="main-menu-item">Professeurs</button>
+		<button class="main-menu-item main-menu-selected">Documents</button>
+		
+		<button id="logout" class="main-menu-item logout">Logout</button>
+	</div>
+	
+	<div class="menu-element">
+		<div id="generateDoc" style="width: 300px" data-dojo-type="dijit.Dialog" title="Bulletin scolaire (Harmos)">
+			<script type="text/javascript">
+				function checkClick(checked) {
+					if (checked == true)
+						document.getElementById('studentSelect').disabled=true;
+					else
+						document.getElementById('studentSelect').disabled=false;
+				}
+			</script>
+			<table style="width: 100%">
+				<tr>
+					<td style="width: 30%" colspan="2"><input type="checkbox" onclick="checkClick(this.checked)">Tous les élèves</input></td>
+				</tr><tr>
+					<td style="width: 30%">Elève</td><td style="width: 70%"><select id="studentSelect" style="width: 100%">
+										  <option>Elève 1</option>
+										  <option>Elève 2</option>
+										  <option>Elève 3</option>
+										  <option>Elève 4</option>
+										  <option>Elève 5</option>
+										  <option>Elève 6</option>
+										  <option>Elève 7</option>
+										  <option>Elève 8</option>
+										  <option>Elève 9</option>
+										  <option>Elève 10</option>
+										  <option>Elève 11</option>
+										  <option>Elève 12</option>
+										  <option>Elève 13</option>
+										  <option>Elève 14</option>
+										  </select></td>
+				</tr><tr>
+					<td align="center"><button>Ok</button></td><td align="center"><button>Annuler</button></td>
+				</tr>
+			</table>
+		</div>
+		<div id="generateDocMyClass" style="width: 300px" data-dojo-type="dijit.Dialog" title="Bulletin scolaire (Harmos)">
+			<script type="text/javascript">
+				function checkClick(checked) {
+					if (checked == true)
+						document.getElementById('studentSelect').disabled=true;
+					else
+						document.getElementById('studentSelect').disabled=false;
+				}
+			</script>
+			<table style="width: 100%">
+				<tr>
+					<td style="width: 30%" colspan="2"><input type="checkbox" onclick="checkClick(this.checked)">Tous les élèves</input></td>
+				</tr><tr>
+					<td style="width: 30%">Elève</td><td style="width: 70%"><select id="studentSelect" style="width: 100%">
+										  <option>Elève 1</option>
+										  <option>Elève 2</option>
+										  <option>Elève 3</option>
+										  <option>Elève 4</option>
+										  <option>Elève 5</option>
+										  <option>Elève 6</option>
+										  <option>Elève 7</option>
+										  <option>Elève 8</option>
+										  <option>Elève 9</option>
+										  <option>Elève 10</option>
+										  <option>Elève 11</option>
+										  <option>Elève 12</option>
+										  <option>Elève 13</option>
+										  <option>Elève 14</option>
+										  </select></td>
+				</tr><tr>
+					<td align="center"><button>Ok</button></td><td align="center"><button>Annuler</button></td>
+				</tr>
+			</table>
+		</div>
+		<script type="text/javascript">
+			function generateDoc() {
+				dijit.byId("generateDoc").show();
+			};
+		</script>
+		<table>
+			<tr><td>Bulletin scolaire (Harmos)</td><td><button onclick="generateDoc()">Générer</button></td></tr>
+			<tr><td>Carnet de scolarité obligatoire</td><td><button>Générer</button></td></tr>
+			<tr><td>Carnet de classe d'acceuil</td><td><button>Générer</button></td></tr>
+			<tr><td>Commentaires carnet</td><td><button>Générer</button></td></tr>
+			<tr><td>Commentaires ECSP</td><td><button>Générer</button></td></tr>
+			<tr><td>Résumé des entretiens</td><td><button>Générer</button></td></tr>
+			<tr><td>Fiche de suivi de l'élève</td><td><button>Générer</button></td></tr>
+			<tr><td>Mesures d'accompagnement</td><td><button>Générer</button></td></tr>
+			<tr><td>Historique des résultats</td><td><button>Générer</button></td></tr>
+			<tr><td>Carnet 8P</td><td><button>Générer</button></td></tr>
+		</table>
+	</div>
+</body>

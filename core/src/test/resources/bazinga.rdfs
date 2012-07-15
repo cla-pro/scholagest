@@ -1,0 +1,28 @@
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:owl="http://www.w3.org/2002/07/owl#">
+<owl:Ontology rdf:about="http://net.onyourmap.com/2011/08/rdf-schema#">
+<rdfs:comment>The OnYourMap bazinga ontology.</rdfs:comment>
+<owl:imports rdf:resource="http://www.w3.org/TR/2004/REC-rdf-schema-20040210/rdfs-namespace"/>
+</owl:Ontology>
+<!-- Bazinga base types. -->
+<rdfs:Class rdf:ID="http://onyourmap.net/bazinga/types#String">
+<rdfs:comment>String object</rdfs:comment>
+</rdfs:Class>
+<rdfs:Class rdf:ID="http://onyourmap.net/bazinga/types#Integer">
+<rdfs:comment>Integer object</rdfs:comment>
+</rdfs:Class>
+<rdfs:Class rdf:ID="http://onyourmap.net/bazinga/types#Long">
+<rdfs:comment>Long object</rdfs:comment>
+</rdfs:Class>
+<rdfs:Class rdf:ID="http://onyourmap.net/bazinga/types#Float">
+<rdfs:comment>Float object</rdfs:comment>
+</rdfs:Class>
+<rdfs:Class rdf:ID="http://onyourmap.net/bazinga/types#Double">
+<rdfs:comment>Double object</rdfs:comment>
+</rdfs:Class>
+<rdfs:Class rdf:ID="http://onyourmap.net/bazinga/types#DateTime">
+<rdfs:comment>DateTime object</rdfs:comment>
+</rdfs:Class>
+<rdfs:Class rdf:ID="http://onyourmap.net/bazinga/types#LongLat">
+<rdfs:comment>LatLong object</rdfs:comment>
+</rdfs:Class>
+</rdf:RDF>

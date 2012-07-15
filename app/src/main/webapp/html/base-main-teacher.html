@@ -1,0 +1,494 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<script type="text/javascript">
+    var dojoConfig = {
+        parseOnLoad: true
+    };
+</script>
+<script src="http://localhost:8080/dojo/1.7.2/dojo/dojo.js"></script>
+<script type="text/javascript">
+	dojo.require("dojo.cookie");
+	dojo.require("dijit.Dialog");
+	dojo.require("dijit.layout.TabContainer");
+	dojo.require("dijit.layout.ContentPane");
+</script>
+<link href="template.css" rel="stylesheet" type="text/css">
+<link href="dialog.css" rel="stylesheet" type="text/css">
+<title>Scholagest</title>
+</head>
+<body class="claro">
+	<div class="header">
+		<img src="images/scholagest-logo1-1.png" class="app-logo" />
+		<img src="images/" class="school-logo" />
+		<!--<span class="app-name">SCHOLAgest</span>-->
+	</div>
+	
+<!-- 		<button id="logout" class="main-menu-item logout">Logout</button> -->
+	<div id="scholagestContent" style="width: 100%; height: 90%">
+		<div id="tabMenu" data-dojo-type="dijit.layout.TabContainer" style="width: 100%; height: 100%;">
+			<div id="menu-element-teachers" data-dojo-type="dijit.layout.ContentPane" title="Professeurs" selected="true">
+				<script type="text/javascript">
+				function clearDOM(domId) {
+		    		var base = dojo.byId(domId);
+					while (base.hasChildNodes()) {
+						base.removeChild(base.lastChild);
+					}
+				}
+				function getTeacherInfo(teacherKey) {
+					var xhrArgs = {
+						    url: "http://localhost:8080/scholagest-app/services/teacher/getProperties",
+						    preventCash: true,
+						    content: {token: dojo.cookie("scholagest-token"),
+						    	teacherKey: teacherKey,
+						    	properties: ["pTeacherFirstName", "pTeacherLastName",
+						    	             "pTeacherMail", "pTeacherPhone", "pTeacherAddress"]},
+						    handleAs: "json",
+						    load: function(data) {
+						    	if (data.errorCode == null) {
+									clearDOM("teacher-data");
+									
+									var base = dojo.byId('teacher-data');
+									dojo.create("h1", {
+										innerHTML: ''}, base);
+									var table = dojo.create("table", {
+										style: "width: 100%"}, base);
+									
+						    		var info = data.info;
+						    		for (var i in info) {
+						    			var tr = dojo.create("tr", {}, table);
+						    			
+						    			dojo.create("td", {
+						    				innerHTML: info[i].displayText,
+						    				style: "width: 150px"
+						    			}, tr);
+						    			var cell = dojo.create("td", {}, tr);
+						    			dojo.create("input", {
+						    				style: "width: 100%",
+						    				type: "text",
+						    				value: info[i].value
+						    			}, cell);
+						    		}
+						    	}
+						    	else
+						    		alert("Error during getTeachers: ("
+						    				+ data.errorCode + ") " + data.message);
+						    },
+						    error: function(error) {
+						    	alert("error = " + error);
+						    }
+					}
+					
+					var deferred = dojo.xhrGet(xhrArgs);
+				}
+				function selectTeacher(teacherKey) {
+					return function(e) {
+						var list = dojo.byId('teacher-search-list');
+						var old = list.selectedTeacher;
+						if (old != null)
+							old.className = 'search-list-item';
+						
+						this.className = 'search-list-item-selected';
+						list.selectedTeacher = this;
+						
+						getTeacherInfo(teacherKey)
+					};
+				}
+				function loadTeachers() {
+					var xhrArgs = {
+						    url: "http://localhost:8080/scholagest-app/services/teacher/getTeachers",
+						    preventCash: true,
+						    content: {token: dojo.cookie("scholagest-token"),
+						    	properties: ["pTeacherLastName", "pTeacherFirstName"] },
+						    handleAs: "json",
+						    load: function(data) {
+						    	if (data.errorCode == null) {
+									clearDOM("teacher-search-list");
+									
+									var base = dojo.byId("teacher-search-list");
+						    		var list = data.teachers;
+						    		var ul = dojo.create("ul", {
+						    			id: 'teacher-search-list',
+						    			className: 'search-list'}, base);
+						    		
+						    		var teachers = data.teachers;
+						    		for (var d in teachers) {
+						    			var t = teachers[d];
+										var text = t.key;
+										if (t.pTeacherFirstName != null || t.pTeacherLastName != null) {
+											text = '';
+											if (t.pTeacherFirstName != null) {
+												text = t.pTeacherFirstName;
+											}
+											
+											if (t.pTeacherLastName != null) {
+												if (text != '')
+													text += ' ';
+												text += t.pTeacherLastName;
+											}
+										}
+										
+						    			dojo.create("li",
+						    					{ innerHTML: text,
+						    					  className: 'search-list-item',
+						    					  onclick: selectTeacher(t.key)}, ul);
+						    		}
+						    	}
+						    	else
+						    		alert("Error during getTeachers: ("
+						    				+ data.errorCode + ") " + data.message);
+						    },
+						    error: function(error) {
+						    	alert("error = " + error);
+						    }
+					}
+					
+					var deferred = dojo.xhrGet(xhrArgs);
+				}
+				function createTeacher(closeId, txtIds) {
+					var keys = [];
+					var values = [];
+					for (var id in txtIds) {
+						var node = dojo.byId(txtIds[id]);
+						
+						var value = node.value;
+						var name = node.attributes.getNamedItem('propertyName').nodeValue;
+						
+						if (name != null && value != null) {
+							keys.push(name);
+							values.push(value);
+						}
+					}
+					
+					var xhrArgs = {
+						    url: "http://localhost:8080/scholagest-app/services/teacher/createTeacher",
+						    preventCash: true,
+						    content: {token: dojo.cookie("scholagest-token"),
+						    	keys: keys, values: values},
+						    handleAs: "json",
+						    load: function(data) {
+						    	if (data.errorCode == null) {
+						    		alert("Teacher created with id: " + data.teacherKey);
+						    	}
+						    	else
+						    		alert("Error during getTeachers: ("
+						    				+ data.errorCode + ") " + data.message);
+						    },
+						    error: function(error) {
+						    	alert("error = " + error);
+						    }
+					}
+					
+					var deferred = dojo.xhrGet(xhrArgs);
+					
+					if (closeId != null) {
+						dijit.byId(closeId).hide();
+					}
+				}
+				</script>
+				<table id="teacherTable" style="width: 100%; height: 100%">
+					<tr>
+						<td valign="top" style="width: 20%; height: 100%">
+							<div id="teacher-search" class="vertical-search">
+								<div id="newTeacherDialog" data-dojo-type="dijit.Dialog"
+									title="Nouveau professeur">
+									<table style="width: 100%">
+										<tr>
+											<td>Type</td>
+											<td>
+												<select style="width: 100%">
+													<option>Normal</option>
+													<option>Principal</option>
+												</select>
+											</td>
+										</tr>
+										<tr>
+											<td>Nom</td>
+											<td><input id="txtNewTeacherLastName" propertyName="pTeacherLastName" type="text" style="width: 100%" /></td>
+										</tr>
+										<tr>
+											<td>Prénom</td>
+											<td><input id="txtNewTeacherFirstName" propertyName="pTeacherFirstName" type="text" style="width: 100%" /></td>
+										</tr>
+										<tr>
+											<td>Email</td>
+											<td><input id="txtNewTeacherMail" propertyName="pTeacherMail" type="text" style="width: 100%" /></td>
+										</tr>
+										<tr>
+											<td>N° de tél</td>
+											<td><input id="txtNewTeacherPhone" propertyName="pTeacherPhone" style="width: 100%" type="text" /></td>
+										</tr>
+										<tr>
+											<td>Adresse</td>
+											<td><input id="txtNewTeacherAddress" propertyName="pTeacherAddress" style="width: 100%" type="text" /></td>
+										</tr>
+										<tr>
+											<td align="center"><button
+												onclick="createTeacher('newTeacherDialog', ['txtNewTeacherLastName', 'txtNewTeacherFirstName', 'txtNewTeacherMail', 'txtNewTeacherPhone', 'txtNewTeacherAddress'])">Ok</button></td>
+											<td align="center"><button onclick="dijit.byId('newTeacherDialog').hide()">Annuler</button></td>
+										</tr>
+									</table>
+								</div>
+								<div id="removeTeacherDialog" data-dojo-type="dijit.Dialog"
+									title="Supprimer un professeur">
+									<table style="width: 100%">
+										<tr>
+											<td colspan="2">Choisissez le professeur à supprimer<br />(Le
+												compte utilisateur uniquement est supprimé)
+											</td>
+										</tr>
+										<tr>
+											<td colspan="2"><select name="teacher-list"
+												style="width: 100%">
+											</select></td>
+										</tr>
+										<tr>
+											<td align="center"><button>Ok</button></td>
+											<td align="center"><button>Annuler</button></td>
+										</tr>
+									</table>
+								</div>
+								<script type="text/javascript">
+									function createNewTeacher() {
+										dijit.byId("newTeacherDialog").show();
+									};
+									function deleteTeacher() {
+										dijit.byId("removeTeacherDialog").show();
+									};
+								</script>
+								<button onclick="createNewTeacher()">Ajouter un professeur</button>
+								<button onclick="deleteTeacher()">Supprimer un professeur</button>
+								<input type="text" class="search-textbox"
+									placeholder="Nom du professeur" />
+								<button>Go</button>
+								<hr />
+								<div id="teacher-search-list" class="search-list"></div>
+							</div>
+						</td>
+						<td valign="top" style="width: 80%">
+							<div id="teacher-data"></div>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div id="menu-element-students" data-dojo-type="dijit.layout.ContentPane" title="Eleves">
+			<table style="width: 100%; height: 100%">
+				<tr>
+					<td valign="top" style="width: 20%; height: 100%">
+						<div id="student-search" class="vertical-search">
+							<div id="newStudentDialog" data-dojo-type="dijit.Dialog"
+								title="Nouvel élève">
+								<div data-dojo-type="dijit.layout.TabContainer"
+									style="width: 500px; height: 200px;">
+									<div data-dojo-type="dijit.layout.ContentPane" title="Nouveau">
+										<table style="width: 100%">
+											<tr>
+												<td>Nom*</td>
+												<td><input type="text" /></td>
+												<td>Préom*</td>
+												<td><input type="text" /></td>
+											</tr>
+											<tr>
+												<td>Rue et n°</td>
+												<td colspan="3"><input type="text" style="width: 100%" /></td>
+											</tr>
+											<tr>
+												<td>Code postal</td>
+												<td><input type="text" /></td>
+												<td>Ville</td>
+												<td><input type="text" /></td>
+											</tr>
+											<tr>
+												<td colspan="4">Les champs marqués d'une * sont
+													obligatoires</td>
+											</tr>
+										</table>
+									</div>
+									<div data-dojo-type="dijit.layout.ContentPane" title="Retour">
+										Choisissez l'élève<br /> <select style="width: 100%">
+											<option>Elève 49</option>
+											<option>Elève 52</option>
+											<option>Elève 57</option>
+											<option>Elève 64</option>
+										</select>
+									</div>
+								</div>
+								<table style="width: 100%">
+									<tr>
+										<td colspan="2" align="center"><button>Ok</button></td>
+										<td colspan="2" align="center"><button>Annuler</button></td>
+									</tr>
+								</table>
+							</div>
+							<div id="outStudentDialog" data-dojo-type="dijit.Dialog"
+								title="Sortie d'élève">
+								<input type="radio" name="out" CHECKED>Sortie vers le
+								cycle</input><br /> <input type="radio" name="out">Changement
+								d'établissement</input> <br />
+								<br /> Choisissez l'élève<br /> <select style="width: 100%">
+									<option>Elève 1</option>
+									<option>Elève 2</option>
+									<option>Elève 3</option>
+									<option>Elève 4</option>
+									<option>Elève 5</option>
+									<option>Elève 6</option>
+									<option>Elève 7</option>
+								</select>
+		
+								<table style="width: 100%">
+									<tr>
+										<td colspan="2" align="center"><button>Ok</button></td>
+										<td colspan="2" align="center"><button>Annuler</button></td>
+									</tr>
+								</table>
+							</div>
+							<script type="text/javascript">
+								function createNewStudent() {
+									dijit.byId("newStudentDialog").show();
+								};
+								function outStudent() {
+									dijit.byId("outStudentDialog").show();
+								};
+							</script>
+							<button onclick="createNewStudent()">Ajouter un élève</button>
+							<button onclick="outStudent()">Faire sortir un élève</button>
+							<!--<button onclick="deleteStudent()">Supprimer un élève</button>-->
+							<hr />
+							<input type="text" class="search-textbox"
+								placeholder="Nom de l'élève" />
+							<button>Go</button>
+							<hr />
+							<select style="width: 80%">
+								<option>Elèves actuels</option>
+								<option>Anciens élèves</option>
+								<option>Tous les élèves</option>
+							</select>
+							<div id="search-list" style="height: 80%">
+								<ul class="search-list">
+									<li class="search-list-item">Elève 1</li>
+									<li class="search-list-item">Elève 2</li>
+									<li class="search-list-item-selected">Elève 3</li>
+									<li class="search-list-item">Elève 4</li>
+									<li class="search-list-item">Elève 5</li>
+									<li class="search-list-item">Elève 6</li>
+									<li class="search-list-item">Elève 7</li>
+									<li class="search-list-item">Elève 8</li>
+									<li class="search-list-item">Elève 9</li>
+									<li class="search-list-item">Elève 10</li>
+									<li class="search-list-item">Elève 11</li>
+								</ul>
+							</div>
+						</div>
+					</td>
+					<td valign="top" style="width: 80%">
+						<div class="student-content">
+							<div class="student-part-title">
+								<a>Fiche personnelle</a>
+								<button class="student-part-button">Fermer</button>
+							</div>
+							<div class="student-part-content">
+								<table>
+									<tr>
+										<td style="width: 150px">Nom</td>
+										<td><input type="text" style="width: 100%" value="3" /></td>
+									</tr>
+									<tr>
+										<td style="width: 150px">Prénom</td>
+										<td><input type="text" style="width: 100%" value="Elève" /></td>
+									</tr>
+									<tr>
+										<td style="width: 150px">Adresse</td>
+										<td><input type="text" style="width: 100%"
+											value="21 Chemin de ..." /></td>
+									</tr>
+									<tr>
+										<td style="width: 150px">N° tél</td>
+										<td><input type="text" style="width: 100%"
+											value="+41 22 5897562" /></td>
+									</tr>
+									<tr>
+										<td style="width: 150px">Origine</td>
+										<td><input type="text" style="width: 100%" value="Suisse" /></td>
+									</tr>
+									<tr>
+										<td style="width: 150px">Profession de la mère</td>
+										<td><input type="text" style="width: 100%"
+											value="Informaticienne" /></td>
+									</tr>
+									<tr>
+										<td style="width: 150px">Profession du père</td>
+										<td><input type="text" style="width: 100%" value="Au foyer" /></td>
+									</tr>
+									<tr>
+										<td style="width: 150px">Environnement familial</td>
+										<td><input type="text" style="width: 100%" value="RAS" /></td>
+									</tr>
+									<tr>
+										<td style="width: 150px">Langue maternelle</td>
+										<td><input type="text" style="width: 100%"
+											value="Français - Allemand" /></td>
+									</tr>
+									<tr>
+										<td style="width: 150px">Arrivée en suisse</td>
+										<td><input type="text" style="width: 100%" value="-" /></td>
+									</tr>
+									<tr>
+										<td valign="top" style="width: 150px">Parcours scolaire</td>
+										<td>
+											<ul>
+												<li>2010-2011 - Classe 3P A - M Lazard</li>
+												<li>2009-2010 - Classe 2P A - Mme Dupont</li>
+												<li>2008-2009 - Classe 1P A - Mme Dupont</li>
+											</ul>
+										</td>
+									</tr>
+									<tr>
+										<td style="width: 150px">Crèche</td>
+										<td><input type="text" style="width: 100%" value="-" /></td>
+									</tr>
+									<tr>
+										<td valign="top" style="width: 150px">Frères et soeurs</td>
+										<td>
+											<ul>
+												<li><a href="#">Elève 12</a></li>
+											</ul>
+											<button>Ajouter un frère ou une soeur</button>
+										</td>
+									</tr>
+									<tr>
+										<td colspan="2" align="center"><button>Enregistrer</button></td>
+									</tr>
+								</table>
+							</div>
+							<div class="student-part-title">
+								<a>Fiche santé</a>
+								<button class="student-part-button">Ouvrir</button>
+							</div>
+							<div class="student-part-content" style="visibility: hidden">empty</div>
+							<div class="student-part-title">
+								<a>Fiche scolaire</a>
+								<button class="student-part-button">Ouvrir</button>
+							</div>
+							<div class="student-part-content" style="visibility: hidden">empty</div>
+							<div class="student-part-title">
+								<a>Anciennes fiches scolaires</a>
+								<button class="student-part-button">Ouvrir</button>
+							</div>
+							<div class="student-part-content" style="visibility: hidden">empty</div>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+		</div>
+		<script type="text/javascript">
+		dojo.ready(function() {
+			var tabs = dijit.byId("tabMenu");
+			dojo.connect(tabs, "selectChild", function(page) { loadTeachers(); });
+		});
+		</script>
+	</div>
+</body>
+</html>

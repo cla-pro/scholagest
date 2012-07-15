@@ -1,0 +1,47 @@
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+		xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+		xmlns:owl="http://www.w3.org/2002/07/owl#"
+		xmlns:sg="http://schlagest.net#">
+	
+	<owl:Ontology rdf:about="http://schlagest.net/2012/06/rdf-schema#">
+		<rdfs:comment>The schlagest ontology</rdfs:comment>
+		<owl:imports rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns"/>
+		<owl:imports rdf:resource="http://www.w3.org/2000/01/rdf-schema"/>
+	</owl:Ontology>
+	
+	<rdfs:Property rdf:ID="sg:displayText" rdfs:comment="Display text">
+		<rdfs:domain rdf:resource="rdfs:Property"/>
+		<rdfs:range rdf:resource="String"/>
+	</rdfs:Property>
+	
+	<rdfs:Class rdf:ID="sg:tTeacher">
+		<rdfs:comment>Teacher representation</rdfs:comment>
+	</rdfs:Class>
+	
+	
+	<rdfs:Property rdf:ID="pTeacherFirstName" rdfs:comment="Teacher's first name">
+		<rdfs:domain rdf:resource="sg:tTeacher"/>
+		<rdfs:range rdf:resource="String"/>
+		<sg:displayText rdf:resource="Prénom" />
+	</rdfs:Property>
+	<rdfs:Property rdf:ID="pTeacherLastName" rdfs:comment="Teacher's last name">
+		<rdfs:domain rdf:resource="sg:tTeacher"/>
+		<rdfs:range rdf:resource="String"/>
+		<sg:displayText rdf:resource="Nom />
+	</rdfs:Property>
+	<rdfs:Property rdf:ID="pTeacherMail" rdfs:comment="Teacher's mail">
+		<rdfs:domain rdf:resource="sg:tTeacher"/>
+		<rdfs:range rdf:resource="String"/>
+		<sg:displayText rdf:resource="EMail" />
+	</rdfs:Property>
+	<rdfs:Property rdf:ID="pTeacherPhone" rdfs:comment="Teacher's phone number">
+		<rdfs:domain rdf:resource="sg:tTeacher"/>
+		<rdfs:range rdf:resource="String"/>
+		<sg:displayText rdf:resource="Téléphone" />
+	</rdfs:Property>
+	<rdfs:Property rdf:ID="pTeacherAddress" rdfs:comment="Teacher's address">
+		<rdfs:domain rdf:resource="sg:tTeacher"/>
+		<rdfs:range rdf:resource="String"/>
+		<sg:displayText rdf:resource="Adresse" />
+	</rdfs:Property>
+</rdf:RDF>

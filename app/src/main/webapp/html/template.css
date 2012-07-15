@@ -1,0 +1,107 @@
+html, body {
+	height: 100%;
+}
+
+.header {
+	width: 100%;
+	height: 50px;
+	padding: 3px;
+}
+
+.app-logo {
+	max-height: 44px;
+}
+
+.school-logo {
+	position: absolute;
+	max-height: 44px;
+	right: 0px;
+}
+
+.logout {
+	float: right;
+	border: black 1px solid;
+}
+
+.main-menu {
+	width: 100%;
+	height: 30px;
+	background-color: #ADD8E6;
+	padding: 5px 5px 5px 5px;
+}
+
+.main-menu-item {
+	height: 30px;
+	padding: 5px 5px 5px 5px;
+	border: black 1px solid;
+}
+.main-menu-item:hover{
+	background: #FFFFFF;
+}
+.main-menu-selected {
+	background: #808080;
+}
+
+.menu-element {
+	border: black 2px solid;
+	bottom: 0px;
+	padding: 5px 5px 5px 5px;
+	height: 80%;
+	overflow: auto;
+}
+.menu-element-hidden {
+	display: none !important;
+}
+.menu-element-visible {
+	display: block !important;
+}
+
+.vertical-search {
+	border-right: black 1px solid;
+	width: 100%;
+	height: 100%;
+	/*padding: 5px 5px 5px 5px;*/
+}
+
+div.search-list {
+	height: 80%;
+	overflow: auto;
+}
+
+ul.search-list {
+	list-style-type: none;
+	padding: 0px 0px 0px 0px;
+	/*height: 30%;
+	overflow: auto;*/
+}
+li.search-list-item:hover {
+	background-color: #C0C0C0;
+}
+li.search-list-item-selected {
+	background-color: #808080;
+}
+
+.student-content {
+	height: 100%;
+}
+.student-part-title {
+	background-color: #ADD8E6;
+	width: 100%;
+}
+.student-part-content {
+	width: 100%;
+}
+.student-part-button {
+	float: right;
+	border: black 1px solid;
+}
+
+.medical-problem {
+	background-color: #FF3300;
+	width: 100%;
+}
+
+.class-info {
+	width: 100%;
+	height: 100%;
+}

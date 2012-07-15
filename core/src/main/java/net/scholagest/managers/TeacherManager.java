@@ -1,0 +1,45 @@
+package net.scholagest.managers;
+
+import java.util.Set;
+import java.util.UUID;
+
+import com.google.inject.Inject;
+
+import net.scholagest.database.ITransaction;
+
+public class TeacherManager extends ObjectManager implements ITeacherManager {
+	@Inject
+	public TeacherManager() {}
+	
+	@Override
+	public String createTeacher(String requestId,
+			ITransaction transaction) throws Exception {
+		String id = UUID.randomUUID().toString();
+		String teacherKey = CoreNamespace.teacherNs + 
+				"#" + id;
+		
+		super.createObject(requestId, transaction, teacherKey, "tTeacher");
+		
+		String teacherBase = CoreNamespace.teacherNs + "/" + id;
+		transaction.insert(CoreNamespace.teachersBase, teacherKey,
+				teacherKey, null);
+		
+		//Classes node
+		String classesKey = teacherBase + "#classes";
+		transaction.insert(teacherKey, CoreNamespace.pTeacherClasses,
+				classesKey, null);
+		
+		//Property nodes
+		String propertiesKey = teacherBase + "#properties";
+		transaction.insert(teacherKey, CoreNamespace.pTeacherProperties,
+				propertiesKey, null);
+		
+		return teacherKey;
+	}
+
+	@Override
+	public Set<String> getTeachers(String requestId,
+			ITransaction transaction) throws Exception {
+		return transaction.getColumns(CoreNamespace.teachersBase);
+	}
+}
