@@ -54,6 +54,7 @@ public class RestTeacherService {
 					teacherProperties);
 		} catch (Exception e) {
 			e.printStackTrace();
+			return "{errorCode=0, message='" + e.getMessage() + "'}";
 		}
 		
 		return new JsonObject("teacherKey", teacherKey).toString();
@@ -74,8 +75,8 @@ public class RestTeacherService {
 			return "{teachers: " + json + "}";
 		} catch (Exception e) {
 			e.printStackTrace();
+			return "{errorCode=0, message='" + e.getMessage() + "'}";
 		}
-		return "{}";
 	}
 	
 	@GET
@@ -126,6 +127,7 @@ public class RestTeacherService {
 			this.teacherService.setTeacherInfo(teacherKey, properties);
 		} catch (Exception e) {
 			e.printStackTrace();
+			return "{errorCode=0, message='" + e.getMessage() + "'}";
 		}
 		
 		return "{}";

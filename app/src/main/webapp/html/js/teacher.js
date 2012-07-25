@@ -16,6 +16,7 @@ function getTeacherInfo(teacherKey) {
 				            			 innerHTML: ''}, base);
 				            		 var table = dojo.create("table", {
 				            			 style: "width: 100%"}, base);
+				            		 table.id = "teacher-data-table";
 
 				            		 var info = data.info;
 				            		 for (var i in info) {
@@ -26,15 +27,45 @@ function getTeacherInfo(teacherKey) {
 				            				 style: "width: 150px"
 				            			 }, tr);
 				            			 var cell = dojo.create("td", {}, tr);
-				            			 dojo.create("input", {
+				            			 var txt = dojo.create("input", {
 				            				 style: "width: 100%",
 				            				 type: "text",
-				            				 value: info[i].value
+				            				 value: info[i].value,
 				            			 }, cell);
+			            				 txt.key = i;
 				            		 }
+				            		 
+				            		 var save = dojo.create("button",
+				            				 {type: "button", onclick:"setTeacherInfo(\"" + teacherKey + "\")"}, base);
 				            	 }
 				            	 else {
-				            		 alert("Error during getTeachers: ("
+				            		 alert("Error during getProperties: ("
+				            				 + data.errorCode + ") " + data.message);
+				            	 }
+				             },
+				             error: function(error) {
+				            	 alert("error = " + error);
+				             }
+	}
+
+	var deferred = dojo.xhrGet(xhrArgs);
+}
+function setTeacherInfo(teacherKey) {
+	var keyValues = getKeyValues('teacher-data-table');
+	var xhrArgs = {
+			url: "http://localhost:8080/scholagest-app/services/teacher/setProperties",
+			preventCash: true,
+			content: {token: dojo.cookie("scholagest-token"),
+				teacherKey: teacherKey,
+				names: keyValues.keys,
+				values: keyValues.values},
+				             handleAs: "json",
+				             load: function(data) {
+				            	 if (data.errorCode == null) {
+				            		 alert("Ok");
+				            	 }
+				            	 else {
+				            		 alert("Error during setProperties: ("
 				            				 + data.errorCode + ") " + data.message);
 				            	 }
 				             },

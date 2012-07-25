@@ -41,3 +41,19 @@ function clearDOM(domId) {
 		base.removeChild(base.lastChild);
 	}
 }
+
+function getKeyValues(parentId) {
+	var keys = [];
+	var values = [];
+	
+	var rows = dojo.byId(parentId).childNodes;
+	for (var i = 0; i < rows.length; i++) {
+		var row = rows.item(i);
+		var cell = row.childNodes[1];
+		var text = cell.childNodes[0];
+		keys.push(text.key);
+		values.push(text.value);
+	}
+	
+	return {"keys": keys, "values": values};
+}

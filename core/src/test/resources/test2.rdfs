@@ -27,7 +27,7 @@
 	<rdfs:Property rdf:ID="pTeacherLastName" rdfs:comment="Teacher's last name">
 		<rdfs:domain rdf:resource="sg:tTeacher"/>
 		<rdfs:range rdf:resource="String"/>
-		<sg:displayText rdf:resource="Nom />
+		<sg:displayText rdf:resource="Nom" />
 	</rdfs:Property>
 	<rdfs:Property rdf:ID="pTeacherMail" rdfs:comment="Teacher's mail">
 		<rdfs:domain rdf:resource="sg:tTeacher"/>

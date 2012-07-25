@@ -111,8 +111,19 @@ public class TeacherService implements ITeacherService {
 	@Override
 	public void setTeacherInfo(String teacherKey, Map<String, Object> properties)
 			throws Exception {
-		// TODO Auto-generated method stub
-		
+		String requestId = UUID.randomUUID().toString();
+
+		ITransaction transaction = this.database.getTransaction(
+				SecheronNamespace.SECHERON_KEYSPACE);
+		try {
+			System.out.println("Set teacher properties");
+			this.teacherManager.setObjectProperties(requestId, transaction, teacherKey, properties);
+			
+			transaction.commit();
+		} catch (Exception e) {
+			transaction.rollback();
+			e.printStackTrace();
+		}
 	}
 
 	@Override
