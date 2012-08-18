@@ -1,4 +1,4 @@
-function createStudent(closeId, txtIds) {
+function getStudentKeysAndValues(txtIds) {
 	var keys = [];
 	var values = [];
 	for (var id in txtIds) {
@@ -12,12 +12,18 @@ function createStudent(closeId, txtIds) {
 			values.push(value);
 		}
 	}
+	
+	return {keys: keys, values: values};
+}
+
+function createStudent(closeId, txtIds) {
+	var keyValues = getStudentKeysAndValues(txtIds);
 
 	var xhrArgs = {
 			url: "http://localhost:8080/scholagest-app/services/student/create",
 			preventCash: true,
 			content: {token: dojo.cookie("scholagest-token"),
-				keys: keys, values: values},
+				keys: keyValues.keys, values: keyValues.values},
 				handleAs: "json",
 				load: function(data) {
 					if (data.errorCode == null) {
