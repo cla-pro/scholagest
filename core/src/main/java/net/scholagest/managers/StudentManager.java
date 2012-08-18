@@ -1,40 +1,67 @@
 package net.scholagest.managers;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 import net.scholagest.database.ITransaction;
 
-public class StudentManager {
+public class StudentManager extends ObjectManager implements IStudentManager {
 	private final static String MEDICAL_INFO_SUFFIX = "#medicalInfo";
 	private final static String PERSONAL_INFO_SUFFIX = "#personalInfo";
-	private final static String OLD_SCHOLAR_INFO_SUFFIX = "#oldScholarInfo";
 	
-	public String createStudent(String requestId, ITransaction transaction)
-			throws Exception {
-		String id = UUID.randomUUID().toString();
-		String studentKey = CoreNamespace.studentNs + 
-				"#" + id;
-		String studentBase = CoreNamespace.studentNs + "/" + id;
-		transaction.insert(CoreNamespace.studentsBase, studentKey,
-				studentKey, null);
+	@Override
+	public String createStudent(String requestId, ITransaction transaction) throws Exception {
+		String studentUUID = UUID.randomUUID().toString();
+		String studentKey = generateStudentKey(studentUUID);
+		super.createObject(requestId, transaction, studentKey, CoreNamespace.tStudent);
 		
-		String personalInfoKey = studentBase + PERSONAL_INFO_SUFFIX;
-		transaction.insert(studentKey, CoreNamespace.pStudentPersonalInfo,
-				personalInfoKey, null);
+		String studentBase = generateStudentBase(studentUUID);
+		String personalInfoKey = super.createObject(requestId, transaction,
+				generatePersonalInfoKey(studentBase), CoreNamespace.tStudentPersonalInfo);
+		String medicalInfoKey = super.createObject(requestId, transaction,
+				generateMedicalInfoKey(studentBase), CoreNamespace.tStudentMedicalInfo);
 		
-		String medicalInfoKey = studentBase + MEDICAL_INFO_SUFFIX;
-		transaction.insert(studentKey, CoreNamespace.pStudentMedicalInfo,
-				medicalInfoKey, null);
-		
-		String oldScholarInfoKey = studentBase + OLD_SCHOLAR_INFO_SUFFIX;
-		transaction.insert(studentKey,
-				CoreNamespace.pStudentOldScholarInfo,
-				oldScholarInfoKey, null);
+		Map<String, Object> properties = new HashMap<>();
+		properties.put(CoreNamespace.pStudentPersonalInfo, personalInfoKey);
+		properties.put(CoreNamespace.pStudentMedicalInfo, medicalInfoKey);
+		super.setObjectProperties(requestId, transaction, studentKey, properties);
 		
 		return studentKey;
 	}
+	
+	@Override
+	public void setPersonalInfoProperties(String requestId, ITransaction transaction,
+			String studentKey, Map<String, Object> properties) throws Exception {
+		String personalInfoKey = (String) transaction.get(studentKey, CoreNamespace.pStudentPersonalInfo, null);
+		super.setObjectProperties(requestId, transaction, personalInfoKey, properties);
+	}
+	
+	@Override
+	public void setMedicalInfoProperties(String requestId, ITransaction transaction,
+			String studentKey, Map<String, Object> properties) throws Exception {
+		String medicalInfoKey = (String) transaction.get(studentKey, CoreNamespace.pStudentMedicalInfo, null);
+		super.setObjectProperties(requestId, transaction, medicalInfoKey, properties);
+	}
+	
+	private String generateStudentKey(String studentUUID) {
+		return CoreNamespace.studentNs + "#" + studentUUID;
+	}
+	
+	private String generateStudentBase(String studentUUID) {
+		return CoreNamespace.studentNs + "/" + studentUUID;
+	}
+	
+	private String generatePersonalInfoKey(String studentBase) {
+		return studentBase + PERSONAL_INFO_SUFFIX;
+	}
+	
+	private String generateMedicalInfoKey(String studentBase) {
+		return studentBase + MEDICAL_INFO_SUFFIX;
+	}
 
+	@Override
 	public Set<String> getStudents(String requestId,
 			ITransaction transaction) throws Exception {
 		return transaction.getColumns(CoreNamespace.studentsBase);

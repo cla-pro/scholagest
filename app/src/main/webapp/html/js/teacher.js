@@ -156,7 +156,7 @@ function createTeacher(closeId, txtIds) {
 	}
 
 	var xhrArgs = {
-			url: "http://localhost:8080/scholagest-app/services/teacher/createTeacher",
+			url: "http://localhost:8080/scholagest-app/services/teacher/create",
 			preventCash: true,
 			content: {token: dojo.cookie("scholagest-token"),
 				keys: keys, values: values},
@@ -167,7 +167,7 @@ function createTeacher(closeId, txtIds) {
 						loadTeachers();
 					}
 					else
-						alert("Error during getTeachers: ("
+						alert("Error during createTeachers: ("
 								+ data.errorCode + ") " + data.message);
 				},
 				error: function(error) {

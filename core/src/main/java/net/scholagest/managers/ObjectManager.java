@@ -8,9 +8,8 @@ import java.util.UUID;
 import net.scholagest.database.ITransaction;
 import net.scholagest.managers.ontology.RDF;
 
-public class ObjectManager implements IObjectManager {
-	@Override
-	public String createObject(String requestId, ITransaction transaction,
+public class ObjectManager {
+	protected String createObject(String requestId, ITransaction transaction,
 			String objectKey, String type) throws Exception {
 		if (objectKey == null)
 			objectKey = UUID.randomUUID().toString();
@@ -20,8 +19,7 @@ public class ObjectManager implements IObjectManager {
 		return objectKey;
 	}
 	
-	@Override
-	public Map<String, Object> getObjectProperties(String requestId,
+	protected Map<String, Object> getObjectProperties(String requestId,
 			ITransaction transaction, String objectKey,
 			Set<String> propertiesName) throws Exception {
 		Map<String, Object> properties = new HashMap<>();
@@ -35,8 +33,7 @@ public class ObjectManager implements IObjectManager {
 		return properties;
 	}
 
-	@Override
-	public void setObjectProperties(String requestId, ITransaction transaction,
+	protected void setObjectProperties(String requestId, ITransaction transaction,
 			String objectKey, Map<String, Object> properties) throws Exception {
 		for (Map.Entry<String, Object> entry : properties.entrySet()) {
 			System.out.println("Set property: " + entry.getKey() + ", " + entry.getValue());

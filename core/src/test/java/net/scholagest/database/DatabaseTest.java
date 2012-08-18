@@ -1,4 +1,4 @@
-package net.scholagest.test.database;
+package net.scholagest.database;
 
 import net.scholagest.database.Database;
 import net.scholagest.database.DatabaseException;

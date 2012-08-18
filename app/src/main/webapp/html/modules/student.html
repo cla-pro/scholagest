@@ -11,9 +11,9 @@
 								<table style="width: 100%">
 									<tr>
 										<td>Nom*</td>
-										<td><input type="text" /></td>
+										<td><input id="txtNewStudentLastName" propertyName="pStudentLastName" type="text" /></td>
 										<td>Préom*</td>
-										<td><input type="text" /></td>
+										<td><input id="txtNewStudentFirstName" propertyName="pStudentFirstName" type="text" /></td>
 									</tr>
 									<tr>
 										<td>Rue et n°</td>
@@ -33,33 +33,23 @@
 							</div>
 							<div data-dojo-type="dijit.layout.ContentPane" title="Retour">
 								Choisissez l'élève<br /> <select style="width: 100%">
-									<option>Elève 49</option>
-									<option>Elève 52</option>
-									<option>Elève 57</option>
-									<option>Elève 64</option>
 								</select>
 							</div>
 						</div>
 						<table style="width: 100%">
 							<tr>
-								<td colspan="2" align="center"><button>Ok</button></td>
+								<td colspan="2" align="center"><button
+                                    onclick="createStudent('newStudentDialog', ['txtNewStudentLastName', 'txtNewStudentFirstName'])">Ok</button></td>
 								<td colspan="2" align="center"><button>Annuler</button></td>
 							</tr>
 						</table>
 					</div>
 					<div id="outStudentDialog" data-dojo-type="dijit.Dialog"
 						title="Sortie d'élève">
-						<input type="radio" name="out" CHECKED>Sortie vers le
-						cycle</input><br /> <input type="radio" name="out">Changement
-						d'établissement</input> <br />
-						<br /> Choisissez l'élève<br /> <select style="width: 100%">
-							<option>Elève 1</option>
-							<option>Elève 2</option>
-							<option>Elève 3</option>
-							<option>Elève 4</option>
-							<option>Elève 5</option>
-							<option>Elève 6</option>
-							<option>Elève 7</option>
+						<input type="radio" name="out" CHECKED>Sortie vers le cycle</input><br />
+						<input type="radio" name="out">Changement d'établissement</input> <br /> <br />
+						Choisissez l'élève<br />
+						<select style="width: 100%">
 						</select>
 
 						<table style="width: 100%">
@@ -91,19 +81,6 @@
 						<option>Tous les élèves</option>
 					</select>
 					<div id="search-list" style="height: 80%">
-						<ul class="search-list">
-							<li class="search-list-item">Elève 1</li>
-							<li class="search-list-item">Elève 2</li>
-							<li class="search-list-item-selected">Elève 3</li>
-							<li class="search-list-item">Elève 4</li>
-							<li class="search-list-item">Elève 5</li>
-							<li class="search-list-item">Elève 6</li>
-							<li class="search-list-item">Elève 7</li>
-							<li class="search-list-item">Elève 8</li>
-							<li class="search-list-item">Elève 9</li>
-							<li class="search-list-item">Elève 10</li>
-							<li class="search-list-item">Elève 11</li>
-						</ul>
 					</div>
 				</div>
 			</td>

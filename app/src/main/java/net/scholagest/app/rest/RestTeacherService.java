@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -23,6 +24,7 @@ import com.google.inject.Inject;
 
 @Path("/teacher")
 public class RestTeacherService {
+	private final static String REQUEST_ID_PREFIX = "teacher-";
 	private final ITeacherService teacherService;
 	private final IOntologyService ontologyService;
 	
@@ -34,13 +36,14 @@ public class RestTeacherService {
 	}
 	
 	@GET
-	@Path("/createTeacher")
+	@Path("/create")
 	@Produces("text/json")
 	public String createTeacher(
 			@QueryParam("token") String token,
 			@QueryParam("teacherType") String teacherType,
 			@QueryParam("keys") List<String> keys,
 			@QueryParam("values") List<String> values) {
+		String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
 		//TODO 1. Check the token and if this token allows to create a new
 		//teacher.
 		
@@ -50,7 +53,7 @@ public class RestTeacherService {
 		//2. Update the database.
 		String teacherKey = null;
 		try {
-			teacherKey = this.teacherService.createTeacher(teacherType,
+			teacherKey = this.teacherService.createTeacher(requestId, teacherType,
 					teacherProperties);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -66,9 +69,10 @@ public class RestTeacherService {
 	public String getTeachers(
 			@QueryParam("token") String token,
 			@QueryParam("properties") Set<String> properties) {
+		String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
 		try {
 			Map<String, Map<String, Object>> teachersInfo =
-					teacherService.getTeachersWithProperties(properties);
+					teacherService.getTeachersWithProperties(requestId, properties);
 			
 			Gson gson = new Gson();
 			String json = gson.toJson(teachersInfo);
@@ -86,9 +90,10 @@ public class RestTeacherService {
 			@QueryParam("token") String token,
 			@QueryParam("teacherKey") String teacherKey,
 			@QueryParam("properties") List<String> properties) {
+		String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
 		try {
 			Map<String, Object> info = this.teacherService.getTeacherInfo(
-					teacherKey, new HashSet<String>(properties));
+					requestId, teacherKey, new HashSet<String>(properties));
 			
 			Map<String, Map<String, Object>> result = new HashMap<>();
 			for (Map.Entry<String, Object> entry : info.entrySet()) {
@@ -120,11 +125,12 @@ public class RestTeacherService {
 			@QueryParam("teacherKey") String teacherKey,
 			@QueryParam("names") List<String> names,
 			@QueryParam("values") List<String> values) {
+		String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
 		try {
 			Map<String, Object> properties = JerseyHelper.listToMap(names,
 					new ArrayList<Object>(values));
 			
-			this.teacherService.setTeacherInfo(teacherKey, properties);
+			this.teacherService.setTeacherInfo(requestId, teacherKey, properties);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "{errorCode=0, message='" + e.getMessage() + "'}";

@@ -1,4 +1,4 @@
-package net.scholagest.test.managers;
+package net.scholagest.managers;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,15 +10,13 @@ import net.scholagest.database.Database;
 import net.scholagest.database.DatabaseException;
 import net.scholagest.database.DefaultDatabaseConfiguration;
 import net.scholagest.database.ITransaction;
-import net.scholagest.managers.IObjectManager;
-import net.scholagest.managers.ObjectManager;
 
 public class ObjectManagerTest {
 	public static void main(String[] args) {
 		Database database = new Database(new DefaultDatabaseConfiguration());
 		database.startup();
 		
-		IObjectManager objectManager = new ObjectManager();
+		ObjectManager objectManager = new ObjectManager();
 		
 		ITransaction transaction = null;
 		try {

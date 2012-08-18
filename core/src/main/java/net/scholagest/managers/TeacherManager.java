@@ -1,5 +1,6 @@
 package net.scholagest.managers;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -41,5 +42,19 @@ public class TeacherManager extends ObjectManager implements ITeacherManager {
 	public Set<String> getTeachers(String requestId,
 			ITransaction transaction) throws Exception {
 		return transaction.getColumns(CoreNamespace.teachersBase);
+	}
+
+	@Override
+	public void setTeacherProperties(String requestId,
+			ITransaction transaction, String teacherKey,
+			Map<String, Object> teacherProperties) throws Exception {
+		super.setObjectProperties(requestId, transaction, teacherKey, teacherProperties);
+	}
+
+	@Override
+	public Map<String, Object> getTeacherProperties(String requestId,
+			ITransaction transaction, String teacherKey,
+			Set<String> propertiesName) throws Exception {
+		return super.getObjectProperties(requestId, transaction, teacherKey, propertiesName);
 	}
 }

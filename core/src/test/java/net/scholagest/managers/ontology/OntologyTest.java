@@ -1,4 +1,4 @@
-package net.scholagest.test.managers.ontology;
+package net.scholagest.managers.ontology;
 
 import java.io.File;
 import java.util.Map;
@@ -25,7 +25,7 @@ public class OntologyTest {
 		docBuilderFactory.setNamespaceAware(true);
         DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
         Document doc = docBuilder.parse(
-        		new File("src/test/resources/test2.rdfs"));
+        		new File("src/test/resources/scholagest.rdfs"));
         
         OntologyManager manager = new OntologyManager();
         

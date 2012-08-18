@@ -7,6 +7,12 @@ public class CoreNamespace {
 	public static final String ontologyNs = scholagestNs + "/ontology";
 	public static final String ontologyBase = ontologyNs + "#ontology";
 	
+	//Types
+	public static final String tTeacher = scholagestNs + "#tTeacher";
+	public static final String tStudent = scholagestNs + "#tStudent";
+	public static final String tStudentPersonalInfo = scholagestNs + "#tStudentPersonalInfo";
+	public static final String tStudentMedicalInfo = scholagestNs + "#tStudentMedicalInfo";
+	
 	//Teachers
 	public static final String teacherNs = scholagestNs + "/teacher";
 	public static final String teachersBase = teacherNs + "#teachers";
@@ -24,8 +30,4 @@ public class CoreNamespace {
 			pStudentNs + "PersonalInfo";
 	public static final String pStudentMedicalInfo =
 			pStudentNs + "MedicalInfo";
-	public static final String pStudentCurrentScholarInfo =
-			pStudentNs + "CurrentScholarInfo";
-	public static final String pStudentOldScholarInfo =
-			pStudentNs + "OldScholarInfo";
 }
