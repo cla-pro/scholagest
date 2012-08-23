@@ -7,13 +7,17 @@ import net.scholagest.database.Database;
 import net.scholagest.database.DefaultDatabaseConfiguration;
 import net.scholagest.database.IDatabase;
 import net.scholagest.database.IDatabaseConfiguration;
+import net.scholagest.managers.IStudentManager;
 import net.scholagest.managers.ITeacherManager;
+import net.scholagest.managers.StudentManager;
 import net.scholagest.managers.TeacherManager;
 import net.scholagest.managers.ontology.OntologyManager;
 import net.scholagest.services.IOntologyService;
+import net.scholagest.services.IStudentService;
 import net.scholagest.services.ITeacherService;
 import net.scholagest.services.IUserService;
 import net.scholagest.services.OntologyService;
+import net.scholagest.services.StudentService;
 import net.scholagest.services.TeacherService;
 import net.scholagest.services.UserService;
 
@@ -38,8 +42,11 @@ public class GuiceContext extends GuiceServletContextListener {
 				bind(OntologyManager.class);
 				bind(IOntologyService.class).to(OntologyService.class);
 				bind(IUserService.class).to(UserService.class);
+				bind(IStudentManager.class).to(StudentManager.class);
+				bind(IStudentService.class).to(StudentService.class);
 
 				bind(RestTeacherService.class);
+				bind(RestStudentService.class);
 				bind(RestUserService.class);
 
 				// Route all requests through GuiceContainer

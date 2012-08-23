@@ -1,14 +1,16 @@
-<div id="menu-element-teachers" data-dojo-type="dijit.layout.ContentPane" title="Professeurs" updateFunction="updateTeacherList" selected="true">
-	<script type="text/javascript">
-		dojo.ready(function() {
-			var tabs = dijit.byId("tabMenu");
-			dojo.connect(tabs, "selectChild", function(page) {
-				alert(page);
-			});
-			tabs.startup();
-			loadTeachers();
-		});
-	</script>
+<div id="menu-element-teachers" data-dojo-type="dijit.layout.ContentPane" title="Professeurs" selected="true">
+    <script type="text/javascript">
+        dojo.ready(function() {
+            var tabs = dijit.byId("tabMenu");
+            tabs.watch("selectedChildWidget", function(name, oval, nval) {
+                if (nval.id == 'menu-element-teachers') {
+                    loadTeachers();
+                }
+            });
+            tabs.startup();
+            loadTeachers();
+        });
+    </script>
 	<table id="teacherTable" style="width: 100%; height: 100%">
 		<tr>
 			<td valign="top" style="width: 20%; height: 100%">

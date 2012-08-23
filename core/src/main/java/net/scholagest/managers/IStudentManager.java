@@ -20,4 +20,10 @@ public interface IStudentManager {
 	public Set<String> getStudents(String requestId,
 			ITransaction transaction) throws Exception;
 
+	public Map<String, Object> getPersonalInfoProperties(String requestId, ITransaction transaction,
+			String studentKey, Set<String> properties) throws Exception;
+
+	public Map<String, Object> getMedicalInfoProperties(String requestId, ITransaction transaction,
+			String studentKey, Set<String> properties) throws Exception;
+
 }

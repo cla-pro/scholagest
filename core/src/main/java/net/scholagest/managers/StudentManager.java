@@ -16,6 +16,9 @@ public class StudentManager extends ObjectManager implements IStudentManager {
 		String studentUUID = UUID.randomUUID().toString();
 		String studentKey = generateStudentKey(studentUUID);
 		super.createObject(requestId, transaction, studentKey, CoreNamespace.tStudent);
+
+		transaction.insert(CoreNamespace.studentsBase, studentKey,
+				studentKey, null);
 		
 		String studentBase = generateStudentBase(studentUUID);
 		String personalInfoKey = super.createObject(requestId, transaction,
@@ -43,6 +46,20 @@ public class StudentManager extends ObjectManager implements IStudentManager {
 			String studentKey, Map<String, Object> properties) throws Exception {
 		String medicalInfoKey = (String) transaction.get(studentKey, CoreNamespace.pStudentMedicalInfo, null);
 		super.setObjectProperties(requestId, transaction, medicalInfoKey, properties);
+	}
+	
+	@Override
+	public Map<String, Object> getPersonalInfoProperties(String requestId, ITransaction transaction,
+			String studentKey, Set<String> properties) throws Exception {
+		String personalInfoKey = (String) transaction.get(studentKey, CoreNamespace.pStudentPersonalInfo, null);
+		return super.getObjectProperties(requestId, transaction, personalInfoKey, properties);
+	}
+	
+	@Override
+	public Map<String, Object> getMedicalInfoProperties(String requestId, ITransaction transaction,
+			String studentKey, Set<String> properties) throws Exception {
+		String medicalInfoKey = (String) transaction.get(studentKey, CoreNamespace.pStudentMedicalInfo, null);
+		return super.getObjectProperties(requestId, transaction, medicalInfoKey, properties);
 	}
 	
 	private String generateStudentKey(String studentUUID) {

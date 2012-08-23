@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -125,4 +126,18 @@ public class OntologyManager {
 		
 		return element;
 	}
+
+	public List<String> getTypeHierarchy(String requestId,
+			ITransaction transaction, String type) throws Exception {
+		OntologyElement typeElement = getElementWithName(requestId, transaction, type);
+		Map<String, Set<OntologyElement>> subElements = typeElement.getSubElements();
+		if (subElements.containsKey("rdfs:subClassOf")) {
+			Set<OntologyElement> parents = subElements.get("rdfs:subClassOf");
+			for (OntologyElement)
+		}
+		
+		return null;
+	}
+	
+	private List<String> extractTypeHierarchy(Ontology)
 }

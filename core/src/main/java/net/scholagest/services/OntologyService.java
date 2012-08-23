@@ -1,7 +1,9 @@
 package net.scholagest.services;
 
+import java.util.List;
 import java.util.UUID;
 
+import net.scholagest.database.DatabaseException;
 import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
 import net.scholagest.managers.ontology.OntologyManager;
@@ -39,5 +41,22 @@ public class OntologyService implements IOntologyService {
 
 		return result;
 	}
+	
+	public List<String> getTypeHierarchy(String type) throws Exception {
+		List<String> result = null;
+		String requestId = UUID.randomUUID().toString();
 
+		ITransaction transaction = this.database.getTransaction(
+				SecheronNamespace.SECHERON_KEYSPACE);
+		try {
+			result = this.ontologyManager.getTypeHierarchy(requestId, transaction, type);
+
+			transaction.commit();
+		} catch (Exception e) {
+			transaction.rollback();
+			e.printStackTrace();
+		}
+
+		return result;
+	}
 }

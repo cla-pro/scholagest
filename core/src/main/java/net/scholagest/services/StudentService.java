@@ -1,10 +1,13 @@
 package net.scholagest.services;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import net.scholagest.database.DatabaseException;
 import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
+import net.scholagest.managers.CoreNamespace;
 import net.scholagest.managers.IStudentManager;
 
 import com.google.inject.Inject;
@@ -60,9 +63,63 @@ public class StudentService implements IStudentService {
 	}
 
 	@Override
-	public Map<String, Object> getStudentInfo(String requestId,
+	public Map<String, Object> getStudentPersonalInfo(String requestId,
 			String studentKey, Set<String> properties) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		Map<String, Object> personalInfo = null;
+		
+		ITransaction transaction = this.database.getTransaction(
+				SecheronNamespace.SECHERON_KEYSPACE);
+		try {
+			personalInfo = studentManager.getPersonalInfoProperties(requestId, transaction, studentKey, properties);
+			transaction.commit();
+		} catch (Exception e) {
+			transaction.rollback();
+			e.printStackTrace();
+		}
+		
+		return personalInfo;
+	}
+
+	public Map<String, Object> getStudentMedicalInfo(String requestId, String studentKey,
+			Set<String> properties) throws Exception {
+		Map<String, Object> medicalInfo = null;
+		
+		ITransaction transaction = this.database.getTransaction(
+				SecheronNamespace.SECHERON_KEYSPACE);
+		try {
+			medicalInfo = studentManager.getMedicalInfoProperties(requestId, transaction, studentKey, properties);
+			transaction.commit();
+		} catch (Exception e) {
+			transaction.rollback();
+			e.printStackTrace();
+		}
+		
+		return medicalInfo;
+	}
+
+	@Override
+	public Map<String, Map<String, Object>> getStudentsWithProperties(
+			String requestId, Set<String> properties) throws Exception {
+		Map<String, Map<String, Object>> students = null;
+
+		ITransaction transaction = this.database.getTransaction(
+				SecheronNamespace.SECHERON_KEYSPACE);
+		try {
+			students = new HashMap<String, Map<String, Object>>();
+			for (String col : transaction.getColumns(CoreNamespace.studentsBase)) {
+				String studentKey = (String) transaction.get(CoreNamespace.studentsBase, col, null);
+				//teachers.add((String) transaction.get(CoreNamespace.teachersBase, col, null));
+				Map<String, Object> info =
+						this.studentManager.getPersonalInfoProperties(requestId, transaction, studentKey, properties);
+				students.put(studentKey, info);
+			}
+
+			transaction.commit();
+		} catch (Exception e) {
+			transaction.rollback();
+			e.printStackTrace();
+		}
+
+		return students;
 	}
 }

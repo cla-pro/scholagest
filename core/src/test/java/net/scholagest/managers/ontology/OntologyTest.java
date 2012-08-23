@@ -25,7 +25,7 @@ public class OntologyTest {
 		docBuilderFactory.setNamespaceAware(true);
         DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
         Document doc = docBuilder.parse(
-        		new File("src/test/resources/scholagest.rdfs"));
+        		new File("src/test/resources/scholagest-properties.rdfs"));
         
         OntologyManager manager = new OntologyManager();
         

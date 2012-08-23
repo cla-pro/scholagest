@@ -86,7 +86,7 @@ function selectTeacher(teacherKey) {
 		this.className = 'search-list-item-selected';
 		list.selectedTeacher = this;
 
-		getTeacherInfo(teacherKey)
+		getTeacherInfo(teacherKey);
 	};
 }
 function loadTeachers() {
