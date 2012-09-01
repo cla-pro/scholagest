@@ -37,14 +37,14 @@ public class OntologyTest {
 	        Map<String, Set<OntologyElement>> elements =
 	        		manager.compileOntology(UUID.randomUUID().toString(),
 	        				transaction, doc);
-	        for (Map.Entry<String, Set<OntologyElement>> entry
+	        /*for (Map.Entry<String, Set<OntologyElement>> entry
 	        		: elements.entrySet()) {
 	        	System.out.println("=================== " + entry.getKey());
 	        	
 	        	for (OntologyElement element : entry.getValue()) {
 	        		displayElement("", element);
 	        	}
-	        }
+	        }*/
 	        
 			transaction.commit();
 		} catch (Exception e) {
@@ -60,8 +60,8 @@ public class OntologyTest {
 	}
 	
 	public static void displayElement(String tab, OntologyElement element) {
-		System.out.println(tab + element.getType());
-		System.out.println(tab + element.getName());
+		System.out.println(tab + "Type " + element.getType());
+		System.out.println(tab + "Name " + element.getName());
 		
 		for (Map.Entry<String, String> attribute
 				: element.getAttributes().entrySet()) {

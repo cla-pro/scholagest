@@ -29,6 +29,7 @@ public class OntologyParser {
 					!(child instanceof Text)) {
 				OntologyElement element = this.parseElement((Element) child);
 				if (element != null) {
+					System.out.println("Element found: " + element.getName() + " of type " + element.getType());
 					Set<OntologyElement> set = elements.get(element.getType());
 					if (set == null) {
 						set = new HashSet<>();

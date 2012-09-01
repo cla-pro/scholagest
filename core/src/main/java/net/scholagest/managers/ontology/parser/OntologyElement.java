@@ -38,7 +38,7 @@ public class OntologyElement {
 	}
 	
 	public void setAttribute(String name, String value) {
-		this.attributes.put(name, value);
+		attributes.put(name, value);
 	}
 
 	public Map<String, Set<OntologyElement>> getSubElements() {
@@ -46,12 +46,43 @@ public class OntologyElement {
 	}
 	
 	public void putSubElement(String type, OntologyElement subElement) {
-		Set<OntologyElement> set = this.subElements.get(type);
+		Set<OntologyElement> set = subElements.get(type);
 		if (set == null) {
 			set = new HashSet<>();
-			this.subElements.put(type, set);
+			subElements.put(type, set);
 		}
 		
 		set.add(subElement);
+	}
+	
+	public OntologyElement getSingleSubElementWithName(String subElementName) {
+		Set<OntologyElement> set = subElements.get(subElementName);
+		if (set == null || set.size() == 0) {
+			return null;
+		}
+		else if (set.size() >= 1) {
+			return set.iterator().next();
+		}
+		
+		return null;
+	}
+	
+	public String getAttributeWithName(String name) {
+		return attributes.get(name);
+	}
+	
+	@Override
+	public boolean equals(Object other) {
+		if (other == null || !(other instanceof OntologyElement)) {
+			return false;
+		}
+		OntologyElement ontologyElement = (OntologyElement) other;
+		if (name == null) {
+			return ontologyElement.getName() == null;
+		}
+		if (ontologyElement.getName() == null) {
+			return false;
+		}
+		return name.equals(ontologyElement.getName());
 	}
 }

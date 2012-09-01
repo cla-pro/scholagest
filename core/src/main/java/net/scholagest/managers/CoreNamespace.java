@@ -8,6 +8,7 @@ public class CoreNamespace {
 	public static final String ontologyBase = ontologyNs + "#ontology";
 	
 	//Types
+	public static final String tGroup = scholagestNs + "#tGroup";
 	public static final String tTeacher = scholagestNs + "#tTeacher";
 	public static final String tStudent = scholagestNs + "#tStudent";
 	public static final String tStudentPersonalInfo = scholagestNs + "#tStudentPersonalInfo";

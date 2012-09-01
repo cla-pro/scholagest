@@ -68,23 +68,39 @@ function selectStudent(studentKey) {
 		getStudentInfo(studentKey);
 	};
 }
-function createInfoHtml(info) {
+function createHtmlGroupTitleBar(parentDOM, title) {
+	var titleBar = dojo.create("div", {className: "student-part-title"}, parentDOM);
+	dojo.create("a", {innerHTML: title}, titleBar);
+	dojo.create("button", {className: "student-part-button", innerHTML: "Fermer"});
+}
+function fillHtmlTableWithText(table, key, displayText, value) {
+	var tr = dojo.create("tr", {}, table);
+
+	dojo.create("td", {
+		innerHTML: displayText,
+		style: "width: 150px"
+	}, tr);
+	var cell = dojo.create("td", {}, tr);
+	var txt = dojo.create("input", {
+		style: "width: 100%",
+		type: "text",
+		value: value,
+	}, cell);
+	txt.key = key;
+}
+function createHtmlGroup(parentDOM, title, contentAsJson) {
+	createHtmlGroupTitleBar(parentDOM, title);
+}
+function createInfoHtml(parentDOM, info) {
 	for (var i in info) {
 		var data = info[i];
 		
-		var tr = dojo.create("tr", {}, table);
-
-		dojo.create("td", {
-			innerHTML: info[i].displayText,
-			style: "width: 150px"
-		}, tr);
-		var cell = dojo.create("td", {}, tr);
-		var txt = dojo.create("input", {
-			style: "width: 100%",
-			type: "text",
-			value: info[i].value,
-		}, cell);
-		txt.key = i;
+		if (data.info != null && data.info == true) {
+			createHtmlGroup(parentDOM, data.displayText, data.value);
+		}
+		else {
+			
+		}
 	}
 
 	var save = dojo.create("button",
@@ -101,8 +117,11 @@ function getStudentInfo(studentKey) {
 				load: function(data) {
 					if (data.errorCode == null) {
 						clearDOM("student-data");
+						
+						var base = dojo.byId(domId);
+						createInfoHtml(base, data.info);
 
-						var base = dojo.byId('student-data');
+						/*var base = dojo.byId('student-data');
 						dojo.create("h1", {
 							innerHTML: ''}, base);
 						var table = dojo.create("table", {
@@ -124,7 +143,7 @@ function getStudentInfo(studentKey) {
 								value: info[i].value,
 							}, cell);
 							txt.key = i;
-						}
+						}*/
 
 						var save = dojo.create("button",
 								{type: "button", onclick:"setStudentInfo(\"" + studentKey + "\")"}, base);

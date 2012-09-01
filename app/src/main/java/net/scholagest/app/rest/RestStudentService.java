@@ -122,8 +122,10 @@ public class RestStudentService {
 			fieldInfo.put("value", value);
 			String displayText = element.getAttributes().get("sg:displayText");
 			fieldInfo.put("displayText", displayText);
-			String type = element.getAttributes().get("rdfs:range");
-			fieldInfo.put("type", type);
+			boolean isRangeGroup = ontologyService.isSubtypeOf(element.getSingleSubElementWithName("rdfs:range").getAttributeWithName("rdf:resource"), ScholagestNamespace.tGroup);
+			if (isRangeGroup) {
+				fieldInfo.put("isGroup", true);
+			}
 			
 			result.put(entry.getKey(), fieldInfo);
 		}

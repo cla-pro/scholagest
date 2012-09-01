@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,21 +37,27 @@ public class OntologyManager {
 		//Parse the ontology.
 		OntologyParser parser = new OntologyParser();
 		Map<String, Set<OntologyElement>> elements
-				= this.parseAndLoadOntology(xmlOntology, parser);
+				= parseAndLoadOntology(xmlOntology, parser);
+		
+		for (Set<OntologyElement> elementSet : elements.values()) {
+			for (OntologyElement ontologyElement : elementSet) {
+				System.out.println("---- " + ontologyElement.getName());
+			}
+		}
 		
 		//TODO Solve the names.
 		
 		
-		//TODO Store into the database.
-		new OntologySaver().saveOntology(requestId, transaction, elements);
+		// Store into the database.
+		//new OntologySaver().saveOntology(requestId, transaction, elements);
 		
 		return elements;
 	}
 	
 	private Map<String, Set<OntologyElement>> parseAndLoadOntology(
 			Document xmlOntology, OntologyParser parser) {
-		Map<String, Set<OntologyElement>> elements
-				= parser.parseOntology(xmlOntology);
+		Map<String, Set<OntologyElement>> elements = new HashMap<>();
+		elements.putAll(parser.parseOntology(xmlOntology));
 		
 		//Search for imports.
 		Set<OntologyElement> owlOntologies = elements.get(OWL.ontology);
@@ -64,7 +70,7 @@ public class OntologyManager {
 					continue;
 				
 				for (OntologyElement imp : imports) {
-					String urlString = imp.getAttributes().get("rdf:resource");
+					String urlString = imp.getAttributes().get(RDF.resource);
 					if (urlString != null) {
 						System.out.println("Load ontology at URL: " + urlString);
 						
@@ -75,14 +81,14 @@ public class OntologyManager {
 							urlStream = url.openStream();
 
 							DocumentBuilder docBuilder =
-									this.docBuilderFactory.newDocumentBuilder();
+									docBuilderFactory.newDocumentBuilder();
 							Document importedXML = docBuilder.parse(urlStream);
 							
 							Map<String, Set<OntologyElement>> importedElements
-									= this.parseAndLoadOntology(importedXML,
+									= parseAndLoadOntology(importedXML,
 											parser);
 							if (importedElements != null)
-								elements.putAll(importedElements);
+								mergeOntologies(elements, importedElements);
 						} catch (MalformedURLException e) {
 							e.printStackTrace();
 						} catch (ParserConfigurationException e) {
@@ -106,6 +112,18 @@ public class OntologyManager {
 		return elements;
 	}
 	
+	private void mergeOntologies(Map<String, Set<OntologyElement>> ontology1, Map<String, Set<OntologyElement>> ontology2) {
+		for (String key : ontology2.keySet()) {
+			if (ontology1.containsKey(key)) {
+				Set<OntologyElement> set = ontology1.get(key);
+				set.addAll(ontology2.get(key));
+			}
+			else {
+				ontology1.put(key, ontology2.get(key));
+			}
+		}
+	}
+	
 	public OntologyElement getElementWithName(String requestId,
 			ITransaction transaction, String elementName) throws Exception {
 		String type = (String) transaction.get(elementName, RDF.type, null);
@@ -127,17 +145,22 @@ public class OntologyManager {
 		return element;
 	}
 
-	public List<String> getTypeHierarchy(String requestId,
-			ITransaction transaction, String type) throws Exception {
+	public boolean isSubtypeOf(String requestId, ITransaction transaction,
+			String type, String supertype) throws Exception {
+		if (type.equals(supertype))
+			return true;
+		
 		OntologyElement typeElement = getElementWithName(requestId, transaction, type);
 		Map<String, Set<OntologyElement>> subElements = typeElement.getSubElements();
 		if (subElements.containsKey("rdfs:subClassOf")) {
-			Set<OntologyElement> parents = subElements.get("rdfs:subClassOf");
-			for (OntologyElement)
+			Set<OntologyElement> parentSet = subElements.get("rdfs:subClassOf");
+			for (OntologyElement parent : parentSet) {
+				if (isSubtypeOf(requestId, transaction, parent.getAttributes().get("rdf:ID"), supertype)) {
+					return true;
+				}
+			}
 		}
 		
-		return null;
+		return false;
 	}
-	
-	private List<String> extractTypeHierarchy(Ontology)
 }
