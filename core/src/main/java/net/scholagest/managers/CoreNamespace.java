@@ -1,7 +1,7 @@
 package net.scholagest.managers;
 
 public class CoreNamespace {
-	protected static final String scholagestNs = "http://scholagest.net";
+	public static final String scholagestNs = "http://scholagest.net";
 	
 	//Ontology
 	public static final String ontologyNs = scholagestNs + "/ontology";

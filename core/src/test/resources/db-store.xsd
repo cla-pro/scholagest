@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="database">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="keyspaces" minOccurs="0" maxOccurs="unbounded" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:complexType name="keyspaceType">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string" />
+            <xs:element name="keys" type="keysType" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="keysType">
+        <xs:sequence>
+            <xs:element name="key" type="keyType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="keyType">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string" />
+            <xs:element name="columns" type="columnsType" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="columnsType">
+        <xs:sequence>
+            <xs:element name="column" type="columnType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="columnType">
+        <xs:all>
+            <xs:element name="name" type="xs:string" />
+            <xs:element name="value" type="xs:string" />
+        </xs:all>
+    </xs:complexType>
+</xs:schema>

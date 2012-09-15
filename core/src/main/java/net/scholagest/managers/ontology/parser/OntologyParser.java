@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import net.scholagest.managers.CoreNamespace;
 import net.scholagest.managers.ontology.OWL;
 import net.scholagest.managers.ontology.RDF;
 import net.scholagest.managers.ontology.RDFS;
@@ -50,20 +51,20 @@ public class OntologyParser {
 		ontologyElement.setType(this.resolveNamespace(element.getTagName()));
 		if (element.getAttribute("rdf:about") != null
 				&& !element.getAttribute("rdf:about").isEmpty())
-			ontologyElement.setName(element.getAttribute("rdf:about"));
+			ontologyElement.setName(resolveNamespace(element.getAttribute("rdf:about")));
 		else if (element.getAttribute("ID") != null
 				&& !element.getAttribute("ID").isEmpty())
-			ontologyElement.setName(element.getAttribute("ID"));
+			ontologyElement.setName(resolveNamespace(element.getAttribute("ID")));
 		else if (element.getAttribute("rdf:ID") != null
 				&& !element.getAttribute("rdf:ID").isEmpty())
-			ontologyElement.setName(element.getAttribute("rdf:ID"));
+			ontologyElement.setName(resolveNamespace(element.getAttribute("rdf:ID")));
 		
 		NamedNodeMap attributes = element.getAttributes();
 		for (int i = 0; i < attributes.getLength(); i++) {
 			Node attribute = attributes.item(i);
 			ontologyElement.setAttribute(
-					this.resolveNamespace(attribute.getNodeName()),
-					attribute.getNodeValue());
+					resolveNamespace(attribute.getNodeName()),
+					resolveNamespace(attribute.getNodeValue()));
 		}
 		
 		NodeList childNodes = element.getChildNodes();
@@ -103,6 +104,7 @@ public class OntologyParser {
 		String result = text.replaceAll("rdf:", RDF.rdfNs);
 		result = result.replaceAll("rdfs:", RDFS.rdfsNs);
 		result = result.replaceAll("owl:", OWL.owlNs);
+		result = result.replaceAll("sg:", CoreNamespace.scholagestNs + "#");
 		
 		return result;
 	}

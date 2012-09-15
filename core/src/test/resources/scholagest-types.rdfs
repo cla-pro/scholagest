@@ -3,35 +3,35 @@
 		xmlns:owl="http://www.w3.org/2002/07/owl#"
 		xmlns:sg="http://scholagest.net#">
 	
-	<owl:Ontology rdf:about="http://schlagest.net/2012/06/rdf-schema#">
-		<rdfs:comment>The schlagest ontology</rdfs:comment>
+	<owl:Ontology rdf:about="http://scholagest.net/2012/06/rdf-schema#">
+		<rdfs:comment>The scholagest ontology</rdfs:comment>
 		<owl:imports rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns"/>
 		<owl:imports rdf:resource="http://www.w3.org/2000/01/rdf-schema"/>
 	</owl:Ontology>
 	
-	<rdfs:Property rdf:ID="http://schlagest.net#displayText" rdfs:comment="Display text">
+	<rdfs:Property rdf:ID="http://scholagest.net#displayText" rdfs:comment="Display text">
 		<rdfs:domain rdf:resource="rdfs:Property"/>
 		<rdfs:range rdf:resource="String"/>
 	</rdfs:Property>
 	
-    <rdfs:Class rdf:ID="http://schlagest.net#tTeacher">
+    <rdfs:Class rdf:ID="http://scholagest.net#tTeacher">
         <rdfs:comment>Teacher representation</rdfs:comment>
     </rdfs:Class>
-    <rdfs:Class rdf:ID="http://schlagest.net#tStudent">
+    <rdfs:Class rdf:ID="http://scholagest.net#tStudent">
         <rdfs:comment>Student representation</rdfs:comment>
     </rdfs:Class>
-    <rdfs:Class rdf:ID="http://schlagest.net#tGroup">
+    <rdfs:Class rdf:ID="http://scholagest.net#tGroup">
         <rdfs:comment></rdfs:comment>
     </rdfs:Class>
-    <rdfs:Class rdf:ID="http://schlagest.net#tStudentPersonalInfo">
+    <rdfs:Class rdf:ID="http://scholagest.net#tStudentPersonalInfo">
         <rdfs:comment>Student's personal info</rdfs:comment>
         <rdfs:subClassOf rdf:resource="sg:tGroup" />
     </rdfs:Class>
-    <rdfs:Class rdf:ID="http://schlagest.net#tStudentMedicalInfo">
+    <rdfs:Class rdf:ID="http://scholagest.net#tStudentMedicalInfo">
         <rdfs:comment>Student's medical info</rdfs:comment>
         <rdfs:subClassOf rdf:resource="sg:tGroup" />
     </rdfs:Class>
-    <rdfs:Class rdf:ID="http://schlagest.net#tStudentScholarInfo">
+    <rdfs:Class rdf:ID="http://scholagest.net#tStudentScholarInfo">
         <rdfs:comment>Student's scholar info</rdfs:comment>
         <rdfs:subClassOf rdf:resource="sg:tGroup" />
     </rdfs:Class>

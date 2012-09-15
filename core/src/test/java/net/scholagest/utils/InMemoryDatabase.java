@@ -1,0 +1,113 @@
+package net.scholagest.utils;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import net.scholagest.database.DatabaseException;
+import net.scholagest.database.IDatabase;
+import net.scholagest.database.ITransaction;
+
+public class InMemoryDatabase implements IDatabase {
+	public InMemoryDatabase() {
+		
+	}
+
+	@Override
+	public void startup() {
+		
+	}
+
+	@Override
+	public void shutdown() {
+		
+	}
+
+	@Override
+	public InMemoryTransaction getTransaction(String keyspaceName) {
+		return new InMemoryTransaction(keyspaceName);
+	}
+
+	@Override
+	public void createIndex(String columnName) throws DatabaseException {
+		
+	}
+	
+	public class InMemoryTransaction implements ITransaction {
+		private String keyspace;
+		private Map<String, Map<String, Object>> values = new HashMap<>();
+		
+		public InMemoryTransaction(String keyspace) {
+			this.keyspace = keyspace;
+		}
+		
+		@Override
+		public void insert(String key, String column, Object value, String type)
+				throws DatabaseException {
+			Map<String, Object> columns = values.get(key);
+			if (columns == null) {
+				columns = new HashMap<>();
+				values.put(key, columns);
+			}
+			
+			columns.put(column, value);
+		}
+
+		@Override
+		public void delete(String key, String column, String type)
+				throws DatabaseException {
+			Map<String, Object> columns = values.get(key);
+			if (columns != null) {
+				columns.remove(column);
+			}
+		}
+
+		@Override
+		public Object get(String key, String column, String type)
+				throws DatabaseException {
+			Map<String, Object> columns = values.get(key);
+			if (columns == null) {
+				return null;
+			}
+			
+			return columns.get(column);
+		}
+
+		@Override
+		public Set<String> getColumns(String key) throws DatabaseException {
+			Map<String, Object> columns = values.get(key);
+			if (columns == null) {
+				return new HashSet<>();
+			}
+			return columns.keySet();
+		}
+
+		@Override
+		public Map<String, Object> getRow(String key) throws DatabaseException {
+			Map<String, Object> columns = values.get(key);
+			if (columns == null) {
+				return new HashMap<>();
+			}
+			return columns;
+		}
+		
+		public String getKeyspace() {
+			return keyspace;
+		}
+
+		@Override
+		public void commit() throws DatabaseException {
+			
+		}
+
+		@Override
+		public void rollback() throws DatabaseException {
+			
+		}
+		
+		public Map<String, Map<String, Object>> getValues() {
+			return values;
+		}
+	}
+}

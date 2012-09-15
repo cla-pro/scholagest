@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import net.scholagest.database.DatabaseException;
 import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
 import net.scholagest.managers.CoreNamespace;
@@ -108,7 +107,6 @@ public class StudentService implements IStudentService {
 			students = new HashMap<String, Map<String, Object>>();
 			for (String col : transaction.getColumns(CoreNamespace.studentsBase)) {
 				String studentKey = (String) transaction.get(CoreNamespace.studentsBase, col, null);
-				//teachers.add((String) transaction.get(CoreNamespace.teachersBase, col, null));
 				Map<String, Object> info =
 						this.studentManager.getPersonalInfoProperties(requestId, transaction, studentKey, properties);
 				students.put(studentKey, info);

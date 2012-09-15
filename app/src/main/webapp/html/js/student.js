@@ -71,10 +71,16 @@ function selectStudent(studentKey) {
 function createHtmlGroupTitleBar(parentDOM, title) {
 	var titleBar = dojo.create("div", {className: "student-part-title"}, parentDOM);
 	dojo.create("a", {innerHTML: title}, titleBar);
-	dojo.create("button", {className: "student-part-button", innerHTML: "Fermer"});
+	dojo.create("button", {className: "student-part-button", innerHTML: "Fermer"}, titleBar);
 }
-function fillHtmlTableWithText(table, key, displayText, value) {
-	var tr = dojo.create("tr", {}, table);
+function createHtmlGroupContent(parentDOM, groupId, contentAsJson) {
+	var div = dojo.create("div", {className: "student-part"}, parentDOM);
+	var table = dojo.create("table", {style: "width: 100%"}, div);
+	
+	createInfoHtml(table, contentAsJson);
+}
+function createHtmlLabelText(parentTable, propertyName, displayText, value) {
+	var tr = dojo.create("tr", {}, parentTable);
 
 	dojo.create("td", {
 		innerHTML: displayText,
@@ -86,67 +92,42 @@ function fillHtmlTableWithText(table, key, displayText, value) {
 		type: "text",
 		value: value,
 	}, cell);
-	txt.key = key;
+	txt.key = propertyName;
 }
 function createHtmlGroup(parentDOM, title, contentAsJson) {
 	createHtmlGroupTitleBar(parentDOM, title);
+	createHtmlGroupContent(parentDOM, "", contentAsJson);
 }
 function createInfoHtml(parentDOM, info) {
 	for (var i in info) {
 		var data = info[i];
 		
-		if (data.info != null && data.info == true) {
+		if (data.isHtmlGroup != null && data.isHtmlGroup == true) {
 			createHtmlGroup(parentDOM, data.displayText, data.value);
 		}
 		else {
-			
+			createHtmlLabelText(parentDOM, i, data.displayText, data.value);
 		}
 	}
-
-	var save = dojo.create("button",
-			{type: "button", onclick:"setStudentInfo(\"" + studentKey + "\")"}, base);
 }
 function getStudentInfo(studentKey) {
 	var xhrArgs = {
 			url: "http://localhost:8080/scholagest-app/services/student/getProperties",
 			preventCash: true,
 			content: {token: dojo.cookie("scholagest-token"),
-				teacherKey: studentKey,
+				studentKey: studentKey,
 				properties: ["pStudentFirstName", "pStudentLastName"]},
 				handleAs: "json",
 				load: function(data) {
 					if (data.errorCode == null) {
-						clearDOM("student-data");
+						var domId = "student-data";
+						clearDOM(domId);
 						
 						var base = dojo.byId(domId);
 						createInfoHtml(base, data.info);
 
-						/*var base = dojo.byId('student-data');
-						dojo.create("h1", {
-							innerHTML: ''}, base);
-						var table = dojo.create("table", {
-							style: "width: 100%"}, base);
-						table.id = "student-data-table";
-
-						var info = data.info;
-						for (var i in info) {
-							var tr = dojo.create("tr", {}, table);
-
-							dojo.create("td", {
-								innerHTML: info[i].displayText,
-								style: "width: 150px"
-							}, tr);
-							var cell = dojo.create("td", {}, tr);
-							var txt = dojo.create("input", {
-								style: "width: 100%",
-								type: "text",
-								value: info[i].value,
-							}, cell);
-							txt.key = i;
-						}*/
-
 						var save = dojo.create("button",
-								{type: "button", onclick:"setStudentInfo(\"" + studentKey + "\")"}, base);
+								{type: "button", onclick:"setStudentInfo(\"" + studentKey + "\")", innerHTML: "Enregistrer"}, base);
 					}
 					else {
 						alert("Error during getProperties: ("
