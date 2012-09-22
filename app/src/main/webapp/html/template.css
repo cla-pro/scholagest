@@ -84,14 +84,14 @@ li.search-list-item-selected {
 .student-content {
 	height: 100%;
 }
-.student-part-title {
+.person-info-part-title {
 	background-color: #ADD8E6;
 	width: 100%;
 }
-.student-part-content {
+.person-info-part-content {
 	width: 100%;
 }
-.student-part-button {
+.person-info-part-button {
 	float: right;
 	border: black 1px solid;
 }

@@ -15,9 +15,6 @@ import javax.ws.rs.QueryParam;
 
 import net.scholagest.app.utils.JerseyHelper;
 import net.scholagest.app.utils.JsonObject;
-import net.scholagest.managers.CoreNamespace;
-import net.scholagest.managers.ontology.RDFS;
-import net.scholagest.managers.ontology.parser.OntologyElement;
 import net.scholagest.services.IOntologyService;
 import net.scholagest.services.IStudentService;
 
@@ -25,13 +22,14 @@ import com.google.gson.Gson;
 import com.google.inject.Inject;
 
 @Path("/student")
-public class RestStudentService {
+public class RestStudentService extends AbstractService {
     private final static String REQUEST_ID_PREFIX = "student-";
     private final IStudentService studentService;
     private final IOntologyService ontologyService;
 
     @Inject
     public RestStudentService(IStudentService studentService, IOntologyService ontologyService) {
+        super(ontologyService);
         this.studentService = studentService;
         this.ontologyService = ontologyService;
     }
@@ -101,30 +99,5 @@ public class RestStudentService {
             e.printStackTrace();
             return "{errorCode=0, message='" + e.getMessage() + "'}";
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    private Map<String, Map<String, Object>> extractOntology(Map<String, Object> info) throws Exception {
-        Map<String, Map<String, Object>> result = new HashMap<>();
-        for (Map.Entry<String, Object> entry : info.entrySet()) {
-            Object value = entry.getValue();
-            if (value instanceof Map) {
-                value = extractOntology((Map<String, Object>) value);
-            }
-            // Get ontology for the field.
-            OntologyElement element = ontologyService.getElementWithName(entry.getKey());
-            Map<String, Object> fieldInfo = new HashMap<>();
-            fieldInfo.put("value", value);
-            String displayText = element.getAttributes().get(CoreNamespace.scholagestNs + "#displayText");
-            fieldInfo.put("displayText", displayText);
-            boolean isRangeGroup = ontologyService.isSubtypeOf(element.getAttributeWithName(RDFS.range), ScholagestNamespace.tGroup);
-            if (isRangeGroup) {
-                fieldInfo.put("isHtmlGroup", true);
-            }
-
-            result.put(entry.getKey(), fieldInfo);
-        }
-
-        return result;
     }
 }

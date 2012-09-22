@@ -40,6 +40,9 @@ public class OntologyManager {
         }
 
         OntologyElement typeElement = getElementWithName(requestId, transaction, type);
+        if (typeElement == null) {
+            throw new Exception("Type \"" + type + "\" does not exists");
+        }
         Map<String, String> subElements = typeElement.getAttributes();
         if (subElements.containsKey(RDFS.isSubclassOf)) {
             String parent = subElements.get(RDFS.isSubclassOf);

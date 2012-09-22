@@ -9,34 +9,14 @@ function getTeacherInfo(teacherKey) {
 				             handleAs: "json",
 				             load: function(data) {
 				            	 if (data.errorCode == null) {
-				            		 clearDOM("teacher-data");
+				            		var domId = "teacher-data";
+									clearDOM(domId);
+									
+									var base = dojo.byId(domId);
+									createInfoHtml(base, data.info);
 
-				            		 var base = dojo.byId('teacher-data');
-				            		 dojo.create("h1", {
-				            			 innerHTML: ''}, base);
-				            		 var table = dojo.create("table", {
-				            			 style: "width: 100%"}, base);
-				            		 table.id = "teacher-data-table";
-
-				            		 var info = data.info;
-				            		 for (var i in info) {
-				            			 var tr = dojo.create("tr", {}, table);
-
-				            			 dojo.create("td", {
-				            				 innerHTML: info[i].displayText,
-				            				 style: "width: 150px"
-				            			 }, tr);
-				            			 var cell = dojo.create("td", {}, tr);
-				            			 var txt = dojo.create("input", {
-				            				 style: "width: 100%",
-				            				 type: "text",
-				            				 value: info[i].value,
-				            			 }, cell);
-			            				 txt.key = i;
-				            		 }
-				            		 
-				            		 var save = dojo.create("button",
-				            				 {type: "button", onclick:"setTeacherInfo(\"" + teacherKey + "\")"}, base);
+									var save = dojo.create("button",
+											{type: "button", onclick:"setTeacherInfo(\"" + teacherKey + "\")", innerHTML: "Enregistrer"}, base);
 				            	 }
 				            	 else {
 				            		 alert("Error during getProperties: ("
@@ -51,7 +31,7 @@ function getTeacherInfo(teacherKey) {
 	var deferred = dojo.xhrGet(xhrArgs);
 }
 function setTeacherInfo(teacherKey) {
-	var keyValues = getKeyValues('teacher-data-table');
+	var keyValues = getKeyValues('teacher-data');
 	var xhrArgs = {
 			url: "http://localhost:8080/scholagest-app/services/teacher/setProperties",
 			preventCash: true,
@@ -61,10 +41,7 @@ function setTeacherInfo(teacherKey) {
 				values: keyValues.values},
 				             handleAs: "json",
 				             load: function(data) {
-				            	 if (data.errorCode == null) {
-				            		 alert("Ok");
-				            	 }
-				            	 else {
+				            	 if (data.errorCode != null) {
 				            		 alert("Error during setProperties: ("
 				            				 + data.errorCode + ") " + data.message);
 				            	 }
@@ -163,7 +140,6 @@ function createTeacher(closeId, txtIds) {
 				handleAs: "json",
 				load: function(data) {
 					if (data.errorCode == null) {
-						//alert("Teacher created with id: " + data.teacherKey);
 						loadTeachers();
 					}
 					else

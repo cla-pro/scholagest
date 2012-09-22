@@ -12,27 +12,27 @@
 	
 	<rdfs:Property rdf:ID="pTeacherFirstName" rdfs:comment="Teacher's first name">
 		<rdfs:domain rdf:resource="sg:tTeacher"/>
-		<rdfs:range rdf:resource="String"/>
+		<rdfs:range rdf:resource="sg:String"/>
 		<sg:displayText rdf:resource="Prénom" />
 	</rdfs:Property>
 	<rdfs:Property rdf:ID="pTeacherLastName" rdfs:comment="Teacher's last name">
 		<rdfs:domain rdf:resource="sg:tTeacher"/>
-		<rdfs:range rdf:resource="String"/>
+		<rdfs:range rdf:resource="sg:String"/>
 		<sg:displayText rdf:resource="Nom" />
 	</rdfs:Property>
 	<rdfs:Property rdf:ID="pTeacherMail" rdfs:comment="Teacher's mail">
 		<rdfs:domain rdf:resource="sg:tTeacher"/>
-		<rdfs:range rdf:resource="String"/>
+		<rdfs:range rdf:resource="sg:String"/>
 		<sg:displayText rdf:resource="EMail" />
 	</rdfs:Property>
 	<rdfs:Property rdf:ID="pTeacherPhone" rdfs:comment="Teacher's phone number">
 		<rdfs:domain rdf:resource="sg:tTeacher"/>
-		<rdfs:range rdf:resource="String"/>
+		<rdfs:range rdf:resource="sg:String"/>
 		<sg:displayText rdf:resource="Téléphone" />
 	</rdfs:Property>
 	<rdfs:Property rdf:ID="pTeacherAddress" rdfs:comment="Teacher's address">
 		<rdfs:domain rdf:resource="sg:tTeacher"/>
-		<rdfs:range rdf:resource="String"/>
+		<rdfs:range rdf:resource="sg:String"/>
 		<sg:displayText rdf:resource="Adresse" />
 	</rdfs:Property>
 	
@@ -49,12 +49,27 @@
 	
     <rdfs:Property rdf:ID="pStudentFirstName" rdfs:comment="Student's first name">
         <rdfs:domain rdf:resource="sg:tStudentPersonalInfo"/>
-        <rdfs:range rdf:resource="String"/>
+        <rdfs:range rdf:resource="sg:String"/>
         <sg:displayText rdf:resource="Prénom" />
     </rdfs:Property>
     <rdfs:Property rdf:ID="pStudentLastName" rdfs:comment="Student's last name">
         <rdfs:domain rdf:resource="sg:tStudentPersonalInfo"/>
-        <rdfs:range rdf:resource="String"/>
+        <rdfs:range rdf:resource="sg:String"/>
         <sg:displayText rdf:resource="Nom" />
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pStudentAddressStreet" rdfs:comment="Student address's street">
+        <rdfs:domain rdf:resource="sg:tStudentPersonalInfo"/>
+        <rdfs:range rdf:resource="sg:String"/>
+        <sg:displayText rdf:resource="Rue et n°" />
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pStudentAddressCity" rdfs:comment="Student address's city">
+        <rdfs:domain rdf:resource="sg:tStudentPersonalInfo"/>
+        <rdfs:range rdf:resource="sg:String"/>
+        <sg:displayText rdf:resource="Ville" />
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pStudentAddressPostcode" rdfs:comment="Student address's postcode">
+        <rdfs:domain rdf:resource="sg:tStudentPersonalInfo"/>
+        <rdfs:range rdf:resource="sg:String"/>
+        <sg:displayText rdf:resource="Code postal" />
     </rdfs:Property>
 </rdf:RDF>

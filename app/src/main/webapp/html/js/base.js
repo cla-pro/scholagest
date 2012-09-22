@@ -50,9 +50,11 @@ function getKeyValues(parentId) {
 	for (var i = 0; i < rows.length; i++) {
 		var row = rows.item(i);
 		var cell = row.childNodes[1];
-		var text = cell.childNodes[0];
-		keys.push(text.key);
-		values.push(text.value);
+		if (cell != null) {
+			var text = cell.childNodes[0];
+			keys.push(text.key);
+			values.push(text.value);
+		}
 	}
 	
 	return {"keys": keys, "values": values};

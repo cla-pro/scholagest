@@ -1,0 +1,25 @@
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:owl="http://www.w3.org/2002/07/owl#">
+	<owl:Ontology rdf:about="http://scholagest.ch/2012/09/cholagest-base-types#">
+		<owl:imports rdf:resource="http://www.w3.org/TR/2004/REC-rdf-schema-20040210/rdfs-namespace" />
+	</owl:Ontology>
+	
+	<rdfs:Class rdf:ID="http://scholagest.net#String">
+		<rdfs:comment>String object</rdfs:comment>
+	</rdfs:Class>
+	<rdfs:Class rdf:ID="http://scholagest.net#Integer">
+		<rdfs:comment>Integer object</rdfs:comment>
+	</rdfs:Class>
+	<rdfs:Class rdf:ID="http://scholagest.net#Long">
+		<rdfs:comment>Long object</rdfs:comment>
+	</rdfs:Class>
+	<rdfs:Class rdf:ID="http://scholagest.net#Float">
+		<rdfs:comment>Float object</rdfs:comment>
+	</rdfs:Class>
+	<rdfs:Class rdf:ID="http://scholagest.net#Double">
+		<rdfs:comment>Double object</rdfs:comment>
+	</rdfs:Class>
+	<rdfs:Class rdf:ID="http://scholagest.net#DateTime">
+		<rdfs:comment>DateTime object</rdfs:comment>
+	</rdfs:Class>
+</rdf:RDF>
