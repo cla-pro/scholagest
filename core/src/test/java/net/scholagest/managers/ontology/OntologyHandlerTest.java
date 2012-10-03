@@ -6,6 +6,7 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,14 +19,15 @@ import net.scholagest.database.Database;
 import net.scholagest.database.DatabaseException;
 import net.scholagest.database.DefaultDatabaseConfiguration;
 import net.scholagest.database.ITransaction;
-import net.scholagest.managers.ontology.parser.OntologyElement;
+import net.scholagest.utils.DatabaseReaderWriter;
+import net.scholagest.utils.InMemoryDatabase;
+import net.scholagest.utils.InMemoryDatabase.InMemoryTransaction;
 
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
 public class OntologyHandlerTest {
-
     @Test
     public void testExtractImportURLWithImport() {
         OntologyHandler ontologyHandler = new OntologyHandler();
@@ -88,6 +90,44 @@ public class OntologyHandlerTest {
                 e1.printStackTrace();
             }
         }
+
+        database.shutdown();
+    }
+
+    public static void main2(String[] args) throws Exception {
+        DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+        docBuilderFactory.setIgnoringComments(true);
+        docBuilderFactory.setNamespaceAware(true);
+        DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+        Document doc = docBuilder.parse(new File("src/test/resources/scholagest-properties.rdfs"));
+
+        OntologyHandler handler = new OntologyHandler();
+
+        InMemoryDatabase database = new InMemoryDatabase();
+        database.startup();
+
+        InMemoryTransaction transaction = database.getTransaction("Ontology");
+        try {
+            Ontology ontology = handler.compileAndSaveOntology(UUID.randomUUID().toString(), transaction, doc);
+            for (OntologyElement element : ontology.getAllOntologyElement()) {
+                displayElement("", element);
+            }
+
+            transaction.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            try {
+                transaction.rollback();
+            } catch (DatabaseException e1) {
+                e1.printStackTrace();
+            }
+        }
+
+        Map<String, Map<String, Map<String, Object>>> databaseContent = new HashMap<>();
+        databaseContent.put(transaction.getKeyspace(), transaction.getValues());
+
+        new DatabaseReaderWriter().writeDataSetsInFile("D:\\Programming\\eclipse-workspace\\Scholagest\\core\\src\\test\\resources\\data",
+                databaseContent);
 
         database.shutdown();
     }

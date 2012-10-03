@@ -13,11 +13,11 @@ public class DatabaseReaderWriter {
     private static final String ELEMENT_SEPARATOR = ":::";
     private static final String FILE_EXTENSION = ".sga";
 
-    public void writeDatabaseInFile(String folderName, Map<String, Map<String, Map<String, Object>>> data) {
-        for (String keyspace : data.keySet()) {
+    public void writeDataSetsInFile(String folderName, Map<String, Map<String, Map<String, Object>>> dataSets) {
+        for (String dataSet : dataSets.keySet()) {
             try {
-                BufferedWriter writer = openBufferedWriter(folderName, keyspace + FILE_EXTENSION);
-                writeKeyspaceInFile(writer, data.get(keyspace));
+                BufferedWriter writer = openBufferedWriter(folderName, dataSet + FILE_EXTENSION);
+                writeSetsInFile(writer, dataSets.get(dataSet));
                 writer.flush();
                 writer.close();
             } catch (IOException e) {
@@ -26,7 +26,7 @@ public class DatabaseReaderWriter {
         }
     }
 
-    public Map<String, Map<String, Map<String, Object>>> readDatabaseFromFile(String folderName, String[] keyspaces) {
+    public Map<String, Map<String, Map<String, Object>>> readDataSetsFromFile(String folderName, String[] dataSets) {
         Map<String, Map<String, Map<String, Object>>> database = new HashMap<>();
 
         File folder = new File(folderName);
@@ -34,12 +34,12 @@ public class DatabaseReaderWriter {
             return database;
         }
 
-        for (String keyspace : keyspaces) {
+        for (String dataSet : dataSets) {
             BufferedReader reader;
             try {
-                reader = openBufferedReader(folderName, keyspace + FILE_EXTENSION);
+                reader = openBufferedReader(folderName, dataSet + FILE_EXTENSION);
                 Map<String, Map<String, Object>> keyspaceData = readKeyspaceFromFile(reader);
-                database.put(keyspace, keyspaceData);
+                database.put(dataSet, keyspaceData);
                 reader.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -49,7 +49,7 @@ public class DatabaseReaderWriter {
         return database;
     }
 
-    private void writeKeyspaceInFile(BufferedWriter writer, Map<String, Map<String, Object>> data) throws IOException {
+    private void writeSetsInFile(BufferedWriter writer, Map<String, Map<String, Object>> data) throws IOException {
         for (String key : data.keySet()) {
             Map<String, Object> columns = data.get(key);
             for (String columnName : columns.keySet()) {

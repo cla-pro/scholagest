@@ -6,8 +6,8 @@ import java.util.UUID;
 
 import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
+import net.scholagest.managers.ontology.OntologyElement;
 import net.scholagest.managers.ontology.OntologyManager;
-import net.scholagest.managers.ontology.parser.OntologyElement;
 
 import com.google.inject.Inject;
 
@@ -65,6 +65,24 @@ public class OntologyService implements IOntologyService {
         ITransaction transaction = this.database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
         try {
             result = this.ontologyManager.filterPropertiesWithCorrectDomain(requestId, transaction, domain, properties);
+
+            transaction.commit();
+        } catch (Exception e) {
+            transaction.rollback();
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    @Override
+    public Set<String> getPropertiesForType(String type) throws Exception {
+        Set<String> result = new HashSet<>();
+        String requestId = UUID.randomUUID().toString();
+
+        ITransaction transaction = this.database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+        try {
+            result = this.ontologyManager.getPropertiesForType(requestId, transaction, type);
 
             transaction.commit();
         } catch (Exception e) {

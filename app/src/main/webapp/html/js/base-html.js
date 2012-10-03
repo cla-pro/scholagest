@@ -54,16 +54,27 @@ function getKeysAndValues(txtIds) {
 	
 	return {keys: keys, values: values};
 };
-function createHtmlGroupTitleBar(parentDOM, title) {
+function createHtmlGroup(parentDOM, title, contentAsJson, saveButton, domId) {
+	createHtmlGroupTitleBar(parentDOM, title, domId + "-title");
+	createHtmlGroupContent(parentDOM, "", contentAsJson, saveButton, domId);
+};
+function createHtmlGroupTitleBar(parentDOM, title, domId) {
 	var titleBar = dojo.create("div", {className: "person-info-part-title"}, parentDOM);
+	titleBar.id = domId;
 	dojo.create("a", {innerHTML: title}, titleBar);
 	dojo.create("button", {className: "person-info-part-button", innerHTML: "Fermer"}, titleBar);
 };
-function createHtmlGroupContent(parentDOM, groupId, contentAsJson) {
+function createHtmlGroupContent(parentDOM, groupId, contentAsJson, saveButton, domId) {
 	var div = dojo.create("div", {className: "person-info-part-content"}, parentDOM);
+	div.id = domId;
 	var table = dojo.create("table", {style: "width: 100%"}, div);
+	table.id = domId + "-table";
 	
-	createInfoHtml(table, contentAsJson);
+	if (saveButton != null) {
+		div.appendChild(saveButton);
+	}
+	
+	createInfoHtmlTable(table, contentAsJson);
 };
 function createHtmlLabelText(parentTable, propertyName, displayText, value) {
 	var tr = dojo.create("tr", {}, parentTable);
@@ -84,19 +95,10 @@ function createHtmlLabelText(parentTable, propertyName, displayText, value) {
 	}, cell);
 	txt.key = propertyName;
 };
-function createHtmlGroup(parentDOM, title, contentAsJson) {
-	createHtmlGroupTitleBar(parentDOM, title);
-	createHtmlGroupContent(parentDOM, "", contentAsJson);
-};
-function createInfoHtml(parentDOM, info) {
+function createInfoHtmlTable(parentDOM, info) {
 	for (var i in info) {
 		var data = info[i];
 		
-		if (data.isHtmlGroup != null && data.isHtmlGroup == true) {
-			createHtmlGroup(parentDOM, data.displayText, data.value);
-		}
-		else {
-			createHtmlLabelText(parentDOM, i, data.displayText, data.value);
-		}
+		createHtmlLabelText(parentDOM, i, data.displayText, data.value);
 	}
 };

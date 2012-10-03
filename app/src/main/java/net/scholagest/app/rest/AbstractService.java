@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.scholagest.managers.CoreNamespace;
+import net.scholagest.managers.ontology.OntologyElement;
 import net.scholagest.managers.ontology.RDFS;
-import net.scholagest.managers.ontology.parser.OntologyElement;
 import net.scholagest.services.IOntologyService;
 
 import com.google.inject.Inject;
@@ -32,8 +32,7 @@ public abstract class AbstractService {
             fieldInfo.put("value", value);
             String displayText = element.getAttributes().get(CoreNamespace.scholagestNs + "#displayText");
             fieldInfo.put("displayText", displayText);
-            boolean isRangeGroup = ontologyService.isSubtypeOf(element.getAttributeWithName(RDFS.range), ScholagestNamespace.tGroup);
-            if (isRangeGroup) {
+            if (ontologyService.isSubtypeOf(element.getAttributeWithName(RDFS.range), ScholagestNamespace.tGroup)) {
                 fieldInfo.put("isHtmlGroup", true);
             }
 

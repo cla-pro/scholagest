@@ -14,6 +14,7 @@ import javax.ws.rs.QueryParam;
 
 import net.scholagest.app.utils.JerseyHelper;
 import net.scholagest.app.utils.JsonObject;
+import net.scholagest.managers.CoreNamespace;
 import net.scholagest.services.IOntologyService;
 import net.scholagest.services.ITeacherService;
 
@@ -77,9 +78,12 @@ public class RestTeacherService extends AbstractService {
     @Path("/getProperties")
     @Produces("text/json")
     public String getTeacherInfo(@QueryParam("token") String token, @QueryParam("teacherKey") String teacherKey,
-            @QueryParam("properties") List<String> properties) {
+            @QueryParam("properties") Set<String> properties) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
         try {
+            if (properties == null || properties.isEmpty()) {
+                properties = this.ontologyService.getPropertiesForType(CoreNamespace.tTeacher);
+            }
             Map<String, Object> info = this.teacherService.getTeacherInfo(requestId, teacherKey, new HashSet<String>(properties));
 
             Map<String, Map<String, Object>> result = extractOntology(info);

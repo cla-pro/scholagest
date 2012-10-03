@@ -25,7 +25,6 @@ public class ObjectManager {
 
         for (String name : propertiesName) {
             Object value = transaction.get(objectKey, name, null);
-            // if (value != null)
             properties.put(name, value);
         }
 

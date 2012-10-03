@@ -15,6 +15,7 @@ import javax.ws.rs.QueryParam;
 
 import net.scholagest.app.utils.JerseyHelper;
 import net.scholagest.app.utils.JsonObject;
+import net.scholagest.managers.CoreNamespace;
 import net.scholagest.services.IOntologyService;
 import net.scholagest.services.IStudentService;
 
@@ -74,20 +75,66 @@ public class RestStudentService extends AbstractService {
     }
 
     @GET
-    @Path("/getProperties")
+    @Path("/getPersonalProperties")
     @Produces("text/json")
-    public String getStudentInfo(@QueryParam("token") String token, @QueryParam("studentKey") String studentKey,
-            @QueryParam("properties") List<String> properties) {
+    public String getStudentPersonalInfo(@QueryParam("token") String token, @QueryParam("studentKey") String studentKey,
+            @QueryParam("properties") Set<String> properties) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
         try {
+            if (properties == null || properties.isEmpty()) {
+                properties = this.ontologyService.getPropertiesForType(CoreNamespace.tStudentPersonalInfo);
+            }
+
             Set<String> personalInfoProperties = ontologyService.filterPropertiesWithCorrectDomain(ScholagestNamespace.tStudentPersonalInfo,
-                    new HashSet<String>(properties));
-            Set<String> medicalInfoProperties = ontologyService.filterPropertiesWithCorrectDomain(ScholagestNamespace.tStudentMedicalInfo,
                     new HashSet<String>(properties));
 
             Map<String, Object> info = new HashMap<String, Object>();
             info.put(ScholagestNamespace.pStudentPersonalInfo,
                     this.studentService.getStudentPersonalInfo(requestId, studentKey, personalInfoProperties));
+
+            Map<String, Map<String, Object>> result = extractOntology(info);
+
+            Gson gson = new Gson();
+            String json = gson.toJson(result);
+            return "{info: " + json + "}";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{errorCode=0, message='" + e.getMessage() + "'}";
+        }
+    }
+
+    @GET
+    @Path("/setPersonalProperties")
+    @Produces("text/json")
+    public String setStudentPersonalInfo(@QueryParam("token") String token, @QueryParam("studentKey") String studentKey,
+            @QueryParam("names") List<String> names, @QueryParam("values") List<String> values) {
+        String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+        try {
+            Map<String, Object> properties = JerseyHelper.listToMap(names, new ArrayList<Object>(values));
+
+            this.studentService.updateStudentInfo(requestId, studentKey, properties, new HashMap<String, Object>());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{errorCode=0, message='" + e.getMessage() + "'}";
+        }
+
+        return "{}";
+    }
+
+    @GET
+    @Path("/getMedicalProperties")
+    @Produces("text/json")
+    public String getStudentMedicalInfo(@QueryParam("token") String token, @QueryParam("studentKey") String studentKey,
+            @QueryParam("properties") Set<String> properties) {
+        String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+        try {
+            if (properties == null || properties.isEmpty()) {
+                properties = this.ontologyService.getPropertiesForType(CoreNamespace.tStudentMedicalInfo);
+            }
+            Set<String> medicalInfoProperties = ontologyService.filterPropertiesWithCorrectDomain(ScholagestNamespace.tStudentMedicalInfo,
+                    new HashSet<String>(properties));
+
+            Map<String, Object> info = new HashMap<String, Object>();
             info.put(ScholagestNamespace.pStudentMedicalInfo, this.studentService.getStudentMedicalInfo(requestId, studentKey, medicalInfoProperties));
 
             Map<String, Map<String, Object>> result = extractOntology(info);
@@ -99,5 +146,23 @@ public class RestStudentService extends AbstractService {
             e.printStackTrace();
             return "{errorCode=0, message='" + e.getMessage() + "'}";
         }
+    }
+
+    @GET
+    @Path("/setMedicalProperties")
+    @Produces("text/json")
+    public String setStudentMedicalInfo(@QueryParam("token") String token, @QueryParam("studentKey") String studentKey,
+            @QueryParam("names") List<String> names, @QueryParam("values") List<String> values) {
+        String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+        try {
+            Map<String, Object> properties = JerseyHelper.listToMap(names, new ArrayList<Object>(values));
+
+            this.studentService.updateStudentInfo(requestId, studentKey, new HashMap<String, Object>(), properties);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{errorCode=0, message='" + e.getMessage() + "'}";
+        }
+
+        return "{}";
     }
 }

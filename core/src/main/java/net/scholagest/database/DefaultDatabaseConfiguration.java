@@ -19,8 +19,8 @@ public class DefaultDatabaseConfiguration implements IDatabaseConfiguration {
     public CassandraHostConfigurator getHostConfigurator() {
         CassandraHostConfigurator hostConfigurator = new CassandraHostConfigurator();
 
-        // hostConfigurator.setHosts("localhost:9160");
-        hostConfigurator.setHosts("192.168.2.104:9160");
+        hostConfigurator.setHosts("localhost:9160");
+        // hostConfigurator.setHosts("192.168.2.104:9160");
 
         return hostConfigurator;
     }

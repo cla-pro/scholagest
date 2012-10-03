@@ -9,187 +9,189 @@
             });
         });
     </script>
-	<table style="width: 100%; height: 100%">
-		<tr>
-			<td valign="top" style="width: 20%; height: 100%">
-				<div id="student-search" class="vertical-search">
-					<div id="newStudentDialog" data-dojo-type="dijit.Dialog"
-						title="Nouvel élève">
-						<div data-dojo-type="dijit.layout.TabContainer"
-							style="width: 500px; height: 200px;">
-							<div data-dojo-type="dijit.layout.ContentPane" title="Nouveau">
-								<table style="width: 100%">
-									<tr>
-										<td>Nom*</td>
-										<td><input id="txtNewStudentLastName" propertyName="pStudentLastName" type="text" /></td>
-										<td>Prénom*</td>
-										<td><input id="txtNewStudentFirstName" propertyName="pStudentFirstName" type="text" /></td>
-									</tr>
-									<tr>
-										<td>Rue et n°</td>
-										<td colspan="3"><input type="text" style="width: 100%" id="txtNewStudentAddressStreet" propertyName="pStudentAddressStreet" /></td>
-									</tr>
-									<tr>
-										<td>Code postal</td>
-										<td><input type="text" id="txtNewStudentAddressPostcode" propertyName="pStudentAddressPostcode" /></td>
-										<td>Ville</td>
-										<td><input type="text" id="txtNewStudentAddressCity" propertyName="pStudentAddressCity" /></td>
-									</tr>
-									<tr>
-										<td colspan="4">Les champs marqués d'une * sont
-											obligatoires</td>
-									</tr>
-								</table>
-							</div>
-							<div data-dojo-type="dijit.layout.ContentPane" title="Retour">
-								Choisissez l'élève<br /> <select style="width: 100%">
-								</select>
-							</div>
-						</div>
-						<table style="width: 100%">
-							<tr>
-								<td colspan="2" align="center"><button
+    <table style="width: 100%; height: 100%">
+        <tr>
+            <td valign="top" style="width: 20%; height: 100%">
+                <div id="student-search" class="vertical-search">
+                    <div id="newStudentDialog" data-dojo-type="dijit.Dialog"
+                        title="Nouvel élève">
+                        <div data-dojo-type="dijit.layout.TabContainer"
+                            style="width: 500px; height: 200px;">
+                            <div data-dojo-type="dijit.layout.ContentPane" title="Nouveau">
+                                <table style="width: 100%">
+                                    <tr>
+                                        <td>Nom*</td>
+                                        <td><input id="txtNewStudentLastName" propertyName="pStudentLastName" type="text" /></td>
+                                        <td>Prénom*</td>
+                                        <td><input id="txtNewStudentFirstName" propertyName="pStudentFirstName" type="text" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Rue et n°</td>
+                                        <td colspan="3"><input type="text" style="width: 100%" id="txtNewStudentAddressStreet" propertyName="pStudentAddressStreet" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Code postal</td>
+                                        <td><input type="text" id="txtNewStudentAddressPostcode" propertyName="pStudentAddressPostcode" /></td>
+                                        <td>Ville</td>
+                                        <td><input type="text" id="txtNewStudentAddressCity" propertyName="pStudentAddressCity" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4">Les champs marqués d'une * sont
+                                            obligatoires</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div data-dojo-type="dijit.layout.ContentPane" title="Retour">
+                                Choisissez l'élève<br /> <select style="width: 100%">
+                                </select>
+                            </div>
+                        </div>
+                        <table style="width: 100%">
+                            <tr>
+                                <td colspan="2" align="center"><button
                                     onclick="createStudent('newStudentDialog', ['txtNewStudentLastName', 'txtNewStudentFirstName', 'txtNewStudentAddressStreet', 'txtNewStudentAddressCity', 'txtNewStudentAddressPostcode'])">Ok</button></td>
-								<td colspan="2" align="center"><button>Annuler</button></td>
-							</tr>
-						</table>
-					</div>
-<!-- 					<div id="outStudentDialog" data-dojo-type="dijit.Dialog" -->
-<!-- 						title="Sortie d'élève"> -->
-<!-- 						<input type="radio" name="out" CHECKED>Sortie vers le cycle</input><br /> -->
-<!-- 						<input type="radio" name="out">Changement d'établissement</input> <br /> <br /> -->
-<!-- 						Choisissez l'élève<br /> -->
-<!-- 						<select style="width: 100%"> -->
-<!-- 						</select> -->
+                                <td colspan="2" align="center"><button>Annuler</button></td>
+                            </tr>
+                        </table>
+                    </div>
+<!--                    <div id="outStudentDialog" data-dojo-type="dijit.Dialog" -->
+<!--                        title="Sortie d'élève"> -->
+<!--                        <input type="radio" name="out" CHECKED>Sortie vers le cycle</input><br /> -->
+<!--                        <input type="radio" name="out">Changement d'établissement</input> <br /> <br /> -->
+<!--                        Choisissez l'élève<br /> -->
+<!--                        <select style="width: 100%"> -->
+<!--                        </select> -->
 
-<!-- 						<table style="width: 100%"> -->
-<!-- 							<tr> -->
-<!-- 								<td colspan="2" align="center"><button>Ok</button></td> -->
-<!-- 								<td colspan="2" align="center"><button>Annuler</button></td> -->
-<!-- 							</tr> -->
-<!-- 						</table> -->
-<!-- 					</div> -->
-					<script type="text/javascript">
-						function createNewStudent() {
-							dijit.byId("newStudentDialog").show();
-						};
-						function outStudent() {
-							//dijit.byId("outStudentDialog").show();
-						};
-					</script>
-					<button onclick="createNewStudent()">Ajouter un élève</button>
-<!-- 					<button onclick="outStudent()">Faire sortir un élève</button> -->
-					<hr />
-<!-- 					<input type="text" class="search-textbox" -->
-<!-- 						placeholder="Nom de l'élève" /> -->
-<!-- 					<button>Go</button> -->
-<!-- 					<hr /> -->
-<!-- 					<select style="width: 80%"> -->
-<!-- 						<option>Elèves actuels</option> -->
-<!-- 						<option>Anciens élèves</option> -->
-<!-- 						<option>Tous les élèves</option> -->
-<!-- 					</select> -->
-					<div id="student-search-list" style="height: 80%">
-					</div>
-				</div>
-			</td>
-			<td valign="top" style="width: 80%">
-				<div id="student-data" class="student-content">
-<!-- 					<div class="student-part-title"> -->
-<!-- 						<a>Fiche personnelle</a> -->
-<!-- 						<button class="student-part-button">Fermer</button> -->
-<!-- 					</div> -->
-<!-- 					<div class="student-part-content"> -->
-<!-- 						<table> -->
-<!-- 							<tr> -->
-<!-- 								<td style="width: 150px">Nom</td> -->
-<!-- 								<td><input type="text" style="width: 100%" value="3" /></td> -->
-<!-- 							</tr> -->
-<!-- 							<tr> -->
-<!-- 								<td style="width: 150px">Prénom</td> -->
-<!-- 								<td><input type="text" style="width: 100%" value="Elève" /></td> -->
-<!-- 							</tr> -->
-<!-- 							<tr> -->
-<!-- 								<td style="width: 150px">Adresse</td> -->
-<!-- 								<td><input type="text" style="width: 100%" -->
-<!-- 									value="21 Chemin de ..." /></td> -->
-<!-- 							</tr> -->
-<!-- 							<tr> -->
-<!-- 								<td style="width: 150px">N° tél</td> -->
-<!-- 								<td><input type="text" style="width: 100%" -->
-<!-- 									value="+41 22 5897562" /></td> -->
-<!-- 							</tr> -->
-<!-- 							<tr> -->
-<!-- 								<td style="width: 150px">Origine</td> -->
-<!-- 								<td><input type="text" style="width: 100%" value="Suisse" /></td> -->
-<!-- 							</tr> -->
-<!-- 							<tr> -->
-<!-- 								<td style="width: 150px">Profession de la mère</td> -->
-<!-- 								<td><input type="text" style="width: 100%" -->
-<!-- 									value="Informaticienne" /></td> -->
-<!-- 							</tr> -->
-<!-- 							<tr> -->
-<!-- 								<td style="width: 150px">Profession du père</td> -->
-<!-- 								<td><input type="text" style="width: 100%" value="Au foyer" /></td> -->
-<!-- 							</tr> -->
-<!-- 							<tr> -->
-<!-- 								<td style="width: 150px">Environnement familial</td> -->
-<!-- 								<td><input type="text" style="width: 100%" value="RAS" /></td> -->
-<!-- 							</tr> -->
-<!-- 							<tr> -->
-<!-- 								<td style="width: 150px">Langue maternelle</td> -->
-<!-- 								<td><input type="text" style="width: 100%" -->
-<!-- 									value="Français - Allemand" /></td> -->
-<!-- 							</tr> -->
-<!-- 							<tr> -->
-<!-- 								<td style="width: 150px">Arrivée en suisse</td> -->
-<!-- 								<td><input type="text" style="width: 100%" value="-" /></td> -->
-<!-- 							</tr> -->
-<!-- 							<tr> -->
-<!-- 								<td valign="top" style="width: 150px">Parcours scolaire</td> -->
-<!-- 								<td> -->
-<!-- 									<ul> -->
-<!-- 										<li>2010-2011 - Classe 3P A - M Lazard</li> -->
-<!-- 										<li>2009-2010 - Classe 2P A - Mme Dupont</li> -->
-<!-- 										<li>2008-2009 - Classe 1P A - Mme Dupont</li> -->
-<!-- 									</ul> -->
-<!-- 								</td> -->
-<!-- 							</tr> -->
-<!-- 							<tr> -->
-<!-- 								<td style="width: 150px">Crèche</td> -->
-<!-- 								<td><input type="text" style="width: 100%" value="-" /></td> -->
-<!-- 							</tr> -->
-<!-- 							<tr> -->
-<!-- 								<td valign="top" style="width: 150px">Frères et soeurs</td> -->
-<!-- 								<td> -->
-<!-- 									<ul> -->
-<!-- 										<li><a href="#">Elève 12</a></li> -->
-<!-- 									</ul> -->
-<!-- 									<button>Ajouter un frère ou une soeur</button> -->
-<!-- 								</td> -->
-<!-- 							</tr> -->
-<!-- 							<tr> -->
-<!-- 								<td colspan="2" align="center"><button>Enregistrer</button></td> -->
-<!-- 							</tr> -->
-<!-- 						</table> -->
-<!-- 					</div> -->
-<!-- 					<div class="student-part-title"> -->
-<!-- 						<a>Fiche santé</a> -->
-<!-- 						<button class="student-part-button">Ouvrir</button> -->
-<!-- 					</div> -->
-<!-- 					<div class="student-part-content" style="visibility: hidden">empty</div> -->
-<!-- 					<div class="student-part-title"> -->
-<!-- 						<a>Fiche scolaire</a> -->
-<!-- 						<button class="student-part-button">Ouvrir</button> -->
-<!-- 					</div> -->
-<!-- 					<div class="student-part-content" style="visibility: hidden">empty</div> -->
-<!-- 					<div class="student-part-title"> -->
-<!-- 						<a>Anciennes fiches scolaires</a> -->
-<!-- 						<button class="student-part-button">Ouvrir</button> -->
-<!-- 					</div> -->
-<!-- 					<div class="student-part-content" style="visibility: hidden">empty</div> -->
-				</div>
-			</td>
-		</tr>
-	</table>
+<!--                        <table style="width: 100%"> -->
+<!--                            <tr> -->
+<!--                                <td colspan="2" align="center"><button>Ok</button></td> -->
+<!--                                <td colspan="2" align="center"><button>Annuler</button></td> -->
+<!--                            </tr> -->
+<!--                        </table> -->
+<!--                    </div> -->
+                    <script type="text/javascript">
+                        function createNewStudent() {
+                            dijit.byId("newStudentDialog").show();
+                        };
+                        function outStudent() {
+                            //dijit.byId("outStudentDialog").show();
+                        };
+                    </script>
+                    <button onclick="createNewStudent()">Ajouter un élève</button>
+<!--                    <button onclick="outStudent()">Faire sortir un élève</button> -->
+                    <hr />
+<!--                    <input type="text" class="search-textbox" -->
+<!--                        placeholder="Nom de l'élève" /> -->
+<!--                    <button>Go</button> -->
+<!--                    <hr /> -->
+<!--                    <select style="width: 80%"> -->
+<!--                        <option>Elèves actuels</option> -->
+<!--                        <option>Anciens élèves</option> -->
+<!--                        <option>Tous les élèves</option> -->
+<!--                    </select> -->
+                    <div id="student-search-list" style="height: 80%">
+                    </div>
+                </div>
+            </td>
+            <td valign="top" style="width: 80%">
+                <div id="student-data" class="student-content">
+                    <div id="student-personal-info" style="width: 100%"></div>
+                    <div id="student-medical-info" style="width: 100%"></div>
+<!--                    <div class="student-part-title"> -->
+<!--                        <a>Fiche personnelle</a> -->
+<!--                        <button class="student-part-button">Fermer</button> -->
+<!--                    </div> -->
+<!--                    <div class="student-part-content"> -->
+<!--                        <table> -->
+<!--                            <tr> -->
+<!--                                <td style="width: 150px">Nom</td> -->
+<!--                                <td><input type="text" style="width: 100%" value="3" /></td> -->
+<!--                            </tr> -->
+<!--                            <tr> -->
+<!--                                <td style="width: 150px">Prénom</td> -->
+<!--                                <td><input type="text" style="width: 100%" value="Elève" /></td> -->
+<!--                            </tr> -->
+<!--                            <tr> -->
+<!--                                <td style="width: 150px">Adresse</td> -->
+<!--                                <td><input type="text" style="width: 100%" -->
+<!--                                    value="21 Chemin de ..." /></td> -->
+<!--                            </tr> -->
+<!--                            <tr> -->
+<!--                                <td style="width: 150px">N° tél</td> -->
+<!--                                <td><input type="text" style="width: 100%" -->
+<!--                                    value="+41 22 5897562" /></td> -->
+<!--                            </tr> -->
+<!--                            <tr> -->
+<!--                                <td style="width: 150px">Origine</td> -->
+<!--                                <td><input type="text" style="width: 100%" value="Suisse" /></td> -->
+<!--                            </tr> -->
+<!--                            <tr> -->
+<!--                                <td style="width: 150px">Profession de la mère</td> -->
+<!--                                <td><input type="text" style="width: 100%" -->
+<!--                                    value="Informaticienne" /></td> -->
+<!--                            </tr> -->
+<!--                            <tr> -->
+<!--                                <td style="width: 150px">Profession du père</td> -->
+<!--                                <td><input type="text" style="width: 100%" value="Au foyer" /></td> -->
+<!--                            </tr> -->
+<!--                            <tr> -->
+<!--                                <td style="width: 150px">Environnement familial</td> -->
+<!--                                <td><input type="text" style="width: 100%" value="RAS" /></td> -->
+<!--                            </tr> -->
+<!--                            <tr> -->
+<!--                                <td style="width: 150px">Langue maternelle</td> -->
+<!--                                <td><input type="text" style="width: 100%" -->
+<!--                                    value="Français - Allemand" /></td> -->
+<!--                            </tr> -->
+<!--                            <tr> -->
+<!--                                <td style="width: 150px">Arrivée en suisse</td> -->
+<!--                                <td><input type="text" style="width: 100%" value="-" /></td> -->
+<!--                            </tr> -->
+<!--                            <tr> -->
+<!--                                <td valign="top" style="width: 150px">Parcours scolaire</td> -->
+<!--                                <td> -->
+<!--                                    <ul> -->
+<!--                                        <li>2010-2011 - Classe 3P A - M Lazard</li> -->
+<!--                                        <li>2009-2010 - Classe 2P A - Mme Dupont</li> -->
+<!--                                        <li>2008-2009 - Classe 1P A - Mme Dupont</li> -->
+<!--                                    </ul> -->
+<!--                                </td> -->
+<!--                            </tr> -->
+<!--                            <tr> -->
+<!--                                <td style="width: 150px">Crèche</td> -->
+<!--                                <td><input type="text" style="width: 100%" value="-" /></td> -->
+<!--                            </tr> -->
+<!--                            <tr> -->
+<!--                                <td valign="top" style="width: 150px">Frères et soeurs</td> -->
+<!--                                <td> -->
+<!--                                    <ul> -->
+<!--                                        <li><a href="#">Elève 12</a></li> -->
+<!--                                    </ul> -->
+<!--                                    <button>Ajouter un frère ou une soeur</button> -->
+<!--                                </td> -->
+<!--                            </tr> -->
+<!--                            <tr> -->
+<!--                                <td colspan="2" align="center"><button>Enregistrer</button></td> -->
+<!--                            </tr> -->
+<!--                        </table> -->
+<!--                    </div> -->
+<!--                    <div class="student-part-title"> -->
+<!--                        <a>Fiche santé</a> -->
+<!--                        <button class="student-part-button">Ouvrir</button> -->
+<!--                    </div> -->
+<!--                    <div class="student-part-content" style="visibility: hidden">empty</div> -->
+<!--                    <div class="student-part-title"> -->
+<!--                        <a>Fiche scolaire</a> -->
+<!--                        <button class="student-part-button">Ouvrir</button> -->
+<!--                    </div> -->
+<!--                    <div class="student-part-content" style="visibility: hidden">empty</div> -->
+<!--                    <div class="student-part-title"> -->
+<!--                        <a>Anciennes fiches scolaires</a> -->
+<!--                        <button class="student-part-button">Ouvrir</button> -->
+<!--                    </div> -->
+<!--                    <div class="student-part-content" style="visibility: hidden">empty</div> -->
+                </div>
+            </td>
+        </tr>
+    </table>
 </div>

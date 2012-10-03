@@ -1,58 +1,26 @@
 package net.scholagest.managers.ontology.namesolving;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
-import net.scholagest.managers.ontology.RDF;
-import net.scholagest.managers.ontology.parser.OntologyElement;
+import net.scholagest.managers.ontology.Ontology;
+import net.scholagest.managers.ontology.OntologyClass;
+import net.scholagest.managers.ontology.OntologyElement;
+import net.scholagest.managers.ontology.RDFS;
 
 public class OntologyNamesolver {
-	private Map<String, OntologyElement> elements = new HashMap<>();
-	
-	public void solveNames(Map<String, Set<OntologyElement>> ontology)
-			throws Exception {
-		//Find the elements (by name).
-		for (Map.Entry<String, Set<OntologyElement>> entry
-				: ontology.entrySet()) {
-			for (OntologyElement element : entry.getValue()) {
-				this.findElement(element);
-			}
-		}
-		
-		//Check the references.
-		for (Map.Entry<String, Set<OntologyElement>> entry
-				: ontology.entrySet()) {
-			for (OntologyElement element : entry.getValue()) {
-				this.handleElement(element);
-			}
-		}
-	}
-	
-	private void findElement(OntologyElement element) throws Exception {
-		Map<String, String> attributes = element.getAttributes();
-		
-		//Extract the element's name.
-		String name = attributes.get(RDF.id);
-		if (name == null) {
-			name = attributes.get(RDF.about);
-		}
-		
-		if (name == null)
-			return;
-		
-		this.elements.put(name, element);
-	}
-	
-	private void handleElement(OntologyElement element) throws Exception {
-		Map<String, String> attributes = element.getAttributes();
+    public void solveNames(Ontology ontology) {
+        solveDomainRange(ontology);
+    }
 
-		String resource = attributes.get(RDF.resource);
-		if (resource != null) {
-			if (!elements.containsKey(resource)) {
-				throw new Exception("Reference to " + resource
-						+ " not valid");
-			}
-		}
-	}
+    private void solveDomainRange(Ontology ontology) {
+        for (OntologyElement ontologyElement : ontology.getElementByType(RDFS.clazz)) {
+            Set<OntologyElement> propertiesWithDomain = ontology.getElementByProperty(RDFS.domain, ontologyElement.getName());
+            Set<OntologyElement> propertiesWithRange = ontology.getElementByProperty(RDFS.range, ontologyElement.getName());
+
+            if (ontologyElement instanceof OntologyClass) {
+                ((OntologyClass) ontologyElement).setPropertiesDomain(propertiesWithDomain);
+                ((OntologyClass) ontologyElement).setPropertiesRange(propertiesWithRange);
+            }
+        }
+    }
 }

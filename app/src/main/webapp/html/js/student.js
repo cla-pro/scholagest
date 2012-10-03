@@ -43,9 +43,10 @@ function loadStudents() {
 						createHtmlListFromList(list, "student-search-list", base,
 								buildListItemTextClosure(["pStudentLastName", "pStudentFirstName"]), selectStudent);
 					}
-					else
+					else {
 						alert("Error during getStudents: ("
 								+ data.errorCode + ") " + data.message);
+					}
 				},
 				error: function(error) {
 					alert("error = " + error);
@@ -65,30 +66,39 @@ function selectStudent(studentKey) {
 		this.className = 'search-list-item-selected';
 		list.selectedStudent = this;
 
-		getStudentInfo(studentKey);
+		getStudentPersonalInfo(studentKey);
+		getStudentMedicalInfo(studentKey);
 	};
 }
-function getStudentInfo(studentKey) {
+function getStudentPersonalInfo(studentKey) {
+	getStudentInfo(studentKey, "getPersonalProperties", "setPersonalProperties", "student-personal-info", "pStudentPersonalInfo");
+}
+function getStudentMedicalInfo(studentKey) {
+	getStudentInfo(studentKey, "getMedicalProperties", "setMedicalProperties", "student-medical-info", "pStudentMedicalInfo");
+}
+function getStudentInfo(studentKey, getInfoServiceName, setInfoServiceName, domId, propertyName) {
 	var xhrArgs = {
-			url: "http://localhost:8080/scholagest-app/services/student/getProperties",
+			url: "http://localhost:8080/scholagest-app/services/student/" + getInfoServiceName,
 			preventCash: true,
 			content: {token: dojo.cookie("scholagest-token"),
-				studentKey: studentKey,
-				properties: ["pStudentFirstName", "pStudentLastName", "pStudentAddressStreet", "pStudentAddressCity", "pStudentAddressPostcode"]},
+				studentKey: studentKey},
 				handleAs: "json",
 				load: function(data) {
 					if (data.errorCode == null) {
-						var domId = "student-data";
 						clearDOM(domId);
 						
 						var base = dojo.byId(domId);
-						createInfoHtml(base, data.info);
-
+						
 						var save = dojo.create("button",
-								{type: "button", onclick:"setStudentInfo(\"" + studentKey + "\")", innerHTML: "Enregistrer"}, base);
+								{type: "button", onclick:setStudentInfo(studentKey, domId + "-content-table", setInfoServiceName), innerHTML: "Enregistrer"});
+						
+						var info = data.info[propertyName];
+						if (info.isHtmlGroup != null && info.isHtmlGroup == true) {
+							createHtmlGroup(base, info.displayText, info.value, save, domId + "-content");
+						}
 					}
 					else {
-						alert("Error during getProperties: ("
+						alert("Error during " + getInfoServiceName + ": ("
 								+ data.errorCode + ") " + data.message);
 					}
 				},
@@ -98,4 +108,29 @@ function getStudentInfo(studentKey) {
 	}
 
 	var deferred = dojo.xhrGet(xhrArgs);
+}
+function setStudentInfo(studentKey, domId, webServiceName) {
+	return function() {
+		var keyValues = getKeyValues(domId);
+		var xhrArgs = {
+				url: "http://localhost:8080/scholagest-app/services/student/" + webServiceName,
+				preventCash: true,
+				content: {token: dojo.cookie("scholagest-token"),
+					studentKey: studentKey,
+					names: keyValues.keys,
+					values: keyValues.values},
+					             handleAs: "json",
+					             load: function(data) {
+					            	 if (data.errorCode != null) {
+					            		 alert("Error during setProperties: ("
+					            				 + data.errorCode + ") " + data.message);
+					            	 }
+					             },
+					             error: function(error) {
+					            	 alert("error = " + error);
+					             }
+		}
+	
+		var deferred = dojo.xhrGet(xhrArgs);
+	}
 }

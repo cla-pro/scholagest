@@ -3,9 +3,7 @@ function getTeacherInfo(teacherKey) {
 			url: "http://localhost:8080/scholagest-app/services/teacher/getProperties",
 			preventCash: true,
 			content: {token: dojo.cookie("scholagest-token"),
-				teacherKey: teacherKey,
-				properties: ["pTeacherFirstName", "pTeacherLastName",
-				             "pTeacherMail", "pTeacherPhone", "pTeacherAddress"]},
+				teacherKey: teacherKey},
 				             handleAs: "json",
 				             load: function(data) {
 				            	 if (data.errorCode == null) {
@@ -13,7 +11,7 @@ function getTeacherInfo(teacherKey) {
 									clearDOM(domId);
 									
 									var base = dojo.byId(domId);
-									createInfoHtml(base, data.info);
+									createInfoHtmlTable(base, data.info);
 
 									var save = dojo.create("button",
 											{type: "button", onclick:"setTeacherInfo(\"" + teacherKey + "\")", innerHTML: "Enregistrer"}, base);

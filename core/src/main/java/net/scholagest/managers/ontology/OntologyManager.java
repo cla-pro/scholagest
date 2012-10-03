@@ -4,8 +4,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import net.scholagest.database.DatabaseException;
 import net.scholagest.database.ITransaction;
-import net.scholagest.managers.ontology.parser.OntologyElement;
+import net.scholagest.managers.CoreNamespace;
 
 import com.google.inject.Inject;
 
@@ -73,5 +74,14 @@ public class OntologyManager {
         }
 
         return filteredProperties;
+    }
+
+    public Set<String> getPropertiesForType(String requestId, ITransaction transaction, String type) throws DatabaseException {
+        String domainPropertiesKey = (String) transaction.get(type, CoreNamespace.pOntologyClassDomain, null);
+        if (domainPropertiesKey == null) {
+            return new HashSet<>();
+        }
+
+        return transaction.getColumns(domainPropertiesKey);
     }
 }
