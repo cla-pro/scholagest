@@ -19,7 +19,10 @@
 	<rdfs:Class rdf:ID="http://scholagest.net#Double">
 		<rdfs:comment>Double object</rdfs:comment>
 	</rdfs:Class>
-	<rdfs:Class rdf:ID="http://scholagest.net#DateTime">
-		<rdfs:comment>DateTime object</rdfs:comment>
-	</rdfs:Class>
+    <rdfs:Class rdf:ID="http://scholagest.net#DateTime">
+        <rdfs:comment>DateTime object</rdfs:comment>
+    </rdfs:Class>
+    <rdfs:Class rdf:ID="http://scholagest.net#Set">
+        <rdfs:comment>Set</rdfs:comment>
+    </rdfs:Class>
 </rdf:RDF>

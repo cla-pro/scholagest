@@ -12,13 +12,14 @@ import java.util.Set;
 import java.util.UUID;
 
 import net.scholagest.database.DatabaseException;
+import net.scholagest.managers.ontology.OntologyManager;
 import net.scholagest.managers.ontology.RDF;
 import net.scholagest.utils.AbstractTestWithTransaction;
 
 import org.junit.Test;
 
 public class ObjectManagerTest extends AbstractTestWithTransaction {
-    private ObjectManager objectManager = new ObjectManager();
+    private ObjectManager objectManager = new ObjectManager(new OntologyManager());
 
     @Test
     public void testCreateObject() throws Exception {

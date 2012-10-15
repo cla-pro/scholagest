@@ -95,10 +95,37 @@ function createHtmlLabelText(parentTable, propertyName, displayText, value) {
 	}, cell);
 	txt.key = propertyName;
 };
+function createHtmlList(parentTable, propertyName, displayText, key, valuesAsArray) {
+	var tr = dojo.create("tr", {}, parentTable);
+
+	dojo.create("td", {
+		innerHTML: displayText,
+		style: "width: 150px"
+	}, tr);
+	var cell = dojo.create("td", {}, tr);
+	
+	var htmlList = dojo.create("ul", {
+		style: "width: 100%"
+	}, cell);
+	htmlList.id = propertyName;
+	htmlList.key = key;
+	
+	for (var i = 0; i < valuesAsArray.length; i++) {
+		var txt = dojo.create("li", {
+			innerHTML : valuesAsArray[i]
+		}, htmlList);
+	}
+}
 function createInfoHtmlTable(parentDOM, info) {
 	for (var i in info) {
 		var data = info[i];
+		var value = data.value;
 		
-		createHtmlLabelText(parentDOM, i, data.displayText, data.value);
+		if (value.isHtmlList != null && value.isHtmlList == true) {
+			createHtmlList(parentDOM, i, data.displayText, value.key, value.values);
+		}
+		else {
+			createHtmlLabelText(parentDOM, i, data.displayText, value);
+		}
 	}
 };

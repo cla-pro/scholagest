@@ -6,10 +6,18 @@ import java.util.Set;
 import java.util.UUID;
 
 import net.scholagest.database.ITransaction;
+import net.scholagest.managers.ontology.OntologyManager;
+
+import com.google.inject.Inject;
 
 public class StudentManager extends ObjectManager implements IStudentManager {
     private final static String MEDICAL_INFO_SUFFIX = "#medicalInfo";
     private final static String PERSONAL_INFO_SUFFIX = "#personalInfo";
+
+    @Inject
+    public StudentManager(OntologyManager ontologyManager) {
+        super(ontologyManager);
+    }
 
     @Override
     public String createStudent(String requestId, ITransaction transaction) throws Exception {

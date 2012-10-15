@@ -33,4 +33,5 @@ public class CoreNamespace {
     public static final String pStudentMedicalInfo = pStudentNs + "MedicalInfo";
 
     public static final String tString = scholagestNs + "#String";
+    public static final String tSet = scholagestNs + "#Set";
 }

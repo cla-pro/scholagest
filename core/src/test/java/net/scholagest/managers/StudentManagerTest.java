@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import net.scholagest.managers.ontology.OntologyManager;
 import net.scholagest.utils.AbstractTestWithTransaction;
 import net.scholagest.utils.DatabaseReaderWriter;
 import net.scholagest.utils.InMemoryDatabase;
@@ -19,7 +20,7 @@ import org.junit.Test;
 public class StudentManagerTest extends AbstractTestWithTransaction {
     private static final String STUDENT_KEY = "http://scholagest.net/student#329c1a51-5469-4eac-a182-29afb1e5ecdb";
 
-    private StudentManager studentManager = spy(new StudentManager());
+    private StudentManager studentManager = spy(new StudentManager(new OntologyManager()));
 
     @Test
     public void testGetMedicalInfoProperties() throws Exception {
@@ -84,7 +85,7 @@ public class StudentManagerTest extends AbstractTestWithTransaction {
     public static void main(String[] args) throws Exception {
         InMemoryTransaction transaction = new InMemoryDatabase().getTransaction("Student");
 
-        StudentManager studentManager = new StudentManager();
+        StudentManager studentManager = new StudentManager(new OntologyManager());
 
         Map<String, Object> personalInfo = new StudentManagerTest().createStudentPersonalInfo();
         Map<String, Object> medicalInfo = new StudentManagerTest().createStudentMedicalInfo();

@@ -5,12 +5,15 @@ import java.util.Set;
 import java.util.UUID;
 
 import net.scholagest.database.ITransaction;
+import net.scholagest.managers.ontology.OntologyManager;
 
 import com.google.inject.Inject;
 
 public class TeacherManager extends ObjectManager implements ITeacherManager {
     @Inject
-    public TeacherManager() {}
+    public TeacherManager(OntologyManager ontologyManager) {
+        super(ontologyManager);
+    }
 
     @Override
     public String createTeacher(String requestId, ITransaction transaction) throws Exception {

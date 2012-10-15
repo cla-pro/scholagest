@@ -8,6 +8,7 @@ import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
 import net.scholagest.managers.CoreNamespace;
 import net.scholagest.managers.IStudentManager;
+import net.scholagest.services.kdom.DBToKdomConverter;
 
 import com.google.inject.Inject;
 
@@ -58,34 +59,38 @@ public class StudentService implements IStudentService {
 
     @Override
     public Map<String, Object> getStudentPersonalInfo(String requestId, String studentKey, Set<String> properties) throws Exception {
-        Map<String, Object> personalInfo = null;
+        Map<String, Object> personalInfoConverted = null;
 
         ITransaction transaction = this.database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
         try {
-            personalInfo = studentManager.getPersonalInfoProperties(requestId, transaction, studentKey, properties);
+            Map<String, Object> personalInfo = studentManager.getPersonalInfoProperties(requestId, transaction, studentKey, properties);
+            personalInfoConverted = new DBToKdomConverter().convertDBToKdom(personalInfo);
+
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
             e.printStackTrace();
         }
 
-        return personalInfo;
+        return personalInfoConverted;
     }
 
     @Override
     public Map<String, Object> getStudentMedicalInfo(String requestId, String studentKey, Set<String> properties) throws Exception {
-        Map<String, Object> medicalInfo = null;
+        Map<String, Object> medicalInfoConverted = null;
 
         ITransaction transaction = this.database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
         try {
-            medicalInfo = studentManager.getMedicalInfoProperties(requestId, transaction, studentKey, properties);
+            Map<String, Object> medicalInfo = studentManager.getMedicalInfoProperties(requestId, transaction, studentKey, properties);
+            medicalInfoConverted = new DBToKdomConverter().convertDBToKdom(medicalInfo);
+
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
             e.printStackTrace();
         }
 
-        return medicalInfo;
+        return medicalInfoConverted;
     }
 
     @Override
