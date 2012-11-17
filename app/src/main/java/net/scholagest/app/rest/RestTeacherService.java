@@ -84,7 +84,7 @@ public class RestTeacherService extends AbstractService {
             if (properties == null || properties.isEmpty()) {
                 properties = this.ontologyService.getPropertiesForType(CoreNamespace.tTeacher);
             }
-            Map<String, Object> info = this.teacherService.getTeacherInfo(requestId, teacherKey, new HashSet<String>(properties));
+            Map<String, Object> info = this.teacherService.getTeacherProperties(requestId, teacherKey, new HashSet<String>(properties));
 
             Map<String, Map<String, Object>> result = extractOntology(info);
 
@@ -106,7 +106,7 @@ public class RestTeacherService extends AbstractService {
         try {
             Map<String, Object> properties = JerseyHelper.listToMap(names, new ArrayList<Object>(values));
 
-            this.teacherService.setTeacherInfo(requestId, teacherKey, properties);
+            this.teacherService.setTeacherProperties(requestId, teacherKey, properties);
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode=0, message='" + e.getMessage() + "'}";

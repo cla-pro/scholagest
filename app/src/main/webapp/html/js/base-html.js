@@ -1,3 +1,16 @@
+function createLIItem(id, contentAsString, onClickFunction, cssStyle) {
+	return dojo.create("li", { id: id, innerHTML: contentAsString, className: cssStyle });
+}
+function createAndFillUL(ulId, liItemsList, cssStyle, base) {
+	var ul = dojo.create("ul", {
+		id: ulId,
+		className: cssStyle}, base);
+	
+	for (var i = 0; i < liItemsList.length; i++) {
+		ul.appendChild(liItemsList[i]);
+	}
+}
+
 function buildListItemTextClosure(propertyNames) {
 	return function(element, elementId) {
 		var text = '';

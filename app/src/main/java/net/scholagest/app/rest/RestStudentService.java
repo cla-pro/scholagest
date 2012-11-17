@@ -46,15 +46,15 @@ public class RestStudentService extends AbstractService {
         Map<String, Object> personalInfo = JerseyHelper.listToMap(keys, new ArrayList<Object>(values));
 
         // 2. Update the database.
-        String teacherKey = null;
+        String studentKey = null;
         try {
-            teacherKey = this.studentService.createStudent(requestId, personalInfo);
+            studentKey = studentService.createStudent(requestId, personalInfo);
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode=0, message='" + e.getMessage() + "'}";
         }
 
-        return new JsonObject("studentKey", teacherKey).toString();
+        return new JsonObject("studentKey", studentKey).toString();
     }
 
     @GET
@@ -63,10 +63,10 @@ public class RestStudentService extends AbstractService {
     public String getStudents(@QueryParam("token") String token, @QueryParam("properties") Set<String> properties) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
         try {
-            Map<String, Map<String, Object>> teachersInfo = studentService.getStudentsWithProperties(requestId, properties);
+            Map<String, Map<String, Object>> studentsInfo = studentService.getStudentsWithProperties(requestId, properties);
 
             Gson gson = new Gson();
-            String json = gson.toJson(teachersInfo);
+            String json = gson.toJson(studentsInfo);
             return "{students: " + json + "}";
         } catch (Exception e) {
             e.printStackTrace();
@@ -82,15 +82,14 @@ public class RestStudentService extends AbstractService {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
         try {
             if (properties == null || properties.isEmpty()) {
-                properties = this.ontologyService.getPropertiesForType(CoreNamespace.tStudentPersonalInfo);
+                properties = ontologyService.getPropertiesForType(CoreNamespace.tStudentPersonalInfo);
             }
 
             Set<String> personalInfoProperties = ontologyService.filterPropertiesWithCorrectDomain(ScholagestNamespace.tStudentPersonalInfo,
                     new HashSet<String>(properties));
 
             Map<String, Object> info = new HashMap<String, Object>();
-            info.put(ScholagestNamespace.pStudentPersonalInfo,
-                    this.studentService.getStudentPersonalInfo(requestId, studentKey, personalInfoProperties));
+            info.put(ScholagestNamespace.pStudentPersonalInfo, studentService.getStudentPersonalProperties(requestId, studentKey, personalInfoProperties));
 
             Map<String, Map<String, Object>> result = extractOntology(info);
 
@@ -112,7 +111,7 @@ public class RestStudentService extends AbstractService {
         try {
             Map<String, Object> properties = JerseyHelper.listToMap(names, new ArrayList<Object>(values));
 
-            this.studentService.updateStudentInfo(requestId, studentKey, properties, new HashMap<String, Object>());
+            studentService.updateStudentProperties(requestId, studentKey, properties, new HashMap<String, Object>());
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode=0, message='" + e.getMessage() + "'}";
@@ -129,13 +128,13 @@ public class RestStudentService extends AbstractService {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
         try {
             if (properties == null || properties.isEmpty()) {
-                properties = this.ontologyService.getPropertiesForType(CoreNamespace.tStudentMedicalInfo);
+                properties = ontologyService.getPropertiesForType(CoreNamespace.tStudentMedicalInfo);
             }
             Set<String> medicalInfoProperties = ontologyService.filterPropertiesWithCorrectDomain(ScholagestNamespace.tStudentMedicalInfo,
                     new HashSet<String>(properties));
 
             Map<String, Object> info = new HashMap<String, Object>();
-            info.put(ScholagestNamespace.pStudentMedicalInfo, this.studentService.getStudentMedicalInfo(requestId, studentKey, medicalInfoProperties));
+            info.put(ScholagestNamespace.pStudentMedicalInfo, studentService.getStudentMedicalProperties(requestId, studentKey, medicalInfoProperties));
 
             Map<String, Map<String, Object>> result = extractOntology(info);
 
@@ -157,7 +156,7 @@ public class RestStudentService extends AbstractService {
         try {
             Map<String, Object> properties = JerseyHelper.listToMap(names, new ArrayList<Object>(values));
 
-            this.studentService.updateStudentInfo(requestId, studentKey, new HashMap<String, Object>(), properties);
+            studentService.updateStudentProperties(requestId, studentKey, new HashMap<String, Object>(), properties);
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode=0, message='" + e.getMessage() + "'}";

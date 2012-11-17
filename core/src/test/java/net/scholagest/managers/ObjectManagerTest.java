@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 import net.scholagest.database.DatabaseException;
 import net.scholagest.managers.ontology.OntologyManager;
@@ -24,7 +23,7 @@ public class ObjectManagerTest extends AbstractTestWithTransaction {
     @Test
     public void testCreateObject() throws Exception {
         String objectKey = "objectKey";
-        objectManager.createObject(UUID.randomUUID().toString(), transaction, objectKey, CoreNamespace.tGroup);
+        objectManager.createObject(requestId, transaction, objectKey, CoreNamespace.tGroup);
 
         verify(transaction).insert(objectKey, RDF.type, CoreNamespace.tGroup, null);
     }
@@ -33,7 +32,7 @@ public class ObjectManagerTest extends AbstractTestWithTransaction {
     public void testSetObjectProperties() throws Exception {
         Map<String, Object> properties = createProperties();
 
-        objectManager.setObjectProperties(UUID.randomUUID().toString(), transaction, "objectKey", properties);
+        objectManager.setObjectProperties(requestId, transaction, "objectKey", properties);
 
         for (Map.Entry<String, Object> prop : properties.entrySet()) {
             verify(transaction).insert(anyString(), eq(prop.getKey()), eq(prop.getValue()), anyString());
@@ -50,7 +49,7 @@ public class ObjectManagerTest extends AbstractTestWithTransaction {
         properties.add("prop1");
         properties.add("prop2");
 
-        objectManager.getObjectProperties(UUID.randomUUID().toString(), transaction, objectKey, properties);
+        objectManager.getObjectProperties(requestId, transaction, objectKey, properties);
 
         for (String prop : properties) {
             verify(transaction).get(anyString(), eq(prop), anyString());
@@ -67,10 +66,9 @@ public class ObjectManagerTest extends AbstractTestWithTransaction {
     public void testGetSetObjectProperties() throws Exception {
         Map<String, Object> propertiesMap = createProperties();
 
-        objectManager.setObjectProperties(UUID.randomUUID().toString(), transaction, "objectKey", propertiesMap);
+        objectManager.setObjectProperties(requestId, transaction, "objectKey", propertiesMap);
 
-        Map<String, Object> resultProperties = objectManager.getObjectProperties(UUID.randomUUID().toString(), transaction, "objectKey",
-                propertiesMap.keySet());
+        Map<String, Object> resultProperties = objectManager.getObjectProperties(requestId, transaction, "objectKey", propertiesMap.keySet());
 
         assertEquals("Returned properties should habe the same size as the saved one", propertiesMap.size(), resultProperties.size());
         for (String propertyName : propertiesMap.keySet()) {

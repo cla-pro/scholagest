@@ -81,6 +81,10 @@ li.search-list-item-selected {
 	background-color: #808080;
 }
 
+li.search-list-item-group-header {
+	background-color: #ADD8E6;
+}
+
 .student-content {
 	height: 100%;
 }

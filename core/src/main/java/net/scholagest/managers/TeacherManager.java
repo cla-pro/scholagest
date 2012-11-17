@@ -1,5 +1,6 @@
 package net.scholagest.managers;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -20,7 +21,7 @@ public class TeacherManager extends ObjectManager implements ITeacherManager {
         String id = UUID.randomUUID().toString();
         String teacherKey = CoreNamespace.teacherNs + "#" + id;
 
-        super.createObject(requestId, transaction, teacherKey, "tTeacher");
+        super.createObject(requestId, transaction, teacherKey, CoreNamespace.tTeacher);
 
         String teacherBase = CoreNamespace.teacherNs + "/" + id;
         transaction.insert(CoreNamespace.teachersBase, teacherKey, teacherKey, null);
@@ -38,7 +39,13 @@ public class TeacherManager extends ObjectManager implements ITeacherManager {
 
     @Override
     public Set<String> getTeachers(String requestId, ITransaction transaction) throws Exception {
-        return transaction.getColumns(CoreNamespace.teachersBase);
+        Set<String> teachers = new HashSet<>();
+
+        for (String col : transaction.getColumns(CoreNamespace.teachersBase)) {
+            teachers.add((String) transaction.get(CoreNamespace.teachersBase, col, null));
+        }
+
+        return teachers;
     }
 
     @Override

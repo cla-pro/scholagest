@@ -40,28 +40,28 @@ public class StudentManager extends ObjectManager implements IStudentManager {
     }
 
     @Override
-    public void setPersonalInfoProperties(String requestId, ITransaction transaction, String studentKey, Map<String, Object> properties)
+    public void setPersonalProperties(String requestId, ITransaction transaction, String studentKey, Map<String, Object> properties)
             throws Exception {
         String personalInfoKey = (String) transaction.get(studentKey, CoreNamespace.pStudentPersonalInfo, null);
         super.setObjectProperties(requestId, transaction, personalInfoKey, properties);
     }
 
     @Override
-    public void setMedicalInfoProperties(String requestId, ITransaction transaction, String studentKey, Map<String, Object> properties)
+    public void setMedicalProperties(String requestId, ITransaction transaction, String studentKey, Map<String, Object> properties)
             throws Exception {
         String medicalInfoKey = (String) transaction.get(studentKey, CoreNamespace.pStudentMedicalInfo, null);
         super.setObjectProperties(requestId, transaction, medicalInfoKey, properties);
     }
 
     @Override
-    public Map<String, Object> getPersonalInfoProperties(String requestId, ITransaction transaction, String studentKey, Set<String> properties)
+    public Map<String, Object> getPersonalProperties(String requestId, ITransaction transaction, String studentKey, Set<String> properties)
             throws Exception {
         String personalInfoKey = (String) transaction.get(studentKey, CoreNamespace.pStudentPersonalInfo, null);
         return super.getObjectProperties(requestId, transaction, personalInfoKey, properties);
     }
 
     @Override
-    public Map<String, Object> getMedicalInfoProperties(String requestId, ITransaction transaction, String studentKey, Set<String> properties)
+    public Map<String, Object> getMedicalProperties(String requestId, ITransaction transaction, String studentKey, Set<String> properties)
             throws Exception {
         String medicalInfoKey = (String) transaction.get(studentKey, CoreNamespace.pStudentMedicalInfo, null);
         return super.getObjectProperties(requestId, transaction, medicalInfoKey, properties);
