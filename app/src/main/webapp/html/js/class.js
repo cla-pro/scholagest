@@ -1,3 +1,33 @@
+function getTeacherInfo(classKey) {
+	var xhrArgs = {
+			url: "http://localhost:8080/scholagest-app/services/class/getProperties",
+			preventCash: true,
+			content: {token: dojo.cookie("scholagest-token"),
+				classKey: classKey},
+				             handleAs: "json",
+				             load: function(data) {
+				            	 if (data.errorCode == null) {
+				            		var domId = "class-data";
+									clearDOM(domId);
+									
+									var base = dojo.byId(domId);
+									createInfoHtmlTable(base, data.info);
+
+									//var save = dojo.create("button",
+									//		{type: "button", onclick:"setTeacherInfo(\"" + teacherKey + "\")", innerHTML: "Enregistrer"}, base);
+				            	 }
+				            	 else {
+				            		 alert("Error during getProperties: ("
+				            				 + data.errorCode + ") " + data.message);
+				            	 }
+				             },
+				             error: function(error) {
+				            	 alert("error = " + error);
+				             }
+	}
+
+	var deferred = dojo.xhrGet(xhrArgs);
+}
 function mergeAndDisplayYearAndClassLists(yearList, classList) {
 	var liItemsList = [];
 	for (var yearKey in yearList) {

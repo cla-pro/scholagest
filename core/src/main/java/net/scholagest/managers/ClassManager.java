@@ -6,6 +6,7 @@ import java.util.Set;
 
 import net.scholagest.database.ITransaction;
 import net.scholagest.managers.ontology.OntologyManager;
+import net.scholagest.managers.ontology.types.DBSet;
 
 import com.google.inject.Inject;
 
@@ -23,7 +24,23 @@ public class ClassManager extends ObjectManager implements IClassManager {
 
         transaction.insert(CoreNamespace.classesBase, createClassesBasePropertyName(yearName, className), classKey, null);
 
+        String studentsSetKey = generateClassStudentsKey(classKey);
+        DBSet.createDBSet(transaction, studentsSetKey);
+        transaction.insert(classKey, CoreNamespace.pYearClasses, studentsSetKey, null);
+
+        String teachersSetKey = generateClassTeachersKey(classKey);
+        DBSet.createDBSet(transaction, teachersSetKey);
+        transaction.insert(classKey, CoreNamespace.pYearClasses, teachersSetKey, null);
+
         return classKey;
+    }
+
+    private String generateClassStudentsKey(String classKey) {
+        return classKey + "_students";
+    }
+
+    private String generateClassTeachersKey(String classKey) {
+        return classKey + "_teachers";
     }
 
     private String createClassesBasePropertyName(String yearName, String className) {

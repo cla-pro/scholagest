@@ -60,10 +60,13 @@ public class ClassBusinessComponentTest extends AbstractTestWithTransaction {
 
     @Test
     public void testCreateClass() throws Exception {
-        String classKey = testee.createClass(requestId, transaction, new HashMap<String, Object>());
+        Map<String, Object> properties = new HashMap<String, Object>();
+        properties.put(CoreNamespace.pClassYear, YEAR_KEY);
+        String classKey = testee.createClass(requestId, transaction, properties);
 
         assertEquals(CLASS_KEY, classKey);
         Mockito.verify(classManager).createClass(Mockito.anyString(), Mockito.eq(transaction), Mockito.anyString(), Mockito.anyString());
+        Mockito.verify(yearManager).addClassToYear(Mockito.eq(requestId), Mockito.eq(transaction), Mockito.eq(YEAR_KEY), Mockito.eq(CLASS_KEY));
     }
 
     @Test

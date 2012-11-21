@@ -54,4 +54,9 @@ public class ClassBusinessComponent implements IClassBusinessComponent {
             throws Exception {
         return classManager.getClassProperties(requestId, transaction, classKey, propertiesName);
     }
+
+    @Override
+    public void setClassProperties(String requestId, ITransaction transaction, String classKey, Map<String, Object> classProperties) throws Exception {
+        classManager.setClassProperties(requestId, transaction, classKey, classProperties);
+    }
 }

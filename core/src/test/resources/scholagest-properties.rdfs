@@ -105,4 +105,14 @@
         <rdfs:range rdf:resource="sg:tYear"/>
         <sg:displayText rdf:resource="Année" />
     </rdfs:Property>
+    <rdfs:Property rdf:ID="pClassStudents" rdfs:comment="Class's students">
+        <rdfs:domain rdf:resource="sg:tClass"/>
+        <rdfs:range rdf:resource="sg:tSet"/>
+        <sg:displayText rdf:resource="Etudiants" />
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pClassTeachers" rdfs:comment="Class's teachers">
+        <rdfs:domain rdf:resource="sg:tClass"/>
+        <rdfs:range rdf:resource="sg:tSet"/>
+        <sg:displayText rdf:resource="Teachers" />
+    </rdfs:Property>
 </rdf:RDF>

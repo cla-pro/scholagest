@@ -14,5 +14,4 @@ public interface IYearBusinessComponent {
 
     public Map<String, Map<String, Object>> getYearsWithProperties(String requestId, ITransaction transaction, Set<String> properties)
             throws Exception;
-
 }

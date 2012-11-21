@@ -48,7 +48,7 @@ public class RestTeacherService extends AbstractService {
         // 2. Update the database.
         String teacherKey = null;
         try {
-            teacherKey = this.teacherService.createTeacher(requestId, teacherType, teacherProperties);
+            teacherKey = teacherService.createTeacher(requestId, teacherType, teacherProperties);
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode=0, message='" + e.getMessage() + "'}";
@@ -77,14 +77,14 @@ public class RestTeacherService extends AbstractService {
     @GET
     @Path("/getProperties")
     @Produces("text/json")
-    public String getTeacherInfo(@QueryParam("token") String token, @QueryParam("teacherKey") String teacherKey,
+    public String getTeacherProperties(@QueryParam("token") String token, @QueryParam("teacherKey") String teacherKey,
             @QueryParam("properties") Set<String> properties) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
         try {
             if (properties == null || properties.isEmpty()) {
-                properties = this.ontologyService.getPropertiesForType(CoreNamespace.tTeacher);
+                properties = ontologyService.getPropertiesForType(CoreNamespace.tTeacher);
             }
-            Map<String, Object> info = this.teacherService.getTeacherProperties(requestId, teacherKey, new HashSet<String>(properties));
+            Map<String, Object> info = teacherService.getTeacherProperties(requestId, teacherKey, new HashSet<String>(properties));
 
             Map<String, Map<String, Object>> result = extractOntology(info);
 
@@ -100,13 +100,13 @@ public class RestTeacherService extends AbstractService {
     @GET
     @Path("/setProperties")
     @Produces("text/json")
-    public String setTeacherInfo(@QueryParam("token") String token, @QueryParam("teacherKey") String teacherKey,
+    public String setTeacherProperties(@QueryParam("token") String token, @QueryParam("teacherKey") String teacherKey,
             @QueryParam("names") List<String> names, @QueryParam("values") List<String> values) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
         try {
             Map<String, Object> properties = JerseyHelper.listToMap(names, new ArrayList<Object>(values));
 
-            this.teacherService.setTeacherProperties(requestId, teacherKey, properties);
+            teacherService.setTeacherProperties(requestId, teacherKey, properties);
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode=0, message='" + e.getMessage() + "'}";

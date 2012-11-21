@@ -2,6 +2,7 @@ package net.scholagest.app.rest;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -80,6 +81,29 @@ public class RestClassService extends AbstractService {
             Gson gson = new Gson();
             String json = gson.toJson(classesInfo);
             return "{classes: " + json + "}";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{errorCode=0, message='" + e.getMessage() + "'}";
+        }
+    }
+
+    @GET
+    @Path("/getProperties")
+    @Produces("text/json")
+    public String getClassProperties(@QueryParam("token") String token, @QueryParam("classKey") String classKey,
+            @QueryParam("properties") Set<String> properties) {
+        String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+        try {
+            if (properties == null || properties.isEmpty()) {
+                properties = this.ontologyService.getPropertiesForType(CoreNamespace.tClass);
+            }
+            Map<String, Object> info = classService.getClassProperties(requestId, classKey, new HashSet<String>(properties));
+
+            Map<String, Map<String, Object>> result = extractOntology(info);
+
+            Gson gson = new Gson();
+            String json = gson.toJson(result);
+            return "{info: " + json + "}";
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode=0, message='" + e.getMessage() + "'}";

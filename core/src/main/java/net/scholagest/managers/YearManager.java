@@ -34,6 +34,7 @@ public class YearManager extends ObjectManager implements IYearManager {
 
         String setKey = generateYearClassesKey(yearKey);
         DBSet.createDBSet(transaction, setKey);
+        transaction.insert(yearKey, CoreNamespace.pYearClasses, setKey, null);
 
         return yearKey;
     }
