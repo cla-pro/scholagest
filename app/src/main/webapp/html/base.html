@@ -8,12 +8,18 @@
         parseOnLoad: true
     };
 </script>
-<script src="http://localhost:8080/dojo/1.7.2/dojo/dojo.js"></script>
+<script src="http://localhost:8080/dojo/1.8.1/dojo/dojo.js"></script>
 <script type="text/javascript">
-	dojo.require("dojo.cookie");
-	dojo.require("dijit.Dialog");
-	dojo.require("dijit.layout.TabContainer");
-	dojo.require("dijit.layout.ContentPane");
+    dojo.require("dojo.cookie");
+    dojo.require("dijit.Dialog");
+    dojo.require("dijit.layout.TabContainer");
+    dojo.require("dijit.layout.ContentPane");
+    dojo.require("dijit.Tree");
+    dojo.require("dijit.tree.dndSource");
+    dojo.require("dojo.store.Memory");
+    dojo.require("dijit.tree.ObjectStoreModel");
+    dojo.require("dojo.store.Observable");
+    dojo.require("dojo.aspect");
 </script>
 <script src="../../html/js/base.js"></script>
 <link href="../../html/template.css" rel="stylesheet" type="text/css">
@@ -21,11 +27,11 @@
 <title>Scholagest</title>
 </head>
 <body class="claro">
-	<div class="header">
-		<img src="../../html/images/scholagest-logo1-1.png" class="app-logo" />
-		<img id="schoolLogo" src="../../html/images/school-logo.png" class="school-logo" />
-	</div>
-	
-	<div id="scholagestContent" style="height: 100%"></div>
+    <div class="header">
+        <img src="../../html/images/scholagest-logo1-1.png" class="app-logo" />
+        <img id="schoolLogo" src="../../html/images/school-logo.png" class="school-logo" />
+    </div>
+    
+    <div id="scholagestContent" style="height: 100%"></div>
 </body>
 </html>

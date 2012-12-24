@@ -1,11 +1,12 @@
 package net.scholagest.business;
 
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import net.scholagest.database.ITransaction;
 import net.scholagest.managers.IStudentManager;
+import net.scholagest.objects.BaseObject;
 import net.scholagest.services.kdom.DBToKdomConverter;
 
 import com.google.inject.Inject;
@@ -13,20 +14,22 @@ import com.google.inject.Inject;
 public class StudentBusinessComponent implements IStudentBusinessComponent {
     private IStudentManager studentManager;
 
+    private DBToKdomConverter converter = new DBToKdomConverter();
+
     @Inject
     public StudentBusinessComponent(IStudentManager studentManager) {
         this.studentManager = studentManager;
     }
 
     @Override
-    public String createStudent(String requestId, ITransaction transaction, Map<String, Object> personalProperties) throws Exception {
-        String studentKey = studentManager.createStudent(requestId, transaction);
+    public BaseObject createStudent(String requestId, ITransaction transaction, Map<String, Object> personalProperties) throws Exception {
+        BaseObject student = studentManager.createStudent(requestId, transaction);
 
         if (personalProperties != null) {
-            studentManager.setPersonalProperties(requestId, transaction, studentKey, personalProperties);
+            studentManager.setPersonalProperties(requestId, transaction, student.getKey(), personalProperties);
         }
 
-        return studentKey;
+        return converter.convertDbToKdom(student);
     }
 
     @Override
@@ -37,27 +40,27 @@ public class StudentBusinessComponent implements IStudentBusinessComponent {
     }
 
     @Override
-    public Map<String, Object> getStudentPersonalProperties(String requestId, ITransaction transaction, String studentKey, Set<String> properties)
+    public BaseObject getStudentPersonalProperties(String requestId, ITransaction transaction, String studentKey, Set<String> properties)
             throws Exception {
-        Map<String, Object> personalProperties = studentManager.getPersonalProperties(requestId, transaction, studentKey, properties);
-        return new DBToKdomConverter().convertDBToKdom(personalProperties);
+        BaseObject personalProperties = studentManager.getPersonalProperties(requestId, transaction, studentKey, properties);
+        return converter.convertDbToKdom(personalProperties);
     }
 
     @Override
-    public Map<String, Object> getStudentMedicalProperties(String requestId, ITransaction transaction, String studentKey, Set<String> properties)
+    public BaseObject getStudentMedicalProperties(String requestId, ITransaction transaction, String studentKey, Set<String> properties)
             throws Exception {
-        Map<String, Object> medicalProperties = studentManager.getMedicalProperties(requestId, transaction, studentKey, properties);
-        return new DBToKdomConverter().convertDBToKdom(medicalProperties);
+        BaseObject medicalProperties = studentManager.getMedicalProperties(requestId, transaction, studentKey, properties);
+        return converter.convertDbToKdom(medicalProperties);
     }
 
     @Override
-    public Map<String, Map<String, Object>> getStudentsWithProperties(String requestId, ITransaction transaction, Set<String> properties)
-            throws Exception {
-        Map<String, Map<String, Object>> students = new HashMap<String, Map<String, Object>>();
+    public Set<BaseObject> getStudentsWithProperties(String requestId, ITransaction transaction, Set<String> properties) throws Exception {
+        Set<BaseObject> students = new HashSet<>();
 
-        for (String studentKey : studentManager.getStudents(requestId, transaction)) {
-            Map<String, Object> info = this.studentManager.getPersonalProperties(requestId, transaction, studentKey, properties);
-            students.put(studentKey, info);
+        for (BaseObject student : studentManager.getStudents(requestId, transaction)) {
+            BaseObject personalInfo = studentManager.getPersonalProperties(requestId, transaction, student.getKey(), properties);
+            student.setProperties(personalInfo.getProperties());
+            students.add(converter.convertDbToKdom(student));
         }
 
         return students;

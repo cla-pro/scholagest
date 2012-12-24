@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import net.scholagest.managers.ontology.OntologyManager;
+import net.scholagest.objects.BaseObject;
 import net.scholagest.utils.AbstractTestWithTransaction;
 import net.scholagest.utils.DatabaseReaderWriter;
 import net.scholagest.utils.InMemoryDatabase;
@@ -24,9 +25,10 @@ public class TeacherManagerTest extends AbstractTestWithTransaction {
 
     @Test
     public void testCreateNewTeacher() throws Exception {
-        String classKey = teacherManager.createTeacher(requestId, transaction);
+        BaseObject teacher = teacherManager.createTeacher(requestId, transaction);
 
-        Mockito.verify(transaction).insert(Mockito.eq(CoreNamespace.teachersBase), Mockito.anyString(), Mockito.eq(classKey), Mockito.anyString());
+        Mockito.verify(transaction).insert(Mockito.eq(CoreNamespace.teachersBase), Mockito.anyString(), Mockito.eq(teacher.getKey()),
+                Mockito.anyString());
     }
 
     @Test
@@ -35,8 +37,9 @@ public class TeacherManagerTest extends AbstractTestWithTransaction {
 
         Map<String, Object> properties = createTeacherProperties();
         teacherManager.setTeacherProperties(requestId, transaction, TEACHER_KEY, properties);
-        Map<String, Object> readProperties = teacherManager.getTeacherProperties(requestId, transaction, TEACHER_KEY, properties.keySet());
+        BaseObject teacher = teacherManager.getTeacherProperties(requestId, transaction, TEACHER_KEY, properties.keySet());
 
+        Map<String, Object> readProperties = teacher.getProperties();
         assertEquals(properties.size(), readProperties.size());
         for (String key : properties.keySet()) {
             assertEquals(properties.get(key), readProperties.get(key));
@@ -47,10 +50,10 @@ public class TeacherManagerTest extends AbstractTestWithTransaction {
     public void testGetTeachers() throws Exception {
         super.fillTransactionWithDataSets(new String[] { "Teacher" });
 
-        Set<String> teachers = teacherManager.getTeachers(requestId, transaction);
+        Set<BaseObject> teachers = teacherManager.getTeachers(requestId, transaction);
 
         assertEquals(1, teachers.size());
-        assertEquals(TEACHER_KEY, teachers.iterator().next());
+        assertEquals(TEACHER_KEY, teachers.iterator().next().getKey());
     }
 
     private Map<String, Object> createTeacherProperties() {
@@ -69,8 +72,8 @@ public class TeacherManagerTest extends AbstractTestWithTransaction {
 
         Map<String, Object> teacherProperties = new TeacherManagerTest().createTeacherProperties();
 
-        String teacherKey = teacherManager.createTeacher(UUID.randomUUID().toString(), transaction);
-        teacherManager.setTeacherProperties(UUID.randomUUID().toString(), transaction, teacherKey, teacherProperties);
+        BaseObject teacher = teacherManager.createTeacher(UUID.randomUUID().toString(), transaction);
+        teacherManager.setTeacherProperties(UUID.randomUUID().toString(), transaction, teacher.getKey(), teacherProperties);
 
         Map<String, Map<String, Map<String, Object>>> databaseContent = new HashMap<>();
         databaseContent.put(transaction.getKeyspace(), transaction.getValues());

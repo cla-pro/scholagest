@@ -5,6 +5,12 @@ import java.util.Map;
 
 import net.scholagest.business.ClassBusinessComponent;
 import net.scholagest.business.IClassBusinessComponent;
+import net.scholagest.business.IStudentBusinessComponent;
+import net.scholagest.business.ITeacherBusinessComponent;
+import net.scholagest.business.IYearBusinessComponent;
+import net.scholagest.business.StudentBusinessComponent;
+import net.scholagest.business.TeacherBusinessComponent;
+import net.scholagest.business.YearBusinessComponent;
 import net.scholagest.database.Database;
 import net.scholagest.database.DefaultDatabaseConfiguration;
 import net.scholagest.database.IDatabase;
@@ -47,14 +53,22 @@ public class GuiceContext extends GuiceServletContextListener {
                 bind(IDatabase.class).to(Database.class);
 
                 bind(ITeacherManager.class).to(TeacherManager.class);
+                bind(ITeacherBusinessComponent.class).to(TeacherBusinessComponent.class);
                 bind(ITeacherService.class).to(TeacherService.class);
+
                 bind(OntologyManager.class);
                 bind(IOntologyService.class).to(OntologyService.class);
+
                 bind(IUserService.class).to(UserService.class);
+
                 bind(IStudentManager.class).to(StudentManager.class);
+                bind(IStudentBusinessComponent.class).to(StudentBusinessComponent.class);
                 bind(IStudentService.class).to(StudentService.class);
+
                 bind(IYearManager.class).to(YearManager.class);
+                bind(IYearBusinessComponent.class).to(YearBusinessComponent.class);
                 bind(IYearService.class).to(YearService.class);
+
                 bind(IClassManager.class).to(ClassManager.class);
                 bind(IClassBusinessComponent.class).to(ClassBusinessComponent.class);
                 bind(IClassService.class).to(ClassService.class);

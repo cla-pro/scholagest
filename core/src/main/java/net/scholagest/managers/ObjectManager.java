@@ -11,6 +11,7 @@ import net.scholagest.managers.ontology.OntologyManager;
 import net.scholagest.managers.ontology.RDF;
 import net.scholagest.managers.ontology.RDFS;
 import net.scholagest.managers.ontology.types.DBSet;
+import net.scholagest.objects.BaseObject;
 
 public class ObjectManager {
     private OntologyManager ontologyManager;
@@ -19,14 +20,14 @@ public class ObjectManager {
         this.ontologyManager = ontologyManager;
     }
 
-    protected String createObject(String requestId, ITransaction transaction, String objectKey, String type) throws Exception {
+    protected BaseObject createObject(String requestId, ITransaction transaction, String objectKey, String type) throws Exception {
         if (objectKey == null) {
             objectKey = UUID.randomUUID().toString();
         }
 
         transaction.insert(objectKey, RDF.type, type, null);
 
-        return objectKey;
+        return new BaseObject(objectKey, type);
     }
 
     protected Map<String, Object> getObjectProperties(String requestId, ITransaction transaction, String objectKey, Set<String> propertiesName)

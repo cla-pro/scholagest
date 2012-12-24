@@ -1,6 +1,5 @@
 package net.scholagest.app.rest;
 
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -9,7 +8,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
-import net.scholagest.app.utils.JsonObject;
+import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IOntologyService;
 import net.scholagest.services.IYearService;
 
@@ -20,36 +19,41 @@ import com.google.inject.Inject;
 public class RestYearService extends AbstractService {
     private final static String REQUEST_ID_PREFIX = "year-";
     private final IYearService yearService;
+    private JsonConverter converter;
 
     @Inject
     public RestYearService(IYearService yearService, IOntologyService ontologyService) {
         super(ontologyService);
         this.yearService = yearService;
+        this.converter = new JsonConverter(ontologyService);
     }
 
     @GET
     @Path("/start")
     @Produces("text/json")
-    public String createStudent(@QueryParam("token") String token, @QueryParam("name") String yearName) {
+    public String startYear(@QueryParam("token") String token, @QueryParam("name") String yearName) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
         // TODO 1. Check the token and if this token allows to start a new year.
 
         // 2. Update the database.
-        String yearKey = null;
+        BaseObject year = null;
         try {
-            yearKey = yearService.startYear(requestId, yearName);
+            year = yearService.startYear(requestId, yearName);
+
+            Gson gson = new Gson();
+            String json = gson.toJson(converter.convertObjectToJson(year, null));
+            return "{info: " + json + "}";
+
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode=0, message='" + e.getMessage() + "'}";
         }
-
-        return new JsonObject("yearKey", yearKey).toString();
     }
 
     @GET
     @Path("/stop")
     @Produces("text/json")
-    public String createStudent(@QueryParam("token") String token) {
+    public String stopYear(@QueryParam("token") String token) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
         // TODO 1. Check the token and if this token allows to start a new year.
 
@@ -61,7 +65,7 @@ public class RestYearService extends AbstractService {
             return "{errorCode=0, message='" + e.getMessage() + "'}";
         }
 
-        return new JsonObject().toString();
+        return "{}";
     }
 
     @GET
@@ -72,15 +76,17 @@ public class RestYearService extends AbstractService {
         // TODO 1. Check the token and if this token allows to start a new year.
 
         // 2. Update the database.
-        String currentYearKey = null;
+        BaseObject currentYear = null;
         try {
-            currentYearKey = yearService.getCurrentYearKey(requestId);
+            currentYear = yearService.getCurrentYearKey(requestId);
+
+            Gson gson = new Gson();
+            String json = gson.toJson(converter.convertObjectToJson(currentYear, null));
+            return "{info: " + json + "}";
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode=0, message='" + e.getMessage() + "'}";
         }
-
-        return new JsonObject("currentYearKey", currentYearKey).toString();
     }
 
     @GET
@@ -89,17 +95,17 @@ public class RestYearService extends AbstractService {
     public String getYears(@QueryParam("token") String token, @QueryParam("properties") Set<String> properties) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
         try {
-            Map<String, Map<String, Object>> yearsInfo = yearService.getYearsWithProperties(requestId, properties);
-            String currentYearKey = yearService.getCurrentYearKey(requestId);
+            Set<BaseObject> yearsInfo = yearService.getYearsWithProperties(requestId, properties);
+            BaseObject currentYearKey = yearService.getCurrentYearKey(requestId);
 
             Gson gson = new Gson();
-            String years = gson.toJson(yearsInfo);
+            String years = gson.toJson(converter.convertObjectToJson(yearsInfo));
 
             String currentYearJson = "";
             if (currentYearKey != null) {
-                currentYearJson = ", currentYear: \"" + currentYearKey + "\"";
+                currentYearJson = ", currentYear: " + gson.toJson(converter.convertObjectToJson(currentYearKey)) + "";
             }
-            return "{years: " + years + currentYearJson + "}";
+            return "{info: {years: " + years + currentYearJson + "}}";
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode=0, message='" + e.getMessage() + "'}";

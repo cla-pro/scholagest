@@ -14,11 +14,12 @@ function loadYears() {
 				handleAs: "json",
 				load: function(data) {
 					if (data.errorCode == null) {
-						changeYearsButtonChange(data.currentYear != null);
+						var info = data.info;
+						changeYearsButtonChange(info.currentYear != null);
 						
-						dijit.byId('newClassDialog').currentYearKey = data.currentYear;
+						dijit.byId('newClassDialog').currentYearKey = info.currentYear.key;
 						
-						loadClasses(data.years);
+						loadClasses(info.years);
 					}
 					else
 						alert("Error during getCurrent: ("
@@ -44,6 +45,7 @@ function startYear(closeId, txtYearNameId) {
 					if (data.errorCode == null) {
 						//loadYears();
 						changeYearsButtonChange(true);
+						dijit.byId('newClassDialog').currentYearKey = data.info.key;
 					}
 					else
 						alert("Error during startYear: ("

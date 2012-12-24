@@ -1,11 +1,11 @@
 package net.scholagest.services;
 
-import java.util.Map;
 import java.util.Set;
 
 import net.scholagest.business.IYearBusinessComponent;
 import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
+import net.scholagest.objects.BaseObject;
 
 import com.google.inject.Inject;
 
@@ -20,12 +20,12 @@ public class YearService implements IYearService {
     }
 
     @Override
-    public String startYear(String requestId, String yearName) throws Exception {
-        String yearKey = null;
+    public BaseObject startYear(String requestId, String yearName) throws Exception {
+        BaseObject year = null;
 
         ITransaction transaction = this.database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
         try {
-            yearKey = yearBusinessComponent.startYear(requestId, transaction, yearName);
+            year = yearBusinessComponent.startYear(requestId, transaction, yearName);
 
             transaction.commit();
         } catch (Exception e) {
@@ -33,7 +33,7 @@ public class YearService implements IYearService {
             e.printStackTrace();
         }
 
-        return yearKey;
+        return year;
     }
 
     @Override
@@ -50,12 +50,12 @@ public class YearService implements IYearService {
     }
 
     @Override
-    public String getCurrentYearKey(String requestId) throws Exception {
-        String currentYearKey = null;
+    public BaseObject getCurrentYearKey(String requestId) throws Exception {
+        BaseObject currentYear = null;
 
         ITransaction transaction = this.database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
         try {
-            currentYearKey = yearBusinessComponent.getCurrentYearKey(requestId, transaction);
+            currentYear = yearBusinessComponent.getCurrentYearKey(requestId, transaction);
 
             transaction.commit();
         } catch (Exception e) {
@@ -63,7 +63,7 @@ public class YearService implements IYearService {
             e.printStackTrace();
         }
 
-        return currentYearKey;
+        return currentYear;
     }
 
     // @Override
@@ -93,8 +93,8 @@ public class YearService implements IYearService {
     // }
 
     @Override
-    public Map<String, Map<String, Object>> getYearsWithProperties(String requestId, Set<String> properties) throws Exception {
-        Map<String, Map<String, Object>> years = null;
+    public Set<BaseObject> getYearsWithProperties(String requestId, Set<String> properties) throws Exception {
+        Set<BaseObject> years = null;
 
         ITransaction transaction = database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
         try {

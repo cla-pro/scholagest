@@ -11,7 +11,7 @@ function getTeacherInfo(teacherKey) {
 									clearDOM(domId);
 									
 									var base = dojo.byId(domId);
-									createInfoHtmlTable(base, data.info);
+									createInfoHtmlTable(base, data.info.properties);
 
 									var save = dojo.create("button",
 											{type: "button", onclick:"setTeacherInfo(\"" + teacherKey + "\")", innerHTML: "Enregistrer"}, base);
@@ -81,20 +81,21 @@ function loadTeachers() {
 							id: 'teacher-search-list',
 							className: 'search-list'}, base);
 
-						var teachers = data.teachers;
+						var teachers = data.info;
 						for (var d in teachers) {
 							var t = teachers[d];
 							var text = d;
-							if (t.pTeacherFirstName != null || t.pTeacherLastName != null) {
+							var properties = t.properties;
+							if (properties.pTeacherFirstName != null || properties.pTeacherLastName != null) {
 								text = '';
-								if (t.pTeacherFirstName != null) {
-									text = t.pTeacherFirstName;
+								if (properties.pTeacherFirstName != null) {
+									text = properties.pTeacherFirstName.value;
 								}
 
-								if (t.pTeacherLastName != null) {
+								if (properties.pTeacherLastName != null) {
 									if (text != '')
 										text += ' ';
-									text += t.pTeacherLastName;
+									text += properties.pTeacherLastName.value;
 								}
 							}
 

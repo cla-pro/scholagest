@@ -6,9 +6,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import net.scholagest.managers.CoreNamespace;
 import net.scholagest.managers.IYearManager;
+import net.scholagest.objects.BaseObject;
+import net.scholagest.objects.BaseObjectMock;
 import net.scholagest.utils.AbstractTestWithTransaction;
 
 import org.junit.Before;
@@ -25,12 +28,16 @@ public class YearBusinessComponentTest extends AbstractTestWithTransaction {
     @Before
     public void setup() throws Exception {
         yearManager = Mockito.mock(IYearManager.class);
-        Mockito.when(yearManager.createNewYear(Mockito.anyString(), Mockito.eq(transaction), Mockito.anyString())).thenReturn(YEAR_KEY);
-        Mockito.when(yearManager.getCurrentYearKey(Mockito.anyString(), Mockito.eq(transaction))).thenReturn(YEAR_KEY);
-        Mockito.when(yearManager.getYears(Mockito.anyString(), Mockito.eq(transaction))).thenReturn(new HashSet<String>(Arrays.asList(YEAR_KEY)));
+        Mockito.when(yearManager.createNewYear(Mockito.anyString(), Mockito.eq(transaction), Mockito.anyString())).thenReturn(
+                new BaseObject(YEAR_KEY, CoreNamespace.tYear));
+        Mockito.when(yearManager.getCurrentYearKey(Mockito.anyString(), Mockito.eq(transaction))).thenReturn(
+                new BaseObject(YEAR_KEY, CoreNamespace.tYear));
+        Mockito.when(yearManager.getYears(Mockito.anyString(), Mockito.eq(transaction))).thenReturn(
+                new HashSet<>(Arrays.asList(new BaseObject(YEAR_KEY, CoreNamespace.tYear))));
         Mockito.when(
                 yearManager.getYearProperties(Mockito.anyString(), Mockito.eq(transaction), Mockito.eq(YEAR_KEY),
-                        Mockito.eq(createYearProperties().keySet()))).thenReturn(createYearProperties());
+                        Mockito.eq(createYearProperties().keySet()))).thenReturn(
+                BaseObjectMock.createBaseObject(YEAR_KEY, CoreNamespace.tYear, createYearProperties()));
 
         testee = new YearBusinessComponent(yearManager);
     }
@@ -45,10 +52,10 @@ public class YearBusinessComponentTest extends AbstractTestWithTransaction {
 
     @Test
     public void testStartYear() throws Exception {
-        String yearKey = testee.startYear(requestId, transaction, YEAR_NAME);
+        BaseObject year = testee.startYear(requestId, transaction, YEAR_NAME);
 
-        assertEquals(YEAR_KEY, yearKey);
-        Mockito.verify(yearManager).restoreYear(Mockito.anyString(), Mockito.eq(transaction), Mockito.eq(yearKey));
+        assertEquals(YEAR_KEY, year.getKey());
+        Mockito.verify(yearManager).restoreYear(Mockito.anyString(), Mockito.eq(transaction), Mockito.eq(year.getKey()));
         assertNoCallToTransaction();
     }
 
@@ -62,9 +69,9 @@ public class YearBusinessComponentTest extends AbstractTestWithTransaction {
 
     @Test
     public void testGetCurrentYearKey() throws Exception {
-        String currentYearKey = testee.getCurrentYearKey(requestId, transaction);
+        BaseObject currentYear = testee.getCurrentYearKey(requestId, transaction);
 
-        assertEquals(YEAR_KEY, currentYearKey);
+        assertEquals(YEAR_KEY, currentYear.getKey());
         Mockito.verify(yearManager).getCurrentYearKey(Mockito.anyString(), Mockito.eq(transaction));
         assertNoCallToTransaction();
     }
@@ -72,10 +79,10 @@ public class YearBusinessComponentTest extends AbstractTestWithTransaction {
     @Test
     public void testGetYearsWithProperties() throws Exception {
         Map<String, Object> properties = createYearProperties();
-        Map<String, Map<String, Object>> yearsWithProperties = testee.getYearsWithProperties(requestId, transaction, properties.keySet());
+        Set<BaseObject> yearsWithProperties = testee.getYearsWithProperties(requestId, transaction, properties.keySet());
 
         assertEquals(1, yearsWithProperties.size());
-        Map<String, Object> readProperties = yearsWithProperties.get(YEAR_KEY);
+        Map<String, Object> readProperties = yearsWithProperties.iterator().next().getProperties();
         assertMapEquals(properties, readProperties);
         assertNoCallToTransaction();
     }

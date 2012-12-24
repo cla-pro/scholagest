@@ -1,12 +1,12 @@
 package net.scholagest.services;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import net.scholagest.business.ITeacherBusinessComponent;
 import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
+import net.scholagest.objects.BaseObject;
 
 import com.google.inject.Inject;
 
@@ -27,24 +27,24 @@ public class TeacherService implements ITeacherService {
     // }
 
     @Override
-    public String createTeacher(String requestId, String teacherType, Map<String, Object> teacherProperties) throws Exception {
-        String teacherKey = null;
+    public BaseObject createTeacher(String requestId, String teacherType, Map<String, Object> teacherProperties) throws Exception {
+        BaseObject teacher = null;
 
         ITransaction transaction = database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
         try {
-            teacherKey = teacherBusinessComponent.createTeacher(requestId, transaction, teacherType, teacherProperties);
+            teacher = teacherBusinessComponent.createTeacher(requestId, transaction, teacherType, teacherProperties);
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
             e.printStackTrace();
         }
 
-        return teacherKey;
+        return teacher;
     }
 
     @Override
-    public Set<String> getTeachers(String requestId) throws Exception {
-        Set<String> teachers = null;
+    public Set<BaseObject> getTeachers(String requestId) throws Exception {
+        Set<BaseObject> teachers = null;
 
         ITransaction transaction = database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
         try {
@@ -59,8 +59,8 @@ public class TeacherService implements ITeacherService {
     }
 
     @Override
-    public Map<String, Map<String, Object>> getTeachersWithProperties(String requestId, Set<String> propertiesName) throws Exception {
-        Map<String, Map<String, Object>> teachers = null;
+    public Set<BaseObject> getTeachersWithProperties(String requestId, Set<String> propertiesName) throws Exception {
+        Set<BaseObject> teachers = null;
 
         ITransaction transaction = database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
         try {
@@ -94,10 +94,10 @@ public class TeacherService implements ITeacherService {
     }
 
     @Override
-    public Map<String, Object> getTeacherProperties(String requestId, String teacherKey, Set<String> propertiesName) throws Exception {
+    public BaseObject getTeacherProperties(String requestId, String teacherKey, Set<String> propertiesName) throws Exception {
         ITransaction transaction = database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
         try {
-            Map<String, Object> properties = teacherBusinessComponent.getTeacherProperties(requestId, transaction, teacherKey, propertiesName);
+            BaseObject properties = teacherBusinessComponent.getTeacherProperties(requestId, transaction, teacherKey, propertiesName);
             transaction.commit();
             return properties;
         } catch (Exception e) {
@@ -105,6 +105,6 @@ public class TeacherService implements ITeacherService {
             e.printStackTrace();
         }
 
-        return new HashMap<>();
+        return null;
     }
 }

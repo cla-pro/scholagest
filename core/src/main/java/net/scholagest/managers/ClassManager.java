@@ -7,6 +7,7 @@ import java.util.Set;
 import net.scholagest.database.ITransaction;
 import net.scholagest.managers.ontology.OntologyManager;
 import net.scholagest.managers.ontology.types.DBSet;
+import net.scholagest.objects.BaseObject;
 
 import com.google.inject.Inject;
 
@@ -17,10 +18,10 @@ public class ClassManager extends ObjectManager implements IClassManager {
     }
 
     @Override
-    public String createClass(String requestId, ITransaction transaction, String className, String yearName) throws Exception {
+    public BaseObject createClass(String requestId, ITransaction transaction, String className, String yearName) throws Exception {
         String classKey = CoreNamespace.classNs + "/" + yearName + "#" + className;
 
-        super.createObject(requestId, transaction, classKey, CoreNamespace.tClass);
+        BaseObject clazz = super.createObject(requestId, transaction, classKey, CoreNamespace.tClass);
 
         transaction.insert(CoreNamespace.classesBase, createClassesBasePropertyName(yearName, className), classKey, null);
 
@@ -32,7 +33,7 @@ public class ClassManager extends ObjectManager implements IClassManager {
         DBSet.createDBSet(transaction, teachersSetKey);
         transaction.insert(classKey, CoreNamespace.pYearClasses, teachersSetKey, null);
 
-        return classKey;
+        return clazz;
     }
 
     private String generateClassStudentsKey(String classKey) {
@@ -53,19 +54,21 @@ public class ClassManager extends ObjectManager implements IClassManager {
     }
 
     @Override
-    public Map<String, Object> getClassProperties(String requestId, ITransaction transaction, String classKey, Set<String> properties)
-            throws Exception {
-        return super.getObjectProperties(requestId, transaction, classKey, properties);
+    public BaseObject getClassProperties(String requestId, ITransaction transaction, String classKey, Set<String> properties) throws Exception {
+        BaseObject clazz = new BaseObject(classKey, CoreNamespace.tClass);
+        clazz.setProperties(super.getObjectProperties(requestId, transaction, classKey, properties));
+
+        return clazz;
     }
 
     @Override
-    public Set<String> getClasses(String requestId, ITransaction transaction, String yearKey) throws Exception {
-        Set<String> classKeySet = new HashSet<>();
+    public Set<BaseObject> getClasses(String requestId, ITransaction transaction, String yearKey) throws Exception {
+        Set<BaseObject> classKeySet = new HashSet<>();
         for (String className : transaction.getColumns(CoreNamespace.classesBase)) {
             String classKey = (String) transaction.get(CoreNamespace.classesBase, className, null);
             String classYearKey = (String) transaction.get(classKey, CoreNamespace.pClassYear, null);
             if (yearKey == null || yearKey.equals(classYearKey)) {
-                classKeySet.add(classKey);
+                classKeySet.add(new BaseObject(classKey, CoreNamespace.tClass));
             }
         }
 

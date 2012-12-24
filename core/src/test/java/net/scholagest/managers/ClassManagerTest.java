@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import net.scholagest.database.ITransaction;
 import net.scholagest.managers.ontology.OntologyManager;
+import net.scholagest.objects.BaseObject;
 import net.scholagest.utils.AbstractTestWithTransaction;
 import net.scholagest.utils.DatabaseReaderWriter;
 import net.scholagest.utils.InMemoryDatabase;
@@ -27,18 +28,18 @@ public class ClassManagerTest extends AbstractTestWithTransaction {
 
     @Test
     public void testCreateNewClass() throws Exception {
-        String classKey = classManager.createClass(requestId, transaction, CLASS_NAME, YEAR_NAME);
+        BaseObject clazz = classManager.createClass(requestId, transaction, CLASS_NAME, YEAR_NAME);
 
-        assertEquals(CLASS_KEY, classKey);
-        Mockito.verify(transaction).insert(Mockito.eq(CoreNamespace.classesBase), Mockito.eq(YEAR_NAME + "/" + CLASS_NAME), Mockito.eq(classKey),
-                Mockito.anyString());
+        assertEquals(CLASS_KEY, clazz.getKey());
+        Mockito.verify(transaction).insert(Mockito.eq(CoreNamespace.classesBase), Mockito.eq(YEAR_NAME + "/" + CLASS_NAME),
+                Mockito.eq(clazz.getKey()), Mockito.anyString());
     }
 
     @Test
     public void testGetClasses() throws Exception {
         super.fillTransactionWithDataSets(new String[] { "Class" });
 
-        Set<String> classKeys = classManager.getClasses(requestId, transaction, YEAR_KEY);
+        Set<BaseObject> classKeys = classManager.getClasses(requestId, transaction, YEAR_KEY);
         assertEquals(2, classKeys.size());
     }
 
@@ -48,12 +49,9 @@ public class ClassManagerTest extends AbstractTestWithTransaction {
 
         Map<String, Object> properties = createClassProperties();
         classManager.setClassProperties(requestId, transaction, CLASS_KEY, properties);
-        Map<String, Object> readProperties = classManager.getClassProperties(requestId, transaction, CLASS_KEY, properties.keySet());
+        BaseObject classProperties = classManager.getClassProperties(requestId, transaction, CLASS_KEY, properties.keySet());
 
-        assertEquals(properties.size(), readProperties.size());
-        for (String key : properties.keySet()) {
-            assertEquals(properties.get(key), readProperties.get(key));
-        }
+        assertMapEquals(properties, classProperties.getProperties());
     }
 
     private Map<String, Object> createClassProperties() {
@@ -83,12 +81,12 @@ public class ClassManagerTest extends AbstractTestWithTransaction {
 
     private static void createClass(ITransaction transaction, IClassManager classManager, String className, String yearName, String yearKey)
             throws Exception {
-        String classKey = classManager.createClass(UUID.randomUUID().toString(), transaction, className, yearName);
+        BaseObject clazz = classManager.createClass(UUID.randomUUID().toString(), transaction, className, yearName);
 
         Map<String, Object> properties = new HashMap<>();
         properties.put(CoreNamespace.pClassName, className);
         properties.put(CoreNamespace.pClassYear, yearKey);
 
-        classManager.setClassProperties(UUID.randomUUID().toString(), transaction, classKey, properties);
+        classManager.setClassProperties(UUID.randomUUID().toString(), transaction, clazz.getKey(), properties);
     }
 }

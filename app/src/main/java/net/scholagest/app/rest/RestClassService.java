@@ -9,13 +9,16 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.xml.ws.RequestWrapper;
 
 import net.scholagest.app.utils.JerseyHelper;
-import net.scholagest.app.utils.JsonObject;
 import net.scholagest.managers.CoreNamespace;
+import net.scholagest.managers.ontology.OntologyElement;
+import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IClassService;
 import net.scholagest.services.IOntologyService;
 
@@ -27,12 +30,14 @@ public class RestClassService extends AbstractService {
     private final static String REQUEST_ID_PREFIX = "class-";
     private final IClassService classService;
     private final IOntologyService ontologyService;
+    private JsonConverter converter;
 
     @Inject
     public RestClassService(IClassService classService, IOntologyService ontologyService) {
         super(ontologyService);
         this.classService = classService;
         this.ontologyService = ontologyService;
+        this.converter = new JsonConverter(this.ontologyService);
     }
 
     @GET
@@ -48,43 +53,59 @@ public class RestClassService extends AbstractService {
         classInfo.put(CoreNamespace.pClassYear, yearKey);
 
         // 2. Update the database.
-        String classKey = null;
+        BaseObject clazz = null;
         try {
-            classKey = classService.createClass(requestId, classInfo);
+            clazz = classService.createClass(requestId, classInfo);
+
+            Gson gson = new Gson();
+            String json = gson.toJson(converter.convertObjectToJson(clazz, null));
+            return "{info: " + json + "}";
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode=0, message='" + e.getMessage() + "'}";
         }
-
-        return new JsonObject("classKey", classKey).toString();
     }
 
     @GET
     @Path("/getClasses")
     @Produces("text/json")
-    public String getClasses(@QueryParam("token") String token, @QueryParam("yearList") Set<String> yearKeyList,
+    public String getClasses(@QueryParam("token") String token, @QueryParam("years") Set<String> yearKeyList,
             @QueryParam("properties") Set<String> properties) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
         try {
-            Map<String, Set<String>> classesKeySet = classService.getClasses(requestId, yearKeyList);
-            Map<String, Map<String, Map<String, Object>>> classesInfo = new HashMap<>();
+            Map<String, Set<BaseObject>> classesKeySet = classService.getClassesForYears(requestId, yearKeyList);
+            Map<String, Set<BaseObject>> classesInfo = new HashMap<>();
 
             for (String yearKey : classesKeySet.keySet()) {
-                Map<String, Map<String, Object>> yearClassesInfo = new HashMap<>();
-                for (String classKey : classesKeySet.get(yearKey)) {
-                    Map<String, Object> classInfo = classService.getClassProperties(requestId, classKey, properties);
-                    yearClassesInfo.put(classKey, classInfo);
+                Set<BaseObject> yearClassesInfo = new HashSet<>();
+                for (BaseObject clazz : classesKeySet.get(yearKey)) {
+                    BaseObject classInfo = classService.getClassProperties(requestId, clazz.getKey(), properties);
+                    yearClassesInfo.add(classInfo);
                 }
                 classesInfo.put(yearKey, yearClassesInfo);
             }
 
-            Gson gson = new Gson();
-            String json = gson.toJson(classesInfo);
-            return "{classes: " + json + "}";
+            String json = buildJsonForClasses(classesInfo);
+            return "{info: " + json + "}";
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode=0, message='" + e.getMessage() + "'}";
         }
+    }
+
+    private String buildJsonForClasses(Map<String, Set<BaseObject>> yearClassesInfo) {
+        String jsonString = "{";
+        Gson gson = new Gson();
+
+        for (String yearKey : yearClassesInfo.keySet()) {
+            if (!jsonString.equals("{")) {
+                jsonString += ",";
+            }
+
+            jsonString += "\"" + yearKey + "\": " + gson.toJson(converter.convertObjectToJson(yearClassesInfo.get(yearKey)));
+        }
+
+        return jsonString + "}";
     }
 
     @GET
@@ -97,16 +118,38 @@ public class RestClassService extends AbstractService {
             if (properties == null || properties.isEmpty()) {
                 properties = this.ontologyService.getPropertiesForType(CoreNamespace.tClass);
             }
-            Map<String, Object> info = classService.getClassProperties(requestId, classKey, new HashSet<String>(properties));
+            BaseObject classInfo = classService.getClassProperties(requestId, classKey, new HashSet<String>(properties));
 
-            Map<String, Map<String, Object>> result = extractOntology(info);
+            Map<String, OntologyElement> ontology = extractOntology(classInfo.getProperties().keySet());
 
-            Gson gson = new Gson();
-            String json = gson.toJson(result);
+            String json = new Gson().toJson(converter.convertObjectToJson(classInfo, ontology));
             return "{info: " + json + "}";
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode=0, message='" + e.getMessage() + "'}";
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    @RequestWrapper(className = "net.scholagest.app.rest.jaxws.SetClassProperties", localName = "setClassProperties",
+            targetNamespace = "http://rest.app.scholagest.net/")
+    @POST
+    @Path("/setProperties")
+    @Produces("text/json")
+    public String setClassProperties(@QueryParam("token") String token, String receivedContent) {
+        String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+        try {
+            Map<String, Object> fromJson = new Gson().fromJson(receivedContent, Map.class);
+            System.out.println(fromJson);
+            // Map<String, Object> properties = JerseyHelper.listToMap(names,
+            // new ArrayList<Object>(values));
+
+            // classService.setClassProperties(requestId, classKey, properties);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{errorCode=0, message='" + e.getMessage() + "'}";
+        }
+
+        return "{}";
     }
 }

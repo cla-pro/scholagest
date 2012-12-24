@@ -6,22 +6,28 @@ import java.util.Map;
 
 import net.scholagest.database.DatabaseException;
 import net.scholagest.managers.ontology.types.DBSet;
+import net.scholagest.objects.BaseObject;
 
 public class DBToKdomConverter {
-    public Map<String, Object> convertDBToKdom(Map<String, Object> toConvert) throws DatabaseException {
-        Map<String, Object> convertedMap = new HashMap<String, Object>();
+    public BaseObject convertDbToKdom(BaseObject toConvert) throws DatabaseException {
+        BaseObject clone = new BaseObject(toConvert.getKey(), toConvert.getType());
 
-        for (String propertyName : toConvert.keySet()) {
-            Object value = toConvert.get(propertyName);
-            if (value instanceof DBSet) {
-                DBSet dbSet = (DBSet) value;
-                KSet kSet = new KSet(dbSet.getKey(), new HashSet<Object>(dbSet.values()));
-                convertedMap.put(propertyName, kSet);
+        Map<String, Object> convertedProperties = new HashMap<>();
+        for (String propertyName : toConvert.getProperties().keySet()) {
+            Object convertedValue = null;
+            Object dbValue = toConvert.getProperty(propertyName);
+            if (dbValue instanceof DBSet) {
+                DBSet dbSet = (DBSet) dbValue;
+                convertedValue = new KSet(dbSet.getKey(), new HashSet<Object>(dbSet.values()));
+            } else if (dbValue instanceof BaseObject) {
+                convertedValue = convertDbToKdom((BaseObject) dbValue);
             } else {
-                convertedMap.put(propertyName, value);
+                convertedValue = dbValue;
             }
+            convertedProperties.put(propertyName, convertedValue);
         }
+        clone.setProperties(convertedProperties);
 
-        return convertedMap;
+        return clone;
     }
 }

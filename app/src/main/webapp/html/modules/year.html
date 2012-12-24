@@ -152,137 +152,46 @@
                     <button id="btnYearNewClass" class="new-class" onclick="createNewClass()" disabled="disabled">Nouvelle classe</button>
                     <button id="btnYearRemoveClass" class="remove-class" onclick="deleteClass()" disabled="disabled">Supprimer une classe</button>
                     <hr />
-                    <div id="year-search-list-div" class="search-list">
-<!--                         <ul class="search-list"> -->
-<!--                             <li style="width: 100%"><div style="width: 100%; background-color: #ADD8E6">2011-2012</div></li> -->
-<!--                             <li class="search-list-item">Classe 1P A</li> -->
-<!--                             <li class="search-list-item">Classe 1P B</li> -->
-<!--                             <li class="search-list-item-selected">Classe 2P A</li> -->
-<!--                             <li class="search-list-item">Classe 2P B</li> -->
-<!--                             <li class="search-list-item">Classe 3P A</li> -->
-<!--                             <li class="search-list-item">Classe 3P B</li> -->
-<!--                             <li class="search-list-item">Classe 3P C</li> -->
-<!--                             <li class="search-list-item">Classe 4P A</li> -->
-<!--                             <li class="search-list-item">Classe 4P B</li> -->
-<!--                             <li class="search-list-item">Classe 5P A</li> -->
-<!--                             <li class="search-list-item">Classe 5P B</li> -->
-<!--                             <li class="search-list-item">Classe 6P A</li> -->
-<!--                             <li class="search-list-item">Classe 7P A</li> -->
-<!--                             <li class="search-list-item">Classe 7P B</li> -->
-<!--                             <li class="search-list-item">Classe 8P A</li> -->
-<!--                             <li class="search-list-item">Classe 8P B</li> -->
-<!--                             <li><hr /></li> -->
-<!--                             <li style="width: 100%"><div style="width: 100%; background-color: #ADD8E6">2010-2011</div></li> -->
-<!--                             <li class="search-list-item">Classe 1P A</li> -->
-<!--                             <li class="search-list-item">Classe 1P B</li> -->
-<!--                             <li><hr /></li> -->
-<!--                             <li style="width: 100%"><div style="width: 100%; background-color: #ADD8E6">2009-2010</div></li> -->
-<!--                             <li class="search-list-item">Classe 1P A</li> -->
-<!--                             <li class="search-list-item">Classe 1P B</li> -->
-<!--                         </ul> -->
-                    </div>
+                    <div id="year-search-list-div" class="search-list"></div>
                 </div>
             </td>
             <td valign="top" style="width: 80%">
-                <div id="class-info" class="class-info">
-<!--                     <div id="addRemoveStudents" style="width:350px" data-dojo-type="dijit.Dialog" title="Ajouter/supprimer des élèves"> -->
-<!--                         <table style="width: 100%"> -->
-<!--                             <tr> -->
-<!--                                 <td colspan="2"><h2>Class 2P A</h2></td> -->
-<!--                             </tr><tr> -->
-<!--                                 <td>Non-assignés</td><td>Assignés</td> -->
-<!--                             </tr><tr> -->
-<!--                                 <td><div style="border: 1px solid black; height: 100%"><div id="free-students"></div></div></td> -->
-<!--                                 <td valign="top"><div style="border: 1px solid black; height: 100%"><div id="class-students"></div></div></td> -->
-<!--                             </tr><tr> -->
-<!--                                 <td align="center"><button>Ok</button></td><td align="center"><button>Annuler</button></td> -->
-<!--                             </tr> -->
-<!--                         </table> -->
-<!--                     </div> -->
-<!--                     <div id="addRemoveTeachers" style="width:350px" data-dojo-type="dijit.Dialog" title="Ajouter/supprimer des professeurs"> -->
-<!--                         <table style="width: 100%"> -->
-<!--                             <tr> -->
-<!--                                 <td colspan="2"><h2>Class 2P A</h2></td> -->
-<!--                             </tr><tr> -->
-<!--                                 <td>Non-assignés</td><td>Assignés</td> -->
-<!--                             </tr><tr> -->
-<!--                                 <td><div style="border: 1px solid black; height: 100%"><div id="free-teachers"></div></div></td> -->
-<!--                                 <td valign="top"><div style="border: 1px solid black; height: 100%"><div id="class-teachers"></div></div></td> -->
-<!--                             </tr><tr> -->
-<!--                                 <td align="center"><button>Ok</button></td><td align="center"><button>Annuler</button></td> -->
-<!--                             </tr> -->
-<!--                         </table> -->
-<!--                     </div> -->
-                    <!-- <script type="text/javascript">
-                        var rawdata1 = [
-                                { label: 'Elève 6', id: '6' },
-                                { label: 'Elève 7', id: '7' },
-                                { label: 'Elève 8', id: '8' },
-                                { label: 'Elève 9', id: '9'  },
-                                { label: 'Elève 10', id: '10' },
-                                { label: 'Elève 11', id: '11' },
-                                { label: 'Elève 12', id: '12' },
-                                { label: 'Elève 13', id: '13' },
-                                { label: 'Elève 14', id: '14' } ];
-                        var rawdata2 = [
-                                { label: 'Elève 1', id: '1' },
-                                { label: 'Elève 2', id: '2' },
-                                { label: 'Elève 3', id: '3' },
-                                { label: 'Elève 4', id: '4'  },
-                                { label: 'Elève 5', id: '5' } ];
-                        var rawdata3 = [
-                                { label: 'Professeur 1', id: '6' },
-                                { label: 'Professeur 2', id: '7' } ];
-                        var rawdata4 = [
-                                { label: 'Charlène Dupont', id: '1' } ];
-                        
-                        function prepareTree(rawdata, divName) {
-                            var store = new dojo.data.ItemFileWriteStore({
-                                data: { identifier: 'id', label : 'label', items: rawdata }
-                            });
-                            var treeModel = new dijit.tree.ForestStoreModel({ store: store });
-                            var treeControl = new dijit.Tree({
-                                model: treeModel,
-                                dndController: "dijit.tree.dndSource",
-                                showRoot: false,
-                                _createTreeNode: function(args){
-                                    var tnode = new dijit._TreeNode(args);
-                                    tnode.labelNode.innerHTML = args.label;
-                                    return tnode;
-                                }
-                            }, divName );
-                        }
-                        function prepare() {
-                            prepareTree(rawdata1, "free-students");
-                            prepareTree(rawdata2, "class-students");
-                            prepareTree(rawdata3, "free-teachers");
-                            prepareTree(rawdata4, "class-teachers");
-                        }
-                        
-                        dojo.ready(prepare);
-                        
-                        function addSuppressTeacher() {
-                            dijit.byId("addRemoveTeachers").show();
-                        };
-                        function addSuppressStudent() {
-                            dijit.byId("addRemoveStudents").show();
-                        };
-                    </script>-->
-                    
-<!--                     <h1>Classe 2P A</h1> -->
-<!--                     <h3>Professeur</h3> -->
-<!--                     <a href="#">Charlène Dupont</a><br /> -->
-<!--                     <button onclick="addSuppressTeacher()">Ajouter/supprimer des professeurs</button> -->
-                    
-<!--                     <h3>Elèves</h3> -->
-<!--                     <ul class="search-list"> -->
-<!--                     <li><a href="#">Elève 1</a></li> -->
-<!--                     <li><a href="#">Elève 2</a></li> -->
-<!--                     <li><a href="#">Elève 3</a></li> -->
-<!--                     <li><a href="#">Elève 4</a></li> -->
-<!--                     <li><a href="#">Elève 5</a></li> -->
-<!--                     <li><button onclick="addSuppressStudent()">Ajouter/supprimer des élèves</button></li> -->
-<!--                     </ul> -->
+                <div id="class-data" class="class-info">
+                    <div id="addRemoveStudents" style="width:350px" data-dojo-type="dijit.Dialog" title="Ajouter/supprimer des élèves">
+                        <table style="width: 100%">
+                            <tr>
+                                <td colspan="3"><h2>Class 2P A</h2></td>
+                            </tr><tr>
+                                <td>Non-assignés</td><td></td><td>Assignés</td>
+                            </tr><tr>
+                                <td><div style="border: 1px solid black; height: 200px"><div id="free-students"></div></div></td>
+                                <td>
+                                    <table>
+                                        <tr><td><button id="fromFreeToClassStudents">-&gt;</button></td></tr>
+                                        <tr><td><button id="fromClassToFreeStudents">&lt;-</button></td></tr>
+                                </td>
+                                <td valign="top"><div style="border: 1px solid black; height: 200px"><div id="class-students"></div></div></td>
+                            </tr><tr>
+                                <td align="center"><button id="btnAddRemoveStudentsOk">Ok</button></td>
+                                <td></td>
+                                <td align="center"><button onclick="dijit.byId('addRemoveStudents').hide();">Annuler</button></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div id="addRemoveTeachers" style="width:350px" data-dojo-type="dijit.Dialog" title="Ajouter/supprimer des professeurs">
+                        <table style="width: 100%">
+                            <tr>
+                                <td colspan="2"><h2>Class 2P A</h2></td>
+                            </tr><tr>
+                                <td>Non-assignés</td><td>Assignés</td>
+                            </tr><tr>
+                                <td><div style="border: 1px solid black; height: 100%"><div id="free-teachers"></div></div></td>
+                                <td valign="top"><div style="border: 1px solid black; height: 100%"><div id="class-teachers"></div></div></td>
+                            </tr><tr>
+                                <td align="center"><button>Ok</button></td><td align="center"><button>Annuler</button></td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
             </td>
         </tr>

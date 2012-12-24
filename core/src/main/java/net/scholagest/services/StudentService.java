@@ -6,6 +6,7 @@ import java.util.Set;
 import net.scholagest.business.IStudentBusinessComponent;
 import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
+import net.scholagest.objects.BaseObject;
 
 import com.google.inject.Inject;
 
@@ -20,24 +21,24 @@ public class StudentService implements IStudentService {
     }
 
     @Override
-    public String createStudent(String requestId, Map<String, Object> personalProperties) throws Exception {
-        String studentKey = null;
+    public BaseObject createStudent(String requestId, Map<String, Object> personalProperties) throws Exception {
+        BaseObject student = null;
 
         ITransaction transaction = this.database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
         try {
-            studentKey = studentBusinessComponent.createStudent(requestId, transaction, personalProperties);
+            student = studentBusinessComponent.createStudent(requestId, transaction, personalProperties);
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
             e.printStackTrace();
         }
 
-        return studentKey;
+        return student;
     }
 
     @Override
-    public void updateStudentProperties(String requestId, String studentKey, Map<String, Object> personalProperties, Map<String, Object> medicalProperties)
-            throws Exception {
+    public void updateStudentProperties(String requestId, String studentKey, Map<String, Object> personalProperties,
+            Map<String, Object> medicalProperties) throws Exception {
         ITransaction transaction = this.database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
         try {
             studentBusinessComponent.updateStudentProperties(requestId, transaction, studentKey, personalProperties, medicalProperties);
@@ -49,8 +50,8 @@ public class StudentService implements IStudentService {
     }
 
     @Override
-    public Map<String, Object> getStudentPersonalProperties(String requestId, String studentKey, Set<String> properties) throws Exception {
-        Map<String, Object> personalProperties = null;
+    public BaseObject getStudentPersonalProperties(String requestId, String studentKey, Set<String> properties) throws Exception {
+        BaseObject personalProperties = null;
 
         ITransaction transaction = this.database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
         try {
@@ -65,8 +66,8 @@ public class StudentService implements IStudentService {
     }
 
     @Override
-    public Map<String, Object> getStudentMedicalProperties(String requestId, String studentKey, Set<String> properties) throws Exception {
-        Map<String, Object> medicalProperties = null;
+    public BaseObject getStudentMedicalProperties(String requestId, String studentKey, Set<String> properties) throws Exception {
+        BaseObject medicalProperties = null;
 
         ITransaction transaction = this.database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
         try {
@@ -81,8 +82,8 @@ public class StudentService implements IStudentService {
     }
 
     @Override
-    public Map<String, Map<String, Object>> getStudentsWithProperties(String requestId, Set<String> properties) throws Exception {
-        Map<String, Map<String, Object>> students = null;
+    public Set<BaseObject> getStudentsWithProperties(String requestId, Set<String> properties) throws Exception {
+        Set<BaseObject> students = null;
 
         ITransaction transaction = this.database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
         try {

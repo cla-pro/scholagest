@@ -7,6 +7,7 @@ import java.util.Set;
 import net.scholagest.business.IClassBusinessComponent;
 import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
+import net.scholagest.objects.BaseObject;
 
 import com.google.inject.Inject;
 
@@ -21,12 +22,12 @@ public class ClassService implements IClassService {
     }
 
     @Override
-    public String createClass(String requestId, Map<String, Object> classProperties) throws Exception {
-        String classKey = null;
+    public BaseObject createClass(String requestId, Map<String, Object> classProperties) throws Exception {
+        BaseObject clazz = null;
 
         ITransaction transaction = this.database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
         try {
-            classKey = classBusinessComponent.createClass(requestId, transaction, classProperties);
+            clazz = classBusinessComponent.createClass(requestId, transaction, classProperties);
 
             transaction.commit();
         } catch (Exception e) {
@@ -34,16 +35,16 @@ public class ClassService implements IClassService {
             e.printStackTrace();
         }
 
-        return classKey;
+        return clazz;
     }
 
     @Override
-    public Map<String, Set<String>> getClasses(String requestId, Set<String> yearKeySet) throws Exception {
-        Map<String, Set<String>> classesKey = new HashMap<>();
+    public Map<String, Set<BaseObject>> getClassesForYears(String requestId, Set<String> yearKeySet) throws Exception {
+        Map<String, Set<BaseObject>> classes = new HashMap<>();
 
         ITransaction transaction = this.database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
         try {
-            classesKey = classBusinessComponent.getClassesForYear(requestId, transaction, yearKeySet);
+            classes = classBusinessComponent.getClassesForYears(requestId, transaction, yearKeySet);
 
             transaction.commit();
         } catch (Exception e) {
@@ -51,12 +52,12 @@ public class ClassService implements IClassService {
             e.printStackTrace();
         }
 
-        return classesKey;
+        return classes;
     }
 
     @Override
-    public Map<String, Object> getClassProperties(String requestId, String classKey, Set<String> propertiesName) throws Exception {
-        Map<String, Object> classInfo = null;
+    public BaseObject getClassProperties(String requestId, String classKey, Set<String> propertiesName) throws Exception {
+        BaseObject classInfo = null;
 
         ITransaction transaction = this.database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
         try {
@@ -69,6 +70,18 @@ public class ClassService implements IClassService {
         }
 
         return classInfo;
+    }
+
+    @Override
+    public void setClassProperties(String requestId, String classKey, Map<String, Object> properties) throws Exception {
+        ITransaction transaction = database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+        try {
+            classBusinessComponent.setClassProperties(requestId, transaction, classKey, properties);
+            transaction.commit();
+        } catch (Exception e) {
+            transaction.rollback();
+            e.printStackTrace();
+        }
     }
 
     // @Override

@@ -13,8 +13,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
 import net.scholagest.app.utils.JerseyHelper;
-import net.scholagest.app.utils.JsonObject;
 import net.scholagest.managers.CoreNamespace;
+import net.scholagest.managers.ontology.OntologyElement;
+import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IOntologyService;
 import net.scholagest.services.ITeacherService;
 
@@ -26,12 +27,14 @@ public class RestTeacherService extends AbstractService {
     private final static String REQUEST_ID_PREFIX = "teacher-";
     private final ITeacherService teacherService;
     private final IOntologyService ontologyService;
+    private JsonConverter converter;
 
     @Inject
     public RestTeacherService(ITeacherService teacherService, IOntologyService ontologyService) {
         super(ontologyService);
         this.teacherService = teacherService;
         this.ontologyService = ontologyService;
+        this.converter = new JsonConverter(this.ontologyService);
     }
 
     @GET
@@ -46,15 +49,17 @@ public class RestTeacherService extends AbstractService {
         Map<String, Object> teacherProperties = JerseyHelper.listToMap(keys, new ArrayList<Object>(values));
 
         // 2. Update the database.
-        String teacherKey = null;
+        BaseObject teacher = null;
         try {
-            teacherKey = teacherService.createTeacher(requestId, teacherType, teacherProperties);
+            teacher = teacherService.createTeacher(requestId, teacherType, teacherProperties);
+
+            Gson gson = new Gson();
+            String json = gson.toJson(converter.convertObjectToJson(teacher, null));
+            return "{info: " + json + "}";
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode=0, message='" + e.getMessage() + "'}";
         }
-
-        return new JsonObject("teacherKey", teacherKey).toString();
     }
 
     @GET
@@ -63,11 +68,10 @@ public class RestTeacherService extends AbstractService {
     public String getTeachers(@QueryParam("token") String token, @QueryParam("properties") Set<String> properties) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
         try {
-            Map<String, Map<String, Object>> teachersInfo = teacherService.getTeachersWithProperties(requestId, properties);
+            Set<BaseObject> teachers = teacherService.getTeachersWithProperties(requestId, properties);
 
-            Gson gson = new Gson();
-            String json = gson.toJson(teachersInfo);
-            return "{teachers: " + json + "}";
+            String json = new Gson().toJson(convertToJsonWithOntology(teachers));
+            return "{info: " + json + "}";
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode=0, message='" + e.getMessage() + "'}";
@@ -84,12 +88,11 @@ public class RestTeacherService extends AbstractService {
             if (properties == null || properties.isEmpty()) {
                 properties = ontologyService.getPropertiesForType(CoreNamespace.tTeacher);
             }
-            Map<String, Object> info = teacherService.getTeacherProperties(requestId, teacherKey, new HashSet<String>(properties));
+            BaseObject teacherInfo = teacherService.getTeacherProperties(requestId, teacherKey, new HashSet<String>(properties));
 
-            Map<String, Map<String, Object>> result = extractOntology(info);
+            Map<String, OntologyElement> ontology = extractOntology(teacherInfo.getProperties().keySet());
 
-            Gson gson = new Gson();
-            String json = gson.toJson(result);
+            String json = new Gson().toJson(converter.convertObjectToJson(teacherInfo, ontology));
             return "{info: " + json + "}";
         } catch (Exception e) {
             e.printStackTrace();

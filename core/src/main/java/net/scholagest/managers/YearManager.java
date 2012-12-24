@@ -10,6 +10,7 @@ import net.scholagest.exception.ScholagestException;
 import net.scholagest.managers.ontology.OntologyManager;
 import net.scholagest.managers.ontology.RDF;
 import net.scholagest.managers.ontology.types.DBSet;
+import net.scholagest.objects.BaseObject;
 
 import com.google.inject.Inject;
 
@@ -21,10 +22,10 @@ public class YearManager extends ObjectManager implements IYearManager {
     }
 
     @Override
-    public String createNewYear(String requestId, ITransaction transaction, String yearName) throws Exception {
+    public BaseObject createNewYear(String requestId, ITransaction transaction, String yearName) throws Exception {
         String yearKey = generateYearKey(yearName);
 
-        transaction.insert(yearKey, RDF.type, CoreNamespace.tYear, null);
+        BaseObject year = super.createObject(requestId, transaction, yearKey, CoreNamespace.tYear);
 
         Map<String, Object> properties = new HashMap<>();
         properties.put(CoreNamespace.pYearName, yearName);
@@ -36,7 +37,7 @@ public class YearManager extends ObjectManager implements IYearManager {
         DBSet.createDBSet(transaction, setKey);
         transaction.insert(yearKey, CoreNamespace.pYearClasses, setKey, null);
 
-        return yearKey;
+        return year;
     }
 
     private String generateYearClassesKey(String yearKey) {
@@ -70,25 +71,32 @@ public class YearManager extends ObjectManager implements IYearManager {
     }
 
     @Override
-    public String getCurrentYearKey(String requestId, ITransaction transaction) throws Exception {
-        return (String) transaction.get(CoreNamespace.yearsBase, CoreNamespace.pYearCurrent, null);
+    public BaseObject getCurrentYearKey(String requestId, ITransaction transaction) throws Exception {
+        String currentYearKey = (String) transaction.get(CoreNamespace.yearsBase, CoreNamespace.pYearCurrent, null);
+
+        if (currentYearKey == null) {
+            return null;
+        }
+        return new BaseObject(currentYearKey, CoreNamespace.tYear);
     }
 
     @Override
-    public Set<String> getYears(String requestId, ITransaction transaction) throws Exception {
-        Set<String> yearSet = new HashSet<>();
+    public Set<BaseObject> getYears(String requestId, ITransaction transaction) throws Exception {
+        Set<BaseObject> yearSet = new HashSet<>();
 
         for (String col : transaction.getColumns(CoreNamespace.yearsBase)) {
-            yearSet.add((String) transaction.get(CoreNamespace.yearsBase, col, null));
+            yearSet.add(new BaseObject((String) transaction.get(CoreNamespace.yearsBase, col, null), CoreNamespace.tYear));
         }
 
         return yearSet;
     }
 
     @Override
-    public Map<String, Object> getYearProperties(String requestId, ITransaction transaction, String yearKey, Set<String> propertiesName)
-            throws Exception {
-        return super.getObjectProperties(requestId, transaction, yearKey, propertiesName);
+    public BaseObject getYearProperties(String requestId, ITransaction transaction, String yearKey, Set<String> propertiesName) throws Exception {
+        BaseObject year = new BaseObject(yearKey, CoreNamespace.tYear);
+        year.setProperties(super.getObjectProperties(requestId, transaction, yearKey, propertiesName));
+
+        return year;
     }
 
     @Override

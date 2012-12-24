@@ -41,9 +41,9 @@ public class ClassServiceTest extends AbstractTest {
 
     @Test
     public void getClasses() throws Exception {
-        testee.getClasses(requestId, new HashSet<String>());
+        testee.getClassesForYears(requestId, new HashSet<String>());
 
-        Mockito.verify(classBusinessComponent).getClassesForYear(Mockito.eq(requestId), (ITransaction) Mockito.any(), Mockito.anySetOf(String.class));
+        Mockito.verify(classBusinessComponent).getClassesForYears(Mockito.eq(requestId), (ITransaction) Mockito.any(), Mockito.anySetOf(String.class));
         Mockito.verify(database).getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
     }
 

@@ -6,10 +6,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.scholagest.database.DatabaseException;
+import net.scholagest.objects.BaseObject;
+import net.scholagest.utils.AbstractTest;
 
 import org.junit.Test;
 
-public class DBToKdomConverterTest {
+public class DBToKdomConverterTest extends AbstractTest {
     @Test
     public void testConvertDBToKdomBasicTypes() throws DatabaseException {
         Map<String, Object> values = new HashMap<String, Object>();
@@ -17,11 +19,12 @@ public class DBToKdomConverterTest {
         values.put("key2", 2);
         values.put("key3", false);
 
-        Map<String, Object> converted = new DBToKdomConverter().convertDBToKdom(values);
+        BaseObject toConvert = new BaseObject("key", "type");
+        toConvert.setProperties(values);
+        BaseObject converted = new DBToKdomConverter().convertDbToKdom(toConvert);
 
-        assertEquals(values.size(), converted.size());
-        for (String key : values.keySet()) {
-            assertEquals(values.get(key), converted.get(key));
-        }
+        assertEquals(toConvert.getKey(), converted.getKey());
+        assertEquals(toConvert.getType(), converted.getType());
+        assertMapEquals(values, converted.getProperties());
     }
 }

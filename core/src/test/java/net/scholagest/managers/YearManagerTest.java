@@ -11,6 +11,7 @@ import java.util.UUID;
 
 import net.scholagest.exception.ScholagestException;
 import net.scholagest.managers.ontology.OntologyManager;
+import net.scholagest.objects.BaseObject;
 import net.scholagest.utils.AbstractTestWithTransaction;
 import net.scholagest.utils.DatabaseReaderWriter;
 import net.scholagest.utils.InMemoryDatabase;
@@ -26,17 +27,17 @@ public class YearManagerTest extends AbstractTestWithTransaction {
 
     @Test
     public void testCreateNewYear() throws Exception {
-        String yearKey = yearManager.createNewYear(requestId, transaction, YEAR_NAME);
+        BaseObject year = yearManager.createNewYear(requestId, transaction, YEAR_NAME);
 
         Mockito.verify(transaction).insert(Mockito.anyString(), Mockito.eq(CoreNamespace.pYearName), Mockito.eq(YEAR_NAME), Mockito.anyString());
-        assertEquals(YEAR_KEY, yearKey);
+        assertEquals(YEAR_KEY, year.getKey());
     }
 
     @Test
     public void testGetCurrentYearKey() throws Exception {
         super.fillTransactionWithDataSets(new String[] { "YearRunning" });
 
-        assertEquals(YEAR_KEY, yearManager.getCurrentYearKey(requestId, transaction));
+        assertEquals(YEAR_KEY, yearManager.getCurrentYearKey(requestId, transaction).getKey());
     }
 
     @Test
@@ -45,7 +46,7 @@ public class YearManagerTest extends AbstractTestWithTransaction {
 
         assertNull(yearManager.getCurrentYearKey(requestId, transaction));
         yearManager.restoreYear(requestId, transaction, YEAR_KEY);
-        assertEquals(YEAR_KEY, yearManager.getCurrentYearKey(requestId, transaction));
+        assertEquals(YEAR_KEY, yearManager.getCurrentYearKey(requestId, transaction).getKey());
     }
 
     @Test(expected = ScholagestException.class)
@@ -70,7 +71,7 @@ public class YearManagerTest extends AbstractTestWithTransaction {
     public void testBackupYear() throws Exception {
         super.fillTransactionWithDataSets(new String[] { "YearRunning" });
 
-        assertEquals(YEAR_KEY, yearManager.getCurrentYearKey(requestId, transaction));
+        assertEquals(YEAR_KEY, yearManager.getCurrentYearKey(requestId, transaction).getKey());
         yearManager.backupYear(requestId, transaction);
         assertNull(yearManager.getCurrentYearKey(requestId, transaction));
     }
@@ -80,8 +81,8 @@ public class YearManagerTest extends AbstractTestWithTransaction {
 
         IYearManager yearManager = new YearManager(new OntologyManager());
 
-        String yearKey = yearManager.createNewYear(UUID.randomUUID().toString(), transaction, YEAR_NAME);
-        yearManager.restoreYear(UUID.randomUUID().toString(), transaction, yearKey);
+        BaseObject year = yearManager.createNewYear(UUID.randomUUID().toString(), transaction, YEAR_NAME);
+        yearManager.restoreYear(UUID.randomUUID().toString(), transaction, year.getKey());
         Map<String, Map<String, Map<String, Object>>> databaseContent = new HashMap<>();
         databaseContent.put(transaction.getKeyspace(), transaction.getValues());
 

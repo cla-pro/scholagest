@@ -5,12 +5,7 @@ import java.util.HashSet;
 import java.util.UUID;
 
 import net.scholagest.business.ITeacherBusinessComponent;
-import net.scholagest.business.TeacherBusinessComponent;
-import net.scholagest.database.Database;
-import net.scholagest.database.DefaultDatabaseConfiguration;
 import net.scholagest.database.ITransaction;
-import net.scholagest.managers.TeacherManager;
-import net.scholagest.managers.ontology.OntologyManager;
 import net.scholagest.utils.AbstractTest;
 import net.scholagest.utils.InMemoryDatabase;
 
@@ -79,21 +74,5 @@ public class TeacherServiceTest extends AbstractTest {
         Mockito.verify(teacherBusinessComponent).getTeacherProperties(Mockito.eq(requestId), (ITransaction) Mockito.any(), Mockito.eq(teacherKey),
                 Mockito.anySetOf(String.class));
         Mockito.verify(database).getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
-    }
-
-    public static void main(String[] args) throws Exception {
-        String requestId = "teacher-" + UUID.randomUUID().toString();
-        Database database = new Database(new DefaultDatabaseConfiguration());
-        database.startup();
-        ITeacherService teacherService = new TeacherService(database, new TeacherBusinessComponent(new TeacherManager(new OntologyManager())));
-
-        System.out.println("Teacher key: " + teacherService.createTeacher(requestId, "Normal", null));
-
-        System.out.println("\n\nTeachers key");
-        for (String key : teacherService.getTeachers(requestId)) {
-            System.out.println("    " + key);
-        }
-
-        database.shutdown();
     }
 }

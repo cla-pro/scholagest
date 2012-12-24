@@ -9,6 +9,8 @@ import net.scholagest.database.ITransaction;
 import net.scholagest.managers.CoreNamespace;
 import net.scholagest.managers.IClassManager;
 import net.scholagest.managers.IYearManager;
+import net.scholagest.objects.BaseObject;
+import net.scholagest.services.kdom.DBToKdomConverter;
 
 import com.google.inject.Inject;
 
@@ -23,36 +25,35 @@ public class ClassBusinessComponent implements IClassBusinessComponent {
     }
 
     @Override
-    public String createClass(String requestId, ITransaction transaction, Map<String, Object> classProperties) throws Exception {
+    public BaseObject createClass(String requestId, ITransaction transaction, Map<String, Object> classProperties) throws Exception {
         String yearKey = (String) classProperties.get(CoreNamespace.pClassYear);
 
         Set<String> properties = new HashSet<>();
         properties.add(CoreNamespace.pYearName);
-        String yearName = (String) yearManager.getYearProperties(requestId, transaction, yearKey, properties).get(CoreNamespace.pYearName);
+        String yearName = (String) yearManager.getYearProperties(requestId, transaction, yearKey, properties).getProperty(CoreNamespace.pYearName);
 
-        String classKey = classManager.createClass(requestId, transaction, (String) classProperties.get(CoreNamespace.pClassName), yearName);
-        classManager.setClassProperties(requestId, transaction, classKey, classProperties);
+        BaseObject clazz = classManager.createClass(requestId, transaction, (String) classProperties.get(CoreNamespace.pClassName), yearName);
+        classManager.setClassProperties(requestId, transaction, clazz.getKey(), classProperties);
 
-        yearManager.addClassToYear(requestId, transaction, yearKey, classKey);
+        yearManager.addClassToYear(requestId, transaction, yearKey, clazz.getKey());
 
-        return classKey;
+        return clazz;
     }
 
     @Override
-    public Map<String, Set<String>> getClassesForYear(String requestId, ITransaction transaction, Set<String> yearKeySet) throws Exception {
-        Map<String, Set<String>> classesKey = new HashMap<>();
+    public Map<String, Set<BaseObject>> getClassesForYears(String requestId, ITransaction transaction, Set<String> yearKeySet) throws Exception {
+        Map<String, Set<BaseObject>> classes = new HashMap<>();
 
         for (String yearKey : yearKeySet) {
-            classesKey.put(yearKey, classManager.getClasses(requestId, transaction, yearKey));
+            classes.put(yearKey, classManager.getClasses(requestId, transaction, yearKey));
         }
 
-        return classesKey;
+        return classes;
     }
 
     @Override
-    public Map<String, Object> getClassProperties(String requestId, ITransaction transaction, String classKey, Set<String> propertiesName)
-            throws Exception {
-        return classManager.getClassProperties(requestId, transaction, classKey, propertiesName);
+    public BaseObject getClassProperties(String requestId, ITransaction transaction, String classKey, Set<String> propertiesName) throws Exception {
+        return new DBToKdomConverter().convertDbToKdom(classManager.getClassProperties(requestId, transaction, classKey, propertiesName));
     }
 
     @Override

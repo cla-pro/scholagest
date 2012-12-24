@@ -43,19 +43,20 @@ function clearDOM(domId) {
 }
 
 function getKeyValues(parentId) {
-	var keys = [];
-	var values = [];
+	//var keys = [];
+	//var values = [];
+	var keyValues = {};
 	
 	var rows = dojo.byId(parentId).childNodes;
 	for (var i = 0; i < rows.length; i++) {
 		var row = rows.item(i);
-		var cell = row.childNodes[1];
-		if (cell != null) {
-			var text = cell.childNodes[0];
-			keys.push(text.key);
-			values.push(text.value);
+		var info = row.info;
+		if (info != null) {
+			//keys.push(info.propertyName);
+			//values.push(info.infoGetter());
+			keyValues[info.propertyName] = info.infoGetter();
 		}
 	}
 	
-	return {"keys": keys, "values": values};
+	return keyValues;
 }

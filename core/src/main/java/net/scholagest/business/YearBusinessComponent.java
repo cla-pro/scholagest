@@ -1,11 +1,11 @@
 package net.scholagest.business;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
 import java.util.Set;
 
 import net.scholagest.database.ITransaction;
 import net.scholagest.managers.IYearManager;
+import net.scholagest.objects.BaseObject;
 
 import com.google.inject.Inject;
 
@@ -18,11 +18,11 @@ public class YearBusinessComponent implements IYearBusinessComponent {
     }
 
     @Override
-    public String startYear(String requestId, ITransaction transaction, String yearName) throws Exception {
-        String yearKey = yearManager.createNewYear(requestId, transaction, yearName);
-        yearManager.restoreYear(requestId, transaction, yearKey);
+    public BaseObject startYear(String requestId, ITransaction transaction, String yearName) throws Exception {
+        BaseObject year = yearManager.createNewYear(requestId, transaction, yearName);
+        yearManager.restoreYear(requestId, transaction, year.getKey());
 
-        return yearKey;
+        return year;
     }
 
     @Override
@@ -31,18 +31,17 @@ public class YearBusinessComponent implements IYearBusinessComponent {
     }
 
     @Override
-    public String getCurrentYearKey(String requestId, ITransaction transaction) throws Exception {
+    public BaseObject getCurrentYearKey(String requestId, ITransaction transaction) throws Exception {
         return yearManager.getCurrentYearKey(requestId, transaction);
     }
 
     @Override
-    public Map<String, Map<String, Object>> getYearsWithProperties(String requestId, ITransaction transaction, Set<String> properties)
-            throws Exception {
-        Map<String, Map<String, Object>> years = new HashMap<String, Map<String, Object>>();
+    public Set<BaseObject> getYearsWithProperties(String requestId, ITransaction transaction, Set<String> properties) throws Exception {
+        Set<BaseObject> years = new HashSet<>();
 
-        for (String yearKey : yearManager.getYears(requestId, transaction)) {
-            Map<String, Object> info = yearManager.getYearProperties(requestId, transaction, yearKey, properties);
-            years.put(yearKey, info);
+        for (BaseObject year : yearManager.getYears(requestId, transaction)) {
+            BaseObject yearInfo = yearManager.getYearProperties(requestId, transaction, year.getKey(), properties);
+            years.add(yearInfo);
         }
 
         return years;
