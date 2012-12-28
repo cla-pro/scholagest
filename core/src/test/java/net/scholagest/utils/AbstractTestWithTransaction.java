@@ -43,8 +43,8 @@ public abstract class AbstractTestWithTransaction extends AbstractTest {
     }
 
     public void fillTransactionWithDataSets(String[] dataSets) {
-        Map<String, Map<String, Map<String, Object>>> dataSetsValues = new DatabaseReaderWriter().readDataSetsFromFile(
-                "D:\\Programming\\eclipse-workspace\\Scholagest\\core\\src\\test\\resources\\data", dataSets);
+        Map<String, Map<String, Map<String, Object>>> dataSetsValues = new DatabaseReaderWriter().
+        		readDataSetsFromResource("data", dataSets);
 
         for (String set : dataSets) {
             transaction.addValues(dataSetsValues.get(set));

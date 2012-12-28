@@ -8,10 +8,13 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
+import net.scholagest.app.rest.object.RestObject;
+import net.scholagest.app.rest.object.RestRequest;
 import net.scholagest.app.utils.JerseyHelper;
 import net.scholagest.managers.CoreNamespace;
 import net.scholagest.managers.ontology.OntologyElement;
@@ -48,13 +51,11 @@ public class RestTeacherService extends AbstractService {
 
         Map<String, Object> teacherProperties = JerseyHelper.listToMap(keys, new ArrayList<Object>(values));
 
-        // 2. Update the database.
-        BaseObject teacher = null;
         try {
-            teacher = teacherService.createTeacher(requestId, teacherType, teacherProperties);
+        	BaseObject teacher = teacherService.createTeacher(requestId, teacherType, teacherProperties);
+        	RestObject restTeacher = new RestToKdomConverter().restObjectFromKdom(teacher);
 
-            Gson gson = new Gson();
-            String json = gson.toJson(converter.convertObjectToJson(teacher, null));
+            String json = new Gson().toJson(restTeacher);
             return "{info: " + json + "}";
         } catch (Exception e) {
             e.printStackTrace();
@@ -69,8 +70,9 @@ public class RestTeacherService extends AbstractService {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
         try {
             Set<BaseObject> teachers = teacherService.getTeachersWithProperties(requestId, properties);
-
-            String json = new Gson().toJson(convertToJsonWithOntology(teachers));
+            List<RestObject> restTeachers = new RestToKdomConverter().restObjectsFromKdoms(teachers);
+            
+            String json = new Gson().toJson(restTeachers);
             return "{info: " + json + "}";
         } catch (Exception e) {
             e.printStackTrace();
@@ -89,10 +91,12 @@ public class RestTeacherService extends AbstractService {
                 properties = ontologyService.getPropertiesForType(CoreNamespace.tTeacher);
             }
             BaseObject teacherInfo = teacherService.getTeacherProperties(requestId, teacherKey, new HashSet<String>(properties));
-
             Map<String, OntologyElement> ontology = extractOntology(teacherInfo.getProperties().keySet());
 
-            String json = new Gson().toJson(converter.convertObjectToJson(teacherInfo, ontology));
+            RestObject restTeacherInfo = new RestToKdomConverter().restObjectFromKdom(teacherInfo);
+            new OntologyMerger(ontologyService).mergeOntologyWithRestObject(restTeacherInfo, ontology);
+
+            String json = new Gson().toJson(restTeacherInfo);
             return "{info: " + json + "}";
         } catch (Exception e) {
             e.printStackTrace();
@@ -100,16 +104,17 @@ public class RestTeacherService extends AbstractService {
         }
     }
 
-    @GET
+    @POST
     @Path("/setProperties")
     @Produces("text/json")
-    public String setTeacherProperties(@QueryParam("token") String token, @QueryParam("teacherKey") String teacherKey,
-            @QueryParam("names") List<String> names, @QueryParam("values") List<String> values) {
+    public String setTeacherProperties(String content) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
         try {
-            Map<String, Object> properties = JerseyHelper.listToMap(names, new ArrayList<Object>(values));
+            RestRequest request = new Gson().fromJson(content, RestRequest.class);
+            RestObject requestObject = request.getObject();
+            BaseObject baseObject = new RestToKdomConverter().baseObjectFromRest(requestObject);
 
-            teacherService.setTeacherProperties(requestId, teacherKey, properties);
+            teacherService.setTeacherProperties(requestId, baseObject.getKey(), baseObject.getProperties());
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode=0, message='" + e.getMessage() + "'}";

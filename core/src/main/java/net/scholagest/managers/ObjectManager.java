@@ -1,5 +1,6 @@
 package net.scholagest.managers;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -58,9 +59,30 @@ public class ObjectManager {
         return element.getAttributeWithName(RDFS.range);
     }
 
-    protected void setObjectProperties(String requestId, ITransaction transaction, String objectKey, Map<String, Object> properties) throws Exception {
-        for (Map.Entry<String, Object> entry : properties.entrySet()) {
-            transaction.insert(objectKey, entry.getKey(), entry.getValue(), null);
+    @SuppressWarnings("unchecked")
+	protected void setObjectProperties(String requestId, ITransaction transaction, String objectKey, Map<String, Object> properties) throws Exception {
+        for (String propertyName : properties.keySet()) {
+        	Object value = properties.get(propertyName);
+        	
+        	String type = getPropertyType(requestId, transaction, propertyName);
+        	if (type != null && ontologyManager.isSubtypeOf(requestId, transaction, type, CoreNamespace.tSet)) {
+        		String setKey = (String) transaction.get(objectKey, propertyName, null);
+        		DBSet dbSet = null;
+        		if (setKey == null) {
+        			dbSet = DBSet.createDBSet(transaction, UUID.randomUUID().toString());
+        			transaction.insert(objectKey, propertyName, dbSet.getKey(), null);
+                } else {
+                	dbSet = new DBSet(transaction, (String) setKey);
+                }
+        		dbSet.clear();
+        		
+        		for (Object element : (Collection<Object>) value) {
+					dbSet.add(element.toString());
+				}
+        	}
+        	else {
+        		transaction.insert(objectKey, propertyName, value, null);
+        	}
         }
     }
 }

@@ -81,8 +81,11 @@ function setClassInfo(classKey) {
 			url: "http://localhost:8080/scholagest-app/services/class/setProperties",
 			preventCash: true,
 			postData: dojo.toJson({
-				classKey: classKey,
-				properties: keyValues
+				token: dojo.cookie("scholagest-token"),
+				object: {
+					key: classKey,
+					properties: keyValues
+				}
 			}),
 			handleAs: "json",
 			load: function(data) {
@@ -117,7 +120,7 @@ function getClassInfo(classKey) {
 							{type: "button", onclick:"setClassInfo(\"" + classKey + "\")", innerHTML: "Enregistrer"}, base);
 				}
 				else {
-					lert("Error during getProperties: ("
+					alert("Error during getProperties: ("
 							+ data.errorCode + ") " + data.message);
 				}
 			},
@@ -136,8 +139,9 @@ function mergeAndDisplayYearAndClassLists(yearList, classList) {
 		
 		liItemsList.push(createLIItem(yearKey, yearInfo.properties['pYearName'].value, undefined, 'search-list-item-group-header'));
 		
-		for (var classKey in classes) {
-			var classInfo = classes[classKey];
+		for (var classIndex in classes) {
+			var classInfo = classes[classIndex];
+			var classKey = classInfo.key;
 			liItemsList.push(createLIItem(classKey, classInfo.properties['pClassName'].value, selectClass(classKey), 'search-list-item'));
 		}
 	}

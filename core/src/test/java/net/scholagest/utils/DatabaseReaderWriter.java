@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +26,32 @@ public class DatabaseReaderWriter {
                 e.printStackTrace();
             }
         }
+    }
+    
+    public Map<String, Map<String, Map<String, Object>>> readDataSetsFromResource(String folder, String[] dataSets) {
+    	Map<String, Map<String, Map<String, Object>>> database = new HashMap<>();
+    	
+    	String folderPrefix = folder;
+    	if (folderPrefix != null) {
+    		folderPrefix += File.separatorChar;
+    	}
+    	
+    	for (String dataSet : dataSets) {
+    		String filePath = folderPrefix + dataSet + ".sga";
+    		System.out.println(filePath);
+    		InputStream resourceStream = ClassLoader.getSystemResourceAsStream(filePath);
+    		BufferedReader reader;
+            try {
+                reader = new BufferedReader(new InputStreamReader(resourceStream));
+                Map<String, Map<String, Object>> keyspaceData = readKeyspaceFromFile(reader);
+                database.put(dataSet, keyspaceData);
+                reader.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+    	}
+    	
+        return database;
     }
 
     public Map<String, Map<String, Map<String, Object>>> readDataSetsFromFile(String folderName, String[] dataSets) {

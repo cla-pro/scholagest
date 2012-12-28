@@ -44,6 +44,8 @@ public class CoreNamespace {
     public static final String classesBase = classNs + "#classes";
     public static final String pClassName = "pClassName";
     public static final String pClassYear = "pClassYear";
+    public static final String pClassStudents = "pClassStudents";
+    public static final String pClassTeachers = "pClassTeachers";
 
     public static final String tString = scholagestNs + "#String";
     public static final String tSet = scholagestNs + "#Set";

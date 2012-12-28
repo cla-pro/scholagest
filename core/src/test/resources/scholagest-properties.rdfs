@@ -7,7 +7,7 @@
 		<rdfs:comment>The scholagest ontology</rdfs:comment>
 		<owl:imports rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns"/>
         <owl:imports rdf:resource="http://www.w3.org/2000/01/rdf-schema"/>
-        <owl:imports rdf:resource="file:///D:/Programming/eclipse-workspace/Scholagest/core/src/test/resources/scholagest-types.rdfs"/>
+        <owl:imports rdf:resource="file:///home/valerie/workspace/scholagest/core/src/test/resources/scholagest-types.rdfs"/>
 	</owl:Ontology>
 	
 	<rdfs:Property rdf:ID="pTeacherFirstName" rdfs:comment="Teacher's first name">

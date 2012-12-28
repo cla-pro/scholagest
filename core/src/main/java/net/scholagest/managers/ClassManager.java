@@ -27,11 +27,11 @@ public class ClassManager extends ObjectManager implements IClassManager {
 
         String studentsSetKey = generateClassStudentsKey(classKey);
         DBSet.createDBSet(transaction, studentsSetKey);
-        transaction.insert(classKey, CoreNamespace.pYearClasses, studentsSetKey, null);
+        transaction.insert(classKey, CoreNamespace.pClassStudents, studentsSetKey, null);
 
         String teachersSetKey = generateClassTeachersKey(classKey);
         DBSet.createDBSet(transaction, teachersSetKey);
-        transaction.insert(classKey, CoreNamespace.pYearClasses, teachersSetKey, null);
+        transaction.insert(classKey, CoreNamespace.pClassTeachers, teachersSetKey, null);
 
         return clazz;
     }

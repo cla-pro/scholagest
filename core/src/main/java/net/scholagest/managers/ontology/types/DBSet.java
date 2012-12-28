@@ -58,6 +58,12 @@ public class DBSet {
 
         return values;
     }
+    
+    public void clear() throws DatabaseException {
+    	for (String element : values()) {
+			remove(element);
+		}
+    }
 
     public String getKey() {
         return setKey;
