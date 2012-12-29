@@ -4,26 +4,26 @@ function getTeacherInfo(teacherKey) {
 			preventCash: true,
 			content: {token: dojo.cookie("scholagest-token"),
 				teacherKey: teacherKey},
-				             handleAs: "json",
-				             load: function(data) {
-				            	 if (data.errorCode == null) {
-				            		var domId = "teacher-data";
-									clearDOM(domId);
-									
-									var base = dojo.byId(domId);
-									createInfoHtmlTable(base, data.info.properties);
+				handleAs: "json",
+				load: function(data) {
+					if (data.errorCode == null) {
+						var domId = "teacher-data";
+						clearDOM(domId);
 
-									var save = dojo.create("button",
-											{type: "button", onclick:"setTeacherInfo(\"" + teacherKey + "\")", innerHTML: "Enregistrer"}, base);
-				            	 }
-				            	 else {
-				            		 alert("Error during getProperties: ("
-				            				 + data.errorCode + ") " + data.message);
-				            	 }
-				             },
-				             error: function(error) {
-				            	 alert("error = " + error);
-				             }
+						var base = dojo.byId(domId);
+						createInfoHtmlTable(base, data.info.properties);
+
+						var save = dojo.create("button",
+								{type: "button", onclick:"setTeacherInfo(\"" + teacherKey + "\")", innerHTML: "Enregistrer"}, base);
+					}
+					else {
+						alert("Error during getProperties: ("
+								+ data.errorCode + ") " + data.message);
+					}
+				},
+				error: function(error) {
+					alert("error = " + error);
+				}
 	}
 
 	var deferred = dojo.xhrGet(xhrArgs);
@@ -33,23 +33,26 @@ function setTeacherInfo(teacherKey) {
 	var xhrArgs = {
 			url: "http://localhost:8080/scholagest-app/services/teacher/setProperties",
 			preventCash: true,
-			content: {token: dojo.cookie("scholagest-token"),
-				teacherKey: teacherKey,
-				names: keyValues.keys,
-				values: keyValues.values},
-				             handleAs: "json",
-				             load: function(data) {
-				            	 if (data.errorCode != null) {
-				            		 alert("Error during setProperties: ("
-				            				 + data.errorCode + ") " + data.message);
-				            	 }
-				             },
-				             error: function(error) {
-				            	 alert("error = " + error);
-				             }
+			postData: dojo.toJson({
+				token: dojo.cookie("scholagest-token"),
+				object: {
+					key: teacherKey,
+					properties: keyValues
+				}
+			}),
+			handleAs: "json",
+			load: function(data) {
+				if (data.errorCode != null) {
+					alert("Error during setProperties: ("
+							+ data.errorCode + ") " + data.message);
+				}
+			},
+			error: function(error) {
+				alert("error = " + error);
+			}
 	}
 
-	var deferred = dojo.xhrGet(xhrArgs);
+	var deferred = dojo.xhrPost(xhrArgs);
 }
 function selectTeacher(teacherKey) {
 	return function(e) {
@@ -76,34 +79,9 @@ function loadTeachers() {
 						clearDOM("teacher-search-list");
 
 						var base = dojo.byId("teacher-search-list");
-						var list = data.teachers;
-						var ul = dojo.create("ul", {
-							id: 'teacher-search-list',
-							className: 'search-list'}, base);
-
 						var teachers = data.info;
-						for (var d in teachers) {
-							var t = teachers[d];
-							var text = d;
-							var properties = t.properties;
-							if (properties.pTeacherFirstName != null || properties.pTeacherLastName != null) {
-								text = '';
-								if (properties.pTeacherFirstName != null) {
-									text = properties.pTeacherFirstName.value;
-								}
-
-								if (properties.pTeacherLastName != null) {
-									if (text != '')
-										text += ' ';
-									text += properties.pTeacherLastName.value;
-								}
-							}
-
-							dojo.create("li",
-									{ innerHTML: text,
-								className: 'search-list-item',
-								onclick: selectTeacher(d)}, ul);
-						}
+						createHtmlListFromList(teachers, "teacher-search-list", base,
+								buildListItemTextClosure(["pTeacherLastName", "pTeacherFirstName"]), selectTeacher);
 					}
 					else
 						alert("Error during getTeachers: ("

@@ -13,8 +13,9 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.xml.ws.RequestWrapper;
 
+import net.scholagest.app.rest.object.RestObject;
+import net.scholagest.app.rest.object.RestRequest;
 import net.scholagest.app.utils.JerseyHelper;
 import net.scholagest.managers.CoreNamespace;
 import net.scholagest.managers.ontology.OntologyElement;
@@ -30,14 +31,12 @@ public class RestClassService extends AbstractService {
     private final static String REQUEST_ID_PREFIX = "class-";
     private final IClassService classService;
     private final IOntologyService ontologyService;
-    private JsonConverter converter;
 
     @Inject
     public RestClassService(IClassService classService, IOntologyService ontologyService) {
         super(ontologyService);
         this.classService = classService;
         this.ontologyService = ontologyService;
-        this.converter = new JsonConverter(this.ontologyService);
     }
 
     @GET
@@ -52,13 +51,11 @@ public class RestClassService extends AbstractService {
         Map<String, Object> classInfo = JerseyHelper.listToMap(keys, new ArrayList<Object>(values));
         classInfo.put(CoreNamespace.pClassYear, yearKey);
 
-        // 2. Update the database.
-        BaseObject clazz = null;
         try {
-            clazz = classService.createClass(requestId, classInfo);
+        	BaseObject clazz = classService.createClass(requestId, classInfo);
+        	RestObject restClass = new RestToKdomConverter().restObjectFromKdom(clazz);
 
-            Gson gson = new Gson();
-            String json = gson.toJson(converter.convertObjectToJson(clazz, null));
+            String json = new Gson().toJson(restClass);
             return "{info: " + json + "}";
         } catch (Exception e) {
             e.printStackTrace();
@@ -74,18 +71,12 @@ public class RestClassService extends AbstractService {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
         try {
             Map<String, Set<BaseObject>> classesKeySet = classService.getClassesForYears(requestId, yearKeyList);
-            Map<String, Set<BaseObject>> classesInfo = new HashMap<>();
+            RestToKdomConverter converter = new RestToKdomConverter();
 
-            for (String yearKey : classesKeySet.keySet()) {
-                Set<BaseObject> yearClassesInfo = new HashSet<>();
-                for (BaseObject clazz : classesKeySet.get(yearKey)) {
-                    BaseObject classInfo = classService.getClassProperties(requestId, clazz.getKey(), properties);
-                    yearClassesInfo.add(classInfo);
-                }
-                classesInfo.put(yearKey, yearClassesInfo);
-            }
+            Map<String, Set<RestObject>> classesInfo = getClassesPropertiesAndConvertToRest(properties,
+            		requestId, classesKeySet, converter);
 
-            String json = buildJsonForClasses(classesInfo);
+            String json = new Gson().toJson(classesInfo);
             return "{info: " + json + "}";
         } catch (Exception e) {
             e.printStackTrace();
@@ -93,20 +84,37 @@ public class RestClassService extends AbstractService {
         }
     }
 
-    private String buildJsonForClasses(Map<String, Set<BaseObject>> yearClassesInfo) {
-        String jsonString = "{";
-        Gson gson = new Gson();
+	private Map<String, Set<RestObject>> getClassesPropertiesAndConvertToRest(Set<String> properties,
+			String requestId, Map<String, Set<BaseObject>> classesKeySet,
+			RestToKdomConverter converter) throws Exception {
+		Map<String, Set<RestObject>> classesInfo = new HashMap<>();
+		
+		for (String yearKey : classesKeySet.keySet()) {
+		    Set<RestObject> yearClassesInfo = new HashSet<>();
+		    for (BaseObject clazz : classesKeySet.get(yearKey)) {
+		        BaseObject classInfo = classService.getClassProperties(requestId, clazz.getKey(), properties);
+		        yearClassesInfo.add(converter.restObjectFromKdom(classInfo));
+		    }
+		    classesInfo.put(yearKey, yearClassesInfo);
+		}
+		
+		return classesInfo;
+	}
 
-        for (String yearKey : yearClassesInfo.keySet()) {
-            if (!jsonString.equals("{")) {
-                jsonString += ",";
-            }
-
-            jsonString += "\"" + yearKey + "\": " + gson.toJson(converter.convertObjectToJson(yearClassesInfo.get(yearKey)));
-        }
-
-        return jsonString + "}";
-    }
+//    private String buildJsonForClasses(Map<String, Set<BaseObject>> yearClassesInfo) {
+//        String jsonString = "{";
+//        Gson gson = new Gson();
+//
+//        for (String yearKey : yearClassesInfo.keySet()) {
+//            if (!jsonString.equals("{")) {
+//                jsonString += ",";
+//            }
+//
+//            jsonString += "\"" + yearKey + "\": " + gson.toJson(converter.convertObjectToJson(yearClassesInfo.get(yearKey)));
+//        }
+//
+//        return jsonString + "}";
+//    }
 
     @GET
     @Path("/getProperties")
@@ -118,11 +126,14 @@ public class RestClassService extends AbstractService {
             if (properties == null || properties.isEmpty()) {
                 properties = this.ontologyService.getPropertiesForType(CoreNamespace.tClass);
             }
+            
             BaseObject classInfo = classService.getClassProperties(requestId, classKey, new HashSet<String>(properties));
-
             Map<String, OntologyElement> ontology = extractOntology(classInfo.getProperties().keySet());
-
-            String json = new Gson().toJson(converter.convertObjectToJson(classInfo, ontology));
+            
+            RestObject restClassInfo = new RestToKdomConverter().restObjectFromKdom(classInfo);
+            new OntologyMerger(ontologyService).mergeOntologyWithRestObject(restClassInfo, ontology);
+            
+            String json = new Gson().toJson(restClassInfo);
             return "{info: " + json + "}";
         } catch (Exception e) {
             e.printStackTrace();
@@ -130,21 +141,17 @@ public class RestClassService extends AbstractService {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    @RequestWrapper(className = "net.scholagest.app.rest.jaxws.SetClassProperties", localName = "setClassProperties",
-            targetNamespace = "http://rest.app.scholagest.net/")
     @POST
     @Path("/setProperties")
     @Produces("text/json")
-    public String setClassProperties(@QueryParam("token") String token, String receivedContent) {
+    public String setClassProperties(@QueryParam("token") String token,String content) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
         try {
-            Map<String, Object> fromJson = new Gson().fromJson(receivedContent, Map.class);
-            System.out.println(fromJson);
-            // Map<String, Object> properties = JerseyHelper.listToMap(names,
-            // new ArrayList<Object>(values));
+            RestRequest request = new Gson().fromJson(content, RestRequest.class);
+            RestObject requestObject = request.getObject();
+            BaseObject baseObject = new RestToKdomConverter().baseObjectFromRest(requestObject);
 
-            // classService.setClassProperties(requestId, classKey, properties);
+            classService.setClassProperties(requestId, requestObject.getKey(), baseObject.getProperties());
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode=0, message='" + e.getMessage() + "'}";

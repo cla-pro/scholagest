@@ -108,7 +108,7 @@ public class InMemoryDatabase implements IDatabase {
         }
 
         public void addValues(Map<String, Map<String, Object>> toAdd) {
-            this.values.putAll(toAdd);
+            values.putAll(toAdd);
         }
     }
 }

@@ -16,19 +16,25 @@ function infoSetterListClosure(originalList, htmlList, label) {
 		}
 	};
 };
-function infoGetterTxtClosure(txtBox) {
+function infoGetterTxtClosure(originalInfo, txtBox) {
 	return function() {
-		return txtBox.value;
+		return {
+			value: txtBox.value,
+			type: originalInfo.type
+		};
 	};
 };
-function infoGetterListClosure(htmlList) {
+function infoGetterListClosure(originalInfo, htmlList) {
 	return function() {
 		var elements = [];
 		var values = htmlList.values;
 		for (var index in values) {
-			elements.push(values[index].info);
+			elements.push(values[index].info.key);
 		}
-		return elements;
+		return {
+			value: elements,
+			type: originalInfo.type
+		};
 	};
 };
 function prepareTree(rawdata, divName) {
@@ -149,35 +155,35 @@ function createHtmlGroupContent(parentDOM, groupId, contentAsJson, saveButton, d
 	
 	createInfoHtmlTable(table, contentAsJson.properties);
 };
-function createHtmlLabelText(parentTable, propertyName, displayText, value) {
+function createHtmlLabelText(parentTable, propertyName, data) {
 	var tr = dojo.create("tr", {id: 'tr' + propertyName}, parentTable);
 	
-	if (value == undefined) {
-		value = "";
+	if (data.value == undefined) {
+		data.value = "";
 	}
 
 	var label = dojo.create("td", {
-		innerHTML: displayText,
+		innerHTML: data.displayText,
 		style: "width: 150px"
 	}, tr);
 	var cell = dojo.create("td", {}, tr);
 	var txt = dojo.create("input", {
 		style: "width: 100%",
 		type: "text",
-		value: value,
+		value: data.value,
 	}, cell);
 	txt.key = propertyName;
 	
 	tr.info = {};
 	tr.info.propertyName = propertyName;
-	tr.info.infoSetter = infoSetterTxtClosure(value, txt, label);
-	tr.info.infoGetter = infoGetterTxtClosure(txt);
+	tr.info.infoSetter = infoSetterTxtClosure(data.value, txt, label);
+	tr.info.infoGetter = infoGetterTxtClosure(data, txt);
 };
-function createHtmlList(parentTable, propertyName, displayText, key, valuesAsArray, createListButtonsClosure) {
+function createHtmlList(parentTable, propertyName, data, createListButtonsClosure) {
 	var tr = dojo.create("tr", {id: 'tr' + propertyName}, parentTable);
 
 	var label = dojo.create("td", {
-		innerHTML: displayText,
+		innerHTML: data.displayText,
 		style: "width: 150px"
 	}, tr);
 	var cell = dojo.create("td", {}, tr);
@@ -186,11 +192,11 @@ function createHtmlList(parentTable, propertyName, displayText, key, valuesAsArr
 		style: "width: 100%"
 	}, cell);
 	htmlList.id = propertyName;
-	htmlList.key = key;
 	
-	for (var i = 0; i < valuesAsArray.length; i++) {
+	var values = data.value;
+	for (var i = 0; i < values.length; i++) {
 		var txt = dojo.create("li", {
-			innerHTML : valuesAsArray[i]
+			innerHTML : values[i]
 		}, htmlList);
 	}
 	
@@ -200,19 +206,19 @@ function createHtmlList(parentTable, propertyName, displayText, key, valuesAsArr
 	
 	tr.info = {};
 	tr.info.propertyName = propertyName;
-	tr.info.infoSetter = infoSetterListClosure(valuesAsArray, htmlList, label);
-	tr.info.infoGetter = infoGetterListClosure(htmlList);
+	tr.info.infoSetter = infoSetterListClosure(data.value, htmlList, label);
+	tr.info.infoGetter = infoGetterListClosure(data, htmlList);
 }
 function createInfoHtmlTable(parentDOM, info, createListButtonsClosure) {
 	for (var i in info) {
 		var data = info[i];
 		var value = data.value;
 		
-		if (value.isHtmlList != null && value.isHtmlList == true) {
-			createHtmlList(parentDOM, i, data.displayText, value.key, value.values, createListButtonsClosure);
+		if (data.isHtmlList != null && data.isHtmlList == true) {
+			createHtmlList(parentDOM, i, data, createListButtonsClosure);
 		}
 		else {
-			createHtmlLabelText(parentDOM, i, data.displayText, value);
+			createHtmlLabelText(parentDOM, i, data);
 		}
 	}
 };
