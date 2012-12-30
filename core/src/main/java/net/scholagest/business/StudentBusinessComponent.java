@@ -65,4 +65,10 @@ public class StudentBusinessComponent implements IStudentBusinessComponent {
 
         return students;
     }
+
+    @Override
+    public BaseObject getStudentProperties(String requestId, ITransaction transaction, String studentKey, Set<String> properties) throws Exception {
+        BaseObject studentObject = studentManager.getStudentProperties(requestId, transaction, studentKey, properties);
+        return converter.convertDbToKdom(studentObject);
+    }
 }

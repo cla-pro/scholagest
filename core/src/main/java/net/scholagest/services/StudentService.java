@@ -96,4 +96,20 @@ public class StudentService implements IStudentService {
 
         return students;
     }
+
+    @Override
+    public BaseObject getStudentProperties(String requestId, String studentKey, Set<String> properties) throws Exception {
+        BaseObject studentObject = null;
+
+        ITransaction transaction = this.database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+        try {
+            studentObject = studentBusinessComponent.getStudentProperties(requestId, transaction, studentKey, properties);
+            transaction.commit();
+        } catch (Exception e) {
+            transaction.rollback();
+            e.printStackTrace();
+        }
+
+        return studentObject;
+    }
 }

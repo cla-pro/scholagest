@@ -11,6 +11,23 @@ function selectClass(classKey) {
 		getClassInfo(classKey);
 	};
 };
+function getListRealInfo(baseList, trDOM) {
+	var propertyName = trDOM.info.propertyName;
+	var properties = ['pStudentFirstName', 'pStudentLastName'];
+	
+	var elementsKey = extractKeys(baseList);
+	if (propertyName == 'pClassStudents') {
+		getStudentsInfo(baseList, properties, function(students) {
+			var converted = convertList(students, properties);
+			
+			trDOM.info.originalData = converted;
+			trDOM.info.infoSetter(converted);
+		});
+	}
+	else if (propertyName == 'pClassTeachers') {
+		
+	}
+};
 function updateClassInfo(classTree, dialogId, trId) {
 	return function(e) {
 		var dialogElementsList = classTree.model.store.data;
@@ -27,47 +44,28 @@ function updateClassInfo(classTree, dialogId, trId) {
 		//Update the displayed class' info.
 		dojo.byId(trId).info.infoSetter(elementsList);
 	};
-}
-function moveStudents(sourceTree, destTree) {
-	return function(e) {
-		var destStore = destTree.model.store;
-		
-		var selectedItems = sourceTree.selectedItems;
-		for (var itemKey in selectedItems) {
-			destStore.add(selectedItems[itemKey]);
-		}
-	};
 };
-function completeAddRemoveStudents(classStudentList) {
-	return function(button) {
-		getStudentList(function(students) {
-			var studentsRawData = [{name: "root", id: "root"}];
-			for (var studentKey in students) {
-				var studentData = students[studentKey];
-				
-				var txt = studentData.properties["pStudentLastName"].value + " " + studentData.properties["pStudentFirstName"].value;
-				studentsRawData.push({
-					name: txt, id: studentKey, key: studentKey, info: studentData, parent: "root" });
-			}
-			var classStudentsRawData = [{name: "root", id: "root"}];
-			var freeTree = prepareTree(studentsRawData, "free-students");
-			var classTree = prepareTree(classStudentsRawData, "class-students");
-			dojo.byId('fromFreeToClassStudents').onclick = moveStudents(freeTree, classTree);
-			dojo.byId('fromClassToFreeStudents').onclick = moveStudents(classTree, freeTree);
-			dojo.byId('btnAddRemoveStudentsOk').onclick = updateClassInfo(classTree, "addRemoveStudents", "trpClassStudents");
-		});
-		
-		dijit.byId("addRemoveStudents").show();
-	};
+function completeAddRemoveStudents(trDOM, button) {
+	getStudentList(function(students) {
+		var studentsRawData = [{name: "root", id: "root"}].concat(convertList(students, ["pStudentFirstName", "pStudentLastName"]));
+		var classStudentsRawData = [{name: "root", id: "root"}].concat(trDOM.info.infoGetter().value);
+		var freeTree = prepareTree(studentsRawData, "free-students");
+		var classTree = prepareTree(classStudentsRawData, "class-students");
+		dojo.byId('fromFreeToClassStudents').onclick = moveElements(freeTree, classTree);
+		dojo.byId('fromClassToFreeStudents').onclick = moveElements(classTree, freeTree);
+		dojo.byId('btnAddRemoveStudentsOk').onclick = updateClassInfo(classTree, "addRemoveStudents", "trpClassStudents");
+	});
+	
+	dijit.byId("addRemoveStudents").show();
 };
 function createListButtonsWrapper(completeAddRemoveStudentsButtonClosure) {
-	return function createListButtons(propertyName, parentDOM) {
+	return function createListButtons(propertyName, trDOM, parentDOM) {
 		var button = dojo.create("button", {
 			innerHTML: "Ajouter/Supprimer"
 		}, parentDOM);
 		if (propertyName == "pClassStudents") {
 			//completeAddRemoveStudentsButtonClosure(button);
-			button.onclick = function(e) { completeAddRemoveStudentsButtonClosure(button); };
+			button.onclick = function(e) { completeAddRemoveStudentsButtonClosure(trDOM, button); };
 		}
 		else if (propertyName == "pClassTeachers") {
 			button.onclick = function(e) { dijit.byId("addRemoveTeachers").show(); }
@@ -114,7 +112,7 @@ function getClassInfo(classKey) {
 					clearDOM(domId);
 					
 					var base = dojo.byId(domId);
-					createInfoHtmlTable(base, data.info.properties, createListButtonsWrapper(completeAddRemoveStudents([])));
+					createInfoHtmlTable(base, data.info.properties, createListButtonsWrapper(completeAddRemoveStudents), getListRealInfo);
 
 					var save = dojo.create("button",
 							{type: "button", onclick:"setClassInfo(\"" + classKey + "\")", innerHTML: "Enregistrer"}, base);

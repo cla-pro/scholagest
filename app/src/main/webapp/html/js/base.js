@@ -1,10 +1,10 @@
 function escapeJson(json) {
 	return handleJson(json, escape);
-}
+};
 
 function unescapeJson(json) {
 	return handleJson(json, unescape);
-}
+};
 
 function handleJson(json, handleStringFunction) {
 	var result = {};
@@ -24,7 +24,7 @@ function handleJson(json, handleStringFunction) {
 	}
 	
 	return result;
-}
+};
 
 function handleArray(array, handleStringFunction) {
 	var result = [];
@@ -33,18 +33,16 @@ function handleArray(array, handleStringFunction) {
 	}
 	
 	return result;
-}
+};
 
 function clearDOM(domId) {
 	var base = dojo.byId(domId);
 	while (base.hasChildNodes()) {
 		base.removeChild(base.lastChild);
 	}
-}
+};
 
 function getKeyValues(parentId) {
-	//var keys = [];
-	//var values = [];
 	var keyValues = {};
 	
 	var rows = dojo.byId(parentId).childNodes;
@@ -52,11 +50,65 @@ function getKeyValues(parentId) {
 		var row = rows.item(i);
 		var info = row.info;
 		if (info != null) {
-			//keys.push(info.propertyName);
-			//values.push(info.infoGetter());
-			keyValues[info.propertyName] = info.infoGetter();
+			keyValues[info.propertyName] = info.infoGetterForSave();
 		}
 	}
 	
 	return keyValues;
-}
+};
+
+function extractText(properties, propertyNames, defaultText) {
+	if (properties == null || propertyNames == null) {
+		return defaultText;
+	}
+	
+	var info = [];
+	for (var i = 0; i < propertyNames.length; i++) {
+		var p = properties[propertyNames[i]];
+		if (p != null) {
+			info.push(p.value);
+		}
+	}
+	return info.join(' ');
+};
+
+function convertList(list, propertyNames) {
+	var resultList = [];
+	
+	for (var i = 0; i < list.length; i++) {
+		var element = list[i];
+		var displayText = extractText(element.properties, propertyNames, element);
+		
+		resultList.push({
+			name: displayText,
+			id: element.key,
+			key: element.key,
+			info: element,
+			parent: 'root'
+		});
+	}
+	
+	return resultList;
+};
+
+function extractKeys(list) {
+	var resultList = [];
+	
+	for (var i = 0; i < list.length; i++) {
+		var element = list[i];
+		resultList.push(element.key);
+	}
+	
+	return resultList;
+};
+
+function moveElements(sourceTree, destTree) {
+	return function(e) {
+		var destStore = destTree.model.store;
+		
+		var selectedItems = sourceTree.selectedItems;
+		for (var itemKey in selectedItems) {
+			destStore.add(selectedItems[itemKey]);
+		}
+	};
+};

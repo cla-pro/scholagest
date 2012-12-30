@@ -7,7 +7,7 @@
 		<rdfs:comment>The scholagest ontology</rdfs:comment>
 		<owl:imports rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns"/>
         <owl:imports rdf:resource="http://www.w3.org/2000/01/rdf-schema"/>
-        <owl:imports rdf:resource="file:///home/valerie/workspace/scholagest/core/src/test/resources/scholagest-types.rdfs"/>
+        <owl:imports rdf:resource="file:///D:/Programming/eclipse-workspace/Scholagest/core/src/test/resources/scholagest-types.rdfs"/>
 	</owl:Ontology>
 	
 	<rdfs:Property rdf:ID="pTeacherFirstName" rdfs:comment="Teacher's first name">
@@ -107,7 +107,7 @@
     <rdfs:Property rdf:ID="pClassStudents" rdfs:comment="Class's students">
         <rdfs:domain rdf:resource="sg:tClass"/>
         <rdfs:range rdf:resource="sg:Set"/>
-        <sg:displayText rdf:resource="Etudiants" />
+        <sg:displayText rdf:resource="Elèves" />
     </rdfs:Property>
     <rdfs:Property rdf:ID="pClassTeachers" rdfs:comment="Class's teachers">
         <rdfs:domain rdf:resource="sg:tClass"/>

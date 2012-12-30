@@ -19,4 +19,6 @@ public interface IStudentBusinessComponent {
             throws Exception;
 
     public Set<BaseObject> getStudentsWithProperties(String requestId, ITransaction transaction, Set<String> properties) throws Exception;
+
+    public BaseObject getStudentProperties(String requestId, ITransaction transaction, String studentKey, Set<String> properties) throws Exception;
 }

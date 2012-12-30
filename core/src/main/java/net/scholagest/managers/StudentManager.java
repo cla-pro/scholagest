@@ -102,4 +102,12 @@ public class StudentManager extends ObjectManager implements IStudentManager {
 
         return students;
     }
+
+    @Override
+    public BaseObject getStudentProperties(String requestId, ITransaction transaction, String studentKey, Set<String> properties) throws Exception {
+        BaseObject studentObject = new BaseObject(studentKey, CoreNamespace.tStudent);
+        studentObject.setProperties(super.getObjectProperties(requestId, transaction, studentKey, properties));
+
+        return studentObject;
+    }
 }

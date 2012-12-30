@@ -1,10 +1,14 @@
-function infoSetterTxtClosure(originalValue, txtBox, label) {
+function infoSetterTxtClosure(txtBox, label) {
 	return function(newValue) {
+		//TODO check for the "update" info.
+		
 		txtBox.value = newValue;
 	};
 };
-function infoSetterListClosure(originalList, htmlList, label) {
+function infoSetterListClosure(htmlList, label) {
 	return function(newList) {
+		//TODO check for the "update" info.
+		
 		//Clear the existing list.
 		clearDOM(htmlList);
 		
@@ -24,7 +28,7 @@ function infoGetterTxtClosure(originalInfo, txtBox) {
 		};
 	};
 };
-function infoGetterListClosure(originalInfo, htmlList) {
+function infoGetterForSaveListClosure(originalInfo, htmlList) {
 	return function() {
 		var elements = [];
 		var values = htmlList.values;
@@ -37,13 +41,26 @@ function infoGetterListClosure(originalInfo, htmlList) {
 		};
 	};
 };
+function infoGetterListClosure(originalInfo, htmlList) {
+	return function() {
+		var elements = [];
+		var values = htmlList.values;
+		for (var index in values) {
+			elements.push(values[index]);
+		}
+		return {
+			value: elements,
+			type: originalInfo.type
+		};
+	};
+};
 function prepareTree(rawdata, divName) {
 	var store = dojo.store.Observable(new dojo.store.Memory({data: rawdata}));
 	store.myKey = divName;
-	store.getChildren = function(object){
+	store.getChildren = function(object) {
 		return this.query({parent: object.id});
 	};
-	dojo.aspect.around(store, "put", function(originalPut){
+	dojo.aspect.around(store, "put", function(originalPut) {
 		return function(obj, options){
 			if(options && options.parent){
 				obj.parent = options.parent.id;
@@ -57,7 +74,7 @@ function prepareTree(rawdata, divName) {
         model: treeModel,
         dndController: "dijit.tree.dndSource",
         showRoot: false
-    }, divName );
+    }, divName);
 	
 	return treeControl;
 }
@@ -107,12 +124,13 @@ function createHtmlListFromList(list, listId, base, buildTextFunction, onclickCl
 		className: 'search-list'}, base);
 	for (var id in list) {
 		var t = list[id];
+		var key = t.key;
 		var text = buildTextFunction(t);
 
 		dojo.create("li",
 				{ innerHTML: text,
 			className: 'search-list-item',
-			onclick: onclickClosure(id)}, ul);
+			onclick: onclickClosure(key)}, ul);
 	}
 }
 
@@ -133,9 +151,9 @@ function getKeysAndValues(txtIds) {
 	
 	return {keys: keys, values: values};
 };
-function createHtmlGroup(parentDOM, title, contentAsJson, saveButton, domId) {
+function createHtmlBaseGroup(parentDOM, title, domId) {
 	createHtmlGroupTitleBar(parentDOM, title, domId + "-title");
-	createHtmlGroupContent(parentDOM, "", contentAsJson, saveButton, domId);
+	createHtmlGroupContent(parentDOM, domId + "-content");
 };
 function createHtmlGroupTitleBar(parentDOM, title, domId) {
 	var titleBar = dojo.create("div", {className: "person-info-part-title"}, parentDOM);
@@ -143,17 +161,11 @@ function createHtmlGroupTitleBar(parentDOM, title, domId) {
 	dojo.create("a", {innerHTML: title}, titleBar);
 	dojo.create("button", {className: "person-info-part-button", innerHTML: "Fermer"}, titleBar);
 };
-function createHtmlGroupContent(parentDOM, groupId, contentAsJson, saveButton, domId) {
+function createHtmlGroupContent(parentDOM, domId) {
 	var div = dojo.create("div", {className: "person-info-part-content"}, parentDOM);
 	div.id = domId;
 	var table = dojo.create("table", {style: "width: 100%"}, div);
 	table.id = domId + "-table";
-	
-	if (saveButton != null) {
-		div.appendChild(saveButton);
-	}
-	
-	createInfoHtmlTable(table, contentAsJson.properties);
 };
 function createHtmlLabelText(parentTable, propertyName, data) {
 	var tr = dojo.create("tr", {id: 'tr' + propertyName}, parentTable);
@@ -176,10 +188,12 @@ function createHtmlLabelText(parentTable, propertyName, data) {
 	
 	tr.info = {};
 	tr.info.propertyName = propertyName;
-	tr.info.infoSetter = infoSetterTxtClosure(data.value, txt, label);
+	tr.info.originalData = data.value;
+	tr.info.infoSetter = infoSetterTxtClosure(txt, label);
 	tr.info.infoGetter = infoGetterTxtClosure(data, txt);
+	tr.info.infoGetterForSave = infoGetterTxtClosure(data, txt);
 };
-function createHtmlList(parentTable, propertyName, data, createListButtonsClosure) {
+function createHtmlList(parentTable, propertyName, data, createListButtonsClosure, listGetterClosure) {
 	var tr = dojo.create("tr", {id: 'tr' + propertyName}, parentTable);
 
 	var label = dojo.create("td", {
@@ -193,32 +207,42 @@ function createHtmlList(parentTable, propertyName, data, createListButtonsClosur
 	}, cell);
 	htmlList.id = propertyName;
 	
+	tr.info = {};
+	tr.info.propertyName = propertyName;
+	tr.info.originalData = data.value;
+	tr.info.infoSetter = infoSetterListClosure(htmlList, label);
+	tr.info.infoGetter = infoGetterListClosure(data, htmlList);
+	tr.info.infoGetterForSave = infoGetterForSaveListClosure(data, htmlList);
+	
 	var values = data.value;
-	for (var i = 0; i < values.length; i++) {
-		var txt = dojo.create("li", {
-			innerHTML : values[i]
-		}, htmlList);
+	if (listGetterClosure == null) {
+		for (var i = 0; i < values.length; i++) {
+			var txt = dojo.create("li", {
+				innerHTML : values[i]
+			}, htmlList);
+		}
+	}
+	else {
+		listGetterClosure(values, tr);
 	}
 	
 	if (createListButtonsClosure != null) {
-		createListButtonsClosure(propertyName, cell);
+		createListButtonsClosure(propertyName, tr, cell);
 	}
-	
-	tr.info = {};
-	tr.info.propertyName = propertyName;
-	tr.info.infoSetter = infoSetterListClosure(data.value, htmlList, label);
-	tr.info.infoGetter = infoGetterListClosure(data, htmlList);
 }
-function createInfoHtmlTable(parentDOM, info, createListButtonsClosure) {
+function createInfoHtmlTable(parentDOM, info, createListButtonsClosure, listGetterClosure) {
 	for (var i in info) {
 		var data = info[i];
 		var value = data.value;
 		
-		if (data.isHtmlList != null && data.isHtmlList == true) {
-			createHtmlList(parentDOM, i, data, createListButtonsClosure);
-		}
-		else {
-			createHtmlLabelText(parentDOM, i, data);
+		//Does not display a property without name.
+		if (data.displayText != null) {
+			if (data.isHtmlList != null && data.isHtmlList == true) {
+				createHtmlList(parentDOM, i, data, createListButtonsClosure, listGetterClosure);
+			}
+			else {
+				createHtmlLabelText(parentDOM, i, data);
+			}
 		}
 	}
 };

@@ -16,4 +16,6 @@ public interface IStudentService {
     public BaseObject getStudentMedicalProperties(String requestId, String studentKey, Set<String> properties) throws Exception;
 
     public Set<BaseObject> getStudentsWithProperties(String requestId, Set<String> properties) throws Exception;
+
+    public BaseObject getStudentProperties(String requestId, String studentKey, Set<String> properties) throws Exception;
 }

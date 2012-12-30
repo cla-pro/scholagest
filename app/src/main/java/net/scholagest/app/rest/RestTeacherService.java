@@ -30,14 +30,12 @@ public class RestTeacherService extends AbstractService {
     private final static String REQUEST_ID_PREFIX = "teacher-";
     private final ITeacherService teacherService;
     private final IOntologyService ontologyService;
-    private JsonConverter converter;
 
     @Inject
     public RestTeacherService(ITeacherService teacherService, IOntologyService ontologyService) {
         super(ontologyService);
         this.teacherService = teacherService;
         this.ontologyService = ontologyService;
-        this.converter = new JsonConverter(this.ontologyService);
     }
 
     @GET
@@ -52,8 +50,8 @@ public class RestTeacherService extends AbstractService {
         Map<String, Object> teacherProperties = JerseyHelper.listToMap(keys, new ArrayList<Object>(values));
 
         try {
-        	BaseObject teacher = teacherService.createTeacher(requestId, teacherType, teacherProperties);
-        	RestObject restTeacher = new RestToKdomConverter().restObjectFromKdom(teacher);
+            BaseObject teacher = teacherService.createTeacher(requestId, teacherType, teacherProperties);
+            RestObject restTeacher = new RestToKdomConverter().restObjectFromKdom(teacher);
 
             String json = new Gson().toJson(restTeacher);
             return "{info: " + json + "}";
@@ -71,7 +69,7 @@ public class RestTeacherService extends AbstractService {
         try {
             Set<BaseObject> teachers = teacherService.getTeachersWithProperties(requestId, properties);
             List<RestObject> restTeachers = new RestToKdomConverter().restObjectsFromKdoms(teachers);
-            
+
             String json = new Gson().toJson(restTeachers);
             return "{info: " + json + "}";
         } catch (Exception e) {
