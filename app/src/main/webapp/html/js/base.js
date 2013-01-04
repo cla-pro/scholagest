@@ -101,14 +101,3 @@ function extractKeys(list) {
 	
 	return resultList;
 };
-
-function moveElements(sourceTree, destTree) {
-	return function(e) {
-		var destStore = destTree.model.store;
-		
-		var selectedItems = sourceTree.selectedItems;
-		for (var itemKey in selectedItems) {
-			destStore.add(selectedItems[itemKey]);
-		}
-	};
-};

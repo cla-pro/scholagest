@@ -79,6 +79,30 @@ public class RestTeacherService extends AbstractService {
     }
 
     @GET
+    @Path("/getTeachersInfo")
+    @Produces("text/json")
+    public String getTeachersInfo(@QueryParam("token") String token, @QueryParam("teachers") Set<String> teacherKeyList,
+            @QueryParam("properties") Set<String> properties) {
+        String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+        try {
+            Set<BaseObject> teachers = new HashSet<>();
+            for (String teacherKey : teacherKeyList) {
+                BaseObject teacher = teacherService.getTeacherProperties(requestId, teacherKey, properties);
+
+                teachers.add(teacher);
+            }
+
+            List<RestObject> restTeachers = new RestToKdomConverter().restObjectsFromKdoms(teachers);
+
+            String json = new Gson().toJson(restTeachers);
+            return "{info: " + json + "}";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{errorCode=0, message='" + e.getMessage() + "'}";
+        }
+    }
+
+    @GET
     @Path("/getProperties")
     @Produces("text/json")
     public String getTeacherProperties(@QueryParam("token") String token, @QueryParam("teacherKey") String teacherKey,

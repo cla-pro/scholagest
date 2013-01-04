@@ -3,7 +3,7 @@ function createStudent(closeId, txtIds) {
 
 	var xhrArgs = {
 			url: "http://localhost:8080/scholagest-app/services/student/create",
-			preventCash: true,
+			preventCache: true,
 			content: {token: dojo.cookie("scholagest-token"),
 				keys: keyValues.keys, values: keyValues.values},
 				handleAs: "json",
@@ -29,7 +29,7 @@ function createStudent(closeId, txtIds) {
 function getStudentList(callback) {
 	var xhrArgs = {
 			url: "http://localhost:8080/scholagest-app/services/student/getStudents",
-			preventCash: true,
+			preventCache: true,
 			content: {token: dojo.cookie("scholagest-token"),
 				properties: ["pStudentLastName", "pStudentFirstName"] },
 				handleAs: "json",
@@ -52,7 +52,7 @@ function getStudentList(callback) {
 function getStudentsInfo(studentList, properties, callback) {
 	var xhrArgs = {
 			url: "http://localhost:8080/scholagest-app/services/student/getStudentsInfo",
-			preventCash: true,
+			preventCache: true,
 			content: {token: dojo.cookie("scholagest-token"),
 				students: studentList,
 				properties: properties},
@@ -86,7 +86,7 @@ function selectStudent(studentKey) {
 	return function(e) {
 		var xhrArgs = {
 				url: "http://localhost:8080/scholagest-app/services/student/getProperties",
-				preventCash: true,
+				preventCache: true,
 				content: {token: dojo.cookie("scholagest-token"),
 					studentKey: studentKey},
 				handleAs: "json",
@@ -148,7 +148,7 @@ function getStudentMedicalInfo(studentKey) {
 function getStudentInfo(studentKey, getInfoServiceName, setInfoServiceName, domId) {
 	var xhrArgs = {
 			url: "http://localhost:8080/scholagest-app/services/student/" + getInfoServiceName,
-			preventCash: true,
+			preventCache: true,
 			content: {token: dojo.cookie("scholagest-token"),
 				studentKey: studentKey},
 			handleAs: "json",
@@ -179,7 +179,7 @@ function setStudentInfo(studentKey, domId, webServiceName) {
 		var keyValues = getKeyValues(domId);
 		var xhrArgs = {
 				url: "http://localhost:8080/scholagest-app/services/student/" + webServiceName,
-				preventCash: true,
+				preventCache: true,
 				postData: dojo.toJson({
 					token: dojo.cookie("scholagest-token"),
 					object: {

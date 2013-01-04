@@ -8,16 +8,21 @@ function changeYearsButtonChange(yearActive) {
 function loadYears() {
 	var xhrArgs = {
 			url: "http://localhost:8080/scholagest-app/services/year/getYears",
-			preventCash: true,
+			preventCache: true,
 			content: {token: dojo.cookie("scholagest-token"),
 				properties: ["pYearName"] },
 				handleAs: "json",
 				load: function(data) {
 					if (data.errorCode == null) {
 						var info = data.info;
+						
+						var yearActive = info.currentYear != null;
+						if (yearActive) {
+							dijit.byId('newClassDialog').currentYearKey = info.currentYear.key;
+						}
 						changeYearsButtonChange(info.currentYear != null);
 						
-						dijit.byId('newClassDialog').currentYearKey = info.currentYear.key;
+						dojo.byId('year-search-list-div').yearsList = info.years;
 						
 						loadClasses(info.years);
 					}
@@ -37,7 +42,7 @@ function startYear(closeId, txtYearNameId) {
 	
 	var xhrArgs = {
 			url: "http://localhost:8080/scholagest-app/services/year/start",
-			preventCash: true,
+			preventCache: true,
 			content: {token: dojo.cookie("scholagest-token"),
 				name: yearName},
 				handleAs: "json",
@@ -46,6 +51,7 @@ function startYear(closeId, txtYearNameId) {
 						//loadYears();
 						changeYearsButtonChange(true);
 						dijit.byId('newClassDialog').currentYearKey = data.info.key;
+						loadYears();
 					}
 					else
 						alert("Error during startYear: ("
@@ -65,7 +71,7 @@ function startYear(closeId, txtYearNameId) {
 function stopYear() {
 	var xhrArgs = {
 			url: "http://localhost:8080/scholagest-app/services/year/stop",
-			preventCash: true,
+			preventCache: true,
 			content: {token: dojo.cookie("scholagest-token")},
 				handleAs: "json",
 				load: function(data) {

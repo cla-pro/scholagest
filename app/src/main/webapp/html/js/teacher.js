@@ -1,7 +1,7 @@
 function getTeacherInfo(teacherKey) {
 	var xhrArgs = {
 			url: "http://localhost:8080/scholagest-app/services/teacher/getProperties",
-			preventCash: true,
+			preventCache: true,
 			content: {token: dojo.cookie("scholagest-token"),
 				teacherKey: teacherKey},
 				handleAs: "json",
@@ -27,12 +27,13 @@ function getTeacherInfo(teacherKey) {
 	}
 
 	var deferred = dojo.xhrGet(xhrArgs);
-}
+};
+
 function setTeacherInfo(teacherKey) {
 	var keyValues = getKeyValues('teacher-data');
 	var xhrArgs = {
 			url: "http://localhost:8080/scholagest-app/services/teacher/setProperties",
-			preventCash: true,
+			preventCache: true,
 			postData: dojo.toJson({
 				token: dojo.cookie("scholagest-token"),
 				object: {
@@ -53,7 +54,8 @@ function setTeacherInfo(teacherKey) {
 	}
 
 	var deferred = dojo.xhrPost(xhrArgs);
-}
+};
+
 function selectTeacher(teacherKey) {
 	return function(e) {
 		var list = dojo.byId('teacher-search-list');
@@ -66,26 +68,23 @@ function selectTeacher(teacherKey) {
 
 		getTeacherInfo(teacherKey);
 	};
-}
-function loadTeachers() {
+};
+
+function getTeacherList(callback) {
 	var xhrArgs = {
 			url: "http://localhost:8080/scholagest-app/services/teacher/getTeachers",
-			preventCash: true,
+			preventCache: true,
 			content: {token: dojo.cookie("scholagest-token"),
 				properties: ["pTeacherLastName", "pTeacherFirstName"] },
 				handleAs: "json",
 				load: function(data) {
 					if (data.errorCode == null) {
-						clearDOM("teacher-search-list");
-
-						var base = dojo.byId("teacher-search-list");
-						var teachers = data.info;
-						createHtmlListFromList(teachers, "teacher-search-list", base,
-								buildListItemTextClosure(["pTeacherLastName", "pTeacherFirstName"]), selectTeacher);
+						callback(data.info);
 					}
-					else
+					else {
 						alert("Error during getTeachers: ("
 								+ data.errorCode + ") " + data.message);
+					}
 				},
 				error: function(error) {
 					alert("error = " + error);
@@ -93,7 +92,43 @@ function loadTeachers() {
 	}
 
 	var deferred = dojo.xhrGet(xhrArgs);
-}
+};
+
+function loadTeachers() {
+	getTeacherList(function(teachers) {
+		clearDOM("teacher-search-list");
+
+		var base = dojo.byId("teacher-search-list");
+		createHtmlListFromList(teachers, "teacher-search-list", base,
+				buildListItemTextClosure(["pTeacherLastName", "pTeacherFirstName"]), selectTeacher);
+	});
+};
+
+function getTeachersInfo(teacherList, properties, callback) {
+	var xhrArgs = {
+			url: "http://localhost:8080/scholagest-app/services/teacher/getTeachersInfo",
+			preventCache: true,
+			content: {token: dojo.cookie("scholagest-token"),
+				teachers: teacherList,
+				properties: properties},
+			handleAs: "json",
+			load: function(data) {
+				if (data.errorCode == null) {
+					callback(data.info);
+				}
+				else {
+					alert("Error during getTeachersInfo: ("
+							+ data.errorCode + ") " + data.message);
+				}
+			},
+			error: function(error) {
+				alert("error = " + error);
+			}
+	}
+
+	var deferred = dojo.xhrGet(xhrArgs);
+};
+
 function createTeacher(closeId, txtIds) {
 	var keys = [];
 	var values = [];
@@ -111,7 +146,7 @@ function createTeacher(closeId, txtIds) {
 
 	var xhrArgs = {
 			url: "http://localhost:8080/scholagest-app/services/teacher/create",
-			preventCash: true,
+			preventCache: true,
 			content: {token: dojo.cookie("scholagest-token"),
 				keys: keys, values: values},
 				handleAs: "json",
@@ -133,4 +168,4 @@ function createTeacher(closeId, txtIds) {
 	if (closeId != null) {
 		dijit.byId(closeId).hide();
 	}
-}
+};

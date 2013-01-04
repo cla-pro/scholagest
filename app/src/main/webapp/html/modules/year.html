@@ -57,7 +57,7 @@
             <td colspan="2" align="center">
                 <button id='btnStartYear' onclick="showStartYearDialog();" disabled="disabled">Démarrer une nouvelle année</button>
                 <button id='btnStopYear' onclick="askConfirmStopYear();" disabled="disabled">Clôturer l'année</button>
-                <button id='btnRenameYear' onclick="showRenameYearDialog();" disabled="disabled">Renommer l'année en cours</button>
+                <button id='btnRenameYear' onclick="showRenameYearDialog();" disabled="disabled" style="visibility: hidden">Renommer l'année en cours</button>
             </td>
         </tr>
         <tr>
@@ -150,7 +150,7 @@
                         };
                     </script>
                     <button id="btnYearNewClass" class="new-class" onclick="createNewClass()" disabled="disabled">Nouvelle classe</button>
-                    <button id="btnYearRemoveClass" class="remove-class" onclick="deleteClass()" disabled="disabled">Supprimer une classe</button>
+                    <button id="btnYearRemoveClass" class="remove-class" onclick="deleteClass()" disabled="disabled" style="visibility: hidden">Supprimer une classe</button>
                     <hr />
                     <div id="year-search-list-div" class="search-list"></div>
                 </div>
@@ -169,26 +169,35 @@
                                     <table>
                                         <tr><td><button id="fromFreeToClassStudents">-&gt;</button></td></tr>
                                         <tr><td><button id="fromClassToFreeStudents">&lt;-</button></td></tr>
+                                    </table>
                                 </td>
                                 <td valign="top"><div style="border: 1px solid black; height: 200px"><div id="class-students"></div></div></td>
                             </tr><tr>
                                 <td align="center"><button id="btnAddRemoveStudentsOk">Ok</button></td>
                                 <td></td>
-                                <td align="center"><button onclick="dijit.byId('addRemoveStudents').hide();">Annuler</button></td>
+                                <td align="center"><button onclick="dijit.byId('addRemoveStudents').onCancel();">Annuler</button></td>
                             </tr>
                         </table>
                     </div>
                     <div id="addRemoveTeachers" style="width:350px" data-dojo-type="dijit.Dialog" title="Ajouter/supprimer des professeurs">
                         <table style="width: 100%">
                             <tr>
-                                <td colspan="2"><h2>Class 2P A</h2></td>
+                                <td colspan="3"><h2>Class 2P A</h2></td>
                             </tr><tr>
-                                <td>Non-assignés</td><td>Assignés</td>
+                                <td>Non-assignés</td><td></td><td>Assignés</td>
                             </tr><tr>
-                                <td><div style="border: 1px solid black; height: 100%"><div id="free-teachers"></div></div></td>
-                                <td valign="top"><div style="border: 1px solid black; height: 100%"><div id="class-teachers"></div></div></td>
+                                <td><div style="border: 1px solid black; height: 100%" id="free-teachers"></div></td>
+                                <td>
+                                    <table>
+                                        <tr><td><button id="fromFreeToClassTeachers">-&gt;</button></td></tr>
+                                        <tr><td><button id="fromClassToFreeTeachers">&lt;-</button></td></tr>
+                                    </table>
+                                </td>
+                                <td valign="top"><div style="border: 1px solid black; height: 100%" id="class-teachers"></div></td>
                             </tr><tr>
-                                <td align="center"><button>Ok</button></td><td align="center"><button>Annuler</button></td>
+                                <td align="center"><button id="btnAddRemoveTeachersOk">Ok</button></td>
+                                <td></td>
+                                <td align="center"><button onclick="dijit.byId('addRemoveTeachers').hide();">Annuler</button></td>
                             </tr>
                         </table>
                     </div>
