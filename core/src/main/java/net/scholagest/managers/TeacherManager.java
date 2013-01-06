@@ -1,11 +1,13 @@
 package net.scholagest.managers;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 import net.scholagest.database.ITransaction;
 import net.scholagest.managers.ontology.OntologyManager;
+import net.scholagest.objects.BaseObject;
 
 import com.google.inject.Inject;
 
@@ -16,11 +18,11 @@ public class TeacherManager extends ObjectManager implements ITeacherManager {
     }
 
     @Override
-    public String createTeacher(String requestId, ITransaction transaction) throws Exception {
+    public BaseObject createTeacher(String requestId, ITransaction transaction) throws Exception {
         String id = UUID.randomUUID().toString();
         String teacherKey = CoreNamespace.teacherNs + "#" + id;
 
-        super.createObject(requestId, transaction, teacherKey, "tTeacher");
+        BaseObject teacherObject = super.createObject(requestId, transaction, teacherKey, CoreNamespace.tTeacher);
 
         String teacherBase = CoreNamespace.teacherNs + "/" + id;
         transaction.insert(CoreNamespace.teachersBase, teacherKey, teacherKey, null);
@@ -33,12 +35,19 @@ public class TeacherManager extends ObjectManager implements ITeacherManager {
         String propertiesKey = teacherBase + "#properties";
         transaction.insert(teacherKey, CoreNamespace.pTeacherProperties, propertiesKey, null);
 
-        return teacherKey;
+        return teacherObject;
     }
 
     @Override
-    public Set<String> getTeachers(String requestId, ITransaction transaction) throws Exception {
-        return transaction.getColumns(CoreNamespace.teachersBase);
+    public Set<BaseObject> getTeachers(String requestId, ITransaction transaction) throws Exception {
+        Set<BaseObject> teachers = new HashSet<>();
+
+        for (String col : transaction.getColumns(CoreNamespace.teachersBase)) {
+            String teacherKey = (String) transaction.get(CoreNamespace.teachersBase, col, null);
+            teachers.add(new BaseObject(teacherKey, CoreNamespace.tTeacher));
+        }
+
+        return teachers;
     }
 
     @Override
@@ -48,8 +57,11 @@ public class TeacherManager extends ObjectManager implements ITeacherManager {
     }
 
     @Override
-    public Map<String, Object> getTeacherProperties(String requestId, ITransaction transaction, String teacherKey, Set<String> propertiesName)
+    public BaseObject getTeacherProperties(String requestId, ITransaction transaction, String teacherKey, Set<String> propertiesName)
             throws Exception {
-        return super.getObjectProperties(requestId, transaction, teacherKey, propertiesName);
+        BaseObject teacherObject = new BaseObject(teacherKey, CoreNamespace.tTeacher);
+        teacherObject.setProperties(super.getObjectProperties(requestId, transaction, teacherKey, propertiesName));
+
+        return teacherObject;
     }
 }

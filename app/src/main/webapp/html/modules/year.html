@@ -1,0 +1,208 @@
+<div id="menu-element-years" data-dojo-type="dijit.layout.ContentPane" title="Volée">
+    <script type="text/javascript">
+        dojo.ready(function() {
+            var tabs = dijit.byId("tabMenu");
+            tabs.watch("selectedChildWidget", function(name, oval, nval) {
+                if (nval.id == 'menu-element-years') {
+                    //getCurrentYearKey();
+                    loadYears();
+                }
+            });
+        });
+    </script>
+    <div id="startYearDialog" data-dojo-type="dijit.Dialog" title="Démarrer une année" style="width: 300px">
+        <table style="width: 100%">
+            <tr>
+                <td colspan="2" style="width: 100%">Nom de l'année</td>
+            </tr><tr>
+                <td colspan="2"><input type="text" id="txtNewYearName" style="width: 100%"></input></td>
+            </tr><tr>
+                <td align="center"><button onclick="startYear('startYearDialog', 'txtNewYearName')">Ok</button></td>
+                <td align="center"><button>Annuler</button></td>
+            </tr>
+        </table>
+    </div>
+<!--     <div id="renameYearDialog" data-dojo-type="dijit.Dialog" title="Renommer l'année en cours" style="width: 300px"> -->
+<!--         <table style="width: 100%"> -->
+<!--             <tr> -->
+<!--                 <td colspan="2" style="width: 100%">Nom de l'année</td> -->
+<!--             </tr><tr> -->
+<!--                 <td colspan="2"><input type="text" style="width: 100%"></input></td> -->
+<!--             </tr><tr> -->
+<!--                 <td align="center"><button>Ok</button></td><td align="center"><button>Annuler</button></td> -->
+<!--             </tr> -->
+<!--         </table> -->
+<!--     </div> -->
+    <script type="text/javascript">
+        function askConfirmStopYear() {
+            if (window.confirm('Êtes vous sûr de vouloir clôturer l\'année?')) {
+                stopYear();
+            }
+        }
+        function showStartYearDialog() {
+            dijit.byId("startYearDialog").show();
+        }
+        function showRenameYearDialog() {
+            dijit.byId("renameYearDialog").show();
+        }
+        function createClassAndCloseDialog(closeId, txtNewClassNameId) {
+            var yearKey = dijit.byId(closeId).currentYearKey;
+            var className = dojo.byId(txtNewClassNameId).value;
+            dijit.byId(closeId).hide();
+            createClass(yearKey, className);
+        }
+    </script>
+    <table style="width: 100%; height: 100%">
+        <tr>
+            <td colspan="2" align="center">
+                <button id='btnStartYear' onclick="showStartYearDialog();" disabled="disabled">Démarrer une nouvelle année</button>
+                <button id='btnStopYear' onclick="askConfirmStopYear();" disabled="disabled">Clôturer l'année</button>
+                <button id='btnRenameYear' onclick="showRenameYearDialog();" disabled="disabled" style="visibility: hidden">Renommer l'année en cours</button>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2"><hr /></td>
+        </tr>
+        <tr>
+            <td valign="top" style="width: 20%; height: 100%">
+                <div id="year-search" class="vertical-search">
+                    <div id="newClassDialog" data-dojo-type="dijit.Dialog" title="Nouvelle classe">
+                        <table style="width: 100%">
+                            <tr>
+                                <td>Nom</td><td><input type="text" id="txtNewClassName" style="width:200px"></input></td>
+                            </tr>
+<!--                             <tr> -->
+<!--                                 <td>Degré</td><td><select name="thelist1" style="width: 100%"> -->
+<!--                                       <option>1ère</option> -->
+<!--                                       <option>2ème</option> -->
+<!--                                       <option>3ème</option> -->
+<!--                                       <option>4ème</option> -->
+<!--                                       <option>5ème</option> -->
+<!--                                       <option>6ème</option> -->
+<!--                                       <option>7ème</option> -->
+<!--                                       <option>8ème</option> -->
+<!--                                     </select></td> -->
+<!--                             </tr> -->
+<!--                             <tr> -->
+<!--                                 <td>Type</td><td><select name="thelist2" style="width: 100%"> -->
+<!--                                       <option>Normal</option> -->
+<!--                                       <option>Acceuil</option> -->
+<!--                                     </select></td> -->
+<!--                             </tr> -->
+<!--                             <tr> -->
+<!--                                 <td>Reprendre</td><td><select name="thelist3" style="width: 100%"> -->
+<!--                                     <option>Aucun</option> -->
+<!--                                     <option>Classe 1P A</option> -->
+<!--                                     <option>Classe 1P B</option> -->
+<!--                                 </select></td> -->
+<!--                             </tr> -->
+<!--                             <tr> -->
+<!--                                 <td># de partie</td><td><select name="thelist1" style="width: 100%"> -->
+<!--                                       <option>1</option> -->
+<!--                                       <option>2</option> -->
+<!--                                       <option>3</option> -->
+<!--                                       <option>4</option> -->
+<!--                                       <option>5</option> -->
+<!--                                     </select></td> -->
+<!--                             </tr> -->
+<!--                             <tr> -->
+<!--                                 <td>Nom de partie</td><td><input type="text" style="width: 100%" value="Trimestre" /></td> -->
+<!--                             </tr> -->
+                            <tr>
+                                <td align="center"><button onclick="createClassAndCloseDialog('newClassDialog', 'txtNewClassName')">Ok</button></td><td align="center"><button>Annuler</button></td>
+                            </tr>
+                        </table>
+                    </div>
+<!--                     <div id="removeClassDialog" data-dojo-type="dijit.Dialog" title="Supprimer une classe" style="width: 300px"> -->
+<!--                         <table style="width: 100%"> -->
+<!--                             <tr> -->
+<!--                                 <td colspan="2">Classe à supprimer</td> -->
+<!--                             </tr><tr> -->
+<!--                                 <td colspan="2"><select name="thelist1" style="width: 100%"> -->
+<!--                                       <option>Classe 1P A</option> -->
+<!--                                       <option>Classe 1P B</option> -->
+<!--                                       <option>Classe 2P A</option> -->
+<!--                                       <option>Classe 2P B</option> -->
+<!--                                       <option>Classe 3P A</option> -->
+<!--                                       <option>Classe 3P B</option> -->
+<!--                                       <option>Classe 3P C</option> -->
+<!--                                       <option>Classe 4P A</option> -->
+<!--                                       <option>Classe 4P B</option> -->
+<!--                                       <option>Classe 5P A</option> -->
+<!--                                       <option>Classe 5P B</option> -->
+<!--                                       <option>Classe 6P A</option> -->
+<!--                                       <option>Classe 7P A</option> -->
+<!--                                       <option>Classe 7P B</option> -->
+<!--                                       <option>Classe 8P A</option> -->
+<!--                                       <option>Classe 8P B</option> -->
+<!--                                     </select></td> -->
+<!--                             </tr><tr> -->
+<!--                                 <td align="center"><button>Ok</button></td><td align="center"><button>Annuler</button></td> -->
+<!--                             </tr> -->
+<!--                         </table> -->
+<!--                     </div> -->
+                    <script type="text/javascript">
+                        function createNewClass() {
+                            dijit.byId("newClassDialog").show();
+                        };
+                        function deleteClass() {
+                            dijit.byId("removeClassDialog").show();
+                        };
+                    </script>
+                    <button id="btnYearNewClass" class="new-class" onclick="createNewClass()" disabled="disabled">Nouvelle classe</button>
+                    <button id="btnYearRemoveClass" class="remove-class" onclick="deleteClass()" disabled="disabled" style="visibility: hidden">Supprimer une classe</button>
+                    <hr />
+                    <div id="year-search-list-div" class="search-list"></div>
+                </div>
+            </td>
+            <td valign="top" style="width: 80%">
+                <div id="class-data" class="class-info">
+                    <div id="addRemoveStudents" style="width:350px" data-dojo-type="dijit.Dialog" title="Ajouter/supprimer des élèves">
+                        <table style="width: 100%">
+                            <tr>
+                                <td colspan="3"><h2>Class 2P A</h2></td>
+                            </tr><tr>
+                                <td>Non-assignés</td><td></td><td>Assignés</td>
+                            </tr><tr>
+                                <td><div style="border: 1px solid black; height: 200px"><div id="free-students"></div></div></td>
+                                <td>
+                                    <table>
+                                        <tr><td><button id="fromFreeToClassStudents">-&gt;</button></td></tr>
+                                        <tr><td><button id="fromClassToFreeStudents">&lt;-</button></td></tr>
+                                    </table>
+                                </td>
+                                <td valign="top"><div style="border: 1px solid black; height: 200px"><div id="class-students"></div></div></td>
+                            </tr><tr>
+                                <td align="center"><button id="btnAddRemoveStudentsOk">Ok</button></td>
+                                <td></td>
+                                <td align="center"><button onclick="dijit.byId('addRemoveStudents').onCancel();">Annuler</button></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div id="addRemoveTeachers" style="width:350px" data-dojo-type="dijit.Dialog" title="Ajouter/supprimer des professeurs">
+                        <table style="width: 100%">
+                            <tr>
+                                <td colspan="3"><h2>Class 2P A</h2></td>
+                            </tr><tr>
+                                <td>Non-assignés</td><td></td><td>Assignés</td>
+                            </tr><tr>
+                                <td><div style="border: 1px solid black; height: 100%" id="free-teachers"></div></td>
+                                <td>
+                                    <table>
+                                        <tr><td><button id="fromFreeToClassTeachers">-&gt;</button></td></tr>
+                                        <tr><td><button id="fromClassToFreeTeachers">&lt;-</button></td></tr>
+                                    </table>
+                                </td>
+                                <td valign="top"><div style="border: 1px solid black; height: 100%" id="class-teachers"></div></td>
+                            </tr><tr>
+                                <td align="center"><button id="btnAddRemoveTeachersOk">Ok</button></td>
+                                <td></td>
+                                <td align="center"><button onclick="dijit.byId('addRemoveTeachers').hide();">Annuler</button></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>

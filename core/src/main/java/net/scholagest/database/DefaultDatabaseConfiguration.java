@@ -7,6 +7,7 @@ import me.prettyprint.hector.api.factory.HFactory;
 import com.google.inject.Inject;
 
 public class DefaultDatabaseConfiguration implements IDatabaseConfiguration {
+
     @Inject
     public DefaultDatabaseConfiguration() {}
 
@@ -20,7 +21,7 @@ public class DefaultDatabaseConfiguration implements IDatabaseConfiguration {
         CassandraHostConfigurator hostConfigurator = new CassandraHostConfigurator();
 
         hostConfigurator.setHosts("localhost:9160");
-        // hostConfigurator.setHosts("192.168.2.104:9160");
+        // hostConfigurator.setHosts("scholagest-demo:9160");
 
         return hostConfigurator;
     }

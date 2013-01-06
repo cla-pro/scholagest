@@ -2,43 +2,47 @@ package net.scholagest.app.rest;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
-import net.scholagest.managers.CoreNamespace;
 import net.scholagest.managers.ontology.OntologyElement;
-import net.scholagest.managers.ontology.RDFS;
+import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IOntologyService;
 
 import com.google.inject.Inject;
 
 public abstract class AbstractService {
     private final IOntologyService ontologyService;
+    private JsonConverter converter;
 
     @Inject
     public AbstractService(IOntologyService ontologyService) {
         this.ontologyService = ontologyService;
+        this.converter = new JsonConverter(this.ontologyService);
     }
 
-    @SuppressWarnings("unchecked")
-    protected Map<String, Map<String, Object>> extractOntology(Map<String, Object> info) throws Exception {
-        Map<String, Map<String, Object>> result = new HashMap<>();
-        for (Map.Entry<String, Object> entry : info.entrySet()) {
-            Object value = entry.getValue();
-            if (value instanceof Map) {
-                value = extractOntology((Map<String, Object>) value);
-            }
-            // Get ontology for the field.
-            OntologyElement element = ontologyService.getElementWithName(entry.getKey());
-            Map<String, Object> fieldInfo = new HashMap<>();
-            fieldInfo.put("value", value);
-            String displayText = element.getAttributes().get(CoreNamespace.scholagestNs + "#displayText");
-            fieldInfo.put("displayText", displayText);
-            if (ontologyService.isSubtypeOf(element.getAttributeWithName(RDFS.range), ScholagestNamespace.tGroup)) {
-                fieldInfo.put("isHtmlGroup", true);
-            }
+    protected Map<String, OntologyElement> extractOntology(Set<String> properties) throws Exception {
+        Map<String, OntologyElement> ontology = new HashMap<>();
 
-            result.put(entry.getKey(), fieldInfo);
+        for (String propertyName : properties) {
+            OntologyElement ontologyElement = extractOntology(propertyName);
+            ontology.put(propertyName, ontologyElement);
         }
 
-        return result;
+        return ontology;
+    }
+
+    protected OntologyElement extractOntology(String property) throws Exception {
+        return ontologyService.getElementWithName(property);
+    }
+
+    protected Map<String, Object> convertToJsonWithOntology(Set<BaseObject> objects) throws Exception {
+        Map<String, Object> jsonObjects = new HashMap<>();
+
+        for (BaseObject baseObject : objects) {
+            Map<String, OntologyElement> objectOntology = extractOntology(baseObject.getProperties().keySet());
+            jsonObjects.put(baseObject.getKey(), converter.convertObjectToJson(baseObject, objectOntology));
+        }
+
+        return jsonObjects;
     }
 }

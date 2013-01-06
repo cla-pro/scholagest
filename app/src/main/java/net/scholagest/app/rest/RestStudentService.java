@@ -9,13 +9,17 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
+import net.scholagest.app.rest.object.RestObject;
+import net.scholagest.app.rest.object.RestRequest;
 import net.scholagest.app.utils.JerseyHelper;
-import net.scholagest.app.utils.JsonObject;
 import net.scholagest.managers.CoreNamespace;
+import net.scholagest.managers.ontology.OntologyElement;
+import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IOntologyService;
 import net.scholagest.services.IStudentService;
 
@@ -27,12 +31,14 @@ public class RestStudentService extends AbstractService {
     private final static String REQUEST_ID_PREFIX = "student-";
     private final IStudentService studentService;
     private final IOntologyService ontologyService;
+    private JsonConverter converter;
 
     @Inject
     public RestStudentService(IStudentService studentService, IOntologyService ontologyService) {
         super(ontologyService);
         this.studentService = studentService;
         this.ontologyService = ontologyService;
+        this.converter = new JsonConverter(this.ontologyService);
     }
 
     @GET
@@ -46,15 +52,17 @@ public class RestStudentService extends AbstractService {
         Map<String, Object> personalInfo = JerseyHelper.listToMap(keys, new ArrayList<Object>(values));
 
         // 2. Update the database.
-        String teacherKey = null;
+        BaseObject student = null;
         try {
-            teacherKey = this.studentService.createStudent(requestId, personalInfo);
+            student = studentService.createStudent(requestId, personalInfo);
+
+            Gson gson = new Gson();
+            String json = gson.toJson(converter.convertObjectToJson(student, null));
+            return "{info: " + json + "}";
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode=0, message='" + e.getMessage() + "'}";
         }
-
-        return new JsonObject("studentKey", teacherKey).toString();
     }
 
     @GET
@@ -63,11 +71,61 @@ public class RestStudentService extends AbstractService {
     public String getStudents(@QueryParam("token") String token, @QueryParam("properties") Set<String> properties) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
         try {
-            Map<String, Map<String, Object>> teachersInfo = studentService.getStudentsWithProperties(requestId, properties);
+            Set<BaseObject> students = studentService.getStudentsWithProperties(requestId, properties);
+            List<RestObject> restStudents = new RestToKdomConverter().restObjectsFromKdoms(students);
 
-            Gson gson = new Gson();
-            String json = gson.toJson(teachersInfo);
-            return "{students: " + json + "}";
+            String json = new Gson().toJson(restStudents);
+            return "{info: " + json + "}";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{errorCode=0, message='" + e.getMessage() + "'}";
+        }
+    }
+
+    @GET
+    @Path("/getStudentsInfo")
+    @Produces("text/json")
+    public String getStudentsInfo(@QueryParam("token") String token, @QueryParam("students") Set<String> studentKeyList,
+            @QueryParam("properties") Set<String> properties) {
+        String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+        try {
+            Set<BaseObject> students = new HashSet<>();
+            for (String studentKey : studentKeyList) {
+                BaseObject studentPersonalInfo = studentService.getStudentPersonalProperties(requestId, studentKey, properties);
+                BaseObject student = new BaseObject(studentKey, CoreNamespace.tStudent);
+                student.setProperties(studentPersonalInfo.getProperties());
+
+                students.add(student);
+            }
+
+            List<RestObject> restStudents = new RestToKdomConverter().restObjectsFromKdoms(students);
+
+            String json = new Gson().toJson(restStudents);
+            return "{info: " + json + "}";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{errorCode=0, message='" + e.getMessage() + "'}";
+        }
+    }
+
+    @GET
+    @Path("/getProperties")
+    @Produces("text/json")
+    public String getStudentProperties(@QueryParam("token") String token, @QueryParam("studentKey") String studentKey,
+            @QueryParam("properties") Set<String> properties) {
+        String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+        try {
+            if (properties == null || properties.isEmpty()) {
+                properties = ontologyService.getPropertiesForType(CoreNamespace.tStudent);
+            }
+            BaseObject studentInfo = studentService.getStudentProperties(requestId, studentKey, new HashSet<String>(properties));
+            Map<String, OntologyElement> ontology = extractOntology(studentInfo.getProperties().keySet());
+
+            RestObject restStudentInfo = new RestToKdomConverter().restObjectFromKdom(studentInfo);
+            new OntologyMerger(ontologyService).mergeOntologyWithRestObject(restStudentInfo, ontology);
+
+            String json = new Gson().toJson(restStudentInfo);
+            return "{info: " + json + "}";
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode=0, message='" + e.getMessage() + "'}";
@@ -82,20 +140,19 @@ public class RestStudentService extends AbstractService {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
         try {
             if (properties == null || properties.isEmpty()) {
-                properties = this.ontologyService.getPropertiesForType(CoreNamespace.tStudentPersonalInfo);
+                properties = ontologyService.getPropertiesForType(CoreNamespace.tStudentPersonalInfo);
             }
 
             Set<String> personalInfoProperties = ontologyService.filterPropertiesWithCorrectDomain(ScholagestNamespace.tStudentPersonalInfo,
                     new HashSet<String>(properties));
 
-            Map<String, Object> info = new HashMap<String, Object>();
-            info.put(ScholagestNamespace.pStudentPersonalInfo,
-                    this.studentService.getStudentPersonalInfo(requestId, studentKey, personalInfoProperties));
+            BaseObject personalObject = studentService.getStudentPersonalProperties(requestId, studentKey, personalInfoProperties);
+            Map<String, OntologyElement> personalOntology = extractOntology(personalObject.getProperties().keySet());
 
-            Map<String, Map<String, Object>> result = extractOntology(info);
+            RestObject restPersonalInfo = new RestToKdomConverter().restObjectFromKdom(personalObject);
+            new OntologyMerger(ontologyService).mergeOntologyWithRestObject(restPersonalInfo, personalOntology);
 
-            Gson gson = new Gson();
-            String json = gson.toJson(result);
+            String json = new Gson().toJson(restPersonalInfo);
             return "{info: " + json + "}";
         } catch (Exception e) {
             e.printStackTrace();
@@ -103,16 +160,17 @@ public class RestStudentService extends AbstractService {
         }
     }
 
-    @GET
+    @POST
     @Path("/setPersonalProperties")
     @Produces("text/json")
-    public String setStudentPersonalInfo(@QueryParam("token") String token, @QueryParam("studentKey") String studentKey,
-            @QueryParam("names") List<String> names, @QueryParam("values") List<String> values) {
+    public String setStudentPersonalInfo(String content) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
         try {
-            Map<String, Object> properties = JerseyHelper.listToMap(names, new ArrayList<Object>(values));
+            RestRequest request = new Gson().fromJson(content, RestRequest.class);
+            RestObject requestObject = request.getObject();
+            BaseObject baseObject = new RestToKdomConverter().baseObjectFromRest(requestObject);
 
-            this.studentService.updateStudentInfo(requestId, studentKey, properties, new HashMap<String, Object>());
+            studentService.updateStudentProperties(requestId, baseObject.getKey(), baseObject.getProperties(), new HashMap<String, Object>());
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode=0, message='" + e.getMessage() + "'}";
@@ -129,18 +187,18 @@ public class RestStudentService extends AbstractService {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
         try {
             if (properties == null || properties.isEmpty()) {
-                properties = this.ontologyService.getPropertiesForType(CoreNamespace.tStudentMedicalInfo);
+                properties = ontologyService.getPropertiesForType(CoreNamespace.tStudentMedicalInfo);
             }
             Set<String> medicalInfoProperties = ontologyService.filterPropertiesWithCorrectDomain(ScholagestNamespace.tStudentMedicalInfo,
                     new HashSet<String>(properties));
 
-            Map<String, Object> info = new HashMap<String, Object>();
-            info.put(ScholagestNamespace.pStudentMedicalInfo, this.studentService.getStudentMedicalInfo(requestId, studentKey, medicalInfoProperties));
+            BaseObject medicalObject = studentService.getStudentMedicalProperties(requestId, studentKey, medicalInfoProperties);
+            Map<String, OntologyElement> medicalOntology = extractOntology(medicalObject.getProperties().keySet());
 
-            Map<String, Map<String, Object>> result = extractOntology(info);
+            RestObject restMedicalInfo = new RestToKdomConverter().restObjectFromKdom(medicalObject);
+            new OntologyMerger(ontologyService).mergeOntologyWithRestObject(restMedicalInfo, medicalOntology);
 
-            Gson gson = new Gson();
-            String json = gson.toJson(result);
+            String json = new Gson().toJson(restMedicalInfo);
             return "{info: " + json + "}";
         } catch (Exception e) {
             e.printStackTrace();
@@ -148,16 +206,17 @@ public class RestStudentService extends AbstractService {
         }
     }
 
-    @GET
+    @POST
     @Path("/setMedicalProperties")
     @Produces("text/json")
-    public String setStudentMedicalInfo(@QueryParam("token") String token, @QueryParam("studentKey") String studentKey,
-            @QueryParam("names") List<String> names, @QueryParam("values") List<String> values) {
+    public String setStudentMedicalInfo(String content) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
         try {
-            Map<String, Object> properties = JerseyHelper.listToMap(names, new ArrayList<Object>(values));
+            RestRequest request = new Gson().fromJson(content, RestRequest.class);
+            RestObject requestObject = request.getObject();
+            BaseObject baseObject = new RestToKdomConverter().baseObjectFromRest(requestObject);
 
-            this.studentService.updateStudentInfo(requestId, studentKey, new HashMap<String, Object>(), properties);
+            studentService.updateStudentProperties(requestId, baseObject.getKey(), new HashMap<String, Object>(), baseObject.getProperties());
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode=0, message='" + e.getMessage() + "'}";

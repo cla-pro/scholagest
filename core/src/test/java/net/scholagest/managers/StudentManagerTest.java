@@ -4,82 +4,78 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.spy;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 import net.scholagest.managers.ontology.OntologyManager;
+import net.scholagest.objects.BaseObject;
 import net.scholagest.utils.AbstractTestWithTransaction;
 import net.scholagest.utils.DatabaseReaderWriter;
 import net.scholagest.utils.InMemoryDatabase;
 import net.scholagest.utils.InMemoryDatabase.InMemoryTransaction;
 
 import org.junit.Test;
+import org.mockito.Mockito;
 
 public class StudentManagerTest extends AbstractTestWithTransaction {
     private static final String STUDENT_KEY = "http://scholagest.net/student#329c1a51-5469-4eac-a182-29afb1e5ecdb";
 
-    private StudentManager studentManager = spy(new StudentManager(new OntologyManager()));
+    private IStudentManager studentManager = spy(new StudentManager(new OntologyManager()));
 
     @Test
-    public void testGetMedicalInfoProperties() throws Exception {
-        super.fillTransactionWithDataSets(new String[] { "Student" });
+    public void testCreateNewStudent() throws Exception {
+        BaseObject student = studentManager.createStudent(requestId, transaction);
 
-        Set<String> properties = new HashSet<>();
-        properties.add("pStudentAlergy");
-        Map<String, Object> readProperties = studentManager.getMedicalInfoProperties(UUID.randomUUID().toString(), transaction, STUDENT_KEY,
-                properties);
-        Map<String, Object> mockProperties = createStudentMedicalInfo();
-
-        assertEquals(mockProperties.size(), readProperties.size());
-        for (String key : mockProperties.keySet()) {
-            assertEquals(mockProperties.get(key), readProperties.get(key));
-        }
+        Mockito.verify(transaction).insert(Mockito.eq(CoreNamespace.studentsBase), Mockito.anyString(), Mockito.eq(student.getKey()),
+                Mockito.anyString());
     }
 
     @Test
-    public void testGetPersonalInfoProperties() throws Exception {
+    public void testGetMedicalProperties() throws Exception {
         super.fillTransactionWithDataSets(new String[] { "Student" });
 
-        Set<String> properties = new HashSet<>();
-        properties.add("pStudentLastName");
-        properties.add("pStudentFirstName");
-        Map<String, Object> readProperties = studentManager.getPersonalInfoProperties(UUID.randomUUID().toString(), transaction, STUDENT_KEY,
-                properties);
-        Map<String, Object> mockProperties = createStudentPersonalInfo();
+        Map<String, Object> mockProperties = createStudentMedical();
+        BaseObject medicalProperties = studentManager.getMedicalProperties(requestId, transaction, STUDENT_KEY, mockProperties.keySet());
 
-        assertEquals(mockProperties.size(), readProperties.size());
-        for (String key : mockProperties.keySet()) {
-            assertEquals(mockProperties.get(key), readProperties.get(key));
-        }
+        assertMapEquals(mockProperties, medicalProperties.getProperties());
+    }
+
+    @Test
+    public void testGetPersonalProperties() throws Exception {
+        super.fillTransactionWithDataSets(new String[] { "Student" });
+
+        Map<String, Object> mockProperties = createStudentPersonal();
+        BaseObject personalProperties = studentManager.getPersonalProperties(requestId, transaction, STUDENT_KEY, mockProperties.keySet());
+
+        assertMapEquals(mockProperties, personalProperties.getProperties());
     }
 
     @Test
     public void testGetStudents() throws Exception {
         super.fillTransactionWithDataSets(new String[] { "Student" });
 
-        Set<String> students = studentManager.getStudents(UUID.randomUUID().toString(), transaction);
+        Set<BaseObject> students = studentManager.getStudents(requestId, transaction);
 
         assertEquals(1, students.size());
-        assertEquals(STUDENT_KEY, students.iterator().next());
+        assertEquals(STUDENT_KEY, students.iterator().next().getKey());
     }
 
-    private Map<String, Object> createStudentPersonalInfo() {
-        Map<String, Object> personalInfo = new HashMap<String, Object>();
+    private Map<String, Object> createStudentPersonal() {
+        Map<String, Object> personalProperties = new HashMap<String, Object>();
 
-        personalInfo.put("pStudentLastName", "Dupont");
-        personalInfo.put("pStudentFirstName", "Gilles");
+        personalProperties.put("pStudentLastName", "Dupont");
+        personalProperties.put("pStudentFirstName", "Gilles");
 
-        return personalInfo;
+        return personalProperties;
     }
 
-    private Map<String, Object> createStudentMedicalInfo() {
-        Map<String, Object> personalInfo = new HashMap<String, Object>();
+    private Map<String, Object> createStudentMedical() {
+        Map<String, Object> personalProperties = new HashMap<String, Object>();
 
-        personalInfo.put("pStudentAlergy", "RAS");
+        personalProperties.put("pStudentAlergy", "RAS");
 
-        return personalInfo;
+        return personalProperties;
     }
 
     public static void main(String[] args) throws Exception {
@@ -87,12 +83,12 @@ public class StudentManagerTest extends AbstractTestWithTransaction {
 
         StudentManager studentManager = new StudentManager(new OntologyManager());
 
-        Map<String, Object> personalInfo = new StudentManagerTest().createStudentPersonalInfo();
-        Map<String, Object> medicalInfo = new StudentManagerTest().createStudentMedicalInfo();
+        Map<String, Object> personalProperties = new StudentManagerTest().createStudentPersonal();
+        Map<String, Object> medicalProperties = new StudentManagerTest().createStudentMedical();
 
-        String studentKey = studentManager.createStudent(UUID.randomUUID().toString(), transaction);
-        studentManager.setPersonalInfoProperties(UUID.randomUUID().toString(), transaction, studentKey, personalInfo);
-        studentManager.setMedicalInfoProperties(UUID.randomUUID().toString(), transaction, studentKey, medicalInfo);
+        BaseObject studentKey = studentManager.createStudent(UUID.randomUUID().toString(), transaction);
+        studentManager.setPersonalProperties(UUID.randomUUID().toString(), transaction, studentKey.getKey(), personalProperties);
+        studentManager.setMedicalProperties(UUID.randomUUID().toString(), transaction, studentKey.getKey(), medicalProperties);
 
         Map<String, Map<String, Map<String, Object>>> databaseContent = new HashMap<>();
         databaseContent.put(transaction.getKeyspace(), transaction.getValues());

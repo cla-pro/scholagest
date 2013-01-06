@@ -36,4 +36,10 @@
         <rdfs:comment>Student's scholar info</rdfs:comment>
         <rdfs:subClassOf rdf:resource="sg:tGroup" />
     </rdfs:Class>
+    <rdfs:Class rdf:ID="http://scholagest.net#tYear">
+        <rdfs:comment>Year</rdfs:comment>
+    </rdfs:Class>
+    <rdfs:Class rdf:ID="http://scholagest.net#tClass">
+        <rdfs:comment>Class</rdfs:comment>
+    </rdfs:Class>
 </rdf:RDF>

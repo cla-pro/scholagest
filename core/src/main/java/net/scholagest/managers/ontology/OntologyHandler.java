@@ -100,6 +100,7 @@ public class OntologyHandler {
         URL url = null;
         InputStream urlStream = null;
         try {
+        	System.out.println("Downloading ontology from " + urlString);
             url = new URL(urlString);
             urlStream = url.openStream();
 

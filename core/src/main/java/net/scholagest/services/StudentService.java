@@ -1,55 +1,47 @@
 package net.scholagest.services;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import net.scholagest.business.IStudentBusinessComponent;
 import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
-import net.scholagest.managers.CoreNamespace;
-import net.scholagest.managers.IStudentManager;
-import net.scholagest.services.kdom.DBToKdomConverter;
+import net.scholagest.objects.BaseObject;
 
 import com.google.inject.Inject;
 
 public class StudentService implements IStudentService {
     private IDatabase database = null;
-    private IStudentManager studentManager;
+    private IStudentBusinessComponent studentBusinessComponent;
 
     @Inject
-    public StudentService(IDatabase database, IStudentManager studentManager) {
+    public StudentService(IDatabase database, IStudentBusinessComponent studentBusinessComponent) {
         this.database = database;
-        this.studentManager = studentManager;
+        this.studentBusinessComponent = studentBusinessComponent;
     }
 
     @Override
-    public String createStudent(String requestId, Map<String, Object> personalInfo) throws Exception {
-        String studentKey = null;
+    public BaseObject createStudent(String requestId, Map<String, Object> personalProperties) throws Exception {
+        BaseObject student = null;
 
         ITransaction transaction = this.database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
         try {
-            studentKey = studentManager.createStudent(requestId, transaction);
-
-            if (personalInfo != null) {
-                studentManager.setPersonalInfoProperties(requestId, transaction, studentKey, personalInfo);
-            }
-
+            student = studentBusinessComponent.createStudent(requestId, transaction, personalProperties);
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
             e.printStackTrace();
         }
 
-        return studentKey;
+        return student;
     }
 
     @Override
-    public void updateStudentInfo(String requestId, String studentKey, Map<String, Object> personalInfo, Map<String, Object> medicalInfo)
-            throws Exception {
+    public void updateStudentProperties(String requestId, String studentKey, Map<String, Object> personalProperties,
+            Map<String, Object> medicalProperties) throws Exception {
         ITransaction transaction = this.database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
         try {
-            studentManager.setPersonalInfoProperties(requestId, transaction, studentKey, personalInfo);
-            studentManager.setMedicalInfoProperties(requestId, transaction, studentKey, medicalInfo);
+            studentBusinessComponent.updateStudentProperties(requestId, transaction, studentKey, personalProperties, medicalProperties);
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
@@ -58,54 +50,44 @@ public class StudentService implements IStudentService {
     }
 
     @Override
-    public Map<String, Object> getStudentPersonalInfo(String requestId, String studentKey, Set<String> properties) throws Exception {
-        Map<String, Object> personalInfoConverted = null;
+    public BaseObject getStudentPersonalProperties(String requestId, String studentKey, Set<String> properties) throws Exception {
+        BaseObject personalProperties = null;
 
         ITransaction transaction = this.database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
         try {
-            Map<String, Object> personalInfo = studentManager.getPersonalInfoProperties(requestId, transaction, studentKey, properties);
-            personalInfoConverted = new DBToKdomConverter().convertDBToKdom(personalInfo);
-
+            personalProperties = studentBusinessComponent.getStudentPersonalProperties(requestId, transaction, studentKey, properties);
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
             e.printStackTrace();
         }
 
-        return personalInfoConverted;
+        return personalProperties;
     }
 
     @Override
-    public Map<String, Object> getStudentMedicalInfo(String requestId, String studentKey, Set<String> properties) throws Exception {
-        Map<String, Object> medicalInfoConverted = null;
+    public BaseObject getStudentMedicalProperties(String requestId, String studentKey, Set<String> properties) throws Exception {
+        BaseObject medicalProperties = null;
 
         ITransaction transaction = this.database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
         try {
-            Map<String, Object> medicalInfo = studentManager.getMedicalInfoProperties(requestId, transaction, studentKey, properties);
-            medicalInfoConverted = new DBToKdomConverter().convertDBToKdom(medicalInfo);
-
+            medicalProperties = studentBusinessComponent.getStudentMedicalProperties(requestId, transaction, studentKey, properties);
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
             e.printStackTrace();
         }
 
-        return medicalInfoConverted;
+        return medicalProperties;
     }
 
     @Override
-    public Map<String, Map<String, Object>> getStudentsWithProperties(String requestId, Set<String> properties) throws Exception {
-        Map<String, Map<String, Object>> students = null;
+    public Set<BaseObject> getStudentsWithProperties(String requestId, Set<String> properties) throws Exception {
+        Set<BaseObject> students = null;
 
         ITransaction transaction = this.database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
         try {
-            students = new HashMap<String, Map<String, Object>>();
-            for (String col : transaction.getColumns(CoreNamespace.studentsBase)) {
-                String studentKey = (String) transaction.get(CoreNamespace.studentsBase, col, null);
-                Map<String, Object> info = this.studentManager.getPersonalInfoProperties(requestId, transaction, studentKey, properties);
-                students.put(studentKey, info);
-            }
-
+            students = studentBusinessComponent.getStudentsWithProperties(requestId, transaction, properties);
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
@@ -113,5 +95,21 @@ public class StudentService implements IStudentService {
         }
 
         return students;
+    }
+
+    @Override
+    public BaseObject getStudentProperties(String requestId, String studentKey, Set<String> properties) throws Exception {
+        BaseObject studentObject = null;
+
+        ITransaction transaction = this.database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+        try {
+            studentObject = studentBusinessComponent.getStudentProperties(requestId, transaction, studentKey, properties);
+            transaction.commit();
+        } catch (Exception e) {
+            transaction.rollback();
+            e.printStackTrace();
+        }
+
+        return studentObject;
     }
 }

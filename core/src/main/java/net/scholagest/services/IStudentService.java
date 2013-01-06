@@ -3,19 +3,19 @@ package net.scholagest.services;
 import java.util.Map;
 import java.util.Set;
 
-public interface IStudentService {
-    public String createStudent(String requestId, Map<String, Object> personalInfo) throws Exception;
-    
-    public void updateStudentInfo(String requestId, String studentKey,
-            Map<String, Object> personalInfo,
-            Map<String, Object> medicalInfo) throws Exception;
-    
-    public Map<String, Object> getStudentPersonalInfo(String requestId, String studentKey,
-            Set<String> properties) throws Exception;
-    
-    public Map<String, Object> getStudentMedicalInfo(String requestId, String studentKey,
-            Set<String> properties) throws Exception;
+import net.scholagest.objects.BaseObject;
 
-	public Map<String, Map<String, Object>> getStudentsWithProperties(
-			String requestId, Set<String> properties) throws Exception;
+public interface IStudentService {
+    public BaseObject createStudent(String requestId, Map<String, Object> personalInfo) throws Exception;
+
+    public void updateStudentProperties(String requestId, String studentKey, Map<String, Object> personalInfo, Map<String, Object> medicalInfo)
+            throws Exception;
+
+    public BaseObject getStudentPersonalProperties(String requestId, String studentKey, Set<String> properties) throws Exception;
+
+    public BaseObject getStudentMedicalProperties(String requestId, String studentKey, Set<String> properties) throws Exception;
+
+    public Set<BaseObject> getStudentsWithProperties(String requestId, Set<String> properties) throws Exception;
+
+    public BaseObject getStudentProperties(String requestId, String studentKey, Set<String> properties) throws Exception;
 }
