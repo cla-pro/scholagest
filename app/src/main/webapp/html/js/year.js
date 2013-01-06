@@ -7,7 +7,7 @@ function changeYearsButtonChange(yearActive) {
 }
 function loadYears() {
 	var xhrArgs = {
-			url: "http://localhost:8080/scholagest-app/services/year/getYears",
+			url: "../year/getYears",
 			preventCache: true,
 			content: {token: dojo.cookie("scholagest-token"),
 				properties: ["pYearName"] },
@@ -41,7 +41,7 @@ function startYear(closeId, txtYearNameId) {
 	var yearName = dojo.byId(txtYearNameId).value;
 	
 	var xhrArgs = {
-			url: "http://localhost:8080/scholagest-app/services/year/start",
+			url: "../year/start",
 			preventCache: true,
 			content: {token: dojo.cookie("scholagest-token"),
 				name: yearName},
@@ -70,7 +70,7 @@ function startYear(closeId, txtYearNameId) {
 }
 function stopYear() {
 	var xhrArgs = {
-			url: "http://localhost:8080/scholagest-app/services/year/stop",
+			url: "../year/stop",
 			preventCache: true,
 			content: {token: dojo.cookie("scholagest-token")},
 				handleAs: "json",

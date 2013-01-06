@@ -1,6 +1,6 @@
 function getTeacherInfo(teacherKey) {
 	var xhrArgs = {
-			url: "http://localhost:8080/scholagest-app/services/teacher/getProperties",
+			url: "../teacher/getProperties",
 			preventCache: true,
 			content: {token: dojo.cookie("scholagest-token"),
 				teacherKey: teacherKey},
@@ -32,7 +32,7 @@ function getTeacherInfo(teacherKey) {
 function setTeacherInfo(teacherKey) {
 	var keyValues = getKeyValues('teacher-data');
 	var xhrArgs = {
-			url: "http://localhost:8080/scholagest-app/services/teacher/setProperties",
+			url: "../teacher/setProperties",
 			preventCache: true,
 			postData: dojo.toJson({
 				token: dojo.cookie("scholagest-token"),
@@ -72,7 +72,7 @@ function selectTeacher(teacherKey) {
 
 function getTeacherList(callback) {
 	var xhrArgs = {
-			url: "http://localhost:8080/scholagest-app/services/teacher/getTeachers",
+			url: "../teacher/getTeachers",
 			preventCache: true,
 			content: {token: dojo.cookie("scholagest-token"),
 				properties: ["pTeacherLastName", "pTeacherFirstName"] },
@@ -106,7 +106,7 @@ function loadTeachers() {
 
 function getTeachersInfo(teacherList, properties, callback) {
 	var xhrArgs = {
-			url: "http://localhost:8080/scholagest-app/services/teacher/getTeachersInfo",
+			url: "../teacher/getTeachersInfo",
 			preventCache: true,
 			content: {token: dojo.cookie("scholagest-token"),
 				teachers: teacherList,
@@ -145,7 +145,7 @@ function createTeacher(closeId, txtIds) {
 	}
 
 	var xhrArgs = {
-			url: "http://localhost:8080/scholagest-app/services/teacher/create",
+			url: "../teacher/create",
 			preventCache: true,
 			content: {token: dojo.cookie("scholagest-token"),
 				keys: keys, values: values},

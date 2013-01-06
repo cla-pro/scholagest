@@ -125,7 +125,7 @@ function setClassInfo(classKey) {
 	var keyValues = getKeyValues("class-data");
 	
 	var xhrArgs = {
-			url: "http://localhost:8080/scholagest-app/services/class/setProperties",
+			url: "../class/setProperties",
 			preventCache: true,
 			postData: dojo.toJson({
 				token: dojo.cookie("scholagest-token"),
@@ -150,7 +150,7 @@ function setClassInfo(classKey) {
 }
 function getClassInfo(classKey) {
 	var xhrArgs = {
-			url: "http://localhost:8080/scholagest-app/services/class/getProperties",
+			url: "../class/getProperties",
 			preventCache: true,
 			content: {token: dojo.cookie("scholagest-token"),
 				classKey: classKey},
@@ -202,7 +202,7 @@ function loadClasses(yearList) {
 	}
 	
 	var xhrArgs = {
-			url: "http://localhost:8080/scholagest-app/services/class/getClasses",
+			url: "../class/getClasses",
 			preventCache: true,
 			content: {token: dojo.cookie("scholagest-token"),
 				properties: ["pClassName"], years: yearKeyList },
@@ -225,7 +225,7 @@ function loadClasses(yearList) {
 }
 function createClass(yearKey, className) {
 	var xhrArgs = {
-			url: "http://localhost:8080/scholagest-app/services/class/create",
+			url: "../class/create",
 			preventCache: true,
 			content: {token: dojo.cookie("scholagest-token"),
 				yearKey: yearKey,

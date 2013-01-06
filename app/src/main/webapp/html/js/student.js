@@ -2,7 +2,7 @@ function createStudent(closeId, txtIds) {
 	var keyValues = getKeysAndValues(txtIds);
 
 	var xhrArgs = {
-			url: "http://localhost:8080/scholagest-app/services/student/create",
+			url: "../student/create",
 			preventCache: true,
 			content: {token: dojo.cookie("scholagest-token"),
 				keys: keyValues.keys, values: keyValues.values},
@@ -28,7 +28,7 @@ function createStudent(closeId, txtIds) {
 };
 function getStudentList(callback) {
 	var xhrArgs = {
-			url: "http://localhost:8080/scholagest-app/services/student/getStudents",
+			url: "../student/getStudents",
 			preventCache: true,
 			content: {token: dojo.cookie("scholagest-token"),
 				properties: ["pStudentLastName", "pStudentFirstName"] },
@@ -51,7 +51,7 @@ function getStudentList(callback) {
 };
 function getStudentsInfo(studentList, properties, callback) {
 	var xhrArgs = {
-			url: "http://localhost:8080/scholagest-app/services/student/getStudentsInfo",
+			url: "../student/getStudentsInfo",
 			preventCache: true,
 			content: {token: dojo.cookie("scholagest-token"),
 				students: studentList,
@@ -85,7 +85,7 @@ function loadStudents() {
 function selectStudent(studentKey) {
 	return function(e) {
 		var xhrArgs = {
-				url: "http://localhost:8080/scholagest-app/services/student/getProperties",
+				url: "../student/getProperties",
 				preventCache: true,
 				content: {token: dojo.cookie("scholagest-token"),
 					studentKey: studentKey},
@@ -147,7 +147,7 @@ function getStudentMedicalInfo(studentKey) {
 }
 function getStudentInfo(studentKey, getInfoServiceName, setInfoServiceName, domId) {
 	var xhrArgs = {
-			url: "http://localhost:8080/scholagest-app/services/student/" + getInfoServiceName,
+			url: "../student/" + getInfoServiceName,
 			preventCache: true,
 			content: {token: dojo.cookie("scholagest-token"),
 				studentKey: studentKey},
@@ -178,7 +178,7 @@ function setStudentInfo(studentKey, domId, webServiceName) {
 	return function() {
 		var keyValues = getKeyValues(domId);
 		var xhrArgs = {
-				url: "http://localhost:8080/scholagest-app/services/student/" + webServiceName,
+				url: "../student/" + webServiceName,
 				preventCache: true,
 				postData: dojo.toJson({
 					token: dojo.cookie("scholagest-token"),
