@@ -99,7 +99,7 @@ function completeAddRemoveTeachers(trDOM, button) {
 		var classTree = prepareTree(classTeachersRawData, "class-teachers");
 		dojo.byId('fromFreeToClassTeachers').onclick = moveElements(freeTree, classTree);
 		dojo.byId('fromClassToFreeTeachers').onclick = moveElements(classTree, freeTree);
-		dojo.byId('btnAddRemoveTeachersOk').onclick = updateClassInfo(classTree, "addRemoveTeachers", "trpClassTeachers");
+		dojo.byId('btnAddRemoveTeachersOk').onclick = updateClassInfo(freeTree, classTree, "addRemoveTeachers", "trpClassTeachers");
 		dijit.byId("addRemoveTeachers").on("hide", function() {
 			freeTree.destroy();
 			classTree.destroy();
