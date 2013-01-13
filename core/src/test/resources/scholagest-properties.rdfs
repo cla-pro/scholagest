@@ -72,16 +72,16 @@
         <rdfs:range rdf:resource="sg:String"/>
         <sg:displayText rdf:resource="Code postal" />
     </rdfs:Property>
-    <rdfs:Property rdf:ID="pStudentParents" rdfs:comment="Student parents' list">
-        <rdfs:domain rdf:resource="sg:tStudentPersonalInfo"/>
-        <rdfs:range rdf:resource="sg:Set"/>
-        <sg:displayText rdf:resource="Parents" />
-    </rdfs:Property>
+<!--     <rdfs:Property rdf:ID="pStudentParents" rdfs:comment="Student parents' list"> -->
+<!--         <rdfs:domain rdf:resource="sg:tStudentPersonalInfo"/> -->
+<!--         <rdfs:range rdf:resource="sg:Set"/> -->
+<!--         <sg:displayText rdf:resource="Parents" /> -->
+<!--     </rdfs:Property> -->
     
-    <rdfs:Property rdf:ID="pStudentAllergy" rdfs:comment="Student allergy list">
+    <rdfs:Property rdf:ID="pStudentDoctor" rdfs:comment="Student doctor">
         <rdfs:domain rdf:resource="sg:tStudentMedicalInfo"/>
-        <rdfs:range rdf:resource="sg:Set"/>
-        <sg:displayText rdf:resource="Allergies" />
+        <rdfs:range rdf:resource="sg:String"/>
+        <sg:displayText rdf:resource="Docteur" />
     </rdfs:Property>
     
     <rdfs:Property rdf:ID="pYearName" rdfs:comment="Year name">

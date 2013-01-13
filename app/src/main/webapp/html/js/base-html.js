@@ -255,3 +255,21 @@ function createInfoHtmlTable(parentDOM, info, createListButtonsClosure, listGett
 		}
 	}
 };
+//Method used to get the values from the different dialogs. DO NOT REMOVE.
+function getKeysAndValues(txtIds) {
+	var keys = [];
+	var values = [];
+	for (var id in txtIds) {
+		var node = dojo.byId(txtIds[id]);
+
+		var value = node.value;
+		var name = node.attributes.getNamedItem('propertyName').nodeValue;
+
+		if (name != null && value != null) {
+			keys.push(name);
+			values.push(value);
+		}
+	}
+
+	return {keys: keys, values: values};
+};
