@@ -99,7 +99,7 @@ function completeAddRemoveTeachers(trDOM, button) {
 		var classTree = prepareTree(classTeachersRawData, "class-teachers");
 		dojo.byId('fromFreeToClassTeachers').onclick = moveElements(freeTree, classTree);
 		dojo.byId('fromClassToFreeTeachers').onclick = moveElements(classTree, freeTree);
-		dojo.byId('btnAddRemoveTeachersOk').onclick = updateClassInfo(classTree, "addRemoveTeachers", "trpClassTeachers");
+		dojo.byId('btnAddRemoveTeachersOk').onclick = updateClassInfo(freeTree, classTree, "addRemoveTeachers", "trpClassTeachers");
 		dijit.byId("addRemoveTeachers").on("hide", function() {
 			freeTree.destroy();
 			classTree.destroy();
@@ -149,22 +149,31 @@ function setClassInfo(classKey) {
 	var deferred = dojo.xhrPost(xhrArgs);
 }
 function getClassInfo(classKey) {
+	callGetClassInfo(classKey, null, function(info) {
+		var domId = "class-data";
+		clearDOM(domId);
+		
+		var base = dojo.byId(domId);
+		createInfoHtmlTable(base, info.properties, createListButtonsWrapper(completeAddRemoveStudents, completeAddRemoveTeachers), getListRealInfo);
+
+		var save = dojo.create("button",
+				{type: "button", onclick:"setClassInfo(\"" + classKey + "\")", innerHTML: "Enregistrer"}, base);
+	});
+}
+function callGetClassInfo(classKey, classProperties, callback) {
+	var content = {token: dojo.cookie("scholagest-token"),
+			classKey: classKey};
+	if (classProperties != null) {
+		content["properties"] = classProperties;
+	}
 	var xhrArgs = {
 			url: "../class/getProperties",
 			preventCache: true,
-			content: {token: dojo.cookie("scholagest-token"),
-				classKey: classKey},
+			content: content,
 			handleAs: "json",
 			load: function(data) {
 				if (data.errorCode == null) {
-					var domId = "class-data";
-					clearDOM(domId);
-					
-					var base = dojo.byId(domId);
-					createInfoHtmlTable(base, data.info.properties, createListButtonsWrapper(completeAddRemoveStudents, completeAddRemoveTeachers), getListRealInfo);
-
-					var save = dojo.create("button",
-							{type: "button", onclick:"setClassInfo(\"" + classKey + "\")", innerHTML: "Enregistrer"}, base);
+					callback(data.info);
 				}
 				else {
 					alert("Error during getProperties: ("

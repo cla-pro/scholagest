@@ -2,6 +2,7 @@ package net.scholagest.services;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.UUID;
 
 import net.scholagest.business.IClassBusinessComponent;
@@ -31,7 +32,7 @@ public class ClassServiceTest extends AbstractTest {
     }
 
     @Test
-    public void createClass() throws Exception {
+    public void testCreateClass() throws Exception {
         testee.createClass(requestId, new HashMap<String, Object>());
 
         Mockito.verify(classBusinessComponent).createClass(Mockito.eq(requestId), (ITransaction) Mockito.any(),
@@ -40,20 +41,32 @@ public class ClassServiceTest extends AbstractTest {
     }
 
     @Test
-    public void getClasses() throws Exception {
+    public void testGetClasses() throws Exception {
         testee.getClassesForYears(requestId, new HashSet<String>());
 
-        Mockito.verify(classBusinessComponent).getClassesForYears(Mockito.eq(requestId), (ITransaction) Mockito.any(), Mockito.anySetOf(String.class));
+        Mockito.verify(classBusinessComponent)
+                .getClassesForYears(Mockito.eq(requestId), (ITransaction) Mockito.any(), Mockito.anySetOf(String.class));
         Mockito.verify(database).getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
     }
 
     @Test
-    public void getClassProperties() throws Exception {
+    public void testGetClassProperties() throws Exception {
         String classKey = "classKey";
         testee.getClassProperties(requestId, classKey, new HashSet<String>());
 
         Mockito.verify(classBusinessComponent).getClassProperties(Mockito.eq(requestId), (ITransaction) Mockito.any(), Mockito.eq(classKey),
                 Mockito.anySetOf(String.class));
+        Mockito.verify(database).getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+    }
+
+    @Test
+    public void testSetClassProperties() throws Exception {
+        String classKey = "classKey";
+        Map<String, Object> properties = new HashMap<String, Object>();
+        testee.setClassProperties(requestId, classKey, properties);
+
+        Mockito.verify(classBusinessComponent).setClassProperties(Mockito.eq(requestId), (ITransaction) Mockito.any(), Mockito.eq(classKey),
+                Mockito.eq(properties));
         Mockito.verify(database).getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
     }
 }

@@ -42,4 +42,19 @@
     <rdfs:Class rdf:ID="http://scholagest.net#tClass">
         <rdfs:comment>Class</rdfs:comment>
     </rdfs:Class>
+    <rdfs:Class rdf:ID="http://scholagest.net#tBranch">
+        <rdfs:comment>Branch</rdfs:comment>
+    </rdfs:Class>
+    <rdfs:Class rdf:ID="http://scholagest.net#tPeriod">
+        <rdfs:comment>Period</rdfs:comment>
+    </rdfs:Class>
+    <rdfs:Class rdf:ID="http://scholagest.net#tExam">
+        <rdfs:comment>Exam</rdfs:comment>
+    </rdfs:Class>
+    <rdfs:Class rdf:ID="http://scholagest.net#tGrade">
+        <rdfs:comment>Grade</rdfs:comment>
+    </rdfs:Class>
+    <rdfs:Class rdf:ID="http://scholagest.net#tStudentYears">
+        <rdfs:comment>Student's year info</rdfs:comment>
+    </rdfs:Class>
 </rdf:RDF>

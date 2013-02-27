@@ -21,4 +21,17 @@ public class KSet {
     public Set<Object> getValues() {
         return values;
     }
+
+    @Override
+    public boolean equals(Object that) {
+        if (that == null || !(that instanceof KSet)) {
+            return false;
+        }
+        if (that == this) {
+            return true;
+        }
+
+        KSet kSet = (KSet) that;
+        return key.equals(kSet.key);
+    }
 }

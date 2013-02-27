@@ -3,18 +3,22 @@ package net.scholagest.managers;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.spy;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 import net.scholagest.managers.ontology.OntologyManager;
+import net.scholagest.managers.ontology.RDF;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.utils.AbstractTestWithTransaction;
 import net.scholagest.utils.DatabaseReaderWriter;
 import net.scholagest.utils.InMemoryDatabase;
 import net.scholagest.utils.InMemoryDatabase.InMemoryTransaction;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -59,6 +63,30 @@ public class StudentManagerTest extends AbstractTestWithTransaction {
 
         assertEquals(1, students.size());
         assertEquals(STUDENT_KEY, students.iterator().next().getKey());
+    }
+
+    @Test
+    public void testGetStudentProperties() throws Exception {
+        super.fillTransactionWithDataSets(new String[] { "Student" });
+
+        BaseObject studentProperties = studentManager.getStudentProperties(requestId, transaction, STUDENT_KEY,
+                new HashSet<>(Arrays.asList(RDF.type)));
+
+        assertEquals(STUDENT_KEY, studentProperties.getKey());
+        assertEquals(CoreNamespace.tStudent, studentProperties.getType());
+
+        Map<String, Object> expectedProperties = new HashMap<>();
+        expectedProperties.put(RDF.type, CoreNamespace.tStudent);
+        assertMapEquals(expectedProperties, studentProperties.getProperties());
+    }
+
+    @Test
+    @Ignore
+    public void testGetStudentGrades() {
+        super.fillTransactionWithDataSets(new String[] { "Student" });
+
+        // studentManager.getStudentGrades(requestId, transaction, STUDENT_KEY,
+        // examKeys, yearKey);
     }
 
     private Map<String, Object> createStudentPersonal() {

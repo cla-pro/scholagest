@@ -11,6 +11,6 @@ public class UserService implements IUserService {
     @Override
     public String[] getVisibleModules(String userKey) throws Exception {
         return new String[] { "js/base.js", "js/base-html.js", "modules/teacher.html", "js/teacher.js", "modules/student.html", "js/student.js",
-                "modules/year.html", "js/year.js", "js/class.js" };
+                "js/exam.js", "js/branch.js", "js/period.js", "modules/year.html", "js/year.js", "js/class.js", "modules/grades.html" };
     }
 }

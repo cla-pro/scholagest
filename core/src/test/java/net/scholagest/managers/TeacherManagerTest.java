@@ -32,7 +32,7 @@ public class TeacherManagerTest extends AbstractTestWithTransaction {
     }
 
     @Test
-    public void testSetAndGetClassProperties() throws Exception {
+    public void testSetAndGetTeacherProperties() throws Exception {
         super.fillTransactionWithDataSets(new String[] { "Teacher" });
 
         Map<String, Object> properties = createTeacherProperties();

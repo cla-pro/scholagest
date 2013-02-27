@@ -17,13 +17,17 @@ public class JsonConverter {
         this.ontologyService = ontologyService;
     }
 
+    public Object convertObjectToJson(ScholagestObject scholagestObject) {
+        Map<String, Object> jsonObject = convertObjectToJsonInternal(scholagestObject);
+        jsonObject.put("properties", convertPropertySetToJson(scholagestObject));
+        return jsonObject;
+    }
+
     public Map<String, Object> convertObjectToJson(Set<? extends ScholagestObject> scholagestObjects) {
         Map<String, Object> jsonObjects = new HashMap<>();
 
         for (ScholagestObject obj : scholagestObjects) {
-            Map<String, Object> jsonObject = convertObjectToJson(obj);
-            jsonObject.put("properties", convertPropertySetToJson(obj));
-            jsonObjects.put(obj.getKey(), jsonObject);
+            jsonObjects.put(obj.getKey(), convertObjectToJson(obj));
         }
 
         return jsonObjects;
@@ -38,14 +42,14 @@ public class JsonConverter {
     }
 
     public Map<String, Object> convertObjectToJson(ScholagestObject scholagestObject, Map<String, OntologyElement> ontology) throws Exception {
-        Map<String, Object> jsonObject = convertObjectToJson(scholagestObject);
+        Map<String, Object> jsonObject = convertObjectToJsonInternal(scholagestObject);
 
         jsonObject.put("properties", mergePropertiesWithOntology(scholagestObject.getProperties(), ontology));
 
         return jsonObject;
     }
 
-    public Map<String, Object> convertObjectToJson(ScholagestObject scholagestObject) {
+    private Map<String, Object> convertObjectToJsonInternal(ScholagestObject scholagestObject) {
         Map<String, Object> jsonObject = new HashMap<>();
 
         jsonObject.put("key", scholagestObject.getKey());

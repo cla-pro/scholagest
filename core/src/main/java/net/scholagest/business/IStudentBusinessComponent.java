@@ -21,4 +21,10 @@ public interface IStudentBusinessComponent {
     public Set<BaseObject> getStudentsWithProperties(String requestId, ITransaction transaction, Set<String> properties) throws Exception;
 
     public BaseObject getStudentProperties(String requestId, ITransaction transaction, String studentKey, Set<String> properties) throws Exception;
+
+    public Map<String, Map<String, BaseObject>> getGrades(String requestId, ITransaction transaction, Set<String> studentKeys, Set<String> examKeys,
+            String yearKey) throws Exception;
+
+    public void setStudentGrades(String requestId, ITransaction transaction, String studentKey, Map<String, BaseObject> studentGrades,
+            String yearKey, String classKey, String branchKey, String periodKey) throws Exception;
 }

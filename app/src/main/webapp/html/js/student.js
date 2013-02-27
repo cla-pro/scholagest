@@ -1,3 +1,27 @@
+function callGetStudentGrades(students, exams, yearKey, callback) {
+	var xhrArgs = {
+			url: "../student/getStudentsGrades",
+			preventCache: true,
+			content: {token: dojo.cookie("scholagest-token"),
+				studentKeys: students,
+				examKeys: exams,
+				yearKey: yearKey},
+				handleAs: "json",
+				load: function(data) {
+					if (data.errorCode == null) {
+						callback(data.info);
+					}
+					else
+						alert("Error during createStudents: ("
+								+ data.errorCode + ") " + data.message);
+				},
+				error: function(error) {
+					alert("error = " + error);
+				}
+	}
+
+	var deferred = dojo.xhrGet(xhrArgs);
+};
 function createStudent(closeId, txtIds) {
 	var keyValues = getKeysAndValues(txtIds);
 

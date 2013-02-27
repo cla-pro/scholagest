@@ -46,6 +46,10 @@
         <rdfs:range rdf:resource="sg:tStudentMedicalInfo"/>
         <sg:displayText rdf:resource="Informations Médicales" />
     </rdfs:Property>
+    <rdfs:Property rdf:ID="pStudentYears" rdfs:comment="Student years' list">
+        <rdfs:domain rdf:resource="sg:tStudent"/>
+        <rdfs:range rdf:resource="sg:tStudentYears"/>
+    </rdfs:Property>
 	
     <rdfs:Property rdf:ID="pStudentFirstName" rdfs:comment="Student's first name">
         <rdfs:domain rdf:resource="sg:tStudentPersonalInfo"/>
@@ -72,16 +76,11 @@
         <rdfs:range rdf:resource="sg:String"/>
         <sg:displayText rdf:resource="Code postal" />
     </rdfs:Property>
-    <rdfs:Property rdf:ID="pStudentParents" rdfs:comment="Student parents' list">
-        <rdfs:domain rdf:resource="sg:tStudentPersonalInfo"/>
-        <rdfs:range rdf:resource="sg:Set"/>
-        <sg:displayText rdf:resource="Parents" />
-    </rdfs:Property>
     
-    <rdfs:Property rdf:ID="pStudentAllergy" rdfs:comment="Student allergy list">
+    <rdfs:Property rdf:ID="pStudentDoctor" rdfs:comment="Student doctor">
         <rdfs:domain rdf:resource="sg:tStudentMedicalInfo"/>
-        <rdfs:range rdf:resource="sg:Set"/>
-        <sg:displayText rdf:resource="Allergies" />
+        <rdfs:range rdf:resource="sg:String"/>
+        <sg:displayText rdf:resource="Docteur" />
     </rdfs:Property>
     
     <rdfs:Property rdf:ID="pYearName" rdfs:comment="Year name">
@@ -113,5 +112,45 @@
         <rdfs:domain rdf:resource="sg:tClass"/>
         <rdfs:range rdf:resource="sg:Set"/>
         <sg:displayText rdf:resource="Professeurs" />
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pClassBranches" rdfs:comment="Class's branches">
+        <rdfs:domain rdf:resource="sg:tClass"/>
+        <rdfs:range rdf:resource="sg:Set"/>
+    </rdfs:Property>
+    
+    <rdfs:Property rdf:ID="pBranchName" rdfs:comment="Branch's name">
+        <rdfs:domain rdf:resource="sg:tBranch"/>
+        <rdfs:range rdf:resource="sg:String"/>
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pBranchPeriods" rdfs:comment="Branch's periods">
+        <rdfs:domain rdf:resource="sg:tBranch"/>
+        <rdfs:range rdf:resource="sg:Set"/>
+    </rdfs:Property>
+    
+    <rdfs:Property rdf:ID="pPeriodName" rdfs:comment="Period's name">
+        <rdfs:domain rdf:resource="sg:tPeriod"/>
+        <rdfs:range rdf:resource="sg:String"/>
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pPeriodExams" rdfs:comment="Period's exams">
+        <rdfs:domain rdf:resource="sg:tPeriod"/>
+        <rdfs:range rdf:resource="sg:Set"/>
+    </rdfs:Property>
+    
+    <rdfs:Property rdf:ID="pExamName" rdfs:comment="Exam's name">
+        <rdfs:domain rdf:resource="sg:tExam"/>
+        <rdfs:range rdf:resource="sg:String"/>
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pExamGrades" rdfs:comment="Exam's grades">
+        <rdfs:domain rdf:resource="sg:tExam"/>
+        <rdfs:range rdf:resource="sg:Set"/>
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pExamCoeff" rdfs:comment="Exam's coeff">
+        <rdfs:domain rdf:resource="sg:tExam"/>
+        <rdfs:range rdf:resource="sg:Double"/>
+    </rdfs:Property>
+    
+    <rdfs:Property rdf:ID="pGradeValue" rdfs:comment="Grade's value">
+        <rdfs:domain rdf:resource="sg:tGrade"/>
+        <rdfs:range rdf:resource="sg:Double"/>
     </rdfs:Property>
 </rdf:RDF>

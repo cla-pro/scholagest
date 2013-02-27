@@ -15,14 +15,14 @@
                 <div id="student-search" class="vertical-search">
                     <div id="newStudentDialog" data-dojo-type="dijit.Dialog"
                         title="Nouvel élève">
-                        <div data-dojo-type="dijit.layout.TabContainer"
-                            style="width: 500px; height: 200px;">
-                            <div data-dojo-type="dijit.layout.ContentPane" title="Nouveau">
+<!--                         <div data-dojo-type="dijit.layout.TabContainer" -->
+<!--                             style="width: 500px; height: 200px;"> -->
+<!--                             <div data-dojo-type="dijit.layout.ContentPane" title="Nouveau"> -->
                                 <table style="width: 100%">
                                     <tr>
-                                        <td>Nom*</td>
+                                        <td>Nom</td>
                                         <td><input id="txtNewStudentLastName" propertyName="pStudentLastName" type="text" /></td>
-                                        <td>Prénom*</td>
+                                        <td>Prénom</td>
                                         <td><input id="txtNewStudentFirstName" propertyName="pStudentFirstName" type="text" /></td>
                                     </tr>
                                     <tr>
@@ -35,18 +35,18 @@
                                         <td>Ville</td>
                                         <td><input type="text" id="txtNewStudentAddressCity" propertyName="pStudentAddressCity" /></td>
                                     </tr>
-                                    <tr>
-                                        <td colspan="4">Les champs marqués d'une * sont
-                                            obligatoires</td>
-                                    </tr>
-                                </table>
-                            </div>
-                            <div data-dojo-type="dijit.layout.ContentPane" title="Retour">
-                                Choisissez l'élève<br /> <select style="width: 100%">
-                                </select>
-                            </div>
-                        </div>
-                        <table style="width: 100%">
+<!--                                     <tr> -->
+<!--                                         <td colspan="4">Les champs marqués d'une * sont -->
+<!--                                             obligatoires</td> -->
+<!--                                     </tr> -->
+<!--                                 </table> -->
+<!--                             </div> -->
+<!--                             <div data-dojo-type="dijit.layout.ContentPane" title="Retour"> -->
+<!--                                 Choisissez l'élève<br /> <select style="width: 100%"> -->
+<!--                                 </select> -->
+<!--                             </div> -->
+<!--                         </div> -->
+<!--                         <table style="width: 100%"> -->
                             <tr>
                                 <td colspan="2" align="center"><button
                                     onclick="createStudent('newStudentDialog', ['txtNewStudentLastName', 'txtNewStudentFirstName', 'txtNewStudentAddressStreet', 'txtNewStudentAddressCity', 'txtNewStudentAddressPostcode'])">Ok</button></td>
