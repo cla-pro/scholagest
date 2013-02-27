@@ -3,15 +3,11 @@ package net.scholagest.services;
 import java.util.Map;
 import java.util.Set;
 
+import net.scholagest.objects.BaseObject;
+
 public interface IExamService {
-	public String createExam(String examName) throws Exception;
-	
-	public void addGrade(String examKey, String studentKey,
-			String value) throws Exception;
-	
-	public void setExamInfo(String examKey, Map<String, Object> properties)
-			throws Exception;
-	
-	public Map<String, Object> getExamInfo(String examKey,
-			Set<String> propertiesName) throws Exception;
+    public BaseObject createExam(String requestId, String yearKey, String classKey, String branchKey, String periodKey, Map<String, Object> examInfo)
+            throws Exception;
+
+    public BaseObject getExamProperties(String requestId, String examKey, Set<String> propertiesName) throws Exception;
 }

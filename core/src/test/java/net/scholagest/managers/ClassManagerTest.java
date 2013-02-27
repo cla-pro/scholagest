@@ -57,8 +57,8 @@ public class ClassManagerTest extends AbstractTestWithTransaction {
     private Map<String, Object> createClassProperties() {
         Map<String, Object> classProperties = new HashMap<String, Object>();
 
-        classProperties.put("pClassName", "1P A");
-        classProperties.put("pClassYear", "2011-2012");
+        classProperties.put(CoreNamespace.pClassName, "1P A");
+        classProperties.put(CoreNamespace.pClassYear, "2011-2012");
 
         return classProperties;
     }

@@ -100,4 +100,13 @@ public class ClassBusinessComponentTest extends AbstractTestWithTransaction {
 
         assertMapEquals(mockProperties, classProperties.getProperties());
     }
+
+    @Test
+    public void testSetClassProperties() throws Exception {
+        Map<String, Object> mockProperties = createProperties();
+        testee.setClassProperties(requestId, transaction, CLASS_KEY, mockProperties);
+
+        Mockito.verify(classManager).setClassProperties(Mockito.anyString(), Mockito.eq(transaction), Mockito.eq(CLASS_KEY),
+                Mockito.eq(mockProperties));
+    }
 }

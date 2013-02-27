@@ -58,14 +58,28 @@ public class DBSet {
 
         return values;
     }
-    
+
     public void clear() throws DatabaseException {
-    	for (String element : values()) {
-			remove(element);
-		}
+        for (String element : values()) {
+            remove(element);
+        }
     }
 
     public String getKey() {
         return setKey;
+    }
+
+    @Override
+    public boolean equals(Object that) {
+        if (that == null && !(that instanceof DBSet)) {
+            return false;
+        }
+
+        if (that == this) {
+            return true;
+        }
+
+        DBSet dbSet = (DBSet) that;
+        return setKey.equals(dbSet.setKey);
     }
 }

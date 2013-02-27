@@ -33,6 +33,10 @@ public class ClassManager extends ObjectManager implements IClassManager {
         DBSet.createDBSet(transaction, teachersSetKey);
         transaction.insert(classKey, CoreNamespace.pClassTeachers, teachersSetKey, null);
 
+        String branchesSetKey = generateClassBranchesKey(classKey);
+        DBSet.createDBSet(transaction, branchesSetKey);
+        transaction.insert(classKey, CoreNamespace.pClassBranches, teachersSetKey, null);
+
         return clazz;
     }
 
@@ -42,6 +46,10 @@ public class ClassManager extends ObjectManager implements IClassManager {
 
     private String generateClassTeachersKey(String classKey) {
         return classKey + "_teachers";
+    }
+
+    private String generateClassBranchesKey(String classKey) {
+        return classKey + "_branches";
     }
 
     private String createClassesBasePropertyName(String yearName, String className) {

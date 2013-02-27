@@ -12,8 +12,8 @@ import net.scholagest.objects.BaseObject;
 import com.google.inject.Inject;
 
 public class ClassService implements IClassService {
-    private IDatabase database = null;
-    private IClassBusinessComponent classBusinessComponent = null;
+    private final IDatabase database;
+    private final IClassBusinessComponent classBusinessComponent;
 
     @Inject
     public ClassService(IDatabase database, IClassBusinessComponent classBusinessComponent) {
@@ -25,7 +25,7 @@ public class ClassService implements IClassService {
     public BaseObject createClass(String requestId, Map<String, Object> classProperties) throws Exception {
         BaseObject clazz = null;
 
-        ITransaction transaction = this.database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+        ITransaction transaction = database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
         try {
             clazz = classBusinessComponent.createClass(requestId, transaction, classProperties);
 
@@ -42,7 +42,7 @@ public class ClassService implements IClassService {
     public Map<String, Set<BaseObject>> getClassesForYears(String requestId, Set<String> yearKeySet) throws Exception {
         Map<String, Set<BaseObject>> classes = new HashMap<>();
 
-        ITransaction transaction = this.database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+        ITransaction transaction = database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
         try {
             classes = classBusinessComponent.getClassesForYears(requestId, transaction, yearKeySet);
 
@@ -59,7 +59,7 @@ public class ClassService implements IClassService {
     public BaseObject getClassProperties(String requestId, String classKey, Set<String> propertiesName) throws Exception {
         BaseObject classInfo = null;
 
-        ITransaction transaction = this.database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+        ITransaction transaction = database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
         try {
             classInfo = classBusinessComponent.getClassProperties(requestId, transaction, classKey, propertiesName);
 
@@ -83,52 +83,4 @@ public class ClassService implements IClassService {
             e.printStackTrace();
         }
     }
-
-    // @Override
-    // public void removeClass(String classKey) throws Exception {
-    // // TODO Auto-generated method stub
-    //
-    // }
-    //
-    // @Override
-    // public void assignTeacherToClass(String classKey, String teacherKey)
-    // throws Exception {
-    // // TODO Auto-generated method stub
-    //
-    // }
-    //
-    // @Override
-    // public void unassignTeacherToClass(String classKey, String teacherKey)
-    // throws Exception {
-    // // TODO Auto-generated method stub
-    //
-    // }
-    //
-    // @Override
-    // public void assignStudentToClass(String classKey, String studentKey)
-    // throws Exception {
-    // // TODO Auto-generated method stub
-    //
-    // }
-    //
-    // @Override
-    // public void unassignStudentToClass(String classKey, String studentKey)
-    // throws Exception {
-    // // TODO Auto-generated method stub
-    //
-    // }
-    //
-    // @Override
-    // public void addBranch(String classKey, String branchKey) throws Exception
-    // {
-    // // TODO Auto-generated method stub
-    //
-    // }
-    //
-    // @Override
-    // public void setClassInfo(String classKey, Map<String, Object> properties)
-    // throws Exception {
-    // // TODO Auto-generated method stub
-    //
-    // }
 }

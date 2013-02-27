@@ -16,6 +16,7 @@ import javax.ws.rs.QueryParam;
 
 import net.scholagest.app.rest.object.RestObject;
 import net.scholagest.app.rest.object.RestRequest;
+import net.scholagest.app.rest.object.RestStudentGradeList;
 import net.scholagest.app.utils.JerseyHelper;
 import net.scholagest.managers.CoreNamespace;
 import net.scholagest.managers.ontology.OntologyElement;
@@ -223,5 +224,81 @@ public class RestStudentService extends AbstractService {
         }
 
         return "{}";
+    }
+
+    @GET
+    @Path("/getStudentsGrades")
+    @Produces("text/json")
+    public String getStudentsGrades(@QueryParam("token") String token, @QueryParam("studentKeys") Set<String> studentKeys,
+            @QueryParam("examKeys") Set<String> examKeys, @QueryParam("yearKey") String yearKey) {
+        String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+        try {
+
+            Map<String, Map<String, BaseObject>> grades = studentService.getGrades(requestId, studentKeys, examKeys, yearKey);
+
+            String json = gradeMapToJson(grades);
+            return "{info: " + json + "}";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{errorCode=0, message='" + e.getMessage() + "'}";
+        }
+    }
+
+    private String gradeMapToJson(Map<String, Map<String, BaseObject>> grades) {
+        Map<String, Map<String, RestObject>> restGrades = new HashMap<>();
+        RestToKdomConverter converter = new RestToKdomConverter();
+
+        for (String studentKey : grades.keySet()) {
+            Map<String, BaseObject> studentGrades = grades.get(studentKey);
+            Map<String, RestObject> studentRestGrades = new HashMap<>();
+            for (String gradeKey : studentGrades.keySet()) {
+                BaseObject baseObject = studentGrades.get(gradeKey);
+                if (baseObject == null) {
+                    studentRestGrades.put(gradeKey, null);
+                } else {
+                    studentRestGrades.put(gradeKey, converter.restObjectFromKdom(baseObject));
+                }
+            }
+
+            restGrades.put(studentKey, studentRestGrades);
+        }
+
+        return new Gson().toJson(restGrades);
+    }
+
+    @POST
+    @Path("/setGrades")
+    @Produces("text/json")
+    public String setStudentsGrades(String content) {
+        String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+        try {
+            RestStudentGradeList request = new Gson().fromJson(content, RestStudentGradeList.class);
+            Map<String, Map<String, RestObject>> restStudentGrades = request.getGrades();
+
+            for (String studentKey : restStudentGrades.keySet()) {
+                Map<String, RestObject> restSingleStudentGrades = restStudentGrades.get(studentKey);
+                Map<String, BaseObject> studentGrades = convertRestObjectMapToBaseObjectMap(restSingleStudentGrades);
+
+                studentService.setGrades(requestId, studentKey, studentGrades, request.getYearKey(), request.getClassKey(), request.getBranchKey(),
+                        request.getPeriodKey());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{errorCode=0, message='" + e.getMessage() + "'}";
+        }
+
+        return "{}";
+    }
+
+    private Map<String, BaseObject> convertRestObjectMapToBaseObjectMap(Map<String, RestObject> restObjectMap) {
+        Map<String, BaseObject> baseObjectMap = new HashMap<>();
+        RestToKdomConverter restToKdomConverter = new RestToKdomConverter();
+
+        for (String key : restObjectMap.keySet()) {
+            RestObject restObject = restObjectMap.get(key);
+            baseObjectMap.put(key, restToKdomConverter.baseObjectFromRest(restObject));
+        }
+
+        return baseObjectMap;
     }
 }

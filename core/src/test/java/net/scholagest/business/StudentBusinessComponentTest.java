@@ -41,7 +41,7 @@ public class StudentBusinessComponentTest extends AbstractTestWithTransaction {
         Mockito.when(studentManager.getStudents(Mockito.anyString(), Mockito.eq(transaction))).thenReturn(
                 new HashSet<>(Arrays.asList(new BaseObject(STUDENT_KEY, CoreNamespace.tStudent))));
 
-        testee = new StudentBusinessComponent(studentManager);
+        testee = new StudentBusinessComponent(studentManager, null, null, null, null, null);
     }
 
     private Map<String, Object> createStudentPersonalProperties() {

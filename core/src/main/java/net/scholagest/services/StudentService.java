@@ -112,4 +112,34 @@ public class StudentService implements IStudentService {
 
         return studentObject;
     }
+
+    @Override
+    public Map<String, Map<String, BaseObject>> getGrades(String requestId, Set<String> studentKeys, Set<String> examKeys, String yearKey)
+            throws Exception {
+        Map<String, Map<String, BaseObject>> grades = null;
+
+        ITransaction transaction = this.database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+        try {
+            grades = studentBusinessComponent.getGrades(requestId, transaction, studentKeys, examKeys, yearKey);
+            transaction.commit();
+        } catch (Exception e) {
+            transaction.rollback();
+            e.printStackTrace();
+        }
+
+        return grades;
+    }
+
+    @Override
+    public void setGrades(String requestId, String studentKey, Map<String, BaseObject> studentGrades, String yearKey, String classKey,
+            String branchKey, String periodKey) throws Exception {
+        ITransaction transaction = this.database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+        try {
+            studentBusinessComponent.setStudentGrades(requestId, transaction, studentKey, studentGrades, yearKey, classKey, branchKey, periodKey);
+            transaction.commit();
+        } catch (Exception e) {
+            transaction.rollback();
+            e.printStackTrace();
+        }
+    }
 }

@@ -16,9 +16,12 @@
 	<rdfs:Class rdf:ID="http://scholagest.net#Float">
 		<rdfs:comment>Float object</rdfs:comment>
 	</rdfs:Class>
-	<rdfs:Class rdf:ID="http://scholagest.net#Double">
-		<rdfs:comment>Double object</rdfs:comment>
-	</rdfs:Class>
+    <rdfs:Class rdf:ID="http://scholagest.net#Double">
+        <rdfs:comment>Double object</rdfs:comment>
+    </rdfs:Class>
+    <rdfs:Class rdf:ID="http://scholagest.net#Boolean">
+        <rdfs:comment>Boolean object</rdfs:comment>
+    </rdfs:Class>
     <rdfs:Class rdf:ID="http://scholagest.net#DateTime">
         <rdfs:comment>DateTime object</rdfs:comment>
     </rdfs:Class>
