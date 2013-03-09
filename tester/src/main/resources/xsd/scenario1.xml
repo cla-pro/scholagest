@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scenario xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="xsd/scenario.xsd">
+    <name>Scenario 1</name>
+    <description></description>
+    <baseURL>http://localhost:8080/scholagest-app/services</baseURL>
+    <calls>
+        <call>
+            <id>Call 1</id>
+            <url>/student/create</url>
+            <parameters>token=1234&amp;keys=pStudentLastName&amp;keys=pStudentFirstName&amp;values=Lavanchy&amp;values=Cédric</parameters>
+            <httpMethod>GET</httpMethod>
+            <expectedResult>
+                <result>
+                    <path>info/type</path>
+                    <value>http://scholagest.net#tStudent</value>
+                </result>
+            </expectedResult>
+        </call>
+<!--         <call> -->
+<!--             <id>Call 2</id> -->
+<!--             <url></url> -->
+<!--             <httpMethod>GET</httpMethod> -->
+<!--             <expectedResult>{}</expectedResult> -->
+<!--         </call> -->
+    </calls>
+</scenario>

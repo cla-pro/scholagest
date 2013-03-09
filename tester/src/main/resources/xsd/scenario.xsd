@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="scenario" type="t_scenario" />
+  <xs:complexType name="t_scenario">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string" />
+      <xs:element name="description" type="xs:string" />
+      <xs:element name="baseURL" type="xs:string" />
+      <xs:element name="calls" minOccurs="0" type="t_calls" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="t_calls">
+    <xs:sequence>
+      <xs:element name="call" minOccurs="0" maxOccurs="unbounded"
+        type="t_call" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="t_call">
+    <xs:sequence>
+      <xs:element name="id" type="xs:string" />
+      <xs:element name="url" type="xs:string" />
+      <xs:element name="parameters" type="xs:string" />
+      <xs:element name="httpMethod">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="GET" />
+            <xs:enumeration value="POST" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="expectedResult" type="t_expectedResults" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="t_expectedResults">
+    <xs:sequence>
+      <xs:element name="result" minOccurs="0" maxOccurs="unbounded"
+        type="t_result" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="t_result">
+    <xs:sequence>
+      <xs:element name="path" type="xs:string" />
+      <xs:element name="value" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

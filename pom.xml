@@ -41,7 +41,8 @@
 	
 	<modules>
 		<module>core</module>
-		<module>app</module>
+        <module>app</module>
+        <module>tester</module>
 	</modules>
 		
 	<dependencies>
