@@ -35,7 +35,7 @@ public class ClassManager extends ObjectManager implements IClassManager {
 
         String branchesSetKey = generateClassBranchesKey(classKey);
         DBSet.createDBSet(transaction, branchesSetKey);
-        transaction.insert(classKey, CoreNamespace.pClassBranches, teachersSetKey, null);
+        transaction.insert(classKey, CoreNamespace.pClassBranches, branchesSetKey, null);
 
         return clazz;
     }
