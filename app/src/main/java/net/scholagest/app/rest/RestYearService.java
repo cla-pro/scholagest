@@ -10,7 +10,10 @@ import javax.ws.rs.QueryParam;
 
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IOntologyService;
+import net.scholagest.services.IUserService;
 import net.scholagest.services.IYearService;
+
+import org.apache.shiro.subject.Subject;
 
 import com.google.gson.Gson;
 import com.google.inject.Inject;
@@ -19,12 +22,14 @@ import com.google.inject.Inject;
 public class RestYearService extends AbstractService {
     private final static String REQUEST_ID_PREFIX = "year-";
     private final IYearService yearService;
+    private final IUserService userService;
     private JsonConverter converter;
 
     @Inject
-    public RestYearService(IYearService yearService, IOntologyService ontologyService) {
+    public RestYearService(IYearService yearService, IOntologyService ontologyService, IUserService userService) {
         super(ontologyService);
         this.yearService = yearService;
+        this.userService = userService;
         this.converter = new JsonConverter(ontologyService);
     }
 
@@ -33,12 +38,11 @@ public class RestYearService extends AbstractService {
     @Produces("text/json")
     public String startYear(@QueryParam("token") String token, @QueryParam("name") String yearName) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
-        // TODO 1. Check the token and if this token allows to start a new year.
 
-        // 2. Update the database.
-        BaseObject year = null;
         try {
-            year = yearService.startYear(requestId, yearName);
+            Subject subject = userService.authenticateWithToken(requestId, token);
+
+            BaseObject year = yearService.startYear(requestId, yearName);
 
             Gson gson = new Gson();
             String json = gson.toJson(converter.convertObjectToJson(year, null));
@@ -55,10 +59,10 @@ public class RestYearService extends AbstractService {
     @Produces("text/json")
     public String stopYear(@QueryParam("token") String token) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
-        // TODO 1. Check the token and if this token allows to start a new year.
 
-        // 2. Update the database.
         try {
+            Subject subject = userService.authenticateWithToken(requestId, token);
+
             yearService.stopYear(requestId);
         } catch (Exception e) {
             e.printStackTrace();
@@ -73,11 +77,11 @@ public class RestYearService extends AbstractService {
     @Produces("text/json")
     public String getCurrent(@QueryParam("token") String token) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
-        // TODO 1. Check the token and if this token allows to start a new year.
 
-        // 2. Update the database.
         BaseObject currentYear = null;
         try {
+            Subject subject = userService.authenticateWithToken(requestId, token);
+
             currentYear = yearService.getCurrentYearKey(requestId);
 
             Gson gson = new Gson();
@@ -95,6 +99,8 @@ public class RestYearService extends AbstractService {
     public String getYears(@QueryParam("token") String token, @QueryParam("properties") Set<String> properties) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
         try {
+            Subject subject = userService.authenticateWithToken(requestId, token);
+
             Set<BaseObject> yearsInfo = yearService.getYearsWithProperties(requestId, properties);
             BaseObject currentYearKey = yearService.getCurrentYearKey(requestId);
 

@@ -1,7 +1,8 @@
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:owl="http://www.w3.org/2002/07/owl#">
 	<owl:Ontology rdf:about="http://scholagest.ch/2012/09/cholagest-base-types#">
-		<owl:imports rdf:resource="http://www.w3.org/TR/2004/REC-rdf-schema-20040210/rdfs-namespace" />
+<!-- 		<owl:imports rdf:resource="http://www.w3.org/TR/2004/REC-rdf-schema-20040210/rdfs-namespace" /> -->
+        <owl:imports rdf:resource="file:///D:/Programming/eclipse-workspace/scholagest/core/src/test/resources/rdfs-namespace.rdfs" />
 	</owl:Ontology>
 	
 	<rdfs:Class rdf:ID="http://scholagest.net#String">

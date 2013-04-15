@@ -30,13 +30,17 @@ import org.xml.sax.InputSource;
 public class OntologyHandlerTest {
     @Test
     public void testExtractImportURLWithImport() {
+        String url1 = "file:///D:/Programming/eclipse-workspace/scholagest/core/src/test/resources/22-rdf-syntax-ns.rdfs";
+        String url2 = "file:///D:/Programming/eclipse-workspace/scholagest/core/src/test/resources/rdf-schema.rdfs";
+
         OntologyHandler ontologyHandler = new OntologyHandler();
         try {
             Document scholagestTypeOntologyXmlDocument = loadXmlAsDocument("scholagest-types.rdfs");
             List<String> urls = ontologyHandler.extractImportURL(scholagestTypeOntologyXmlDocument);
+            System.out.println(urls);
             assertEquals("3 imports should be found", 3, urls.size());
-            assertTrue("Missing url: \"http://www.w3.org/1999/02/22-rdf-syntax-ns\"", urls.contains("http://www.w3.org/1999/02/22-rdf-syntax-ns"));
-            assertTrue("Missing url: \"http://www.w3.org/2000/01/rdf-schema\"", urls.contains("http://www.w3.org/2000/01/rdf-schema"));
+            assertTrue("Missing url: \"" + url1 + "\"", urls.contains(url1));
+            assertTrue("Missing url: \"" + url2 + "\"", urls.contains(url2));
         } catch (Exception e) {
             e.printStackTrace();
             fail("No exception expected");

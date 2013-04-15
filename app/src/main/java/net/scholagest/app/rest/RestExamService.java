@@ -17,6 +17,9 @@ import net.scholagest.app.utils.JerseyHelper;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IExamService;
 import net.scholagest.services.IOntologyService;
+import net.scholagest.services.IUserService;
+
+import org.apache.shiro.subject.Subject;
 
 import com.google.gson.Gson;
 import com.google.inject.Inject;
@@ -25,11 +28,13 @@ import com.google.inject.Inject;
 public class RestExamService extends AbstractService {
     private final static String REQUEST_ID_PREFIX = "exam-";
     private final IExamService examService;
+    private final IUserService userService;
 
     @Inject
-    public RestExamService(IExamService examService, IOntologyService ontologyService) {
+    public RestExamService(IExamService examService, IOntologyService ontologyService, IUserService userService) {
         super(ontologyService);
         this.examService = examService;
+        this.userService = userService;
     }
 
     @GET
@@ -39,12 +44,12 @@ public class RestExamService extends AbstractService {
             @QueryParam("branchKey") String branchKey, @QueryParam("periodKey") String periodKey, @QueryParam("keys") List<String> keys,
             @QueryParam("values") List<String> values) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
-        // TODO 1. Check the token and if this token allows to create a new
-        // class.
-
-        Map<String, Object> classInfo = JerseyHelper.listToMap(keys, new ArrayList<Object>(values));
 
         try {
+            Subject subject = userService.authenticateWithToken(requestId, token);
+
+            Map<String, Object> classInfo = JerseyHelper.listToMap(keys, new ArrayList<Object>(values));
+
             BaseObject exam = examService.createExam(requestId, yearKey, classKey, branchKey, periodKey, classInfo);
             RestObject restClass = new RestToKdomConverter().restObjectFromKdom(exam);
 
@@ -62,7 +67,10 @@ public class RestExamService extends AbstractService {
     public String getTeachersInfo(@QueryParam("token") String token, @QueryParam("exams") Set<String> examKeyList,
             @QueryParam("properties") Set<String> properties) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+
         try {
+            Subject subject = userService.authenticateWithToken(requestId, token);
+
             Set<BaseObject> teachers = new HashSet<>();
             for (String teacherKey : examKeyList) {
                 BaseObject exam = examService.getExamProperties(requestId, teacherKey, properties);

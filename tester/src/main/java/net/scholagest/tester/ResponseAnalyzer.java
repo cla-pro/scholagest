@@ -19,8 +19,10 @@ import com.google.gson.internal.StringMap;
 
 public class ResponseAnalyzer {
     private List<TestResult> results;
+    private final Placeholder placeholder;
 
-    public ResponseAnalyzer() {
+    public ResponseAnalyzer(Placeholder placeholder) {
+        this.placeholder = placeholder;
         this.results = new ArrayList<TestResult>();
     }
 
@@ -28,6 +30,7 @@ public class ResponseAnalyzer {
         TestResult testResult = new TestResult();
         testResult.setCall(call);
         testResult.setContentExchange(contentExchange);
+
         if (isHtmlError(contentExchange)) {
             testResult.setStatus(TestResultStatus.HTML_ERROR);
         } else {
@@ -57,25 +60,36 @@ public class ResponseAnalyzer {
         List<FieldResult> fieldResultList = new ArrayList<>();
 
         for (TResult result : call.getExpectedResult().getResult()) {
-            String resultValue = getValue(result.getPath(), response);
+            String path = placeholder.replacePlaceholdersInString(result.getPath());
+            String resultValue = getValue(path, response);
 
-            FieldResult fieldResult = new FieldResult();
-            fieldResult.setPath(result.getPath());
-            fieldResult.setExpectedValue(result.getValue());
-            fieldResult.setReceivedValue(resultValue);
-
-            if (resultValue == null) {
-                fieldResult.setStatus(FieldResultStatus.NO_RESULT);
-            } else if (result.getValue().equals(resultValue)) {
-                fieldResult.setStatus(FieldResultStatus.OK);
-            } else {
-                fieldResult.setStatus(FieldResultStatus.WRONG_RESULT);
+            if (result.getValue() != null) {
+                checkAndStoreResult(fieldResultList, result, resultValue);
             }
 
-            fieldResultList.add(fieldResult);
+            if (result.getStoreIn() != null) {
+                placeholder.storeValue(result.getStoreIn(), resultValue);
+            }
         }
 
         return fieldResultList;
+    }
+
+    private void checkAndStoreResult(List<FieldResult> fieldResultList, TResult result, String resultValue) {
+        FieldResult fieldResult = new FieldResult();
+        fieldResult.setPath(result.getPath());
+        fieldResult.setExpectedValue(result.getValue());
+        fieldResult.setReceivedValue(resultValue);
+
+        if (resultValue == null) {
+            fieldResult.setStatus(FieldResultStatus.NO_RESULT);
+        } else if (result.getValue().equals(resultValue)) {
+            fieldResult.setStatus(FieldResultStatus.OK);
+        } else {
+            fieldResult.setStatus(FieldResultStatus.WRONG_RESULT);
+        }
+
+        fieldResultList.add(fieldResult);
     }
 
     @SuppressWarnings("unchecked")
@@ -108,6 +122,7 @@ public class ResponseAnalyzer {
         for (TestResult result : results) {
             System.out.println(String.format("============== Call id: %s", result.getCall().getId()));
             System.out.println(String.format("Url: %s", result.getCall().getUrl()));
+            System.out.println(String.format("Parameters: %s", placeholder.replacePlaceholdersInString(result.getCall().getParameters())));
             System.out.println(String.format("Result status: %s", result.getStatus().name()));
             try {
                 System.out.println(String.format("Response: %s", result.getContentExchange().getResponseContent()));

@@ -16,10 +16,13 @@ import javax.ws.rs.QueryParam;
 import net.scholagest.app.rest.object.RestObject;
 import net.scholagest.app.rest.object.RestRequest;
 import net.scholagest.app.utils.JerseyHelper;
-import net.scholagest.managers.CoreNamespace;
+import net.scholagest.managers.impl.CoreNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IBranchService;
 import net.scholagest.services.IOntologyService;
+import net.scholagest.services.IUserService;
+
+import org.apache.shiro.subject.Subject;
 
 import com.google.gson.Gson;
 import com.google.inject.Inject;
@@ -29,13 +32,15 @@ public class RestBranchService extends AbstractService {
     private final static String REQUEST_ID_PREFIX = "branch-";
     private final IBranchService branchService;
     private final IOntologyService ontologyService;
+    private final IUserService userService;
     private final JsonConverter converter;
 
     @Inject
-    public RestBranchService(IBranchService branchService, IOntologyService ontologyService) {
+    public RestBranchService(IBranchService branchService, IOntologyService ontologyService, IUserService userService) {
         super(ontologyService);
         this.branchService = branchService;
         this.ontologyService = ontologyService;
+        this.userService = userService;
         this.converter = new JsonConverter(ontologyService);
     }
 
@@ -45,12 +50,12 @@ public class RestBranchService extends AbstractService {
     public String createBranch(@QueryParam("token") String token, @QueryParam("classKey") String classKey, @QueryParam("keys") List<String> keys,
             @QueryParam("values") List<String> values) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
-        // TODO 1. Check the token and if this token allows to create a new
-        // branch.
-
-        Map<String, Object> branchInfo = JerseyHelper.listToMap(keys, new ArrayList<Object>(values));
 
         try {
+            Subject subject = userService.authenticateWithToken(requestId, token);
+
+            Map<String, Object> branchInfo = JerseyHelper.listToMap(keys, new ArrayList<Object>(values));
+
             BaseObject clazz = branchService.createBranch(requestId, classKey, branchInfo);
             RestObject restBranch = new RestToKdomConverter().restObjectFromKdom(clazz);
 
@@ -69,6 +74,8 @@ public class RestBranchService extends AbstractService {
             @QueryParam("properties") Set<String> properties) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
         try {
+            Subject subject = userService.authenticateWithToken(requestId, token);
+
             if (properties == null || properties.isEmpty()) {
                 properties = ontologyService.getPropertiesForType(CoreNamespace.tBranch);
             }
@@ -96,6 +103,8 @@ public class RestBranchService extends AbstractService {
             @QueryParam("properties") Set<String> properties) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
         try {
+            Subject subject = userService.authenticateWithToken(requestId, token);
+
             if (properties == null || properties.isEmpty()) {
                 properties = ontologyService.getPropertiesForType(CoreNamespace.tBranch);
             }
@@ -118,6 +127,8 @@ public class RestBranchService extends AbstractService {
     public String setBranchProperties(@QueryParam("token") String token, String content) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
         try {
+            Subject subject = userService.authenticateWithToken(requestId, token);
+
             RestRequest request = new Gson().fromJson(content, RestRequest.class);
             RestObject requestObject = request.getObject();
             BaseObject baseObject = new RestToKdomConverter().baseObjectFromRest(requestObject);

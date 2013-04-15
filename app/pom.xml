@@ -71,6 +71,11 @@
 			<artifactId>jersey-guice</artifactId>
 			<version>1.12</version>
 		</dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-guice</artifactId>
+            <version>1.2.1</version>
+        </dependency>
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>

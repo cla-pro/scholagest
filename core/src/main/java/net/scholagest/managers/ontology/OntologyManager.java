@@ -6,7 +6,7 @@ import java.util.Set;
 
 import net.scholagest.database.DatabaseException;
 import net.scholagest.database.ITransaction;
-import net.scholagest.managers.CoreNamespace;
+import net.scholagest.managers.impl.CoreNamespace;
 
 import com.google.inject.Inject;
 

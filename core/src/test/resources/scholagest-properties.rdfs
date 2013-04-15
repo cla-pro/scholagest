@@ -5,16 +5,44 @@
 	
 	<owl:Ontology rdf:about="http://scholagest.net/2012/06/rdf-schema#">
 		<rdfs:comment>The scholagest ontology</rdfs:comment>
-		<owl:imports rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns"/>
-        <owl:imports rdf:resource="http://www.w3.org/2000/01/rdf-schema"/>
-        <owl:imports rdf:resource="file:///D:/Programming/eclipse-workspace/Scholagest/core/src/test/resources/scholagest-types.rdfs"/>
+<!--         <owl:imports rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns"/> -->
+        <owl:imports rdf:resource="file:///D:/Programming/eclipse-workspace/scholagest/core/src/test/resources/22-rdf-syntax-ns.rdfs" />
+<!--         <owl:imports rdf:resource="http://www.w3.org/2000/01/rdf-schema"/> -->
+        <owl:imports rdf:resource="file:///D:/Programming/eclipse-workspace/scholagest/core/src/test/resources/rdf-schema.rdfs" />
+        <owl:imports rdf:resource="file:///D:/Programming/eclipse-workspace/scholagest/core/src/test/resources/scholagest-types.rdfs" />
 	</owl:Ontology>
-	
-	<rdfs:Property rdf:ID="pTeacherFirstName" rdfs:comment="Teacher's first name">
-		<rdfs:domain rdf:resource="sg:tTeacher"/>
-		<rdfs:range rdf:resource="sg:String"/>
-		<sg:displayText rdf:resource="Prénom" />
-	</rdfs:Property>
+    
+    <rdfs:Property rdf:ID="pUserUsername" rdfs:comment="User's username">
+        <rdfs:domain rdf:resource="sg:tUser"/>
+        <rdfs:range rdf:resource="sg:String"/>
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="Password" rdfs:comment="User's password">
+        <rdfs:domain rdf:resource="sg:tUser"/>
+        <rdfs:range rdf:resource="sg:String"/>
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pUserRoles" rdfs:comment="User's roles">
+        <rdfs:domain rdf:resource="sg:tUser"/>
+        <rdfs:range rdf:resource="sg:DBSet"/>
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pUserPermissions" rdfs:comment="User's permissions">
+        <rdfs:domain rdf:resource="sg:tUser"/>
+        <rdfs:range rdf:resource="sg:DBSet"/>
+    </rdfs:Property>
+    
+    <rdfs:Property rdf:ID="pTokenUser" rdfs:comment="Token's user">
+        <rdfs:domain rdf:resource="sg:tToken"/>
+        <rdfs:range rdf:resource="sg:tUser"/>
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pTokenEndValidityTime" rdfs:comment="Token's end validity time">
+        <rdfs:domain rdf:resource="sg:tToken"/>
+        <rdfs:range rdf:resource="sg:String"/>
+    </rdfs:Property>
+    
+    <rdfs:Property rdf:ID="pTeacherFirstName" rdfs:comment="Teacher's first name">
+        <rdfs:domain rdf:resource="sg:tTeacher"/>
+        <rdfs:range rdf:resource="sg:String"/>
+        <sg:displayText rdf:resource="Prénom" />
+    </rdfs:Property>
 	<rdfs:Property rdf:ID="pTeacherLastName" rdfs:comment="Teacher's last name">
 		<rdfs:domain rdf:resource="sg:tTeacher"/>
 		<rdfs:range rdf:resource="sg:String"/>

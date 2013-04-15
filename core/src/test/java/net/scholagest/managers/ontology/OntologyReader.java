@@ -8,7 +8,7 @@ import net.scholagest.database.Database;
 import net.scholagest.database.DatabaseException;
 import net.scholagest.database.DefaultDatabaseConfiguration;
 import net.scholagest.database.ITransaction;
-import net.scholagest.managers.CoreNamespace;
+import net.scholagest.managers.impl.CoreNamespace;
 
 public class OntologyReader {
     public static void main(String[] args) {

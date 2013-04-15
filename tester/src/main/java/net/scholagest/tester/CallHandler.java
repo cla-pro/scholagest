@@ -10,9 +10,11 @@ import org.mortbay.jetty.client.HttpClient;
 
 public class CallHandler {
     private final ResponseAnalyzer responseAnalyzer;
+    private final Placeholder placeholder;
 
-    public CallHandler(ResponseAnalyzer responseAnalyzer) {
+    public CallHandler(ResponseAnalyzer responseAnalyzer, Placeholder placeholder) {
         this.responseAnalyzer = responseAnalyzer;
+        this.placeholder = placeholder;
     }
 
     public void handleCallAndException(String baseUrl, TCall call) {
@@ -34,7 +36,8 @@ public class CallHandler {
 
             httpClient.setConnectorType(HttpClient.CONNECTOR_SELECT_CHANNEL);
 
-            String encoded = baseUrl + call.getUrl() + "?" + encodeParameters(call.getParameters());
+            String parameters = placeholder.replacePlaceholdersInString(call.getParameters());
+            String encoded = baseUrl + call.getUrl() + "?" + encodeParameters(parameters);
             contentExchange.setURL(encoded);
             contentExchange.setMethod(call.getHttpMethod());
 

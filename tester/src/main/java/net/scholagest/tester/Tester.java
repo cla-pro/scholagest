@@ -26,27 +26,17 @@ public class Tester {
     public void run() throws JAXBException, IOException {
         TScenario scenario = readScenario();
 
-        playScenario(scenario);
+        new ScenarioPlayer().playScenario(scenario);
     }
 
     private TScenario readScenario() throws JAXBException, IOException {
         JAXBContext jc = JAXBContext.newInstance(new Class[] { TCall.class, TCalls.class, TScenario.class });
 
         Unmarshaller unmarshaller = jc.createUnmarshaller();
-        InputStream xml = ClassLoader.getSystemResourceAsStream("xsd" + File.separatorChar + "scenario1.xml");
+        InputStream xml = ClassLoader.getSystemResourceAsStream("scenario" + File.separatorChar + "scenario1.xml");
         JAXBElement<TScenario> scenario = unmarshaller.unmarshal(new StreamSource(xml), TScenario.class);
         xml.close();
 
         return scenario.getValue();
-    }
-
-    private void playScenario(TScenario scenario) {
-        ResponseAnalyzer responseAnalyzer = new ResponseAnalyzer();
-
-        for (TCall call : scenario.getCalls().getCall()) {
-            new CallHandler(responseAnalyzer).handleCallAndException(scenario.getBaseURL(), call);
-        }
-
-        responseAnalyzer.displayResults();
     }
 }

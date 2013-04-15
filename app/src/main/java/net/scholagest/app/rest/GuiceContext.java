@@ -3,42 +3,43 @@ package net.scholagest.app.rest;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.scholagest.business.BranchBusinessComponent;
-import net.scholagest.business.ClassBusinessComponent;
-import net.scholagest.business.ExamBusinessComponent;
 import net.scholagest.business.IBranchBusinessComponent;
 import net.scholagest.business.IClassBusinessComponent;
 import net.scholagest.business.IExamBusinessComponent;
 import net.scholagest.business.IPeriodBusinessComponent;
 import net.scholagest.business.IStudentBusinessComponent;
 import net.scholagest.business.ITeacherBusinessComponent;
+import net.scholagest.business.IUserBusinessComponent;
 import net.scholagest.business.IYearBusinessComponent;
-import net.scholagest.business.PeriodBusinessComponent;
-import net.scholagest.business.StudentBusinessComponent;
-import net.scholagest.business.TeacherBusinessComponent;
-import net.scholagest.business.YearBusinessComponent;
+import net.scholagest.business.impl.BranchBusinessComponent;
+import net.scholagest.business.impl.ClassBusinessComponent;
+import net.scholagest.business.impl.ExamBusinessComponent;
+import net.scholagest.business.impl.PeriodBusinessComponent;
+import net.scholagest.business.impl.StudentBusinessComponent;
+import net.scholagest.business.impl.TeacherBusinessComponent;
+import net.scholagest.business.impl.UserBusinessComponent;
+import net.scholagest.business.impl.YearBusinessComponent;
 import net.scholagest.database.Database;
 import net.scholagest.database.DefaultDatabaseConfiguration;
 import net.scholagest.database.IDatabase;
 import net.scholagest.database.IDatabaseConfiguration;
-import net.scholagest.managers.BranchManager;
-import net.scholagest.managers.ClassManager;
-import net.scholagest.managers.ExamManager;
 import net.scholagest.managers.IBranchManager;
 import net.scholagest.managers.IClassManager;
 import net.scholagest.managers.IExamManager;
 import net.scholagest.managers.IPeriodManager;
 import net.scholagest.managers.IStudentManager;
 import net.scholagest.managers.ITeacherManager;
+import net.scholagest.managers.IUserManager;
 import net.scholagest.managers.IYearManager;
-import net.scholagest.managers.PeriodManager;
-import net.scholagest.managers.StudentManager;
-import net.scholagest.managers.TeacherManager;
-import net.scholagest.managers.YearManager;
+import net.scholagest.managers.impl.BranchManager;
+import net.scholagest.managers.impl.ClassManager;
+import net.scholagest.managers.impl.ExamManager;
+import net.scholagest.managers.impl.PeriodManager;
+import net.scholagest.managers.impl.StudentManager;
+import net.scholagest.managers.impl.TeacherManager;
+import net.scholagest.managers.impl.UserManager;
+import net.scholagest.managers.impl.YearManager;
 import net.scholagest.managers.ontology.OntologyManager;
-import net.scholagest.services.BranchService;
-import net.scholagest.services.ClassService;
-import net.scholagest.services.ExamService;
 import net.scholagest.services.IBranchService;
 import net.scholagest.services.IClassService;
 import net.scholagest.services.IExamService;
@@ -48,12 +49,19 @@ import net.scholagest.services.IStudentService;
 import net.scholagest.services.ITeacherService;
 import net.scholagest.services.IUserService;
 import net.scholagest.services.IYearService;
-import net.scholagest.services.OntologyService;
-import net.scholagest.services.PeriodService;
-import net.scholagest.services.StudentService;
-import net.scholagest.services.TeacherService;
-import net.scholagest.services.UserService;
-import net.scholagest.services.YearService;
+import net.scholagest.services.impl.BranchService;
+import net.scholagest.services.impl.ClassService;
+import net.scholagest.services.impl.ExamService;
+import net.scholagest.services.impl.OntologyService;
+import net.scholagest.services.impl.PeriodService;
+import net.scholagest.services.impl.StudentService;
+import net.scholagest.services.impl.TeacherService;
+import net.scholagest.services.impl.UserService;
+import net.scholagest.services.impl.YearService;
+import net.scholagest.shiro.RealmAuthenticationAndAuthorization;
+
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.guice.ShiroModule;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -64,7 +72,7 @@ import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 public class GuiceContext extends GuiceServletContextListener {
     @Override
     protected Injector getInjector() {
-        return Guice.createInjector(new JerseyServletModule() {
+        Injector injector = Guice.createInjector(new JerseyServletModule() {
             @Override
             protected void configureServlets() {
                 bind(IDatabaseConfiguration.class).to(DefaultDatabaseConfiguration.class);
@@ -77,6 +85,8 @@ public class GuiceContext extends GuiceServletContextListener {
                 bind(OntologyManager.class);
                 bind(IOntologyService.class).to(OntologyService.class);
 
+                bind(IUserManager.class).to(UserManager.class);
+                bind(IUserBusinessComponent.class).to(UserBusinessComponent.class);
                 bind(IUserService.class).to(UserService.class);
 
                 bind(IStudentManager.class).to(StudentManager.class);
@@ -118,6 +128,16 @@ public class GuiceContext extends GuiceServletContextListener {
                 params.put("com.sun.jersey.config.property.packages", "net.scholagest.rest");
                 serve("/services/*").with(GuiceContainer.class, params);
             }
+        }, new ShiroModule() {
+            @Override
+            protected void configureShiro() {
+                bindRealm().to(RealmAuthenticationAndAuthorization.class);
+            }
         });
+
+        org.apache.shiro.mgt.SecurityManager securityManager = injector.getInstance(org.apache.shiro.mgt.SecurityManager.class);
+        SecurityUtils.setSecurityManager(securityManager);
+
+        return injector;
     }
 }

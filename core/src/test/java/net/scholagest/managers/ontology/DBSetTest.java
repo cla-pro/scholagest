@@ -7,7 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Set;
 
 import net.scholagest.database.DatabaseException;
-import net.scholagest.managers.CoreNamespace;
+import net.scholagest.managers.impl.CoreNamespace;
 import net.scholagest.managers.ontology.types.DBSet;
 import net.scholagest.utils.AbstractTestWithTransaction;
 

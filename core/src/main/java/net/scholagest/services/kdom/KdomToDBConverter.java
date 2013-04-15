@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.scholagest.database.ITransaction;
-import net.scholagest.managers.CoreNamespace;
+import net.scholagest.managers.impl.CoreNamespace;
 import net.scholagest.managers.ontology.OntologyElement;
 import net.scholagest.managers.ontology.OntologyManager;
 import net.scholagest.managers.ontology.RDFS;

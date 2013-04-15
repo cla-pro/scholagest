@@ -17,11 +17,14 @@ import javax.ws.rs.QueryParam;
 import net.scholagest.app.rest.object.RestObject;
 import net.scholagest.app.rest.object.RestRequest;
 import net.scholagest.app.utils.JerseyHelper;
-import net.scholagest.managers.CoreNamespace;
+import net.scholagest.managers.impl.CoreNamespace;
 import net.scholagest.managers.ontology.OntologyElement;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IClassService;
 import net.scholagest.services.IOntologyService;
+import net.scholagest.services.IUserService;
+
+import org.apache.shiro.subject.Subject;
 
 import com.google.gson.Gson;
 import com.google.inject.Inject;
@@ -31,12 +34,14 @@ public class RestClassService extends AbstractService {
     private final static String REQUEST_ID_PREFIX = "class-";
     private final IClassService classService;
     private final IOntologyService ontologyService;
+    private final IUserService userService;
 
     @Inject
-    public RestClassService(IClassService classService, IOntologyService ontologyService) {
+    public RestClassService(IClassService classService, IOntologyService ontologyService, IUserService userService) {
         super(ontologyService);
         this.classService = classService;
         this.ontologyService = ontologyService;
+        this.userService = userService;
     }
 
     @GET
@@ -45,13 +50,13 @@ public class RestClassService extends AbstractService {
     public String createClass(@QueryParam("token") String token, @QueryParam("yearKey") String yearKey, @QueryParam("keys") List<String> keys,
             @QueryParam("values") List<String> values) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
-        // TODO 1. Check the token and if this token allows to create a new
-        // class.
-
-        Map<String, Object> classInfo = JerseyHelper.listToMap(keys, new ArrayList<Object>(values));
-        classInfo.put(CoreNamespace.pClassYear, yearKey);
 
         try {
+            Subject subject = userService.authenticateWithToken(requestId, token);
+
+            Map<String, Object> classInfo = JerseyHelper.listToMap(keys, new ArrayList<Object>(values));
+            classInfo.put(CoreNamespace.pClassYear, yearKey);
+
             BaseObject clazz = classService.createClass(requestId, classInfo);
             RestObject restClass = new RestToKdomConverter().restObjectFromKdom(clazz);
 
@@ -69,7 +74,10 @@ public class RestClassService extends AbstractService {
     public String getClasses(@QueryParam("token") String token, @QueryParam("years") Set<String> yearKeyList,
             @QueryParam("properties") Set<String> properties) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+
         try {
+            Subject subject = userService.authenticateWithToken(requestId, token);
+
             Map<String, Set<BaseObject>> classesKeySet = classService.getClassesForYears(requestId, yearKeyList);
             RestToKdomConverter converter = new RestToKdomConverter();
 
@@ -122,7 +130,10 @@ public class RestClassService extends AbstractService {
     public String getClassProperties(@QueryParam("token") String token, @QueryParam("classKey") String classKey,
             @QueryParam("properties") Set<String> properties) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+
         try {
+            Subject subject = userService.authenticateWithToken(requestId, token);
+
             if (properties == null || properties.isEmpty()) {
                 properties = ontologyService.getPropertiesForType(CoreNamespace.tClass);
             }
@@ -146,7 +157,10 @@ public class RestClassService extends AbstractService {
     @Produces("text/json")
     public String setClassProperties(@QueryParam("token") String token, String content) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+
         try {
+            Subject subject = userService.authenticateWithToken(requestId, token);
+
             RestRequest request = new Gson().fromJson(content, RestRequest.class);
             RestObject requestObject = request.getObject();
             BaseObject baseObject = new RestToKdomConverter().baseObjectFromRest(requestObject);
