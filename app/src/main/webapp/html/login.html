@@ -8,7 +8,7 @@
         parseOnLoad: true
     };
 </script>
-<script src="http://localhost:8080/dojo/1.7.2/dojo/dojo.js"></script>
+<script src="../../dojo/1.8.1/dojo/dojo.js"></script>
 <script type="text/javascript">
 	dojo.require("dojo.cookie");
 </script>
@@ -33,7 +33,7 @@
 			    handleAs: "json",
 			    load: function(data) {
 			    	if (data.errorCode == null) {
-			    		dojo.cookie("scholagest-token", data.token);
+			    		//dojo.cookie("scholagest_token", data.token);
 			    		window.location = unescape(data.nextpage.replace(/\+/g, " "));
 			    	}
 			    	else

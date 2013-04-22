@@ -15,11 +15,20 @@ import net.scholagest.managers.ontology.RDFS;
 import net.scholagest.managers.ontology.types.DBSet;
 import net.scholagest.objects.BaseObject;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 public class ObjectManager {
+    private static final String DATE_TIME_FORMAT_PATTERN = "YYYY-MM-dd HH:mm:ss:SSS";
+
     private OntologyManager ontologyManager;
+
+    private DateTimeFormatter dateTimeFormatter;
 
     protected ObjectManager(OntologyManager ontologyManager) {
         this.ontologyManager = ontologyManager;
+        dateTimeFormatter = DateTimeFormat.forPattern(DATE_TIME_FORMAT_PATTERN);
     }
 
     protected void persistObject(String requestId, ITransaction transaction, BaseObject object) throws Exception {
@@ -76,6 +85,8 @@ public class ObjectManager {
             } else {
                 value = new DBSet(transaction, (String) value);
             }
+        } else if (type != null && ontologyManager.isSubtypeOf(requestId, transaction, type, CoreNamespace.tCalendar)) {
+            value = dateTimeFormatter.parseDateTime((String) value);
         }
         return value;
     }
@@ -94,7 +105,9 @@ public class ObjectManager {
             Object value = properties.get(propertyName);
 
             String type = getPropertyType(requestId, transaction, propertyName);
-            if (type != null && ontologyManager.isSubtypeOf(requestId, transaction, type, CoreNamespace.tSet)) {
+            if (value instanceof DBSet) {
+                transaction.insert(objectKey, propertyName, ((DBSet) value).getKey(), null);
+            } else if (type != null && ontologyManager.isSubtypeOf(requestId, transaction, type, CoreNamespace.tSet)) {
                 String setKey = (String) transaction.get(objectKey, propertyName, null);
                 DBSet dbSet = null;
                 if (setKey == null) {
@@ -108,6 +121,8 @@ public class ObjectManager {
                 for (Object element : (Collection<Object>) value) {
                     dbSet.add(element.toString());
                 }
+            } else if (type != null && ontologyManager.isSubtypeOf(requestId, transaction, type, CoreNamespace.tCalendar)) {
+                transaction.insert(objectKey, propertyName, dateTimeFormatter.print((DateTime) value), null);
             } else {
                 transaction.insert(objectKey, propertyName, value, null);
             }

@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -23,8 +22,9 @@ import net.scholagest.database.DatabaseException;
 import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
 import net.scholagest.services.IUserService;
+import net.scholagest.shiro.RealmAuthenticationAndAuthorization;
 
-import org.joda.time.DateTime;
+import org.apache.shiro.subject.Subject;
 
 import com.google.inject.Inject;
 
@@ -45,28 +45,24 @@ public class RestUserService {
     @GET
     @Path("/authenticate")
     @Produces("text/json")
-    public String authenticate(@QueryParam("username") String username, @QueryParam("password") String password,
-            @Context HttpServletResponse servletResponse) {
-        // TODO 1. check the username/password
-
-        String token = UUID.randomUUID().toString();
-
-        // 2. store the token and the information into the database.
-        ITransaction transaction = this.database.getTransaction(ScholagestNamespace.scholagestKeyspace);
+    public String authenticate(@QueryParam("username") String username, @QueryParam("password") String password) {
         try {
-            transaction.insert(token, ScholagestNamespace.pSessionExpirationDate, new DateTime().plusHours(2).toString("yyyy-MM-dd HH:mm:ss"), null);
-        } catch (DatabaseException e) {
-            e.printStackTrace();
-        }
+            Subject subject = userService.authenticateWithUsername(UUID.randomUUID().toString(), username, password);
 
-        return new JsonObject("token", token, "nextpage", "http://localhost:8080/scholagest-app/services/user/getPage").toString();
+            String token = (String) subject.getPrincipals().fromRealm(RealmAuthenticationAndAuthorization.TOKEN_KEY).iterator().next();
+
+            return new JsonObject("token", token, "nextpage", "http://localhost:8080/scholagest-app/services/user/getPage?token=" + token).toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{errorCode=0, message='" + e.getMessage() + "'}";
+        }
     }
 
     @GET
     @Path("/getPage")
     @Produces(MediaType.TEXT_HTML)
     public String getPage(@QueryParam("token") String token) {
-        String[] pages;
+        List<String> pages = new ArrayList<>();
         try {
             pages = userService.getVisibleModules(UUID.randomUUID().toString(), token);
         } catch (Exception e) {
@@ -77,6 +73,7 @@ public class RestUserService {
         StringBuilder builder = new StringBuilder();
 
         builder.append("<div id=\"tabMenu\" data-dojo-type=\"dijit.layout.TabContainer\" " + "style=\"width: 100%; height: 100%;\">");
+        builder.append("<script type=\"text/javascript\">dojo.ready(function() { dojo.cookie(\"scholagest_token\", \"" + token + "\"); });</script>");
         for (String page : pages) {
             String module = loadFile("html" + File.separatorChar + page);
 

@@ -2,7 +2,7 @@ function callGetStudentGrades(students, exams, yearKey, callback) {
 	var xhrArgs = {
 			url: "../student/getStudentsGrades",
 			preventCache: true,
-			content: {token: dojo.cookie("scholagest-token"),
+			content: {token: dojo.cookie("scholagest_token"),
 				studentKeys: students,
 				examKeys: exams,
 				yearKey: yearKey},
@@ -28,7 +28,7 @@ function createStudent(closeId, txtIds) {
 	var xhrArgs = {
 			url: "../student/create",
 			preventCache: true,
-			content: {token: dojo.cookie("scholagest-token"),
+			content: {token: dojo.cookie("scholagest_token"),
 				keys: keyValues.keys, values: keyValues.values},
 				handleAs: "json",
 				load: function(data) {
@@ -54,7 +54,7 @@ function getStudentList(callback) {
 	var xhrArgs = {
 			url: "../student/getStudents",
 			preventCache: true,
-			content: {token: dojo.cookie("scholagest-token"),
+			content: {token: dojo.cookie("scholagest_token"),
 				properties: ["pStudentLastName", "pStudentFirstName"] },
 				handleAs: "json",
 				load: function(data) {
@@ -77,7 +77,7 @@ function getStudentsInfo(studentList, properties, callback) {
 	var xhrArgs = {
 			url: "../student/getStudentsInfo",
 			preventCache: true,
-			content: {token: dojo.cookie("scholagest-token"),
+			content: {token: dojo.cookie("scholagest_token"),
 				students: studentList,
 				properties: properties},
 			handleAs: "json",
@@ -111,7 +111,7 @@ function selectStudent(studentKey) {
 		var xhrArgs = {
 				url: "../student/getProperties",
 				preventCache: true,
-				content: {token: dojo.cookie("scholagest-token"),
+				content: {token: dojo.cookie("scholagest_token"),
 					studentKey: studentKey},
 				handleAs: "json",
 				load: function(data) {
@@ -173,7 +173,7 @@ function getStudentInfo(studentKey, getInfoServiceName, setInfoServiceName, domI
 	var xhrArgs = {
 			url: "../student/" + getInfoServiceName,
 			preventCache: true,
-			content: {token: dojo.cookie("scholagest-token"),
+			content: {token: dojo.cookie("scholagest_token"),
 				studentKey: studentKey},
 			handleAs: "json",
 			load: function(data) {
@@ -205,7 +205,7 @@ function setStudentInfo(studentKey, domId, webServiceName) {
 				url: "../student/" + webServiceName,
 				preventCache: true,
 				postData: dojo.toJson({
-					token: dojo.cookie("scholagest-token"),
+					token: dojo.cookie("scholagest_token"),
 					object: {
 						key: studentKey,
 						properties: keyValues

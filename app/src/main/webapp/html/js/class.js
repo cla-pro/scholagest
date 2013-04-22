@@ -128,7 +128,7 @@ function setClassInfo(classKey) {
 			url: "../class/setProperties",
 			preventCache: true,
 			postData: dojo.toJson({
-				token: dojo.cookie("scholagest-token"),
+				token: dojo.cookie("scholagest_token"),
 				object: {
 					key: classKey,
 					properties: keyValues
@@ -161,7 +161,7 @@ function getClassInfo(classKey) {
 	});
 }
 function callGetClassInfo(classKey, classProperties, callback) {
-	var content = {token: dojo.cookie("scholagest-token"),
+	var content = {token: dojo.cookie("scholagest_token"),
 			classKey: classKey};
 	if (classProperties != null) {
 		content["properties"] = classProperties;
@@ -213,7 +213,7 @@ function loadClasses(yearList) {
 	var xhrArgs = {
 			url: "../class/getClasses",
 			preventCache: true,
-			content: {token: dojo.cookie("scholagest-token"),
+			content: {token: dojo.cookie("scholagest_token"),
 				properties: ["pClassName"], years: yearKeyList },
 			handleAs: "json",
 			load: function(data) {
@@ -236,7 +236,7 @@ function createClass(yearKey, className) {
 	var xhrArgs = {
 			url: "../class/create",
 			preventCache: true,
-			content: {token: dojo.cookie("scholagest-token"),
+			content: {token: dojo.cookie("scholagest_token"),
 				yearKey: yearKey,
 				keys: ["pClassName"], values: [className] },
 			handleAs: "json",

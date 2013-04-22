@@ -27,6 +27,9 @@
         <rdfs:comment>DateTime object</rdfs:comment>
     </rdfs:Class>
     <rdfs:Class rdf:ID="http://scholagest.net#Set">
-        <rdfs:comment>Set</rdfs:comment>
+        <rdfs:comment>Set object</rdfs:comment>
+    </rdfs:Class>
+    <rdfs:Class rdf:ID="http://scholagest.net#Calendar">
+        <rdfs:comment>Calendar object</rdfs:comment>
     </rdfs:Class>
 </rdf:RDF>

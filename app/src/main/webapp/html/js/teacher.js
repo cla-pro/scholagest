@@ -2,7 +2,7 @@ function getTeacherInfo(teacherKey) {
 	var xhrArgs = {
 			url: "../teacher/getProperties",
 			preventCache: true,
-			content: {token: dojo.cookie("scholagest-token"),
+			content: {token: dojo.cookie("scholagest_token"),
 				teacherKey: teacherKey},
 				handleAs: "json",
 				load: function(data) {
@@ -35,7 +35,7 @@ function setTeacherInfo(teacherKey) {
 			url: "../teacher/setProperties",
 			preventCache: true,
 			postData: dojo.toJson({
-				token: dojo.cookie("scholagest-token"),
+				token: dojo.cookie("scholagest_token"),
 				object: {
 					key: teacherKey,
 					properties: keyValues
@@ -71,10 +71,11 @@ function selectTeacher(teacherKey) {
 };
 
 function getTeacherList(callback) {
+	var token = dojo.cookie("scholagest_token");
 	var xhrArgs = {
 			url: "../teacher/getTeachers",
 			preventCache: true,
-			content: {token: dojo.cookie("scholagest-token"),
+			content: {token: dojo.cookie("scholagest_token"),
 				properties: ["pTeacherLastName", "pTeacherFirstName"] },
 				handleAs: "json",
 				load: function(data) {
@@ -108,7 +109,7 @@ function getTeachersInfo(teacherList, properties, callback) {
 	var xhrArgs = {
 			url: "../teacher/getTeachersInfo",
 			preventCache: true,
-			content: {token: dojo.cookie("scholagest-token"),
+			content: {token: dojo.cookie("scholagest_token"),
 				teachers: teacherList,
 				properties: properties},
 			handleAs: "json",
@@ -147,7 +148,7 @@ function createTeacher(closeId, txtIds) {
 	var xhrArgs = {
 			url: "../teacher/create",
 			preventCache: true,
-			content: {token: dojo.cookie("scholagest-token"),
+			content: {token: dojo.cookie("scholagest_token"),
 				keys: keys, values: values},
 				handleAs: "json",
 				load: function(data) {

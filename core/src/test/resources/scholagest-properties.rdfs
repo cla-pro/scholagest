@@ -22,11 +22,11 @@
     </rdfs:Property>
     <rdfs:Property rdf:ID="pUserRoles" rdfs:comment="User's roles">
         <rdfs:domain rdf:resource="sg:tUser"/>
-        <rdfs:range rdf:resource="sg:DBSet"/>
+        <rdfs:range rdf:resource="sg:Set"/>
     </rdfs:Property>
     <rdfs:Property rdf:ID="pUserPermissions" rdfs:comment="User's permissions">
         <rdfs:domain rdf:resource="sg:tUser"/>
-        <rdfs:range rdf:resource="sg:DBSet"/>
+        <rdfs:range rdf:resource="sg:Set"/>
     </rdfs:Property>
     
     <rdfs:Property rdf:ID="pTokenUser" rdfs:comment="Token's user">
@@ -35,6 +35,15 @@
     </rdfs:Property>
     <rdfs:Property rdf:ID="pTokenEndValidityTime" rdfs:comment="Token's end validity time">
         <rdfs:domain rdf:resource="sg:tToken"/>
+        <rdfs:range rdf:resource="sg:Calendar"/>
+    </rdfs:Property>
+    
+    <rdfs:Property rdf:ID="pPageRole" rdfs:comment="Page's roles">
+        <rdfs:domain rdf:resource="sg:tPage"/>
+        <rdfs:range rdf:resource="sg:Set"/>
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pPagePath" rdfs:comment="Page's path">
+        <rdfs:domain rdf:resource="sg:tPage"/>
         <rdfs:range rdf:resource="sg:String"/>
     </rdfs:Property>
     

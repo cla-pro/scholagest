@@ -66,7 +66,7 @@ public class UserBusinessComponent implements IUserBusinessComponent {
         BaseObject teacherProperties = teacherManager.getTeacherProperties(requestId, transaction, teacherKey,
                 new HashSet<>(Arrays.asList("pTeacherFirstName", "pTeacherLastName")));
         String username = generateUsername(teacherProperties);
-        return userManager.createUser(requestId, transaction, username);
+        return userManager.createUser(requestId, transaction, username, "");
     }
 
     private String generateUsername(BaseObject teacherProperties) {

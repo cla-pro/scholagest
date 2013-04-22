@@ -2,7 +2,7 @@ function callGetPeriodsInfo(periods, properties, callback) {
 	var xhrArgs = {
 			url: "../period/getPropertiesForList",
 			preventCache: true,
-			content: {token: dojo.cookie("scholagest-token"),
+			content: {token: dojo.cookie("scholagest_token"),
 				periodKeys: periods,
 				properties: properties},
 			handleAs: "json",
@@ -185,7 +185,7 @@ function sendSaveGradesRequest(yearKey, classKey, branchKey, periodKey, grades) 
 			url: "../student/setGrades",
 			preventCache: true,
 			postData: dojo.toJson({
-				token: dojo.cookie("scholagest-token"),
+				token: dojo.cookie("scholagest_token"),
 				yearKey: yearKey,
 				classKey: classKey,
 				branchKey: branchKey,

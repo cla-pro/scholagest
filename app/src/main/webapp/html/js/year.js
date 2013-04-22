@@ -9,7 +9,7 @@ function loadYears() {
 	var xhrArgs = {
 			url: "../year/getYears",
 			preventCache: true,
-			content: {token: dojo.cookie("scholagest-token"),
+			content: {token: dojo.cookie("scholagest_token"),
 				properties: ["pYearName"] },
 				handleAs: "json",
 				load: function(data) {
@@ -43,7 +43,7 @@ function startYear(closeId, txtYearNameId) {
 	var xhrArgs = {
 			url: "../year/start",
 			preventCache: true,
-			content: {token: dojo.cookie("scholagest-token"),
+			content: {token: dojo.cookie("scholagest_token"),
 				name: yearName},
 				handleAs: "json",
 				load: function(data) {
@@ -72,7 +72,7 @@ function stopYear() {
 	var xhrArgs = {
 			url: "../year/stop",
 			preventCache: true,
-			content: {token: dojo.cookie("scholagest-token")},
+			content: {token: dojo.cookie("scholagest_token")},
 				handleAs: "json",
 				load: function(data) {
 					if (data.errorCode == null) {

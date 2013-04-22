@@ -31,7 +31,7 @@ public class ScholagestTokenToken implements AuthenticationToken {
 
     @Override
     public Object getCredentials() {
-        return null;
+        return token;
     }
 
     @Override
@@ -40,7 +40,7 @@ public class ScholagestTokenToken implements AuthenticationToken {
     }
 
     @Override
-    public boolean isRememberMe() {
-        return false;
+    public String toString() {
+        return String.format("%s[token=%s]", getClass().getName(), token);
     }
 }

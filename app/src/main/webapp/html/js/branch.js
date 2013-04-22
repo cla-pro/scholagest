@@ -20,7 +20,7 @@ function loadBranches() {
 		var xhrArgs = {
 				url: "../branch/getPropertiesForList",
 				preventCache: true,
-				content: {token: dojo.cookie("scholagest-token"),
+				content: {token: dojo.cookie("scholagest_token"),
 					branchKeys: info.properties["pClassBranches"].value,
 					properties: ["pBranchName"]},
 				handleAs: "json",
@@ -51,7 +51,7 @@ function getBranchInfo(branchKey, properties, callback) {
 	var xhrArgs = {
 			url: "../branch/getProperties",
 			preventCache: true,
-			content: {token: dojo.cookie("scholagest-token"),
+			content: {token: dojo.cookie("scholagest_token"),
 				branchKey: branchKey,
 				properties: properties},
 			handleAs: "json",
@@ -80,7 +80,7 @@ function createBranch(closeId, txtNameId, gradesFlagChkId) {
 	var xhrArgs = {
 			url: "../branch/create",
 			preventCache: true,
-			content: {token: dojo.cookie("scholagest-token"),
+			content: {token: dojo.cookie("scholagest_token"),
 				classKey: classKey,
 				keys: ['pBranchName'],
 				values: [className]},

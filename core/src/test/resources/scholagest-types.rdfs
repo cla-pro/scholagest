@@ -23,6 +23,9 @@
     <rdfs:Class rdf:ID="http://scholagest.net#tToken">
         <rdfs:comment>Token representation</rdfs:comment>
     </rdfs:Class>
+    <rdfs:Class rdf:ID="http://scholagest.net#tPage">
+        <rdfs:comment>Page representation</rdfs:comment>
+    </rdfs:Class>
 	
     <rdfs:Class rdf:ID="http://scholagest.net#tTeacher">
         <rdfs:comment>Teacher representation</rdfs:comment>

@@ -1,5 +1,7 @@
 package net.scholagest.shiro;
 
+import java.util.UUID;
+
 import net.scholagest.database.DatabaseException;
 import net.scholagest.database.ITransaction;
 import net.scholagest.managers.IUserManager;
@@ -24,6 +26,7 @@ public class RealmAuthenticationAndAuthorization extends AuthorizingRealm {
     private static final String PERMISSIONS_KEY = "permissions";
     private static final String REQUEST_ID_KEY = "requestId";
     private static final String TRANSACTION_KEY = "transaction";
+    public static final String TOKEN_KEY = "token";
 
     private final IUserManager userManager;
 
@@ -76,10 +79,13 @@ public class RealmAuthenticationAndAuthorization extends AuthorizingRealm {
     }
 
     private AuthenticationInfo getAndCheckUserFromDb(ScholagestUsernameToken token) throws Exception {
-        UserObject userObject = null;
+        String requestId = token.getRequestId();
+        ITransaction transaction = token.getTransaction();
+        UserObject userObject = userManager.getUserWithUsername(requestId, transaction, token.getUsername());
 
         if (isValidUsernamePassword(userObject, new String(token.getPassword()))) {
-            return createAuthenticationInfo(token.getRequestId(), token.getTransaction(), userObject);
+            TokenObject tokenObject = storeTokenForUser(requestId, transaction, UUID.randomUUID().toString(), userObject);
+            return createAuthenticationInfo(requestId, transaction, userObject, tokenObject.getKey(), userObject.getPassword().toCharArray());
         }
 
         return null;
@@ -87,6 +93,10 @@ public class RealmAuthenticationAndAuthorization extends AuthorizingRealm {
 
     private boolean isValidUsernamePassword(UserObject userObject, String password) {
         return userObject != null && userObject.getPassword().equals(password);
+    }
+
+    private TokenObject storeTokenForUser(String requestId, ITransaction transaction, String token, UserObject userObject) throws Exception {
+        return userManager.createToken(requestId, transaction, userObject.getKey(), token);
     }
 
     private AuthenticationInfo checkToken(ScholagestTokenToken token) {
@@ -107,22 +117,24 @@ public class RealmAuthenticationAndAuthorization extends AuthorizingRealm {
 
         if (isTokenValid(tokenObject)) {
             UserObject userObject = userManager.getUser(requestId, transaction, tokenObject.getUserObjectKey());
-            return createAuthenticationInfo(requestId, transaction, userObject);
+            return createAuthenticationInfo(requestId, transaction, userObject, token.getToken(), token.getToken());
         }
 
         return null;
     }
 
     private boolean isTokenValid(TokenObject tokenObject) {
-        return tokenObject != null && tokenObject.getEndValidityTime().isBeforeNow();
+        return tokenObject != null && tokenObject.getEndValidityTime().isAfterNow();
     }
 
-    private AuthenticationInfo createAuthenticationInfo(String requestId, ITransaction transaction, UserObject userObject) throws Exception {
-        SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo();
+    private AuthenticationInfo createAuthenticationInfo(String requestId, ITransaction transaction, UserObject userObject, String token,
+            Object credentials) throws Exception {
+        SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(userObject.getUsername(), credentials, getName());
 
         SimplePrincipalCollection principals = readRolesAndPermissions(requestId, transaction, userObject);
         principals.add(transaction, TRANSACTION_KEY);
         principals.add(requestId, REQUEST_ID_KEY);
+        principals.add(token, TOKEN_KEY);
 
         authenticationInfo.setPrincipals(principals);
 

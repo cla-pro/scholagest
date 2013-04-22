@@ -9,7 +9,7 @@ function createExam(closeId, txtIds) {
 	var xhrArgs = {
 			url: "../exam/create",
 			preventCache: true,
-			content: {token: dojo.cookie("scholagest-token"),
+			content: {token: dojo.cookie("scholagest_token"),
 				keys: keyValues.keys,
 				values: keyValues.values,
 				yearKey: yearKey,
@@ -41,7 +41,7 @@ function getExamsInfo(examList, properties, callback) {
 	var xhrArgs = {
 			url: "../exam/getExamsInfo",
 			preventCache: true,
-			content: {token: dojo.cookie("scholagest-token"),
+			content: {token: dojo.cookie("scholagest_token"),
 				exams: examList,
 				properties: properties},
 			handleAs: "json",
