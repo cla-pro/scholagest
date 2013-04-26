@@ -87,16 +87,17 @@ public class TeacherService implements ITeacherService {
 
     @Override
     public BaseObject getTeacherProperties(String requestId, String teacherKey, Set<String> propertiesName) throws Exception {
+        BaseObject properties = null;
+
         ITransaction transaction = database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
         try {
-            BaseObject properties = teacherBusinessComponent.getTeacherProperties(requestId, transaction, teacherKey, propertiesName);
+            properties = teacherBusinessComponent.getTeacherProperties(requestId, transaction, teacherKey, propertiesName);
             transaction.commit();
-            return properties;
         } catch (Exception e) {
             transaction.rollback();
             e.printStackTrace();
         }
 
-        return null;
+        return properties;
     }
 }

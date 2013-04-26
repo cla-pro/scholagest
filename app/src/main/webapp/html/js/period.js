@@ -12,8 +12,7 @@ function callGetPeriodsInfo(periods, properties, callback) {
 					callback(info);
 				}
 				else {
-					alert("Error during getProperties: ("
-							+ data.errorCode + ") " + data.message);
+					handleServiceError(data);
 				}
 			},
 			error: function(error) {
@@ -195,8 +194,7 @@ function sendSaveGradesRequest(yearKey, classKey, branchKey, periodKey, grades) 
 			handleAs: "json",
 			load: function(data) {
 				if (data.errorCode != null) {
-					alert("Error during setGrades: ("
-							+ data.errorCode + ") " + data.message);
+					handleServiceError(data);
 				}
 			},
 			error: function(error) {

@@ -10,26 +10,33 @@ import java.util.UUID;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import net.scholagest.app.rest.object.RestRequest;
 import net.scholagest.app.utils.HtmlPageBuilder;
 import net.scholagest.app.utils.JsonObject;
 import net.scholagest.database.DatabaseException;
 import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
+import net.scholagest.services.IOntologyService;
 import net.scholagest.services.IUserService;
 import net.scholagest.shiro.RealmAuthenticationAndAuthorization;
 
+import org.apache.shiro.ShiroException;
 import org.apache.shiro.subject.Subject;
 
+import com.google.gson.Gson;
 import com.google.inject.Inject;
 
 @Path("/user")
-public class RestUserService {
+public class RestUserService extends AbstractService {
+    private final static String REQUEST_ID_PREFIX = "student-";
+
     private final IDatabase database;
     private final IUserService userService;
 
@@ -37,7 +44,8 @@ public class RestUserService {
     ServletContext context;
 
     @Inject
-    public RestUserService(final IDatabase database, final IUserService userService) {
+    public RestUserService(final IDatabase database, final IUserService userService, IOntologyService ontologyService) {
+        super(ontologyService);
         this.database = database;
         this.userService = userService;
     }
@@ -52,9 +60,11 @@ public class RestUserService {
             String token = (String) subject.getPrincipals().fromRealm(RealmAuthenticationAndAuthorization.TOKEN_KEY).iterator().next();
 
             return new JsonObject("token", token, "nextpage", "http://localhost:8080/scholagest-app/services/user/getPage?token=" + token).toString();
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{errorCode=0, message='" + e.getMessage() + "'}";
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
     }
 
@@ -119,6 +129,26 @@ public class RestUserService {
         }
 
         return builder.toString();
+    }
+
+    @POST
+    @Path("/validateToken")
+    @Produces("text/json")
+    public String validateToken(String content) {
+        String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+
+        try {
+            RestRequest request = new Gson().fromJson(content, RestRequest.class);
+
+            userService.authenticateWithToken(requestId, request.getToken());
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
+        }
+
+        return "{}";
     }
 
     @GET

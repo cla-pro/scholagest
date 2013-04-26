@@ -8,6 +8,8 @@ import net.scholagest.managers.ontology.OntologyElement;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IOntologyService;
 
+import org.apache.shiro.ShiroException;
+
 import com.google.inject.Inject;
 
 public abstract class AbstractService {
@@ -18,6 +20,10 @@ public abstract class AbstractService {
     public AbstractService(IOntologyService ontologyService) {
         this.ontologyService = ontologyService;
         this.converter = new JsonConverter(this.ontologyService);
+    }
+
+    protected String generateSessionExpiredMessage(ShiroException e) {
+        return "{errorCode:0, msg:''}";
     }
 
     protected Map<String, OntologyElement> extractOntology(Set<String> properties) throws Exception {

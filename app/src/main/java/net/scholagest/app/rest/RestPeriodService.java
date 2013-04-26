@@ -20,6 +20,7 @@ import net.scholagest.services.IOntologyService;
 import net.scholagest.services.IPeriodService;
 import net.scholagest.services.IUserService;
 
+import org.apache.shiro.ShiroException;
 import org.apache.shiro.subject.Subject;
 
 import com.google.gson.Gson;
@@ -66,9 +67,11 @@ public class RestPeriodService extends AbstractService {
 
             String json = new Gson().toJson(jsonObjects);
             return "{info: " + json + "}";
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{errorCode=0, message='" + e.getMessage() + "'}";
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
     }
 }

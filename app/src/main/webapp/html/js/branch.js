@@ -34,8 +34,7 @@ function loadBranches() {
 								buildListItemTextClosure(["pBranchName"]), selectBranchWrapper(classKey, yearKey));
 					}
 					else {
-						alert("Error during getProperties: ("
-								+ data.errorCode + ") " + data.message);
+						handleServiceError(data);
 					}
 				},
 				error: function(error) {
@@ -61,8 +60,7 @@ function getBranchInfo(branchKey, properties, callback) {
 					callback(info);
 				}
 				else {
-					alert("Error during getProperties: ("
-							+ data.errorCode + ") " + data.message);
+					handleServiceError(data);
 				}
 			},
 			error: function(error) {
@@ -90,8 +88,7 @@ function createBranch(closeId, txtNameId, gradesFlagChkId) {
 					loadBranches();
 				}
 				else {
-					alert("Error during getProperties: ("
-							+ data.errorCode + ") " + data.message);
+					handleServiceError(data);
 				}
 			},
 			error: function(error) {

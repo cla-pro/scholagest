@@ -137,8 +137,7 @@ function setClassInfo(classKey) {
 			handleAs: "json",
 			load: function(data) {
 				if (data.errorCode != null) {
-					alert("Error during getProperties: ("
-							+ data.errorCode + ") " + data.message);
+					handleServiceError(data);
 				}
 			},
 			error: function(error) {
@@ -176,8 +175,7 @@ function callGetClassInfo(classKey, classProperties, callback) {
 					callback(data.info);
 				}
 				else {
-					alert("Error during getProperties: ("
-							+ data.errorCode + ") " + data.message);
+					handleServiceError(data);
 				}
 			},
 			error: function(error) {
@@ -221,9 +219,9 @@ function loadClasses(yearList) {
 					clearDOM("year-search-list-div");
 					mergeAndDisplayYearAndClassLists(yearList, data.info);
 				}
-				else
-					alert("Error during getClasses: ("
-							+ data.errorCode + ") " + data.message);
+				else {
+					handleServiceError(data);
+				}
 			},
 			error: function(error) {
 				alert("error = " + error);
@@ -244,9 +242,9 @@ function createClass(yearKey, className) {
 				if (data.errorCode == null) {
 					loadClasses(dojo.byId('year-search-list-div').yearsList);
 				}
-				else
-					alert("Error during createClass: ("
-							+ data.errorCode + ") " + data.message);
+				else {
+					handleServiceError(data);
+				}
 			},
 			error: function(error) {
 				alert("error = " + error);

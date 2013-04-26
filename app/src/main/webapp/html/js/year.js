@@ -26,9 +26,9 @@ function loadYears() {
 						
 						loadClasses(info.years);
 					}
-					else
-						alert("Error during getCurrent: ("
-								+ data.errorCode + ") " + data.message);
+					else {
+						handleServiceError(data);
+					}
 				},
 				error: function(error) {
 					alert("error = " + error);
@@ -53,9 +53,9 @@ function startYear(closeId, txtYearNameId) {
 						dijit.byId('newClassDialog').currentYearKey = data.info.key;
 						loadYears();
 					}
-					else
-						alert("Error during startYear: ("
-								+ data.errorCode + ") " + data.message);
+					else {
+						handleServiceError(data);
+					}
 				},
 				error: function(error) {
 					alert("error = " + error);
@@ -79,9 +79,9 @@ function stopYear() {
 						//loadYears();
 						changeYearsButtonChange(false);
 					}
-					else
-						alert("Error during stopYear: ("
-								+ data.errorCode + ") " + data.message);
+					else {
+						handleServiceError(data);
+					}
 				},
 				error: function(error) {
 					alert("error = " + error);

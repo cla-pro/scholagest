@@ -21,9 +21,9 @@ function createExam(closeId, txtIds) {
 					if (data.errorCode == null) {
 						loadStudents();
 					}
-					else
-						alert("Error during createStudents: ("
-								+ data.errorCode + ") " + data.message);
+					else {
+						handleServiceError(data);
+					}
 				},
 				error: function(error) {
 					alert("error = " + error);
@@ -50,8 +50,7 @@ function getExamsInfo(examList, properties, callback) {
 					callback(data.info);
 				}
 				else {
-					alert("Error during getExamsInfo: ("
-							+ data.errorCode + ") " + data.message);
+					handleServiceError(data);
 				}
 			},
 			error: function(error) {

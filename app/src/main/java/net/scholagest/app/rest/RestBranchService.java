@@ -22,6 +22,7 @@ import net.scholagest.services.IBranchService;
 import net.scholagest.services.IOntologyService;
 import net.scholagest.services.IUserService;
 
+import org.apache.shiro.ShiroException;
 import org.apache.shiro.subject.Subject;
 
 import com.google.gson.Gson;
@@ -61,9 +62,11 @@ public class RestBranchService extends AbstractService {
 
             String json = new Gson().toJson(restBranch);
             return "{info: " + json + "}";
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{errorCode=0, message='" + e.getMessage() + "'}";
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
     }
 
@@ -90,9 +93,11 @@ public class RestBranchService extends AbstractService {
 
             String json = new Gson().toJson(convertObjectToJson);
             return "{info: " + json + "}";
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{errorCode=0, message='" + e.getMessage() + "'}";
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
     }
 
@@ -115,9 +120,11 @@ public class RestBranchService extends AbstractService {
 
             String json = new Gson().toJson(convertObjectToJson);
             return "{info: " + json + "}";
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{errorCode=0, message='" + e.getMessage() + "'}";
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
     }
 
@@ -134,9 +141,11 @@ public class RestBranchService extends AbstractService {
             BaseObject baseObject = new RestToKdomConverter().baseObjectFromRest(requestObject);
 
             branchService.setBranchProperties(requestId, requestObject.getKey(), baseObject.getProperties());
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{errorCode=0, message='" + e.getMessage() + "'}";
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
 
         return "{}";

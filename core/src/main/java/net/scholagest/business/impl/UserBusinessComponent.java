@@ -14,7 +14,6 @@ import net.scholagest.shiro.ScholagestTokenToken;
 import net.scholagest.shiro.ScholagestUsernameToken;
 
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.subject.Subject;
 
 import com.google.inject.Inject;
@@ -36,12 +35,7 @@ public class UserBusinessComponent implements IUserBusinessComponent {
         ScholagestUsernameToken token = new ScholagestUsernameToken(requestId, transaction, sessionToken, username, password);
         Subject subject = SecurityUtils.getSubject();
 
-        try {
-            subject.login(token);
-        } catch (AuthenticationException e) {
-            e.printStackTrace();
-            return null;
-        }
+        subject.login(token);
 
         return subject;
     }
@@ -51,12 +45,7 @@ public class UserBusinessComponent implements IUserBusinessComponent {
         ScholagestTokenToken token = new ScholagestTokenToken(requestId, transaction, tokenId);
         Subject subject = SecurityUtils.getSubject();
 
-        try {
-            subject.login(token);
-        } catch (AuthenticationException e) {
-            e.printStackTrace();
-            return null;
-        }
+        subject.login(token);
 
         return subject;
     }

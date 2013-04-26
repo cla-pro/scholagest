@@ -13,6 +13,7 @@ import net.scholagest.services.IOntologyService;
 import net.scholagest.services.IUserService;
 import net.scholagest.services.IYearService;
 
+import org.apache.shiro.ShiroException;
 import org.apache.shiro.subject.Subject;
 
 import com.google.gson.Gson;
@@ -47,10 +48,11 @@ public class RestYearService extends AbstractService {
             Gson gson = new Gson();
             String json = gson.toJson(converter.convertObjectToJson(year, null));
             return "{info: " + json + "}";
-
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{errorCode=0, message='" + e.getMessage() + "'}";
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
     }
 
@@ -64,9 +66,11 @@ public class RestYearService extends AbstractService {
             Subject subject = userService.authenticateWithToken(requestId, token);
 
             yearService.stopYear(requestId);
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{errorCode=0, message='" + e.getMessage() + "'}";
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
 
         return "{}";
@@ -87,9 +91,11 @@ public class RestYearService extends AbstractService {
             Gson gson = new Gson();
             String json = gson.toJson(converter.convertObjectToJson(currentYear, null));
             return "{info: " + json + "}";
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{errorCode=0, message='" + e.getMessage() + "'}";
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
     }
 
@@ -112,9 +118,11 @@ public class RestYearService extends AbstractService {
                 currentYearJson = ", currentYear: " + gson.toJson(converter.convertObjectToJson(currentYearKey)) + "";
             }
             return "{info: {years: " + years + currentYearJson + "}}";
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{errorCode=0, message='" + e.getMessage() + "'}";
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
     }
 }

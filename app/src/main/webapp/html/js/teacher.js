@@ -17,8 +17,7 @@ function getTeacherInfo(teacherKey) {
 								{type: "button", onclick:"setTeacherInfo(\"" + teacherKey + "\")", innerHTML: "Enregistrer"}, base);
 					}
 					else {
-						alert("Error during getProperties: ("
-								+ data.errorCode + ") " + data.message);
+						handleServiceError(data);
 					}
 				},
 				error: function(error) {
@@ -44,8 +43,7 @@ function setTeacherInfo(teacherKey) {
 			handleAs: "json",
 			load: function(data) {
 				if (data.errorCode != null) {
-					alert("Error during setProperties: ("
-							+ data.errorCode + ") " + data.message);
+					handleServiceError(data);
 				}
 			},
 			error: function(error) {
@@ -83,8 +81,7 @@ function getTeacherList(callback) {
 						callback(data.info);
 					}
 					else {
-						alert("Error during getTeachers: ("
-								+ data.errorCode + ") " + data.message);
+						handleServiceError(data);
 					}
 				},
 				error: function(error) {
@@ -118,8 +115,7 @@ function getTeachersInfo(teacherList, properties, callback) {
 					callback(data.info);
 				}
 				else {
-					alert("Error during getTeachersInfo: ("
-							+ data.errorCode + ") " + data.message);
+					handleServiceError(data);
 				}
 			},
 			error: function(error) {
@@ -155,9 +151,9 @@ function createTeacher(closeId, txtIds) {
 					if (data.errorCode == null) {
 						loadTeachers();
 					}
-					else
-						alert("Error during createTeachers: ("
-								+ data.errorCode + ") " + data.message);
+					else {
+						handleServiceError(data);
+					}
 				},
 				error: function(error) {
 					alert("error = " + error);

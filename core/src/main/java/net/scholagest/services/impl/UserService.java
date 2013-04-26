@@ -11,6 +11,7 @@ import net.scholagest.database.ITransaction;
 import net.scholagest.objects.PageObject;
 import net.scholagest.services.IUserService;
 
+import org.apache.shiro.ShiroException;
 import org.apache.shiro.subject.Subject;
 
 import com.google.inject.Inject;
@@ -40,6 +41,9 @@ public class UserService implements IUserService {
             // "js/exam.js", "js/branch.js", "js/period.js",
             // "modules/year.html", "js/year.js", "js/class.js",
             // "modules/grades.html" };
+        } catch (ShiroException e) {
+            transaction.rollback();
+            throw e;
         } catch (Exception e) {
             transaction.rollback();
             e.printStackTrace();
@@ -66,6 +70,9 @@ public class UserService implements IUserService {
         try {
             subject = userBusinessComponent.authenticateUser(requestId, transaction, username, password);
             transaction.commit();
+        } catch (ShiroException e) {
+            transaction.rollback();
+            throw e;
         } catch (Exception e) {
             transaction.rollback();
             e.printStackTrace();
@@ -82,6 +89,9 @@ public class UserService implements IUserService {
         try {
             subject = userBusinessComponent.authenticateToken(requestId, transaction, token);
             transaction.commit();
+        } catch (ShiroException e) {
+            transaction.rollback();
+            throw e;
         } catch (Exception e) {
             transaction.rollback();
             e.printStackTrace();

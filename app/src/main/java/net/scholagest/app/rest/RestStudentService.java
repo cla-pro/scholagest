@@ -25,6 +25,7 @@ import net.scholagest.services.IOntologyService;
 import net.scholagest.services.IStudentService;
 import net.scholagest.services.IUserService;
 
+import org.apache.shiro.ShiroException;
 import org.apache.shiro.subject.Subject;
 
 import com.google.gson.Gson;
@@ -66,9 +67,11 @@ public class RestStudentService extends AbstractService {
             Gson gson = new Gson();
             String json = gson.toJson(converter.convertObjectToJson(student, null));
             return "{info: " + json + "}";
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{errorCode=0, message='" + e.getMessage() + "'}";
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
     }
 
@@ -86,9 +89,11 @@ public class RestStudentService extends AbstractService {
 
             String json = new Gson().toJson(restStudents);
             return "{info: " + json + "}";
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{errorCode=0, message='" + e.getMessage() + "'}";
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
     }
 
@@ -115,9 +120,11 @@ public class RestStudentService extends AbstractService {
 
             String json = new Gson().toJson(restStudents);
             return "{info: " + json + "}";
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{errorCode=0, message='" + e.getMessage() + "'}";
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
     }
 
@@ -142,9 +149,11 @@ public class RestStudentService extends AbstractService {
 
             String json = new Gson().toJson(restStudentInfo);
             return "{info: " + json + "}";
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{errorCode=0, message='" + e.getMessage() + "'}";
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
     }
 
@@ -173,9 +182,11 @@ public class RestStudentService extends AbstractService {
 
             String json = new Gson().toJson(restPersonalInfo);
             return "{info: " + json + "}";
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{errorCode=0, message='" + e.getMessage() + "'}";
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
     }
 
@@ -194,9 +205,11 @@ public class RestStudentService extends AbstractService {
             BaseObject baseObject = new RestToKdomConverter().baseObjectFromRest(requestObject);
 
             studentService.updateStudentProperties(requestId, baseObject.getKey(), baseObject.getProperties(), new HashMap<String, Object>());
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{errorCode=0, message='" + e.getMessage() + "'}";
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
 
         return "{}";
@@ -226,9 +239,11 @@ public class RestStudentService extends AbstractService {
 
             String json = new Gson().toJson(restMedicalInfo);
             return "{info: " + json + "}";
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{errorCode=0, message='" + e.getMessage() + "'}";
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
     }
 
@@ -247,9 +262,11 @@ public class RestStudentService extends AbstractService {
             BaseObject baseObject = new RestToKdomConverter().baseObjectFromRest(requestObject);
 
             studentService.updateStudentProperties(requestId, baseObject.getKey(), new HashMap<String, Object>(), baseObject.getProperties());
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{errorCode=0, message='" + e.getMessage() + "'}";
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
 
         return "{}";
@@ -269,9 +286,11 @@ public class RestStudentService extends AbstractService {
 
             String json = gradeMapToJson(grades);
             return "{info: " + json + "}";
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{errorCode=0, message='" + e.getMessage() + "'}";
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
     }
 
@@ -317,9 +336,11 @@ public class RestStudentService extends AbstractService {
                 studentService.setGrades(requestId, studentKey, studentGrades, request.getYearKey(), request.getClassKey(), request.getBranchKey(),
                         request.getPeriodKey());
             }
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{errorCode=0, message='" + e.getMessage() + "'}";
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
 
         return "{}";

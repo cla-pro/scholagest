@@ -11,9 +11,9 @@ function callGetStudentGrades(students, exams, yearKey, callback) {
 					if (data.errorCode == null) {
 						callback(data.info);
 					}
-					else
-						alert("Error during createStudents: ("
-								+ data.errorCode + ") " + data.message);
+					else {
+						handleServiceError(data);
+					}
 				},
 				error: function(error) {
 					alert("error = " + error);
@@ -35,9 +35,9 @@ function createStudent(closeId, txtIds) {
 					if (data.errorCode == null) {
 						loadStudents();
 					}
-					else
-						alert("Error during createStudents: ("
-								+ data.errorCode + ") " + data.message);
+					else {
+						handleServiceError(data);
+					}
 				},
 				error: function(error) {
 					alert("error = " + error);
@@ -62,8 +62,7 @@ function getStudentList(callback) {
 						callback(data.info);
 					}
 					else {
-						alert("Error during getStudents: ("
-								+ data.errorCode + ") " + data.message);
+						handleServiceError(data);
 					}
 				},
 				error: function(error) {
@@ -86,8 +85,7 @@ function getStudentsInfo(studentList, properties, callback) {
 					callback(data.info);
 				}
 				else {
-					alert("Error during getStudents: ("
-							+ data.errorCode + ") " + data.message);
+					handleServiceError(data);
 				}
 			},
 			error: function(error) {
@@ -137,8 +135,7 @@ function selectStudent(studentKey) {
 						}
 					}
 					else {
-						alert("Error during " + getInfoServiceName + ": ("
-								+ data.errorCode + ") " + data.message);
+						handleServiceError(data);
 					}
 				},
 				error: function(error) {
@@ -187,8 +184,7 @@ function getStudentInfo(studentKey, getInfoServiceName, setInfoServiceName, domI
 							{type: "button", onclick:setStudentInfo(studentKey, domId + "-content-table", setInfoServiceName), innerHTML: "Enregistrer"}, base);
 				}
 				else {
-					alert("Error during " + getInfoServiceName + ": ("
-							+ data.errorCode + ") " + data.message);
+					handleServiceError(data);
 				}
 			},
 			error: function(error) {
@@ -214,8 +210,7 @@ function setStudentInfo(studentKey, domId, webServiceName) {
 				handleAs: "json",
 				load: function(data) {
 					if (data.errorCode != null) {
-						alert("Error during setProperties: ("
-								+ data.errorCode + ") " + data.message);
+						handleServiceError(data);
 					}
 				},
 				error: function(error) {

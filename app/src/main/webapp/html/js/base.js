@@ -101,3 +101,72 @@ function extractKeys(list) {
 	
 	return resultList;
 };
+
+function sendPostRequest(serviceUrl, jsonObject, callback, errorCallback) {
+	var xhrArgs = {
+		url: serviceUrl,
+		preventCache: true,
+		postData: dojo.toJson({
+			token: dojo.cookie("scholagest_token"),
+			object: jsonObject
+		}),
+		handleAs: "json",
+		load: function(data) {
+			handleResult(data, callback, errorCallback);
+		},
+		error: function(error) {
+			handleWebServiceError(error);
+		}
+	}
+
+	var deferred = dojo.xhrPost(xhrArgs);
+};
+
+function sendGetRequest(serviceUrl, parameters, callback, errorCallback) {
+	parameters.token = dojo.cookie("scholagest_token");
+	var xhrArgs = {
+		url: serviceUrl,
+		preventCache: true,
+		content: parameters,
+		handleAs: "json",
+		load: function(data) {
+			handleResult(data, callback, errorCallback);
+		},
+		error: function(error) {
+			handleWebServiceError(error);
+		}
+	}
+
+	var deferred = dojo.xhrGet(xhrArgs);
+};
+
+function handleResult(data, callback, errorCallback) {
+	if (data.errorCode == null) {
+		if (callback != null) {
+			callback(data.info);
+		}
+	}
+	else {
+		handleJsonError(data, errorCallback);
+	}
+};
+
+function handleJsonError(errorJson, errorCallback) {
+	if (!handleServiceError(errorJson)) {
+		if (errorCallback != null) {
+			errorCallback(errorJson);
+		}
+	}
+};
+
+function handleWebServiceError(error) {
+	alert("error = " + error);
+}
+
+function handleServiceError(errorJson) {
+	if (errorJson.errorCode >= 0 && errorJson.errorCode < 100) {
+		window.location = "http://localhost:8080/scholagest-app/html/login.html";
+	} else {
+		alert("Error with code: " + errorJson.errorCode + " and message: " + errorJson.msg);
+	}
+};

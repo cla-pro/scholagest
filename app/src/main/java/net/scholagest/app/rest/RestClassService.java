@@ -24,6 +24,7 @@ import net.scholagest.services.IClassService;
 import net.scholagest.services.IOntologyService;
 import net.scholagest.services.IUserService;
 
+import org.apache.shiro.ShiroException;
 import org.apache.shiro.subject.Subject;
 
 import com.google.gson.Gson;
@@ -62,9 +63,11 @@ public class RestClassService extends AbstractService {
 
             String json = new Gson().toJson(restClass);
             return "{info: " + json + "}";
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{errorCode=0, message='" + e.getMessage() + "'}";
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
     }
 
@@ -85,9 +88,11 @@ public class RestClassService extends AbstractService {
 
             String json = new Gson().toJson(classesInfo);
             return "{info: " + json + "}";
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{errorCode=0, message='" + e.getMessage() + "'}";
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
     }
 
@@ -146,9 +151,11 @@ public class RestClassService extends AbstractService {
 
             String json = new Gson().toJson(restClassInfo);
             return "{info: " + json + "}";
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{errorCode=0, message='" + e.getMessage() + "'}";
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
     }
 
@@ -166,9 +173,11 @@ public class RestClassService extends AbstractService {
             BaseObject baseObject = new RestToKdomConverter().baseObjectFromRest(requestObject);
 
             classService.setClassProperties(requestId, requestObject.getKey(), baseObject.getProperties());
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{errorCode=0, message='" + e.getMessage() + "'}";
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
 
         return "{}";
