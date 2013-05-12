@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import net.scholagest.managers.CoreNamespace;
+import net.scholagest.managers.impl.CoreNamespace;
 import net.scholagest.managers.ontology.OWL;
 import net.scholagest.managers.ontology.OntologyElement;
 import net.scholagest.managers.ontology.RDF;

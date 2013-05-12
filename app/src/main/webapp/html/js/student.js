@@ -1,8 +1,9 @@
 function callGetStudentGrades(students, exams, yearKey, callback) {
-	var xhrArgs = {
+	sendGetRequest("../student/getStudentsGrades", { studentKeys: students, examKeys: exams, yearKey: yearKey }, callback);
+	/*var xhrArgs = {
 			url: "../student/getStudentsGrades",
 			preventCache: true,
-			content: {token: dojo.cookie("scholagest-token"),
+			content: {token: dojo.cookie("scholagest_token"),
 				studentKeys: students,
 				examKeys: exams,
 				yearKey: yearKey},
@@ -11,50 +12,52 @@ function callGetStudentGrades(students, exams, yearKey, callback) {
 					if (data.errorCode == null) {
 						callback(data.info);
 					}
-					else
-						alert("Error during createStudents: ("
-								+ data.errorCode + ") " + data.message);
+					else {
+						handleServiceError(data);
+					}
 				},
 				error: function(error) {
 					alert("error = " + error);
 				}
 	}
 
-	var deferred = dojo.xhrGet(xhrArgs);
+	var deferred = dojo.xhrGet(xhrArgs);*/
 };
 function createStudent(closeId, txtIds) {
 	var keyValues = getKeysAndValues(txtIds);
 
-	var xhrArgs = {
+	sendGetRequest("../student/create", { keys: keyValues.keys, values: keyValues.values }, function(info) { loadStudents(); });
+	/*var xhrArgs = {
 			url: "../student/create",
 			preventCache: true,
-			content: {token: dojo.cookie("scholagest-token"),
+			content: {token: dojo.cookie("scholagest_token"),
 				keys: keyValues.keys, values: keyValues.values},
 				handleAs: "json",
 				load: function(data) {
 					if (data.errorCode == null) {
 						loadStudents();
 					}
-					else
-						alert("Error during createStudents: ("
-								+ data.errorCode + ") " + data.message);
+					else {
+						handleServiceError(data);
+					}
 				},
 				error: function(error) {
 					alert("error = " + error);
 				}
 	}
 
-	var deferred = dojo.xhrGet(xhrArgs);
+	var deferred = dojo.xhrGet(xhrArgs);*/
 
 	if (closeId != null) {
 		dijit.byId(closeId).hide();
 	}
 };
 function getStudentList(callback) {
-	var xhrArgs = {
+	sendGetRequest("../student/getStudents", { properties: ["pStudentLastName", "pStudentFirstName"] }, callback);
+	/*var xhrArgs = {
 			url: "../student/getStudents",
 			preventCache: true,
-			content: {token: dojo.cookie("scholagest-token"),
+			content: {token: dojo.cookie("scholagest_token"),
 				properties: ["pStudentLastName", "pStudentFirstName"] },
 				handleAs: "json",
 				load: function(data) {
@@ -62,8 +65,7 @@ function getStudentList(callback) {
 						callback(data.info);
 					}
 					else {
-						alert("Error during getStudents: ("
-								+ data.errorCode + ") " + data.message);
+						handleServiceError(data);
 					}
 				},
 				error: function(error) {
@@ -71,13 +73,14 @@ function getStudentList(callback) {
 				}
 	}
 
-	var deferred = dojo.xhrGet(xhrArgs);
+	var deferred = dojo.xhrGet(xhrArgs);*/
 };
 function getStudentsInfo(studentList, properties, callback) {
-	var xhrArgs = {
+	sendGetRequest("../student/getStudentsInfo", { students: studentList, properties: properties }, callback);
+	/*var xhrArgs = {
 			url: "../student/getStudentsInfo",
 			preventCache: true,
-			content: {token: dojo.cookie("scholagest-token"),
+			content: {token: dojo.cookie("scholagest_token"),
 				students: studentList,
 				properties: properties},
 			handleAs: "json",
@@ -86,8 +89,7 @@ function getStudentsInfo(studentList, properties, callback) {
 					callback(data.info);
 				}
 				else {
-					alert("Error during getStudents: ("
-							+ data.errorCode + ") " + data.message);
+					handleServiceError(data);
 				}
 			},
 			error: function(error) {
@@ -95,7 +97,7 @@ function getStudentsInfo(studentList, properties, callback) {
 			}
 	}
 
-	var deferred = dojo.xhrGet(xhrArgs);
+	var deferred = dojo.xhrGet(xhrArgs);*/
 };
 function loadStudents() {
 	getStudentList(function(students) {
@@ -111,7 +113,7 @@ function selectStudent(studentKey) {
 		var xhrArgs = {
 				url: "../student/getProperties",
 				preventCache: true,
-				content: {token: dojo.cookie("scholagest-token"),
+				content: {token: dojo.cookie("scholagest_token"),
 					studentKey: studentKey},
 				handleAs: "json",
 				load: function(data) {
@@ -137,8 +139,7 @@ function selectStudent(studentKey) {
 						}
 					}
 					else {
-						alert("Error during " + getInfoServiceName + ": ("
-								+ data.errorCode + ") " + data.message);
+						handleServiceError(data);
 					}
 				},
 				error: function(error) {
@@ -170,25 +171,31 @@ function getStudentMedicalInfo(studentKey) {
 	getStudentInfo(studentKey, "getMedicalProperties", "setMedicalProperties", "student-medical-info");
 }
 function getStudentInfo(studentKey, getInfoServiceName, setInfoServiceName, domId) {
-	var xhrArgs = {
+	sendGetRequest("../student/" + getInfoServiceName, { studentKey: studentKey }, function(info) {
+		var base = dojo.byId(domId + "-content-table");
+		createInfoHtmlTable(base, info.properties);
+		
+		var save = dojo.create("button",
+				{type: "button", onclick:setStudentInfo(studentKey, domId + "-content-table", setInfoServiceName), innerHTML: "Enregistrer"}, base);
+	});
+	/*var xhrArgs = {
 			url: "../student/" + getInfoServiceName,
 			preventCache: true,
-			content: {token: dojo.cookie("scholagest-token"),
+			content: {token: dojo.cookie("scholagest_token"),
 				studentKey: studentKey},
 			handleAs: "json",
 			load: function(data) {
 				if (data.errorCode == null) {
-					var base = dojo.byId(domId + "-content-table");
 
 					var info = data.info;
+					var base = dojo.byId(domId + "-content-table");
 					createInfoHtmlTable(base, info.properties);
 					
 					var save = dojo.create("button",
 							{type: "button", onclick:setStudentInfo(studentKey, domId + "-content-table", setInfoServiceName), innerHTML: "Enregistrer"}, base);
 				}
 				else {
-					alert("Error during " + getInfoServiceName + ": ("
-							+ data.errorCode + ") " + data.message);
+					handleServiceError(data);
 				}
 			},
 			error: function(error) {
@@ -196,16 +203,17 @@ function getStudentInfo(studentKey, getInfoServiceName, setInfoServiceName, domI
 			}
 	}
 
-	var deferred = dojo.xhrGet(xhrArgs);
+	var deferred = dojo.xhrGet(xhrArgs);*/
 }
 function setStudentInfo(studentKey, domId, webServiceName) {
 	return function() {
 		var keyValues = getKeyValues(domId);
-		var xhrArgs = {
+		sendPostRequest("../student/" + webServiceName, { key: studentKey, properties: keyValues }, function(info) {});
+		/*var xhrArgs = {
 				url: "../student/" + webServiceName,
 				preventCache: true,
 				postData: dojo.toJson({
-					token: dojo.cookie("scholagest-token"),
+					token: dojo.cookie("scholagest_token"),
 					object: {
 						key: studentKey,
 						properties: keyValues
@@ -214,8 +222,7 @@ function setStudentInfo(studentKey, domId, webServiceName) {
 				handleAs: "json",
 				load: function(data) {
 					if (data.errorCode != null) {
-						alert("Error during setProperties: ("
-								+ data.errorCode + ") " + data.message);
+						handleServiceError(data);
 					}
 				},
 				error: function(error) {
@@ -223,6 +230,6 @@ function setStudentInfo(studentKey, domId, webServiceName) {
 				}
 		}
 
-		var deferred = dojo.xhrPost(xhrArgs);
+		var deferred = dojo.xhrPost(xhrArgs);*/
 	}
 }

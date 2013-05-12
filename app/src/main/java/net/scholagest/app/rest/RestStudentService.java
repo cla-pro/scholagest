@@ -18,11 +18,15 @@ import net.scholagest.app.rest.object.RestObject;
 import net.scholagest.app.rest.object.RestRequest;
 import net.scholagest.app.rest.object.RestStudentGradeList;
 import net.scholagest.app.utils.JerseyHelper;
-import net.scholagest.managers.CoreNamespace;
+import net.scholagest.managers.impl.CoreNamespace;
 import net.scholagest.managers.ontology.OntologyElement;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IOntologyService;
 import net.scholagest.services.IStudentService;
+import net.scholagest.services.IUserService;
+
+import org.apache.shiro.ShiroException;
+import org.apache.shiro.subject.Subject;
 
 import com.google.gson.Gson;
 import com.google.inject.Inject;
@@ -32,13 +36,15 @@ public class RestStudentService extends AbstractService {
     private final static String REQUEST_ID_PREFIX = "student-";
     private final IStudentService studentService;
     private final IOntologyService ontologyService;
+    private final IUserService userService;
     private JsonConverter converter;
 
     @Inject
-    public RestStudentService(IStudentService studentService, IOntologyService ontologyService) {
+    public RestStudentService(IStudentService studentService, IOntologyService ontologyService, IUserService userService) {
         super(ontologyService);
         this.studentService = studentService;
         this.ontologyService = ontologyService;
+        this.userService = userService;
         this.converter = new JsonConverter(this.ontologyService);
     }
 
@@ -50,19 +56,22 @@ public class RestStudentService extends AbstractService {
         // TODO 1. Check the token and if this token allows to create a new
         // student.
 
-        Map<String, Object> personalInfo = JerseyHelper.listToMap(keys, new ArrayList<Object>(values));
-
-        // 2. Update the database.
-        BaseObject student = null;
         try {
-            student = studentService.createStudent(requestId, personalInfo);
+            Subject subject = userService.authenticateWithToken(requestId, token);
+
+            Map<String, Object> personalInfo = JerseyHelper.listToMap(keys, new ArrayList<Object>(values));
+
+            // 2. Update the database.
+            BaseObject student = studentService.createStudent(requestId, personalInfo);
 
             Gson gson = new Gson();
             String json = gson.toJson(converter.convertObjectToJson(student, null));
             return "{info: " + json + "}";
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{errorCode=0, message='" + e.getMessage() + "'}";
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
     }
 
@@ -71,15 +80,20 @@ public class RestStudentService extends AbstractService {
     @Produces("text/json")
     public String getStudents(@QueryParam("token") String token, @QueryParam("properties") Set<String> properties) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+
         try {
+            Subject subject = userService.authenticateWithToken(requestId, token);
+
             Set<BaseObject> students = studentService.getStudentsWithProperties(requestId, properties);
             List<RestObject> restStudents = new RestToKdomConverter().restObjectsFromKdoms(students);
 
             String json = new Gson().toJson(restStudents);
             return "{info: " + json + "}";
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{errorCode=0, message='" + e.getMessage() + "'}";
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
     }
 
@@ -89,7 +103,10 @@ public class RestStudentService extends AbstractService {
     public String getStudentsInfo(@QueryParam("token") String token, @QueryParam("students") Set<String> studentKeyList,
             @QueryParam("properties") Set<String> properties) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+
         try {
+            Subject subject = userService.authenticateWithToken(requestId, token);
+
             Set<BaseObject> students = new HashSet<>();
             for (String studentKey : studentKeyList) {
                 BaseObject studentPersonalInfo = studentService.getStudentPersonalProperties(requestId, studentKey, properties);
@@ -103,9 +120,11 @@ public class RestStudentService extends AbstractService {
 
             String json = new Gson().toJson(restStudents);
             return "{info: " + json + "}";
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{errorCode=0, message='" + e.getMessage() + "'}";
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
     }
 
@@ -115,7 +134,10 @@ public class RestStudentService extends AbstractService {
     public String getStudentProperties(@QueryParam("token") String token, @QueryParam("studentKey") String studentKey,
             @QueryParam("properties") Set<String> properties) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+
         try {
+            Subject subject = userService.authenticateWithToken(requestId, token);
+
             if (properties == null || properties.isEmpty()) {
                 properties = ontologyService.getPropertiesForType(CoreNamespace.tStudent);
             }
@@ -127,9 +149,11 @@ public class RestStudentService extends AbstractService {
 
             String json = new Gson().toJson(restStudentInfo);
             return "{info: " + json + "}";
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{errorCode=0, message='" + e.getMessage() + "'}";
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
     }
 
@@ -139,7 +163,10 @@ public class RestStudentService extends AbstractService {
     public String getStudentPersonalInfo(@QueryParam("token") String token, @QueryParam("studentKey") String studentKey,
             @QueryParam("properties") Set<String> properties) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+
         try {
+            Subject subject = userService.authenticateWithToken(requestId, token);
+
             if (properties == null || properties.isEmpty()) {
                 properties = ontologyService.getPropertiesForType(CoreNamespace.tStudentPersonalInfo);
             }
@@ -155,9 +182,11 @@ public class RestStudentService extends AbstractService {
 
             String json = new Gson().toJson(restPersonalInfo);
             return "{info: " + json + "}";
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{errorCode=0, message='" + e.getMessage() + "'}";
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
     }
 
@@ -166,15 +195,21 @@ public class RestStudentService extends AbstractService {
     @Produces("text/json")
     public String setStudentPersonalInfo(String content) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+
         try {
             RestRequest request = new Gson().fromJson(content, RestRequest.class);
+
+            Subject subject = userService.authenticateWithToken(requestId, request.getToken());
+
             RestObject requestObject = request.getObject();
             BaseObject baseObject = new RestToKdomConverter().baseObjectFromRest(requestObject);
 
             studentService.updateStudentProperties(requestId, baseObject.getKey(), baseObject.getProperties(), new HashMap<String, Object>());
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{errorCode=0, message='" + e.getMessage() + "'}";
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
 
         return "{}";
@@ -186,7 +221,10 @@ public class RestStudentService extends AbstractService {
     public String getStudentMedicalInfo(@QueryParam("token") String token, @QueryParam("studentKey") String studentKey,
             @QueryParam("properties") Set<String> properties) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+
         try {
+            Subject subject = userService.authenticateWithToken(requestId, token);
+
             if (properties == null || properties.isEmpty()) {
                 properties = ontologyService.getPropertiesForType(CoreNamespace.tStudentMedicalInfo);
             }
@@ -201,9 +239,11 @@ public class RestStudentService extends AbstractService {
 
             String json = new Gson().toJson(restMedicalInfo);
             return "{info: " + json + "}";
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{errorCode=0, message='" + e.getMessage() + "'}";
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
     }
 
@@ -212,15 +252,21 @@ public class RestStudentService extends AbstractService {
     @Produces("text/json")
     public String setStudentMedicalInfo(String content) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+
         try {
             RestRequest request = new Gson().fromJson(content, RestRequest.class);
+
+            Subject subject = userService.authenticateWithToken(requestId, request.getToken());
+
             RestObject requestObject = request.getObject();
             BaseObject baseObject = new RestToKdomConverter().baseObjectFromRest(requestObject);
 
             studentService.updateStudentProperties(requestId, baseObject.getKey(), new HashMap<String, Object>(), baseObject.getProperties());
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{errorCode=0, message='" + e.getMessage() + "'}";
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
 
         return "{}";
@@ -232,15 +278,19 @@ public class RestStudentService extends AbstractService {
     public String getStudentsGrades(@QueryParam("token") String token, @QueryParam("studentKeys") Set<String> studentKeys,
             @QueryParam("examKeys") Set<String> examKeys, @QueryParam("yearKey") String yearKey) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+
         try {
+            Subject subject = userService.authenticateWithToken(requestId, token);
 
             Map<String, Map<String, BaseObject>> grades = studentService.getGrades(requestId, studentKeys, examKeys, yearKey);
 
             String json = gradeMapToJson(grades);
             return "{info: " + json + "}";
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{errorCode=0, message='" + e.getMessage() + "'}";
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
     }
 
@@ -271,8 +321,12 @@ public class RestStudentService extends AbstractService {
     @Produces("text/json")
     public String setStudentsGrades(String content) {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+
         try {
             RestStudentGradeList request = new Gson().fromJson(content, RestStudentGradeList.class);
+
+            Subject subject = userService.authenticateWithToken(requestId, request.getToken());
+
             Map<String, Map<String, RestObject>> restStudentGrades = request.getGrades();
 
             for (String studentKey : restStudentGrades.keySet()) {
@@ -282,9 +336,11 @@ public class RestStudentService extends AbstractService {
                 studentService.setGrades(requestId, studentKey, studentGrades, request.getYearKey(), request.getClassKey(), request.getBranchKey(),
                         request.getPeriodKey());
             }
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{errorCode=0, message='" + e.getMessage() + "'}";
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
 
         return "{}";

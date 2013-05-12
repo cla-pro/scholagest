@@ -4,11 +4,11 @@
     xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>net</groupId>
-		<artifactId>scholagest</artifactId>
-    <version>0.3.0-SNAPSHOT</version>
-	</parent>
+    <parent>
+        <groupId>net</groupId>
+        <artifactId>scholagest</artifactId>
+        <version>0.3.0-SNAPSHOT</version>
+    </parent>
 
     <groupId>net.scholagest</groupId>
     <artifactId>core</artifactId>
@@ -46,6 +46,11 @@
             <artifactId>junit</artifactId>
             <version>4.10</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.shiro</groupId>

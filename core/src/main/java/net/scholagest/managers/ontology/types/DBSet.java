@@ -5,7 +5,7 @@ import java.util.Set;
 
 import net.scholagest.database.DatabaseException;
 import net.scholagest.database.ITransaction;
-import net.scholagest.managers.CoreNamespace;
+import net.scholagest.managers.impl.CoreNamespace;
 import net.scholagest.managers.ontology.RDF;
 
 public class DBSet {
@@ -63,6 +63,11 @@ public class DBSet {
         for (String element : values()) {
             remove(element);
         }
+    }
+
+    public void delete() throws DatabaseException {
+        transaction.delete(setKey, RDF.type, null);
+        clear();
     }
 
     public String getKey() {

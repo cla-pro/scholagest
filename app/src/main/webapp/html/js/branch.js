@@ -16,11 +16,21 @@ function displayBranchWrapper(classKey, yearKey) {
 function loadBranches() {
 	var classKey = "http://scholagest.net/class/2012-2013#1P A";
 	var yearKey = "http://scholagest.net/year#2012-2013";
+	
 	callGetClassInfo(classKey, "pClassBranches", function(info) {
-		var xhrArgs = {
+		var parameters = { branchKeys: info.properties["pClassBranches"].value, properties: ["pBranchName"] };
+		sendGetRequest("../branch/getPropertiesForList", parameters, function(branchInfo) {
+			clearDOM("branch-search-list");
+
+			var base = dojo.byId("branch-search-list");
+			createHtmlListFromList(branchInfo, "branch-search-list", base,
+					buildListItemTextClosure(["pBranchName"]), selectBranchWrapper(classKey, yearKey));
+		});
+		
+		/*var xhrArgs = {
 				url: "../branch/getPropertiesForList",
 				preventCache: true,
-				content: {token: dojo.cookie("scholagest-token"),
+				content: {token: dojo.cookie("scholagest_token"),
 					branchKeys: info.properties["pClassBranches"].value,
 					properties: ["pBranchName"]},
 				handleAs: "json",
@@ -34,8 +44,7 @@ function loadBranches() {
 								buildListItemTextClosure(["pBranchName"]), selectBranchWrapper(classKey, yearKey));
 					}
 					else {
-						alert("Error during getProperties: ("
-								+ data.errorCode + ") " + data.message);
+						handleServiceError(data);
 					}
 				},
 				error: function(error) {
@@ -43,15 +52,16 @@ function loadBranches() {
 				}
 		}
 
-		var deferred = dojo.xhrGet(xhrArgs);
+		var deferred = dojo.xhrGet(xhrArgs);*/
 	});
 };
 
 function getBranchInfo(branchKey, properties, callback) {
-	var xhrArgs = {
+	sendGetRequest("../branch/getProperties", { branchKey: branchKey, properties: properties }, callback);
+	/*var xhrArgs = {
 			url: "../branch/getProperties",
 			preventCache: true,
-			content: {token: dojo.cookie("scholagest-token"),
+			content: {token: dojo.cookie("scholagest_token"),
 				branchKey: branchKey,
 				properties: properties},
 			handleAs: "json",
@@ -61,8 +71,7 @@ function getBranchInfo(branchKey, properties, callback) {
 					callback(info);
 				}
 				else {
-					alert("Error during getProperties: ("
-							+ data.errorCode + ") " + data.message);
+					handleServiceError(data);
 				}
 			},
 			error: function(error) {
@@ -70,17 +79,18 @@ function getBranchInfo(branchKey, properties, callback) {
 			}
 	}
 
-	var deferred = dojo.xhrGet(xhrArgs);
+	var deferred = dojo.xhrGet(xhrArgs);*/
 }
 
 function createBranch(closeId, txtNameId, gradesFlagChkId) {
 	var classKey = "http://scholagest.net/class/2012-2013#1P A";
 	var className = dojo.byId(txtNameId).value;
 	
-	var xhrArgs = {
+	sendGetRequest("../branch/create", { classKey: classKey, keys: ['pBranchName'], values: [className]}, function(info) { loadBranches(); });
+	/*var xhrArgs = {
 			url: "../branch/create",
 			preventCache: true,
-			content: {token: dojo.cookie("scholagest-token"),
+			content: {token: dojo.cookie("scholagest_token"),
 				classKey: classKey,
 				keys: ['pBranchName'],
 				values: [className]},
@@ -90,8 +100,7 @@ function createBranch(closeId, txtNameId, gradesFlagChkId) {
 					loadBranches();
 				}
 				else {
-					alert("Error during getProperties: ("
-							+ data.errorCode + ") " + data.message);
+					handleServiceError(data);
 				}
 			},
 			error: function(error) {
@@ -99,7 +108,7 @@ function createBranch(closeId, txtNameId, gradesFlagChkId) {
 			}
 	}
 
-	var deferred = dojo.xhrGet(xhrArgs);
+	var deferred = dojo.xhrGet(xhrArgs);*/
 	if (closeId != null) {
 		dijit.byId(closeId).hide();
 	}

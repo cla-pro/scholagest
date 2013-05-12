@@ -41,4 +41,8 @@ public class BaseObject implements ScholagestObject {
     public Object getProperty(String propertyName) {
         return properties.get(propertyName);
     }
+
+    public void putProperty(String propertyName, Object value) {
+        properties.put(propertyName, value);
+    }
 }

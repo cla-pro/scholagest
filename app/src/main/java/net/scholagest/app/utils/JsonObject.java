@@ -107,6 +107,7 @@ public class JsonObject {
             if (i < this.json.size() - 1) {
                 jsonString += ", ";
             }
+            i++;
         }
 
         jsonString += "}";

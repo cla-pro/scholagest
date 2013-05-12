@@ -6,10 +6,21 @@ function changeYearsButtonChange(yearActive) {
 	dojo.byId('btnYearRemoveClass').disabled = !yearActive;
 }
 function loadYears() {
-	var xhrArgs = {
+	sendGetRequest("../year/getYears", { properties: ["pYearName"] }, function(info) {
+		var yearActive = info.currentYear != null;
+		if (yearActive) {
+			dijit.byId('newClassDialog').currentYearKey = info.currentYear.key;
+		}
+		changeYearsButtonChange(info.currentYear != null);
+		
+		dojo.byId('year-search-list-div').yearsList = info.years;
+		
+		loadClasses(info.years);
+	});
+	/*var xhrArgs = {
 			url: "../year/getYears",
 			preventCache: true,
-			content: {token: dojo.cookie("scholagest-token"),
+			content: {token: dojo.cookie("scholagest_token"),
 				properties: ["pYearName"] },
 				handleAs: "json",
 				load: function(data) {
@@ -26,24 +37,29 @@ function loadYears() {
 						
 						loadClasses(info.years);
 					}
-					else
-						alert("Error during getCurrent: ("
-								+ data.errorCode + ") " + data.message);
+					else {
+						handleServiceError(data);
+					}
 				},
 				error: function(error) {
 					alert("error = " + error);
 				}
 	}
 
-	var deferred = dojo.xhrGet(xhrArgs);
+	var deferred = dojo.xhrGet(xhrArgs);*/
 }
 function startYear(closeId, txtYearNameId) {
 	var yearName = dojo.byId(txtYearNameId).value;
 	
-	var xhrArgs = {
+	sendGetRequest("../year/start", { name: yearName }, function(info) {
+		changeYearsButtonChange(true);
+		dijit.byId('newClassDialog').currentYearKey = info.key;
+		loadYears();
+	});
+	/*var xhrArgs = {
 			url: "../year/start",
 			preventCache: true,
-			content: {token: dojo.cookie("scholagest-token"),
+			content: {token: dojo.cookie("scholagest_token"),
 				name: yearName},
 				handleAs: "json",
 				load: function(data) {
@@ -53,40 +69,41 @@ function startYear(closeId, txtYearNameId) {
 						dijit.byId('newClassDialog').currentYearKey = data.info.key;
 						loadYears();
 					}
-					else
-						alert("Error during startYear: ("
-								+ data.errorCode + ") " + data.message);
+					else {
+						handleServiceError(data);
+					}
 				},
 				error: function(error) {
 					alert("error = " + error);
 				}
 	}
 
-	var deferred = dojo.xhrGet(xhrArgs);
+	var deferred = dojo.xhrGet(xhrArgs);*/
 	
 	if (closeId != null) {
 		dijit.byId(closeId).hide();
 	}
 }
 function stopYear() {
-	var xhrArgs = {
+	sendGetRequest("../year/stop", {}, function(info) { changeYearsButtonChange(false); });
+	/*var xhrArgs = {
 			url: "../year/stop",
 			preventCache: true,
-			content: {token: dojo.cookie("scholagest-token")},
+			content: {token: dojo.cookie("scholagest_token")},
 				handleAs: "json",
 				load: function(data) {
 					if (data.errorCode == null) {
 						//loadYears();
 						changeYearsButtonChange(false);
 					}
-					else
-						alert("Error during stopYear: ("
-								+ data.errorCode + ") " + data.message);
+					else {
+						handleServiceError(data);
+					}
 				},
 				error: function(error) {
 					alert("error = " + error);
 				}
 	}
 
-	var deferred = dojo.xhrGet(xhrArgs);
+	var deferred = dojo.xhrGet(xhrArgs);*/
 }

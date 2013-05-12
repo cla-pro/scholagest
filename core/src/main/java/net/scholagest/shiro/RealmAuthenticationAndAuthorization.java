@@ -1,29 +1,38 @@
 package net.scholagest.shiro;
 
+import java.util.UUID;
+
 import net.scholagest.database.DatabaseException;
 import net.scholagest.database.ITransaction;
+import net.scholagest.managers.IUserManager;
+import net.scholagest.managers.ontology.types.DBSet;
+import net.scholagest.objects.TokenObject;
+import net.scholagest.objects.UserObject;
 
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
-import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 
+import com.google.inject.Inject;
+
 public class RealmAuthenticationAndAuthorization extends AuthorizingRealm {
     private static final String ROLES_KEY = "roles";
     private static final String PERMISSIONS_KEY = "permissions";
-    private static final String USERNAME_KEY = "username";
-    private static final String PASSWORD_KEY = "password";
+    private static final String REQUEST_ID_KEY = "requestId";
+    private static final String TRANSACTION_KEY = "transaction";
+    public static final String TOKEN_KEY = "token";
 
-    private final ITransaction transaction;
+    private final IUserManager userManager;
 
-    public RealmAuthenticationAndAuthorization(ITransaction transaction) {
-        this.transaction = transaction;
+    @Inject
+    public RealmAuthenticationAndAuthorization(IUserManager userManager) {
+        this.userManager = userManager;
         super.setAuthenticationCachingEnabled(false);
         super.setAuthorizationCachingEnabled(false);
     }
@@ -44,41 +53,108 @@ public class RealmAuthenticationAndAuthorization extends AuthorizingRealm {
     }
 
     @Override
+    public boolean supports(AuthenticationToken token) {
+        return token instanceof ScholagestUsernameToken || token instanceof ScholagestTokenToken;
+    }
+
+    @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-        UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken) token.getCredentials();
-        String username = usernamePasswordToken.getUsername();
-        char[] password = usernamePasswordToken.getPassword();
+        if (token instanceof ScholagestUsernameToken) {
+            return checkUsernameToken((ScholagestUsernameToken) token);
+        } else if (token instanceof ScholagestTokenToken) {
+            return checkToken((ScholagestTokenToken) token);
+        }
 
-        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(username, password, getName());
+        throw new AuthenticationException("Invalid informations");
+    }
 
-        SimplePrincipalCollection principals = new SimplePrincipalCollection();
-        principals.add(username, USERNAME_KEY);
-        principals.add(new String(password), PASSWORD_KEY);
-
+    private AuthenticationInfo checkUsernameToken(ScholagestUsernameToken token) {
         try {
-            setRolesAndPermissions(principals, username);
-        } catch (DatabaseException e) {
+            return getAndCheckUserFromDb(token);
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        info.setPrincipals(principals);
-
-        return info;
+        return null;
     }
 
-    private void setRolesAndPermissions(SimplePrincipalCollection principals, String username) throws DatabaseException {
-        String roleNode = (String) transaction.get(username, AuthorizationNamespace.pUserRoles, null);
-        if (roleNode != null) {
-            for (String role : transaction.getColumns(roleNode)) {
-                principals.add(role, ROLES_KEY);
-            }
+    private AuthenticationInfo getAndCheckUserFromDb(ScholagestUsernameToken token) throws Exception {
+        String requestId = token.getRequestId();
+        ITransaction transaction = token.getTransaction();
+        UserObject userObject = userManager.getUserWithUsername(requestId, transaction, token.getUsername());
+
+        if (isValidUsernamePassword(userObject, new String(token.getPassword()))) {
+            TokenObject tokenObject = storeTokenForUser(requestId, transaction, UUID.randomUUID().toString(), userObject);
+            return createAuthenticationInfo(requestId, transaction, userObject, tokenObject.getKey(), userObject.getPassword().toCharArray());
         }
 
-        String stringPermissionNode = (String) transaction.get(username, AuthorizationNamespace.pUserPermissions, null);
-        if (stringPermissionNode != null) {
-            for (String stringPermission : transaction.getColumns(stringPermissionNode)) {
-                principals.add(stringPermission, PERMISSIONS_KEY);
-            }
+        return null;
+    }
+
+    private boolean isValidUsernamePassword(UserObject userObject, String password) {
+        return userObject != null && userObject.getPassword().equals(password);
+    }
+
+    private TokenObject storeTokenForUser(String requestId, ITransaction transaction, String token, UserObject userObject) throws Exception {
+        return userManager.createToken(requestId, transaction, userObject.getKey(), token);
+    }
+
+    private AuthenticationInfo checkToken(ScholagestTokenToken token) {
+        try {
+            return getAndCheckTokenFromDb(token);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
+        return null;
+    }
+
+    private AuthenticationInfo getAndCheckTokenFromDb(ScholagestTokenToken token) throws Exception {
+        String requestId = token.getRequestId();
+        ITransaction transaction = token.getTransaction();
+
+        TokenObject tokenObject = userManager.getToken(requestId, transaction, token.getToken());
+
+        if (isTokenValid(tokenObject)) {
+            UserObject userObject = userManager.getUser(requestId, transaction, tokenObject.getUserObjectKey());
+            return createAuthenticationInfo(requestId, transaction, userObject, token.getToken(), token.getToken());
+        }
+
+        return null;
+    }
+
+    private boolean isTokenValid(TokenObject tokenObject) {
+        return tokenObject != null && tokenObject.getEndValidityTime().isAfterNow();
+    }
+
+    private AuthenticationInfo createAuthenticationInfo(String requestId, ITransaction transaction, UserObject userObject, String token,
+            Object credentials) throws Exception {
+        SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(userObject.getUsername(), credentials, getName());
+
+        SimplePrincipalCollection principals = readRolesAndPermissions(requestId, transaction, userObject);
+        principals.add(transaction, TRANSACTION_KEY);
+        principals.add(requestId, REQUEST_ID_KEY);
+        principals.add(token, TOKEN_KEY);
+
+        authenticationInfo.setPrincipals(principals);
+
+        return authenticationInfo;
+    }
+
+    private SimplePrincipalCollection readRolesAndPermissions(String requestId, ITransaction transaction, UserObject userObject)
+            throws DatabaseException {
+        SimplePrincipalCollection principals = new SimplePrincipalCollection();
+
+        DBSet roles = userObject.getRoles();
+        for (String role : roles.values()) {
+            principals.add(role, ROLES_KEY);
+        }
+
+        DBSet permissions = userObject.getPermissions();
+        for (String permission : permissions.values()) {
+            principals.add(permission, PERMISSIONS_KEY);
+        }
+
+        return principals;
     }
 }

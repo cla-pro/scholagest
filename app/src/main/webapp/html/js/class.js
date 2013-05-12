@@ -124,11 +124,12 @@ function createListButtonsWrapper(completeAddRemoveStudentsButtonClosure, comple
 function setClassInfo(classKey) {
 	var keyValues = getKeyValues("class-data");
 	
-	var xhrArgs = {
+	sendPostRequest("../class/setProperties", { key: classKey, properties: keyValues }, function(info) {});
+	/*var xhrArgs = {
 			url: "../class/setProperties",
 			preventCache: true,
 			postData: dojo.toJson({
-				token: dojo.cookie("scholagest-token"),
+				token: dojo.cookie("scholagest_token"),
 				object: {
 					key: classKey,
 					properties: keyValues
@@ -137,8 +138,7 @@ function setClassInfo(classKey) {
 			handleAs: "json",
 			load: function(data) {
 				if (data.errorCode != null) {
-					alert("Error during getProperties: ("
-							+ data.errorCode + ") " + data.message);
+					handleServiceError(data);
 				}
 			},
 			error: function(error) {
@@ -146,7 +146,7 @@ function setClassInfo(classKey) {
 			}
 	}
 
-	var deferred = dojo.xhrPost(xhrArgs);
+	var deferred = dojo.xhrPost(xhrArgs);*/
 }
 function getClassInfo(classKey) {
 	callGetClassInfo(classKey, null, function(info) {
@@ -161,12 +161,14 @@ function getClassInfo(classKey) {
 	});
 }
 function callGetClassInfo(classKey, classProperties, callback) {
-	var content = {token: dojo.cookie("scholagest-token"),
+	var content = {//automatically added token: dojo.cookie("scholagest_token"),
 			classKey: classKey};
 	if (classProperties != null) {
 		content["properties"] = classProperties;
 	}
-	var xhrArgs = {
+	
+	sendGetRequest("../class/getProperties", content, callback);
+	/*var xhrArgs = {
 			url: "../class/getProperties",
 			preventCache: true,
 			content: content,
@@ -176,8 +178,7 @@ function callGetClassInfo(classKey, classProperties, callback) {
 					callback(data.info);
 				}
 				else {
-					alert("Error during getProperties: ("
-							+ data.errorCode + ") " + data.message);
+					handleServiceError(data);
 				}
 			},
 			error: function(error) {
@@ -185,7 +186,7 @@ function callGetClassInfo(classKey, classProperties, callback) {
 			}
 	}
 
-	var deferred = dojo.xhrGet(xhrArgs);
+	var deferred = dojo.xhrGet(xhrArgs);*/
 }
 function mergeAndDisplayYearAndClassLists(yearList, classList) {
 	var liItemsList = [];
@@ -210,10 +211,14 @@ function loadClasses(yearList) {
 		yearKeyList.push(yearKey);
 	}
 	
-	var xhrArgs = {
+	sendGetRequest("../class/getClasses", { properties: ["pClassName"], years: yearKeyList }, function(info) {
+		clearDOM("year-search-list-div");
+		mergeAndDisplayYearAndClassLists(yearList, info);
+	});
+	/*var xhrArgs = {
 			url: "../class/getClasses",
 			preventCache: true,
-			content: {token: dojo.cookie("scholagest-token"),
+			content: {token: dojo.cookie("scholagest_token"),
 				properties: ["pClassName"], years: yearKeyList },
 			handleAs: "json",
 			load: function(data) {
@@ -221,22 +226,25 @@ function loadClasses(yearList) {
 					clearDOM("year-search-list-div");
 					mergeAndDisplayYearAndClassLists(yearList, data.info);
 				}
-				else
-					alert("Error during getClasses: ("
-							+ data.errorCode + ") " + data.message);
+				else {
+					handleServiceError(data);
+				}
 			},
 			error: function(error) {
 				alert("error = " + error);
 			}
 	}
 
-	var deferred = dojo.xhrGet(xhrArgs);
+	var deferred = dojo.xhrGet(xhrArgs);*/
 }
 function createClass(yearKey, className) {
-	var xhrArgs = {
+	sendGetRequest("../class/create", { yearKey: yearKey, keys: ["pClassName"], values: [className] },
+			function(info) { loadClasses(dojo.byId('year-search-list-div').yearsList); });
+	
+	/*var xhrArgs = {
 			url: "../class/create",
 			preventCache: true,
-			content: {token: dojo.cookie("scholagest-token"),
+			content: {token: dojo.cookie("scholagest_token"),
 				yearKey: yearKey,
 				keys: ["pClassName"], values: [className] },
 			handleAs: "json",
@@ -244,14 +252,14 @@ function createClass(yearKey, className) {
 				if (data.errorCode == null) {
 					loadClasses(dojo.byId('year-search-list-div').yearsList);
 				}
-				else
-					alert("Error during createClass: ("
-							+ data.errorCode + ") " + data.message);
+				else {
+					handleServiceError(data);
+				}
 			},
 			error: function(error) {
 				alert("error = " + error);
 			}
 	}
 
-	var deferred = dojo.xhrGet(xhrArgs);
+	var deferred = dojo.xhrGet(xhrArgs);*/
 }

@@ -33,6 +33,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
+                <version>2.3</version>
 				<configuration>
 					<warName>scholagest-app</warName>
 				</configuration>
@@ -71,6 +72,11 @@
 			<artifactId>jersey-guice</artifactId>
 			<version>1.12</version>
 		</dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-guice</artifactId>
+            <version>1.2.1</version>
+        </dependency>
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>

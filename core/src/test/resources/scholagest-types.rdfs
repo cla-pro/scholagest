@@ -5,15 +5,27 @@
 	
 	<owl:Ontology rdf:about="http://scholagest.net/2012/06/rdf-schema#">
 		<rdfs:comment>The scholagest ontology</rdfs:comment>
-		<owl:imports rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns"/>
-		<owl:imports rdf:resource="http://www.w3.org/2000/01/rdf-schema"/>
-        <owl:imports rdf:resource="file:///D:/Programming/eclipse-workspace/Scholagest/core/src/test/resources/scholagest-base-types.rdfs"/>
+<!-- 		<owl:imports rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns"/> -->
+        <owl:imports rdf:resource="file:///D:/Programming/eclipse-workspace/scholagest/core/src/test/resources/22-rdf-syntax-ns.rdfs" />
+<!-- 		<owl:imports rdf:resource="http://www.w3.org/2000/01/rdf-schema"/> -->
+        <owl:imports rdf:resource="file:///D:/Programming/eclipse-workspace/scholagest/core/src/test/resources/rdf-schema.rdfs" />
+        <owl:imports rdf:resource="file:///D:/Programming/eclipse-workspace/scholagest/core/src/test/resources/scholagest-base-types.rdfs"/>
 	</owl:Ontology>
 	
 	<rdfs:Property rdf:ID="http://scholagest.net#displayText" rdfs:comment="Display text">
 		<rdfs:domain rdf:resource="rdfs:Property"/>
 		<rdfs:range rdf:resource="String"/>
 	</rdfs:Property>
+    
+    <rdfs:Class rdf:ID="http://scholagest.net#tUser">
+        <rdfs:comment>User representation</rdfs:comment>
+    </rdfs:Class>
+    <rdfs:Class rdf:ID="http://scholagest.net#tToken">
+        <rdfs:comment>Token representation</rdfs:comment>
+    </rdfs:Class>
+    <rdfs:Class rdf:ID="http://scholagest.net#tPage">
+        <rdfs:comment>Page representation</rdfs:comment>
+    </rdfs:Class>
 	
     <rdfs:Class rdf:ID="http://scholagest.net#tTeacher">
         <rdfs:comment>Teacher representation</rdfs:comment>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scenario xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="xsd/scenario.xsd">
+    <name>Scenario 1</name>
+    <description></description>
+    <baseURL>http://localhost:8080/scholagest-app/services</baseURL>
+    <calls>
+        <call>
+            <id>1 - Authenticate the token</id>
+            <url>/user/validateToken</url>
+            <httpMethod>POST</httpMethod>
+            <parameters>{token:'abcdefghijklm'}</parameters>
+            <expectedResult>
+                <result>
+                    <path>errorCode</path>
+                    <value>0.0</value>
+                </result>
+            </expectedResult>
+        </call>
+    </calls>
+</scenario>
