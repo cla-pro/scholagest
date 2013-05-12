@@ -1,57 +1,19 @@
 function getTeacherInfo(teacherKey) {
-	var xhrArgs = {
-			url: "../teacher/getProperties",
-			preventCache: true,
-			content: {token: dojo.cookie("scholagest_token"),
-				teacherKey: teacherKey},
-				handleAs: "json",
-				load: function(data) {
-					if (data.errorCode == null) {
-						var domId = "teacher-data";
-						clearDOM(domId);
+	sendGetRequest("../teacher/getProperties", { teacherKey: teacherKey }, function(info) {
+		var domId = "teacher-data";
+		clearDOM(domId);
 
-						var base = dojo.byId(domId);
-						createInfoHtmlTable(base, data.info.properties);
+		var base = dojo.byId(domId);
+		createInfoHtmlTable(base, info.properties);
 
-						var save = dojo.create("button",
-								{type: "button", onclick:"setTeacherInfo(\"" + teacherKey + "\")", innerHTML: "Enregistrer"}, base);
-					}
-					else {
-						handleServiceError(data);
-					}
-				},
-				error: function(error) {
-					alert("error = " + error);
-				}
-	}
-
-	var deferred = dojo.xhrGet(xhrArgs);
+		var save = dojo.create("button",
+				{type: "button", onclick:"setTeacherInfo(\"" + teacherKey + "\")", innerHTML: "Enregistrer"}, base);
+	});
 };
 
 function setTeacherInfo(teacherKey) {
 	var keyValues = getKeyValues('teacher-data');
-	var xhrArgs = {
-			url: "../teacher/setProperties",
-			preventCache: true,
-			postData: dojo.toJson({
-				token: dojo.cookie("scholagest_token"),
-				object: {
-					key: teacherKey,
-					properties: keyValues
-				}
-			}),
-			handleAs: "json",
-			load: function(data) {
-				if (data.errorCode != null) {
-					handleServiceError(data);
-				}
-			},
-			error: function(error) {
-				alert("error = " + error);
-			}
-	}
-
-	var deferred = dojo.xhrPost(xhrArgs);
+	sendPostRequest("../teacher/setProperties", { key: teacherKey, properties: keyValues }, function(info) {});
 };
 
 function selectTeacher(teacherKey) {
@@ -69,27 +31,7 @@ function selectTeacher(teacherKey) {
 };
 
 function getTeacherList(callback) {
-	var token = dojo.cookie("scholagest_token");
-	var xhrArgs = {
-			url: "../teacher/getTeachers",
-			preventCache: true,
-			content: {token: dojo.cookie("scholagest_token"),
-				properties: ["pTeacherLastName", "pTeacherFirstName"] },
-				handleAs: "json",
-				load: function(data) {
-					if (data.errorCode == null) {
-						callback(data.info);
-					}
-					else {
-						handleServiceError(data);
-					}
-				},
-				error: function(error) {
-					alert("error = " + error);
-				}
-	}
-
-	var deferred = dojo.xhrGet(xhrArgs);
+	sendGetRequest("../teacher/getTeachers", { properties: ["pTeacherLastName", "pTeacherFirstName"] }, callback);
 };
 
 function loadTeachers() {
@@ -103,27 +45,7 @@ function loadTeachers() {
 };
 
 function getTeachersInfo(teacherList, properties, callback) {
-	var xhrArgs = {
-			url: "../teacher/getTeachersInfo",
-			preventCache: true,
-			content: {token: dojo.cookie("scholagest_token"),
-				teachers: teacherList,
-				properties: properties},
-			handleAs: "json",
-			load: function(data) {
-				if (data.errorCode == null) {
-					callback(data.info);
-				}
-				else {
-					handleServiceError(data);
-				}
-			},
-			error: function(error) {
-				alert("error = " + error);
-			}
-	}
-
-	var deferred = dojo.xhrGet(xhrArgs);
+	sendGetRequest("../teacher/getTeachersInfo", { teachers: teacherList, properties: properties }, callback);
 };
 
 function createTeacher(closeId, txtIds) {
@@ -141,26 +63,7 @@ function createTeacher(closeId, txtIds) {
 		}
 	}
 
-	var xhrArgs = {
-			url: "../teacher/create",
-			preventCache: true,
-			content: {token: dojo.cookie("scholagest_token"),
-				keys: keys, values: values},
-				handleAs: "json",
-				load: function(data) {
-					if (data.errorCode == null) {
-						loadTeachers();
-					}
-					else {
-						handleServiceError(data);
-					}
-				},
-				error: function(error) {
-					alert("error = " + error);
-				}
-	}
-
-	var deferred = dojo.xhrGet(xhrArgs);
+	sendGetRequest("../teacher/create", { keys: keys, values: values }, function(info) { loadTeachers(); })
 
 	if (closeId != null) {
 		dijit.byId(closeId).hide();

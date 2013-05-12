@@ -1,5 +1,6 @@
 function callGetPeriodsInfo(periods, properties, callback) {
-	var xhrArgs = {
+	sendGetRequest("../period/getPropertiesForList", { periodKeys: periods, properties: properties }, callback)
+	/*var xhrArgs = {
 			url: "../period/getPropertiesForList",
 			preventCache: true,
 			content: {token: dojo.cookie("scholagest_token"),
@@ -20,7 +21,7 @@ function callGetPeriodsInfo(periods, properties, callback) {
 			}
 		}
 
-		var deferred = dojo.xhrGet(xhrArgs);
+		var deferred = dojo.xhrGet(xhrArgs);*/
 };
 function getPeriodsInfo(periods, branchKey, classKey, yearKey, divName) {
 	callGetPeriodsInfo(periods, ["pPeriodName"], function(periods) {
@@ -180,7 +181,15 @@ function saveGrades(tableDom, yearKey, classKey, branchKey, periodKey, students,
 	};
 };
 function sendSaveGradesRequest(yearKey, classKey, branchKey, periodKey, grades) {
-	var xhrArgs = {
+	var postContent = {
+			yearKey: yearKey,
+			classKey: classKey,
+			branchKey: branchKey,
+			periodKey: periodKey,
+			grades: grades
+		};
+	sendPostRequest("../student/setGrades", postContent, function(info) {});
+	/*var xhrArgs = {
 			url: "../student/setGrades",
 			preventCache: true,
 			postData: dojo.toJson({
@@ -202,5 +211,5 @@ function sendSaveGradesRequest(yearKey, classKey, branchKey, periodKey, grades) 
 			}
 	}
 
-	var deferred = dojo.xhrPost(xhrArgs);
+	var deferred = dojo.xhrPost(xhrArgs);*/
 };

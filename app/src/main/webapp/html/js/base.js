@@ -165,7 +165,8 @@ function handleWebServiceError(error) {
 
 function handleServiceError(errorJson) {
 	if (errorJson.errorCode >= 0 && errorJson.errorCode < 100) {
-		window.location = "http://localhost:8080/scholagest-app/html/login.html";
+		//http://localhost:8080/scholagest-app/
+		window.location = BASE_URL + "html/login.html";
 	} else {
 		alert("Error with code: " + errorJson.errorCode + " and message: " + errorJson.msg);
 	}

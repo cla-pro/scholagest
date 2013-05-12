@@ -8,6 +8,8 @@ import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IBranchService;
+import net.scholagest.utils.ConfigurationServiceImpl;
+import net.scholagest.utils.ScholagestProperty;
 
 import com.google.inject.Inject;
 
@@ -25,7 +27,7 @@ public class BranchService implements IBranchService {
     public BaseObject createBranch(String requestId, String classKey, Map<String, Object> branchProperties) throws Exception {
         BaseObject branch = null;
 
-        ITransaction transaction = database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         try {
             branch = branchBusinessComponent.createBranch(requestId, transaction, classKey, branchProperties);
 
@@ -42,7 +44,7 @@ public class BranchService implements IBranchService {
     public BaseObject getBranchProperties(String requestId, String branchKey, Set<String> propertiesName) throws Exception {
         BaseObject branchInfo = null;
 
-        ITransaction transaction = database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         try {
             branchInfo = branchBusinessComponent.getBranchProperties(requestId, transaction, branchKey, propertiesName);
 
@@ -57,7 +59,7 @@ public class BranchService implements IBranchService {
 
     @Override
     public void setBranchProperties(String requestId, String branchKey, Map<String, Object> properties) throws Exception {
-        ITransaction transaction = database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         try {
             branchBusinessComponent.setBranchProperties(requestId, transaction, branchKey, properties);
             transaction.commit();

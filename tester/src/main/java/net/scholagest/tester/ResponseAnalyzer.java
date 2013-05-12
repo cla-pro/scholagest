@@ -6,10 +6,11 @@ import java.util.List;
 
 import net.scholagest.tester.jaxb.TCall;
 import net.scholagest.tester.jaxb.TResult;
+import net.scholagest.tester.result.CallResult;
+import net.scholagest.tester.result.CallResultStatus;
 import net.scholagest.tester.result.FieldResult;
 import net.scholagest.tester.result.FieldResultStatus;
 import net.scholagest.tester.result.TestResult;
-import net.scholagest.tester.result.TestResultStatus;
 
 import org.mortbay.jetty.HttpStatus;
 import org.mortbay.jetty.client.ContentExchange;
@@ -18,37 +19,37 @@ import com.google.gson.Gson;
 import com.google.gson.internal.StringMap;
 
 public class ResponseAnalyzer {
-    private List<TestResult> results;
+    private TestResult testResult;
     private final Placeholder placeholder;
 
-    public ResponseAnalyzer(Placeholder placeholder) {
+    public ResponseAnalyzer(Placeholder placeholder, String testName) {
         this.placeholder = placeholder;
-        this.results = new ArrayList<TestResult>();
+        this.testResult = new TestResult(testName);
     }
 
     public void analyzeContentExchange(TCall call, ContentExchange contentExchange) throws UnsupportedEncodingException {
-        TestResult testResult = new TestResult();
-        testResult.setCall(call);
-        testResult.setContentExchange(contentExchange);
+        CallResult callResult = new CallResult();
+        callResult.setCall(call);
+        callResult.setContentExchange(contentExchange);
 
         if (isHtmlError(contentExchange)) {
-            testResult.setStatus(TestResultStatus.HTML_ERROR);
+            callResult.setStatus(CallResultStatus.HTML_ERROR);
         } else {
             List<FieldResult> fieldResultList = checkContent(call, contentExchange);
-            testResult.setStatus(getTestResultStatus(fieldResultList));
-            testResult.setFieldResults(fieldResultList);
+            callResult.setStatus(getTestResultStatus(fieldResultList));
+            callResult.setFieldResults(fieldResultList);
         }
 
-        results.add(testResult);
+        testResult.addCallResult(callResult);
     }
 
-    private TestResultStatus getTestResultStatus(List<FieldResult> fieldResultList) {
+    private CallResultStatus getTestResultStatus(List<FieldResult> fieldResultList) {
         for (FieldResult fieldResult : fieldResultList) {
             if (fieldResult.getStatus() != FieldResultStatus.OK) {
-                return TestResultStatus.CONTENT_ERROR;
+                return CallResultStatus.CONTENT_ERROR;
             }
         }
-        return TestResultStatus.OK;
+        return CallResultStatus.OK;
     }
 
     private boolean isHtmlError(ContentExchange contentExchange) {
@@ -81,15 +82,27 @@ public class ResponseAnalyzer {
         fieldResult.setExpectedValue(result.getValue());
         fieldResult.setReceivedValue(resultValue);
 
-        if (resultValue == null) {
+        if (isResultExpectedButNotReceived(result, resultValue)) {
             fieldResult.setStatus(FieldResultStatus.NO_RESULT);
-        } else if (result.getValue().equals(resultValue)) {
+        } else if (isReceivedResultCorrect(result, resultValue)) {
             fieldResult.setStatus(FieldResultStatus.OK);
         } else {
             fieldResult.setStatus(FieldResultStatus.WRONG_RESULT);
         }
 
         fieldResultList.add(fieldResult);
+    }
+
+    private boolean isReceivedResultCorrect(TResult result, String resultValue) {
+        if (result.getValue().equals("null")) {
+            return resultValue == null;
+        }
+
+        return result.getValue().equals(resultValue);
+    }
+
+    private boolean isResultExpectedButNotReceived(TResult result, String resultValue) {
+        return resultValue == null && !result.getValue().equals("null");
     }
 
     @SuppressWarnings("unchecked")
@@ -104,11 +117,13 @@ public class ResponseAnalyzer {
     private String getValueRec(String[] pathElements, int i, StringMap<Object> subJson) {
         Object fieldValue = subJson.get(pathElements[i]);
 
-        if (pathElements.length - 1 == i || fieldValue == null) {
+        if (fieldValue == null) {
+            return null;
+        } else if (pathElements.length - 1 == i) {
             if (fieldValue instanceof String) {
                 return (String) fieldValue;
             } else {
-                return null;
+                return fieldValue.toString();
             }
         }
 
@@ -118,22 +133,7 @@ public class ResponseAnalyzer {
         return null;
     }
 
-    public void displayResults() {
-        for (TestResult result : results) {
-            System.out.println(String.format("============== Call id: %s", result.getCall().getId()));
-            System.out.println(String.format("Url: %s", result.getCall().getUrl()));
-            System.out.println(String.format("Parameters: %s", placeholder.replacePlaceholdersInString(result.getCall().getParameters())));
-            System.out.println(String.format("Result status: %s", result.getStatus().name()));
-            try {
-                System.out.println(String.format("Response: %s", result.getContentExchange().getResponseContent()));
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-
-            for (FieldResult fieldResult : result.getFieldResults()) {
-                System.out.println(String.format("%10s | %50s | %50s | %50s", fieldResult.getStatus().name(), fieldResult.getExpectedValue(),
-                        fieldResult.getReceivedValue(), fieldResult.getPath()));
-            }
-        }
+    public TestResult getTestResult() {
+        return testResult;
     }
 }

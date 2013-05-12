@@ -9,6 +9,8 @@ import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IClassService;
+import net.scholagest.utils.ConfigurationServiceImpl;
+import net.scholagest.utils.ScholagestProperty;
 
 import com.google.inject.Inject;
 
@@ -26,7 +28,7 @@ public class ClassService implements IClassService {
     public BaseObject createClass(String requestId, Map<String, Object> classProperties) throws Exception {
         BaseObject clazz = null;
 
-        ITransaction transaction = database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         try {
             clazz = classBusinessComponent.createClass(requestId, transaction, classProperties);
 
@@ -43,7 +45,7 @@ public class ClassService implements IClassService {
     public Map<String, Set<BaseObject>> getClassesForYears(String requestId, Set<String> yearKeySet) throws Exception {
         Map<String, Set<BaseObject>> classes = new HashMap<>();
 
-        ITransaction transaction = database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         try {
             classes = classBusinessComponent.getClassesForYears(requestId, transaction, yearKeySet);
 
@@ -60,7 +62,7 @@ public class ClassService implements IClassService {
     public BaseObject getClassProperties(String requestId, String classKey, Set<String> propertiesName) throws Exception {
         BaseObject classInfo = null;
 
-        ITransaction transaction = database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         try {
             classInfo = classBusinessComponent.getClassProperties(requestId, transaction, classKey, propertiesName);
 
@@ -75,7 +77,7 @@ public class ClassService implements IClassService {
 
     @Override
     public void setClassProperties(String requestId, String classKey, Map<String, Object> properties) throws Exception {
-        ITransaction transaction = database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         try {
             classBusinessComponent.setClassProperties(requestId, transaction, classKey, properties);
             transaction.commit();

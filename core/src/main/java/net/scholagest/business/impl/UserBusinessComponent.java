@@ -61,6 +61,6 @@ public class UserBusinessComponent implements IUserBusinessComponent {
     private String generateUsername(BaseObject teacherProperties) {
         String firstName = (String) teacherProperties.getProperty("pTeacherFirstName");
         String lastName = (String) teacherProperties.getProperty("pTeacherLastName");
-        return firstName.substring(0, 1) + lastName;
+        return firstName.substring(0, 1).toLowerCase() + lastName.toLowerCase();
     }
 }

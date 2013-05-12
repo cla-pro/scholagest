@@ -7,6 +7,8 @@ import java.util.Set;
 import net.scholagest.managers.ontology.OntologyElement;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IOntologyService;
+import net.scholagest.utils.ConfigurationServiceImpl;
+import net.scholagest.utils.ScholagestProperty;
 
 import org.apache.shiro.ShiroException;
 
@@ -20,6 +22,10 @@ public abstract class AbstractService {
     public AbstractService(IOntologyService ontologyService) {
         this.ontologyService = ontologyService;
         this.converter = new JsonConverter(this.ontologyService);
+    }
+
+    protected String getBaseUrl() {
+        return ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.BASE_URL);
     }
 
     protected String generateSessionExpiredMessage(ShiroException e) {

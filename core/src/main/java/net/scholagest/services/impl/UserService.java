@@ -10,6 +10,8 @@ import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
 import net.scholagest.objects.PageObject;
 import net.scholagest.services.IUserService;
+import net.scholagest.utils.ConfigurationServiceImpl;
+import net.scholagest.utils.ScholagestProperty;
 
 import org.apache.shiro.ShiroException;
 import org.apache.shiro.subject.Subject;
@@ -30,7 +32,7 @@ public class UserService implements IUserService {
 
     @Override
     public List<String> getVisibleModules(String requestId, String userKey) throws Exception {
-        ITransaction transaction = database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         try {
             Set<PageObject> pageObjects = pageBusinessComponent.getAllPages(requestId, transaction);
             return extractPath(pageObjects);
@@ -64,7 +66,7 @@ public class UserService implements IUserService {
 
     @Override
     public Subject authenticateWithUsername(String requestId, String username, String password) throws Exception {
-        ITransaction transaction = database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
 
         Subject subject = null;
         try {
@@ -83,7 +85,7 @@ public class UserService implements IUserService {
 
     @Override
     public Subject authenticateWithToken(String requestId, String token) throws Exception {
-        ITransaction transaction = database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
 
         Subject subject = null;
         try {

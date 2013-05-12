@@ -5,6 +5,8 @@ import java.net.URLEncoder;
 
 import net.scholagest.tester.jaxb.TCall;
 
+import org.mortbay.io.Buffer;
+import org.mortbay.io.ByteArrayBuffer;
 import org.mortbay.jetty.client.ContentExchange;
 import org.mortbay.jetty.client.HttpClient;
 
@@ -36,10 +38,14 @@ public class CallHandler {
 
             httpClient.setConnectorType(HttpClient.CONNECTOR_SELECT_CHANNEL);
 
+            String httpMethod = call.getHttpMethod();
             String parameters = placeholder.replacePlaceholdersInString(call.getParameters());
-            String encoded = baseUrl + call.getUrl() + "?" + encodeParameters(parameters);
+            String encoded = createUrl(baseUrl, call, parameters, httpMethod);
             contentExchange.setURL(encoded);
-            contentExchange.setMethod(call.getHttpMethod());
+            contentExchange.setMethod(httpMethod);
+            if (httpMethod.equals("POST")) {
+                contentExchange.setRequestContent(createContent(parameters));
+            }
 
             httpClient.send(contentExchange);
             contentExchange.waitForDone();
@@ -48,6 +54,18 @@ public class CallHandler {
         } finally {
             httpClient.stop();
         }
+    }
+
+    private Buffer createContent(String parameters) throws UnsupportedEncodingException {
+        return new ByteArrayBuffer(parameters);
+    }
+
+    private String createUrl(String baseUrl, TCall call, String parameters, String httpMethod) throws UnsupportedEncodingException {
+        String url = baseUrl + call.getUrl();
+        if (httpMethod.equals("GET")) {
+            return url + "?" + encodeParameters(parameters);
+        }
+        return url;
     }
 
     private String encodeParameters(String parameters) throws UnsupportedEncodingException {
@@ -65,9 +83,13 @@ public class CallHandler {
             String[] keyValue = param.split("=");
             paramBuilder.append(keyValue[0]);
             paramBuilder.append("=");
-            paramBuilder.append(URLEncoder.encode(keyValue[1], "UTF-8"));
+            paramBuilder.append(encoreUrl(keyValue[1]));
         }
 
         return paramBuilder.toString();
+    }
+
+    private String encoreUrl(String toEncode) throws UnsupportedEncodingException {
+        return URLEncoder.encode(toEncode, "UTF-8");
     }
 }

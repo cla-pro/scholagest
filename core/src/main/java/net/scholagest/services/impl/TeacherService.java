@@ -9,6 +9,8 @@ import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.ITeacherService;
+import net.scholagest.utils.ConfigurationServiceImpl;
+import net.scholagest.utils.ScholagestProperty;
 
 import com.google.inject.Inject;
 
@@ -28,7 +30,7 @@ public class TeacherService implements ITeacherService {
     public BaseObject createTeacher(String requestId, String teacherType, Map<String, Object> teacherProperties) throws Exception {
         BaseObject teacher = null;
 
-        ITransaction transaction = database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         try {
             teacher = teacherBusinessComponent.createTeacher(requestId, transaction, teacherType, teacherProperties);
             userBusinessComponent.createUser(requestId, transaction, teacher.getKey());
@@ -45,7 +47,7 @@ public class TeacherService implements ITeacherService {
     public Set<BaseObject> getTeachers(String requestId) throws Exception {
         Set<BaseObject> teachers = null;
 
-        ITransaction transaction = database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         try {
             teachers = teacherBusinessComponent.getTeachers(requestId, transaction);
             transaction.commit();
@@ -61,7 +63,7 @@ public class TeacherService implements ITeacherService {
     public Set<BaseObject> getTeachersWithProperties(String requestId, Set<String> propertiesName) throws Exception {
         Set<BaseObject> teachers = null;
 
-        ITransaction transaction = database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         try {
             teachers = teacherBusinessComponent.getTeachersWithProperties(requestId, transaction, propertiesName);
             transaction.commit();
@@ -75,7 +77,7 @@ public class TeacherService implements ITeacherService {
 
     @Override
     public void setTeacherProperties(String requestId, String teacherKey, Map<String, Object> properties) throws Exception {
-        ITransaction transaction = database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         try {
             teacherBusinessComponent.setTeacherProperties(requestId, transaction, teacherKey, properties);
             transaction.commit();
@@ -89,7 +91,7 @@ public class TeacherService implements ITeacherService {
     public BaseObject getTeacherProperties(String requestId, String teacherKey, Set<String> propertiesName) throws Exception {
         BaseObject properties = null;
 
-        ITransaction transaction = database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         try {
             properties = teacherBusinessComponent.getTeacherProperties(requestId, transaction, teacherKey, propertiesName);
             transaction.commit();

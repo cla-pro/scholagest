@@ -7,6 +7,8 @@ import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IYearService;
+import net.scholagest.utils.ConfigurationServiceImpl;
+import net.scholagest.utils.ScholagestProperty;
 
 import com.google.inject.Inject;
 
@@ -24,7 +26,8 @@ public class YearService implements IYearService {
     public BaseObject startYear(String requestId, String yearName) throws Exception {
         BaseObject year = null;
 
-        ITransaction transaction = this.database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+        ITransaction transaction = this.database
+                .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         try {
             year = yearBusinessComponent.startYear(requestId, transaction, yearName);
 
@@ -39,7 +42,8 @@ public class YearService implements IYearService {
 
     @Override
     public void stopYear(String requestId) throws Exception {
-        ITransaction transaction = this.database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+        ITransaction transaction = this.database
+                .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         try {
             yearBusinessComponent.stopYear(requestId, transaction);
 
@@ -54,7 +58,8 @@ public class YearService implements IYearService {
     public BaseObject getCurrentYearKey(String requestId) throws Exception {
         BaseObject currentYear = null;
 
-        ITransaction transaction = this.database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+        ITransaction transaction = this.database
+                .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         try {
             currentYear = yearBusinessComponent.getCurrentYearKey(requestId, transaction);
 
@@ -97,7 +102,7 @@ public class YearService implements IYearService {
     public Set<BaseObject> getYearsWithProperties(String requestId, Set<String> properties) throws Exception {
         Set<BaseObject> years = null;
 
-        ITransaction transaction = database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         try {
             years = yearBusinessComponent.getYearsWithProperties(requestId, transaction, properties);
 

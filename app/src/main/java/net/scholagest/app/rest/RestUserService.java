@@ -59,7 +59,8 @@ public class RestUserService extends AbstractService {
 
             String token = (String) subject.getPrincipals().fromRealm(RealmAuthenticationAndAuthorization.TOKEN_KEY).iterator().next();
 
-            return new JsonObject("token", token, "nextpage", "http://localhost:8080/scholagest-app/services/user/getPage?token=" + token).toString();
+            // http://localhost:8080/scholagest-app/
+            return new JsonObject("token", token, "nextpage", getBaseUrl() + "services/user/getPage?token=" + token).toString();
         } catch (ShiroException e) {
             return generateSessionExpiredMessage(e);
         } catch (Exception e) {
@@ -83,7 +84,8 @@ public class RestUserService extends AbstractService {
         StringBuilder builder = new StringBuilder();
 
         builder.append("<div id=\"tabMenu\" data-dojo-type=\"dijit.layout.TabContainer\" " + "style=\"width: 100%; height: 100%;\">");
-        builder.append("<script type=\"text/javascript\">dojo.ready(function() { dojo.cookie(\"scholagest_token\", \"" + token + "\"); });</script>");
+        builder.append("<script type=\"text/javascript\">" + "var BASE_URL = '" + getBaseUrl() + "';"
+                + "dojo.ready(function() { dojo.cookie('scholagest_token', '" + token + "'); " + " });</script>");
         for (String page : pages) {
             String module = loadFile("html" + File.separatorChar + page);
 
@@ -138,17 +140,21 @@ public class RestUserService extends AbstractService {
         String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
 
         try {
+            if (content == null || content.equals("")) {
+                return "{errorCode: 0, message: 'Empty content'}";
+            }
+
             RestRequest request = new Gson().fromJson(content, RestRequest.class);
 
             userService.authenticateWithToken(requestId, request.getToken());
+
+            return "{info: {}}";
         } catch (ShiroException e) {
             return generateSessionExpiredMessage(e);
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
-
-        return "{}";
     }
 
     @GET

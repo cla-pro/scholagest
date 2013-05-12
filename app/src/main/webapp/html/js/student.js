@@ -1,5 +1,6 @@
 function callGetStudentGrades(students, exams, yearKey, callback) {
-	var xhrArgs = {
+	sendGetRequest("../student/getStudentsGrades", { studentKeys: students, examKeys: exams, yearKey: yearKey }, callback);
+	/*var xhrArgs = {
 			url: "../student/getStudentsGrades",
 			preventCache: true,
 			content: {token: dojo.cookie("scholagest_token"),
@@ -20,12 +21,13 @@ function callGetStudentGrades(students, exams, yearKey, callback) {
 				}
 	}
 
-	var deferred = dojo.xhrGet(xhrArgs);
+	var deferred = dojo.xhrGet(xhrArgs);*/
 };
 function createStudent(closeId, txtIds) {
 	var keyValues = getKeysAndValues(txtIds);
 
-	var xhrArgs = {
+	sendGetRequest("../student/create", { keys: keyValues.keys, values: keyValues.values }, function(info) { loadStudents(); });
+	/*var xhrArgs = {
 			url: "../student/create",
 			preventCache: true,
 			content: {token: dojo.cookie("scholagest_token"),
@@ -44,14 +46,15 @@ function createStudent(closeId, txtIds) {
 				}
 	}
 
-	var deferred = dojo.xhrGet(xhrArgs);
+	var deferred = dojo.xhrGet(xhrArgs);*/
 
 	if (closeId != null) {
 		dijit.byId(closeId).hide();
 	}
 };
 function getStudentList(callback) {
-	var xhrArgs = {
+	sendGetRequest("../student/getStudents", { properties: ["pStudentLastName", "pStudentFirstName"] }, callback);
+	/*var xhrArgs = {
 			url: "../student/getStudents",
 			preventCache: true,
 			content: {token: dojo.cookie("scholagest_token"),
@@ -70,10 +73,11 @@ function getStudentList(callback) {
 				}
 	}
 
-	var deferred = dojo.xhrGet(xhrArgs);
+	var deferred = dojo.xhrGet(xhrArgs);*/
 };
 function getStudentsInfo(studentList, properties, callback) {
-	var xhrArgs = {
+	sendGetRequest("../student/getStudentsInfo", { students: studentList, properties: properties }, callback);
+	/*var xhrArgs = {
 			url: "../student/getStudentsInfo",
 			preventCache: true,
 			content: {token: dojo.cookie("scholagest_token"),
@@ -93,7 +97,7 @@ function getStudentsInfo(studentList, properties, callback) {
 			}
 	}
 
-	var deferred = dojo.xhrGet(xhrArgs);
+	var deferred = dojo.xhrGet(xhrArgs);*/
 };
 function loadStudents() {
 	getStudentList(function(students) {
@@ -167,7 +171,14 @@ function getStudentMedicalInfo(studentKey) {
 	getStudentInfo(studentKey, "getMedicalProperties", "setMedicalProperties", "student-medical-info");
 }
 function getStudentInfo(studentKey, getInfoServiceName, setInfoServiceName, domId) {
-	var xhrArgs = {
+	sendGetRequest("../student/" + getInfoServiceName, { studentKey: studentKey }, function(info) {
+		var base = dojo.byId(domId + "-content-table");
+		createInfoHtmlTable(base, info.properties);
+		
+		var save = dojo.create("button",
+				{type: "button", onclick:setStudentInfo(studentKey, domId + "-content-table", setInfoServiceName), innerHTML: "Enregistrer"}, base);
+	});
+	/*var xhrArgs = {
 			url: "../student/" + getInfoServiceName,
 			preventCache: true,
 			content: {token: dojo.cookie("scholagest_token"),
@@ -175,9 +186,9 @@ function getStudentInfo(studentKey, getInfoServiceName, setInfoServiceName, domI
 			handleAs: "json",
 			load: function(data) {
 				if (data.errorCode == null) {
-					var base = dojo.byId(domId + "-content-table");
 
 					var info = data.info;
+					var base = dojo.byId(domId + "-content-table");
 					createInfoHtmlTable(base, info.properties);
 					
 					var save = dojo.create("button",
@@ -192,12 +203,13 @@ function getStudentInfo(studentKey, getInfoServiceName, setInfoServiceName, domI
 			}
 	}
 
-	var deferred = dojo.xhrGet(xhrArgs);
+	var deferred = dojo.xhrGet(xhrArgs);*/
 }
 function setStudentInfo(studentKey, domId, webServiceName) {
 	return function() {
 		var keyValues = getKeyValues(domId);
-		var xhrArgs = {
+		sendPostRequest("../student/" + webServiceName, { key: studentKey, properties: keyValues }, function(info) {});
+		/*var xhrArgs = {
 				url: "../student/" + webServiceName,
 				preventCache: true,
 				postData: dojo.toJson({
@@ -218,6 +230,6 @@ function setStudentInfo(studentKey, domId, webServiceName) {
 				}
 		}
 
-		var deferred = dojo.xhrPost(xhrArgs);
+		var deferred = dojo.xhrPost(xhrArgs);*/
 	}
 }

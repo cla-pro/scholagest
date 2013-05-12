@@ -9,6 +9,8 @@ import net.scholagest.database.ITransaction;
 import net.scholagest.managers.ontology.OntologyElement;
 import net.scholagest.managers.ontology.OntologyManager;
 import net.scholagest.services.IOntologyService;
+import net.scholagest.utils.ConfigurationServiceImpl;
+import net.scholagest.utils.ScholagestProperty;
 
 import com.google.inject.Inject;
 
@@ -27,7 +29,8 @@ public class OntologyService implements IOntologyService {
         OntologyElement result = null;
         String requestId = UUID.randomUUID().toString();
 
-        ITransaction transaction = this.database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+        ITransaction transaction = this.database
+                .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         try {
             result = this.ontologyManager.getElementWithName(requestId, transaction, elementName);
 
@@ -45,7 +48,8 @@ public class OntologyService implements IOntologyService {
         boolean result = false;
         String requestId = UUID.randomUUID().toString();
 
-        ITransaction transaction = this.database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+        ITransaction transaction = this.database
+                .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         try {
             result = this.ontologyManager.isSubtypeOf(requestId, transaction, type, supertype);
 
@@ -63,7 +67,8 @@ public class OntologyService implements IOntologyService {
         Set<String> result = new HashSet<>();
         String requestId = UUID.randomUUID().toString();
 
-        ITransaction transaction = this.database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+        ITransaction transaction = this.database
+                .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         try {
             result = this.ontologyManager.filterPropertiesWithCorrectDomain(requestId, transaction, domain, properties);
 
@@ -81,7 +86,8 @@ public class OntologyService implements IOntologyService {
         Set<String> result = new HashSet<>();
         String requestId = UUID.randomUUID().toString();
 
-        ITransaction transaction = this.database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+        ITransaction transaction = this.database
+                .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         try {
             result = this.ontologyManager.getPropertiesForType(requestId, transaction, type);
 

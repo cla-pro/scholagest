@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scenario xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="xsd/scenario.xsd">
+    <name>Scenario 1</name>
+    <description></description>
+    <baseURL>http://localhost:8080/scholagest-app/services</baseURL>
+    <calls>
+        <call>
+            <id>1 - Call the service (teacher/create) with an invalid token</id>
+            <url>/teacher/create</url>
+            <httpMethod>GET</httpMethod>
+            <parameters>token=abcdefghij</parameters>
+            <expectedResult>
+                <result>
+                    <path>errorCode</path>
+                    <value>0.0</value>
+                </result>
+            </expectedResult>
+        </call>
+        <call>
+            <id>2 - Call the service (teacher/getTeachers) with an invalid token</id>
+            <url>/teacher/getTeachers</url>
+            <httpMethod>GET</httpMethod>
+            <parameters>token=abcdefghij</parameters>
+            <expectedResult>
+                <result>
+                    <path>errorCode</path>
+                    <value>0.0</value>
+                </result>
+            </expectedResult>
+        </call>
+        <call>
+            <id>3 - Call the service (teacher/getTeachersInfo) with an invalid token</id>
+            <url>/teacher/getTeachersInfo</url>
+            <httpMethod>GET</httpMethod>
+            <parameters>token=abcdefghij</parameters>
+            <expectedResult>
+                <result>
+                    <path>errorCode</path>
+                    <value>0.0</value>
+                </result>
+            </expectedResult>
+        </call>
+        <call>
+            <id>4 - Call the service (teacher/getProperties) with an invalid token</id>
+            <url>/teacher/getProperties</url>
+            <httpMethod>GET</httpMethod>
+            <parameters>token=abcdefghij</parameters>
+            <expectedResult>
+                <result>
+                    <path>errorCode</path>
+                    <value>0.0</value>
+                </result>
+            </expectedResult>
+        </call>
+        <call>
+            <id>5 - Call the service (teacher/setProperties) with an invalid token</id>
+            <url>/teacher/setProperties</url>
+            <httpMethod>POST</httpMethod>
+            <parameters>{token:'abcdefghij'}</parameters>
+            <expectedResult>
+                <result>
+                    <path>errorCode</path>
+                    <value>0.0</value>
+                </result>
+            </expectedResult>
+        </call>
+    </calls>
+</scenario>

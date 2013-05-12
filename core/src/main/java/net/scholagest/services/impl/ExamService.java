@@ -8,6 +8,8 @@ import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IExamService;
+import net.scholagest.utils.ConfigurationServiceImpl;
+import net.scholagest.utils.ScholagestProperty;
 
 import com.google.inject.Inject;
 
@@ -26,7 +28,7 @@ public class ExamService implements IExamService {
             throws Exception {
         BaseObject exam = null;
 
-        ITransaction transaction = database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         try {
             exam = examBusinessComponent.createExam(requestId, transaction, yearKey, classKey, branchKey, periodKey, examInfo);
 
@@ -41,7 +43,7 @@ public class ExamService implements IExamService {
 
     @Override
     public BaseObject getExamProperties(String requestId, String examKey, Set<String> propertiesName) throws Exception {
-        ITransaction transaction = database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         try {
             BaseObject properties = examBusinessComponent.getExamProperties(requestId, transaction, examKey, propertiesName);
             transaction.commit();

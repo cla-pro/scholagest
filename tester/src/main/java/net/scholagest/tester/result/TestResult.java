@@ -3,49 +3,33 @@ package net.scholagest.tester.result;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.scholagest.tester.jaxb.TCall;
-
-import org.mortbay.jetty.client.ContentExchange;
-
 public class TestResult {
-    private TCall call;
-    private ContentExchange contentExchange;
-    private TestResultStatus status;
-    private List<FieldResult> fieldResults;
+    private String testName;
+    private List<CallResult> results = new ArrayList<>();
 
-    public TestResult() {
-        fieldResults = new ArrayList<>();
+    public TestResult(String testName) {
+        this.testName = testName;
     }
 
-    public TCall getCall() {
-        return call;
+    public String getTestName() {
+        return testName;
     }
 
-    public void setCall(TCall call) {
-        this.call = call;
+    public void addCallResult(CallResult callResult) {
+        results.add(callResult);
     }
 
-    public ContentExchange getContentExchange() {
-        return contentExchange;
+    public List<CallResult> getResults() {
+        return results;
     }
 
-    public void setContentExchange(ContentExchange contentExchange) {
-        this.contentExchange = contentExchange;
-    }
+    public TestResultStatus getTestStatus() {
+        for (CallResult callResult : results) {
+            if (callResult.getStatus() != CallResultStatus.OK) {
+                return TestResultStatus.ERROR;
+            }
+        }
 
-    public TestResultStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(TestResultStatus status) {
-        this.status = status;
-    }
-
-    public List<FieldResult> getFieldResults() {
-        return fieldResults;
-    }
-
-    public void setFieldResults(List<FieldResult> fieldResults) {
-        this.fieldResults = fieldResults;
+        return TestResultStatus.OK;
     }
 }

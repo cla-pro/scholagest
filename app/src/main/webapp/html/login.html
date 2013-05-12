@@ -27,7 +27,7 @@
 			var password = document.getElementById('txtPassword').value;
 			
 			var xhrArgs = {
-			    url: "http://localhost:8080/scholagest-app/services/user/authenticate",
+			    url: "../services/user/authenticate",
 			    preventCash: true,
 			    content: {username: username, password: password},
 			    handleAs: "json",

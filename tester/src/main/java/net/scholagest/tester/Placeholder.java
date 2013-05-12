@@ -21,7 +21,7 @@ public class Placeholder {
                 String after = "";
 
                 int afterStartIndex = endIndex + delimiterLength;
-                if (afterStartIndex >= toCheck.length()) {
+                if (afterStartIndex < toCheck.length()) {
                     after = toCheck.substring(endIndex + delimiterLength);
                 }
 
