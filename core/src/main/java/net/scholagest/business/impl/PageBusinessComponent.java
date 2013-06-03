@@ -3,7 +3,6 @@ package net.scholagest.business.impl;
 import java.util.Set;
 
 import net.scholagest.business.IPageBusinessComponent;
-import net.scholagest.database.ITransaction;
 import net.scholagest.managers.IPageManager;
 import net.scholagest.objects.PageObject;
 
@@ -18,7 +17,7 @@ public class PageBusinessComponent implements IPageBusinessComponent {
     }
 
     @Override
-    public Set<PageObject> getAllPages(String requestId, ITransaction transaction) throws Exception {
-        return pageManager.getAllPages(requestId, transaction);
+    public Set<PageObject> getAllPages() throws Exception {
+        return pageManager.getAllPages();
     }
 }

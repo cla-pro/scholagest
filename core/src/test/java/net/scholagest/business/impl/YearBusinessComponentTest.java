@@ -9,9 +9,8 @@ import java.util.Map;
 import java.util.Set;
 
 import net.scholagest.business.IYearBusinessComponent;
-import net.scholagest.business.impl.YearBusinessComponent;
 import net.scholagest.managers.IYearManager;
-import net.scholagest.managers.impl.CoreNamespace;
+import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.objects.BaseObjectMock;
 import net.scholagest.utils.AbstractTestWithTransaction;
@@ -30,15 +29,10 @@ public class YearBusinessComponentTest extends AbstractTestWithTransaction {
     @Before
     public void setup() throws Exception {
         yearManager = Mockito.mock(IYearManager.class);
-        Mockito.when(yearManager.createNewYear(Mockito.anyString(), Mockito.eq(transaction), Mockito.anyString())).thenReturn(
-                new BaseObject(YEAR_KEY, CoreNamespace.tYear));
-        Mockito.when(yearManager.getCurrentYearKey(Mockito.anyString(), Mockito.eq(transaction))).thenReturn(
-                new BaseObject(YEAR_KEY, CoreNamespace.tYear));
-        Mockito.when(yearManager.getYears(Mockito.anyString(), Mockito.eq(transaction))).thenReturn(
-                new HashSet<>(Arrays.asList(new BaseObject(YEAR_KEY, CoreNamespace.tYear))));
-        Mockito.when(
-                yearManager.getYearProperties(Mockito.anyString(), Mockito.eq(transaction), Mockito.eq(YEAR_KEY),
-                        Mockito.eq(createYearProperties().keySet()))).thenReturn(
+        Mockito.when(yearManager.createNewYear(Mockito.anyString())).thenReturn(new BaseObject(YEAR_KEY, CoreNamespace.tYear));
+        Mockito.when(yearManager.getCurrentYearKey()).thenReturn(new BaseObject(YEAR_KEY, CoreNamespace.tYear));
+        Mockito.when(yearManager.getYears()).thenReturn(new HashSet<>(Arrays.asList(new BaseObject(YEAR_KEY, CoreNamespace.tYear))));
+        Mockito.when(yearManager.getYearProperties(Mockito.eq(YEAR_KEY), Mockito.eq(createYearProperties().keySet()))).thenReturn(
                 BaseObjectMock.createBaseObject(YEAR_KEY, CoreNamespace.tYear, createYearProperties()));
 
         testee = new YearBusinessComponent(yearManager);
@@ -54,34 +48,34 @@ public class YearBusinessComponentTest extends AbstractTestWithTransaction {
 
     @Test
     public void testStartYear() throws Exception {
-        BaseObject year = testee.startYear(requestId, transaction, YEAR_NAME);
+        BaseObject year = testee.startYear(YEAR_NAME);
 
         assertEquals(YEAR_KEY, year.getKey());
-        Mockito.verify(yearManager).restoreYear(Mockito.anyString(), Mockito.eq(transaction), Mockito.eq(year.getKey()));
+        Mockito.verify(yearManager).restoreYear(Mockito.eq(year.getKey()));
         assertNoCallToTransaction();
     }
 
     @Test
     public void testStopYear() throws Exception {
-        testee.stopYear(requestId, transaction);
+        testee.stopYear();
 
-        Mockito.verify(yearManager).backupYear(Mockito.anyString(), Mockito.eq(transaction));
+        Mockito.verify(yearManager).backupYear();
         assertNoCallToTransaction();
     }
 
     @Test
     public void testGetCurrentYearKey() throws Exception {
-        BaseObject currentYear = testee.getCurrentYearKey(requestId, transaction);
+        BaseObject currentYear = testee.getCurrentYearKey();
 
         assertEquals(YEAR_KEY, currentYear.getKey());
-        Mockito.verify(yearManager).getCurrentYearKey(Mockito.anyString(), Mockito.eq(transaction));
+        Mockito.verify(yearManager).getCurrentYearKey();
         assertNoCallToTransaction();
     }
 
     @Test
     public void testGetYearsWithProperties() throws Exception {
         Map<String, Object> properties = createYearProperties();
-        Set<BaseObject> yearsWithProperties = testee.getYearsWithProperties(requestId, transaction, properties.keySet());
+        Set<BaseObject> yearsWithProperties = testee.getYearsWithProperties(properties.keySet());
 
         assertEquals(1, yearsWithProperties.size());
         Map<String, Object> readProperties = yearsWithProperties.iterator().next().getProperties();

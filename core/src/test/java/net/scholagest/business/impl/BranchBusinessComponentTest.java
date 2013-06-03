@@ -8,13 +8,12 @@ import java.util.Map;
 import java.util.UUID;
 
 import net.scholagest.business.IBranchBusinessComponent;
-import net.scholagest.business.impl.BranchBusinessComponent;
 import net.scholagest.managers.IBranchManager;
 import net.scholagest.managers.IClassManager;
 import net.scholagest.managers.IPeriodManager;
 import net.scholagest.managers.IYearManager;
-import net.scholagest.managers.impl.CoreNamespace;
 import net.scholagest.managers.ontology.types.DBSet;
+import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.objects.BaseObjectMock;
 import net.scholagest.services.kdom.KSet;
@@ -44,26 +43,22 @@ public class BranchBusinessComponentTest extends AbstractTestWithTransaction {
     @Before
     public void setup() throws Exception {
         yearManager = Mockito.mock(IYearManager.class);
-        Mockito.when(yearManager.getYearProperties(Mockito.anyString(), Mockito.eq(transaction), Mockito.anyString(), Mockito.anySet())).thenReturn(
+        Mockito.when(yearManager.getYearProperties(Mockito.anyString(), Mockito.anySet())).thenReturn(
                 BaseObjectMock.createBaseObject(YEAR_KEY, CoreNamespace.tYear, createYearProperties()));
 
         classManager = Mockito.mock(IClassManager.class);
-        Mockito.when(classManager.getClassProperties(Mockito.anyString(), Mockito.eq(transaction), Mockito.eq(CLASS_KEY), Mockito.anySet()))
-                .thenReturn(BaseObjectMock.createBaseObject(CLASS_KEY, CoreNamespace.tClass, createClassProperties()));
+        Mockito.when(classManager.getClassProperties(Mockito.eq(CLASS_KEY), Mockito.anySet())).thenReturn(
+                BaseObjectMock.createBaseObject(CLASS_KEY, CoreNamespace.tClass, createClassProperties()));
 
         branchManager = Mockito.mock(IBranchManager.class);
-        Mockito.when(
-                branchManager.createBranch(Mockito.anyString(), Mockito.eq(transaction), Mockito.eq(BRANCH_NAME), Mockito.eq(CLASS_NAME),
-                        Mockito.eq(YEAR_NAME))).thenReturn(BaseObjectMock.createBaseObject(BRANCH_KEY, CoreNamespace.tBranch, createProperties()));
-        Mockito.when(branchManager.getBranchProperties(Mockito.anyString(), Mockito.eq(transaction), Mockito.anyString(), Mockito.anySet()))
-                .thenReturn(null);
-        Mockito.when(branchManager.getBranchProperties(Mockito.anyString(), Mockito.eq(transaction), Mockito.eq(BRANCH_KEY), Mockito.anySet()))
-                .thenReturn(BaseObjectMock.createBaseObject(BRANCH_KEY, CoreNamespace.tBranch, createReadProperties()));
+        Mockito.when(branchManager.createBranch(Mockito.eq(BRANCH_NAME), Mockito.eq(CLASS_NAME), Mockito.eq(YEAR_NAME))).thenReturn(
+                BaseObjectMock.createBaseObject(BRANCH_KEY, CoreNamespace.tBranch, createProperties()));
+        Mockito.when(branchManager.getBranchProperties(Mockito.anyString(), Mockito.anySet())).thenReturn(null);
+        Mockito.when(branchManager.getBranchProperties(Mockito.eq(BRANCH_KEY), Mockito.anySet())).thenReturn(
+                BaseObjectMock.createBaseObject(BRANCH_KEY, CoreNamespace.tBranch, createReadProperties()));
 
         periodManager = Mockito.mock(IPeriodManager.class);
-        Mockito.when(
-                periodManager.createPeriod(Mockito.anyString(), Mockito.eq(transaction), Mockito.anyString(), Mockito.anyString(),
-                        Mockito.anyString(), Mockito.anyString())).thenReturn(
+        Mockito.when(periodManager.createPeriod(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(
                 BaseObjectMock.createBaseObject(BRANCH_PERIOD_SET.toString(), CoreNamespace.tPeriod, createReadProperties()));
 
         testee = new BranchBusinessComponent(periodManager, branchManager, classManager, yearManager);
@@ -114,29 +109,26 @@ public class BranchBusinessComponentTest extends AbstractTestWithTransaction {
     @Test
     public void testCreateBranch() throws Exception {
         Map<String, Object> mockProperties = createProperties();
-        BaseObject branch = testee.createBranch(requestId, transaction, CLASS_KEY, mockProperties);
+        BaseObject branch = testee.createBranch(CLASS_KEY, mockProperties);
 
         assertEquals(BRANCH_KEY, branch.getKey());
-        Mockito.verify(branchManager).createBranch(Mockito.anyString(), Mockito.eq(transaction), Mockito.eq(BRANCH_NAME), Mockito.eq(CLASS_NAME),
-                Mockito.eq(YEAR_NAME));
+        Mockito.verify(branchManager).createBranch(Mockito.eq(BRANCH_NAME), Mockito.eq(CLASS_NAME), Mockito.eq(YEAR_NAME));
     }
 
     @Test
     public void testSetBranchProperties() throws Exception {
         Map<String, Object> mockProperties = createProperties();
-        testee.setBranchProperties(requestId, transaction, BRANCH_KEY, mockProperties);
+        testee.setBranchProperties(BRANCH_KEY, mockProperties);
 
-        Mockito.verify(branchManager).setBranchProperties(Mockito.anyString(), Mockito.eq(transaction), Mockito.eq(BRANCH_KEY),
-                Mockito.eq(mockProperties));
+        Mockito.verify(branchManager).setBranchProperties(Mockito.eq(BRANCH_KEY), Mockito.eq(mockProperties));
     }
 
     @Test
     public void testGetBranchProperties() throws Exception {
         Map<String, Object> mockProperties = createExpectedProperties();
-        BaseObject branchProperties = testee.getBranchProperties(requestId, transaction, BRANCH_KEY, mockProperties.keySet());
+        BaseObject branchProperties = testee.getBranchProperties(BRANCH_KEY, mockProperties.keySet());
 
-        Mockito.verify(branchManager).getBranchProperties(Mockito.anyString(), Mockito.eq(transaction), Mockito.eq(BRANCH_KEY),
-                Mockito.eq(mockProperties.keySet()));
+        Mockito.verify(branchManager).getBranchProperties(Mockito.eq(BRANCH_KEY), Mockito.eq(mockProperties.keySet()));
 
         assertMapEquals(mockProperties, branchProperties.getProperties());
     }

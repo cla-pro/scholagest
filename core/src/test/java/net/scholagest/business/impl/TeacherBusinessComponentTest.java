@@ -11,10 +11,9 @@ import java.util.Map;
 import java.util.Set;
 
 import net.scholagest.business.ITeacherBusinessComponent;
-import net.scholagest.business.impl.TeacherBusinessComponent;
 import net.scholagest.exception.ScholagestException;
 import net.scholagest.managers.ITeacherManager;
-import net.scholagest.managers.impl.CoreNamespace;
+import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.utils.AbstractTestWithTransaction;
 
@@ -32,16 +31,14 @@ public class TeacherBusinessComponentTest extends AbstractTestWithTransaction {
     @Before
     public void setup() throws Exception {
         teacherManager = Mockito.mock(ITeacherManager.class);
-        Mockito.when(teacherManager.createTeacher(Mockito.anyString(), Mockito.eq(transaction))).thenReturn(
-                new BaseObject(TEACHER_KEY, CoreNamespace.tTeacher));
+        Mockito.when(teacherManager.createTeacher()).thenReturn(new BaseObject(TEACHER_KEY, CoreNamespace.tTeacher));
 
         BaseObject teacherObject = new BaseObject(TEACHER_KEY, CoreNamespace.tTeacher);
         teacherObject.setProperties(createTeacherProperties());
 
-        Mockito.when(
-                teacherManager.getTeacherProperties(Mockito.anyString(), Mockito.eq(transaction), Mockito.eq(TEACHER_KEY),
-                        Mockito.eq(createTeacherProperties().keySet()))).thenReturn(teacherObject);
-        Mockito.when(teacherManager.getTeachers(Mockito.anyString(), Mockito.eq(transaction))).thenReturn(
+        Mockito.when(teacherManager.getTeacherProperties(Mockito.eq(TEACHER_KEY), Mockito.eq(createTeacherProperties().keySet()))).thenReturn(
+                teacherObject);
+        Mockito.when(teacherManager.getTeachers()).thenReturn(
                 new HashSet<BaseObject>(Arrays.asList(new BaseObject(TEACHER_KEY, CoreNamespace.tTeacher))));
 
         testee = new TeacherBusinessComponent(teacherManager);
@@ -65,16 +62,16 @@ public class TeacherBusinessComponentTest extends AbstractTestWithTransaction {
     @Test
     public void testCreateTeacher() throws Exception {
         Map<String, Object> teacherProperties = createTeacherProperties();
-        BaseObject teacher = testee.createTeacher(requestId, transaction, null, teacherProperties);
+        BaseObject teacher = testee.createTeacher(null, teacherProperties);
 
         assertEquals(TEACHER_KEY, teacher.getKey());
-        Mockito.verify(teacherManager).createTeacher(Mockito.anyString(), Mockito.eq(transaction));
+        Mockito.verify(teacherManager).createTeacher();
         assertNoCallToTransaction();
     }
 
     @Test
     public void testGetTeachers() throws Exception {
-        Set<BaseObject> teachers = testee.getTeachers(requestId, transaction);
+        Set<BaseObject> teachers = testee.getTeachers();
 
         assertEquals(1, teachers.size());
         assertEquals(TEACHER_KEY, teachers.iterator().next().getKey());
@@ -84,7 +81,7 @@ public class TeacherBusinessComponentTest extends AbstractTestWithTransaction {
     @Test
     public void testGetTeachersWithProperties() throws Exception {
         Map<String, Object> teacherProperties = createTeacherProperties();
-        Set<BaseObject> studentsWithProperties = testee.getTeachersWithProperties(requestId, transaction, teacherProperties.keySet());
+        Set<BaseObject> studentsWithProperties = testee.getTeachersWithProperties(teacherProperties.keySet());
 
         assertEquals(1, studentsWithProperties.size());
         BaseObject teacher = studentsWithProperties.iterator().next();
@@ -96,27 +93,25 @@ public class TeacherBusinessComponentTest extends AbstractTestWithTransaction {
 
     @Test(expected = ScholagestException.class)
     public void testGetTeacherClasses() throws Exception {
-        testee.getTeacherClasses(requestId, transaction, TEACHER_KEY);
+        testee.getTeacherClasses(TEACHER_KEY);
         fail("Exception expected");
     }
 
     @Test
     public void testSetTeacherProperties() throws Exception {
         Map<String, Object> teacherProperties = createTeacherProperties();
-        testee.setTeacherProperties(requestId, transaction, TEACHER_KEY, teacherProperties);
+        testee.setTeacherProperties(TEACHER_KEY, teacherProperties);
 
-        Mockito.verify(teacherManager).setTeacherProperties(Mockito.anyString(), Mockito.eq(transaction), Mockito.eq(TEACHER_KEY),
-                Mockito.eq(teacherProperties));
+        Mockito.verify(teacherManager).setTeacherProperties(Mockito.eq(TEACHER_KEY), Mockito.eq(teacherProperties));
         assertNoCallToTransaction();
     }
 
     @Test
     public void testGetTeacherProperties() throws Exception {
         Map<String, Object> teacherProperties = createTeacherProperties();
-        BaseObject teacher = testee.getTeacherProperties(requestId, transaction, TEACHER_KEY, teacherProperties.keySet());
+        BaseObject teacher = testee.getTeacherProperties(TEACHER_KEY, teacherProperties.keySet());
 
-        Mockito.verify(teacherManager).getTeacherProperties(Mockito.anyString(), Mockito.eq(transaction), Mockito.eq(TEACHER_KEY),
-                Mockito.eq(teacherProperties.keySet()));
+        Mockito.verify(teacherManager).getTeacherProperties(Mockito.eq(TEACHER_KEY), Mockito.eq(teacherProperties.keySet()));
 
         assertMapEquals(teacherProperties, teacher.getProperties());
         assertNoCallToTransaction();

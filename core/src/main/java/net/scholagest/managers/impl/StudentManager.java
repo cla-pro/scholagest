@@ -11,7 +11,9 @@ import net.scholagest.database.ITransaction;
 import net.scholagest.managers.IStudentManager;
 import net.scholagest.managers.ontology.OntologyManager;
 import net.scholagest.managers.ontology.RDF;
+import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
+import net.scholagest.utils.ScholagestThreadLocal;
 
 import com.google.inject.Inject;
 
@@ -26,54 +28,63 @@ public class StudentManager extends ObjectManager implements IStudentManager {
     }
 
     @Override
-    public BaseObject createStudent(String requestId, ITransaction transaction) throws Exception {
+    public BaseObject createStudent() throws Exception {
+        ITransaction transaction = ScholagestThreadLocal.getTransaction();
+
         String studentUUID = UUID.randomUUID().toString();
         String studentKey = generateStudentKey(studentUUID);
-        BaseObject studentObject = super.createObject(requestId, transaction, studentKey, CoreNamespace.tStudent);
+        BaseObject studentObject = createObject(transaction, studentKey, CoreNamespace.tStudent);
 
         transaction.insert(CoreNamespace.studentsBase, studentKey, studentKey, null);
 
         String studentBase = generateStudentBase(studentUUID);
-        BaseObject personalInfo = super
-                .createObject(requestId, transaction, generatePersonalInfoKey(studentBase), CoreNamespace.tStudentPersonalInfo);
-        BaseObject medicalInfo = super.createObject(requestId, transaction, generateMedicalInfoKey(studentBase), CoreNamespace.tStudentMedicalInfo);
+        BaseObject personalInfo = super.createObject(transaction, generatePersonalInfoKey(studentBase), CoreNamespace.tStudentPersonalInfo);
+        BaseObject medicalInfo = createObject(transaction, generateMedicalInfoKey(studentBase), CoreNamespace.tStudentMedicalInfo);
 
         Map<String, Object> properties = new HashMap<>();
         properties.put(CoreNamespace.pStudentPersonalInfo, personalInfo.getKey());
         properties.put(CoreNamespace.pStudentMedicalInfo, medicalInfo.getKey());
-        super.setObjectProperties(requestId, transaction, studentKey, properties);
+        setObjectProperties(transaction, studentKey, properties);
 
         return studentObject;
     }
 
     @Override
-    public void setPersonalProperties(String requestId, ITransaction transaction, String studentKey, Map<String, Object> properties) throws Exception {
+    public void setPersonalProperties(String studentKey, Map<String, Object> properties) throws Exception {
+        ITransaction transaction = ScholagestThreadLocal.getTransaction();
+
         String personalInfoKey = (String) transaction.get(studentKey, CoreNamespace.pStudentPersonalInfo, null);
-        super.setObjectProperties(requestId, transaction, personalInfoKey, properties);
+        setObjectProperties(transaction, personalInfoKey, properties);
     }
 
     @Override
-    public void setMedicalProperties(String requestId, ITransaction transaction, String studentKey, Map<String, Object> properties) throws Exception {
+    public void setMedicalProperties(String studentKey, Map<String, Object> properties) throws Exception {
+        ITransaction transaction = ScholagestThreadLocal.getTransaction();
+
         String medicalInfoKey = (String) transaction.get(studentKey, CoreNamespace.pStudentMedicalInfo, null);
-        super.setObjectProperties(requestId, transaction, medicalInfoKey, properties);
+        setObjectProperties(transaction, medicalInfoKey, properties);
     }
 
     @Override
-    public BaseObject getPersonalProperties(String requestId, ITransaction transaction, String studentKey, Set<String> properties) throws Exception {
+    public BaseObject getPersonalProperties(String studentKey, Set<String> properties) throws Exception {
+        ITransaction transaction = ScholagestThreadLocal.getTransaction();
+
         String personalInfoKey = (String) transaction.get(studentKey, CoreNamespace.pStudentPersonalInfo, null);
 
         BaseObject personalInfo = new BaseObject(personalInfoKey, CoreNamespace.tStudentPersonalInfo);
-        personalInfo.setProperties(super.getObjectProperties(requestId, transaction, personalInfoKey, properties));
+        personalInfo.setProperties(getObjectProperties(transaction, personalInfoKey, properties));
 
         return personalInfo;
     }
 
     @Override
-    public BaseObject getMedicalProperties(String requestId, ITransaction transaction, String studentKey, Set<String> properties) throws Exception {
+    public BaseObject getMedicalProperties(String studentKey, Set<String> properties) throws Exception {
+        ITransaction transaction = ScholagestThreadLocal.getTransaction();
+
         String medicalInfoKey = (String) transaction.get(studentKey, CoreNamespace.pStudentMedicalInfo, null);
 
         BaseObject medicalInfo = new BaseObject(medicalInfoKey, CoreNamespace.tStudentMedicalInfo);
-        medicalInfo.setProperties(super.getObjectProperties(requestId, transaction, medicalInfoKey, properties));
+        medicalInfo.setProperties(getObjectProperties(transaction, medicalInfoKey, properties));
 
         return medicalInfo;
     }
@@ -95,7 +106,9 @@ public class StudentManager extends ObjectManager implements IStudentManager {
     }
 
     @Override
-    public Set<BaseObject> getStudents(String requestId, ITransaction transaction) throws Exception {
+    public Set<BaseObject> getStudents() throws Exception {
+        ITransaction transaction = ScholagestThreadLocal.getTransaction();
+
         Set<BaseObject> students = new HashSet<>();
 
         for (String col : transaction.getColumns(CoreNamespace.studentsBase)) {
@@ -107,23 +120,26 @@ public class StudentManager extends ObjectManager implements IStudentManager {
     }
 
     @Override
-    public BaseObject getStudentProperties(String requestId, ITransaction transaction, String studentKey, Set<String> properties) throws Exception {
+    public BaseObject getStudentProperties(String studentKey, Set<String> properties) throws Exception {
+        ITransaction transaction = ScholagestThreadLocal.getTransaction();
+
         BaseObject studentObject = new BaseObject(studentKey, CoreNamespace.tStudent);
-        studentObject.setProperties(super.getObjectProperties(requestId, transaction, studentKey, properties));
+        studentObject.setProperties(getObjectProperties(transaction, studentKey, properties));
 
         return studentObject;
     }
 
     @Override
-    public Map<String, BaseObject> getStudentGrades(String requestId, ITransaction transaction, String studentKey, Set<String> examKeys,
-            String yearKey) throws Exception {
+    public Map<String, BaseObject> getStudentGrades(String studentKey, Set<String> examKeys, String yearKey) throws Exception {
+        ITransaction transaction = ScholagestThreadLocal.getTransaction();
+
         String studentYearsKey = (String) transaction.get(studentKey, CoreNamespace.pStudentYears, null);
         if (studentYearsKey == null) {
-            studentYearsKey = createStudentYears(requestId, transaction, studentKey);
+            studentYearsKey = createStudentYears(transaction, studentKey);
         }
         String studentYearNodeKey = (String) transaction.get(studentYearsKey, yearKey, null);
         if (studentYearNodeKey == null) {
-            studentYearNodeKey = createStudentYearNode(requestId, transaction, studentYearsKey, yearKey);
+            studentYearNodeKey = createStudentYearNode(transaction, studentYearsKey, yearKey);
         }
 
         Map<String, BaseObject> studentGrades = new HashMap<>();
@@ -144,29 +160,30 @@ public class StudentManager extends ObjectManager implements IStudentManager {
         return studentGrades;
     }
 
-    private String createStudentYearNode(String requestId, ITransaction transaction, String studentYearsKey, String yearKey) throws DatabaseException {
+    private String createStudentYearNode(ITransaction transaction, String studentYearsKey, String yearKey) throws DatabaseException {
         String yearName = yearKey.substring(yearKey.indexOf("#") + 1);
         String studentYearNode = studentYearsKey + "_" + yearName;
         transaction.insert(studentYearsKey, yearKey, studentYearNode, null);
         return studentYearNode;
     }
 
-    private String createStudentYears(String requestId, ITransaction transaction, String studentKey) throws DatabaseException {
+    private String createStudentYears(ITransaction transaction, String studentKey) throws DatabaseException {
         String studentYearsKey = studentKey + YEARS_INFO_SUFFIX;
         transaction.insert(studentKey, CoreNamespace.pStudentYears, studentYearsKey, null);
         return studentYearsKey;
     }
 
     @Override
-    public void persistStudentGrade(String requestId, ITransaction transaction, String studentKey, String yearKey, String examKey,
-            BaseObject gradeObject) throws Exception {
+    public void persistStudentGrade(String studentKey, String yearKey, String examKey, BaseObject gradeObject) throws Exception {
+        ITransaction transaction = ScholagestThreadLocal.getTransaction();
+
         String studentYearsKey = (String) transaction.get(studentKey, CoreNamespace.pStudentYears, null);
 
         String studentYearKey = (String) transaction.get(studentYearsKey, yearKey, null);
 
         String gradeKey = gradeObject.getKey();
         transaction.insert(gradeKey, RDF.type, gradeObject.getType(), null);
-        super.setObjectProperties(requestId, transaction, gradeKey, gradeObject.getProperties());
+        setObjectProperties(transaction, gradeKey, gradeObject.getProperties());
 
         transaction.insert(studentYearKey, examKey, gradeKey, null);
     }

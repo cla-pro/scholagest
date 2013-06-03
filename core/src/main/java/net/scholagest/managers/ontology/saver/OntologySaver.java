@@ -5,11 +5,11 @@ import java.util.Set;
 
 import net.scholagest.database.DatabaseException;
 import net.scholagest.database.ITransaction;
-import net.scholagest.managers.impl.CoreNamespace;
 import net.scholagest.managers.ontology.Ontology;
 import net.scholagest.managers.ontology.OntologyClass;
 import net.scholagest.managers.ontology.OntologyElement;
 import net.scholagest.managers.ontology.RDF;
+import net.scholagest.namespace.CoreNamespace;
 
 public class OntologySaver {
     public void saveOntology(String requestId, ITransaction transaction, Ontology ontology) throws Exception {

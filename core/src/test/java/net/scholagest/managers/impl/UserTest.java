@@ -1,7 +1,5 @@
 package net.scholagest.managers.impl;
 
-import java.util.UUID;
-
 import net.scholagest.database.Database;
 import net.scholagest.database.DatabaseException;
 import net.scholagest.database.DefaultDatabaseConfiguration;
@@ -10,6 +8,7 @@ import net.scholagest.database.ITransaction;
 import net.scholagest.managers.IUserManager;
 import net.scholagest.managers.ontology.OntologyManager;
 import net.scholagest.services.impl.SecheronNamespace;
+import net.scholagest.utils.ScholagestThreadLocal;
 
 public class UserTest {
     public static void main(String[] args) throws DatabaseException {
@@ -19,8 +18,9 @@ public class UserTest {
         IDatabase database = new Database(new DefaultDatabaseConfiguration());
 
         ITransaction transaction = database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
+        ScholagestThreadLocal.setTransaction(transaction);
         try {
-            userManager.createUser(UUID.randomUUID().toString(), transaction, "admin", "admin");
+            userManager.createUser("admin", "admin");
 
             transaction.commit();
         } catch (Exception e) {

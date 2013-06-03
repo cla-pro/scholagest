@@ -1,6 +1,7 @@
 package net.scholagest.services.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -8,12 +9,14 @@ import net.scholagest.business.IPageBusinessComponent;
 import net.scholagest.business.IUserBusinessComponent;
 import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
+import net.scholagest.namespace.AuthorizationNamespace;
 import net.scholagest.objects.PageObject;
 import net.scholagest.services.IUserService;
+import net.scholagest.shiro.AuthorizationHelper;
 import net.scholagest.utils.ConfigurationServiceImpl;
 import net.scholagest.utils.ScholagestProperty;
+import net.scholagest.utils.ScholagestThreadLocal;
 
-import org.apache.shiro.ShiroException;
 import org.apache.shiro.subject.Subject;
 
 import com.google.inject.Inject;
@@ -31,11 +34,16 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public List<String> getVisibleModules(String requestId, String userKey) throws Exception {
+    public List<String> getVisibleModules(String userKey) throws Exception {
         ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ScholagestThreadLocal.setTransaction(transaction);
+
+        List<String> modules = Collections.emptyList();
         try {
-            Set<PageObject> pageObjects = pageBusinessComponent.getAllPages(requestId, transaction);
-            return extractPath(pageObjects);
+            new AuthorizationHelper().checkAuthorizationRoles(AuthorizationNamespace.getAllRoles());
+
+            Set<PageObject> pageObjects = pageBusinessComponent.getAllPages();
+            modules = extractPath(pageObjects);
             // TODO read in DB
             // return new String[] { "js/base.js", "js/base-html.js",
             // "modules/teacher.html", "js/teacher.js", "modules/student.html",
@@ -43,15 +51,14 @@ public class UserService implements IUserService {
             // "js/exam.js", "js/branch.js", "js/period.js",
             // "modules/year.html", "js/year.js", "js/class.js",
             // "modules/grades.html" };
-        } catch (ShiroException e) {
-            transaction.rollback();
-            throw e;
+
+            transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
-            e.printStackTrace();
+            throw e;
         }
 
-        return new ArrayList<>();
+        return modules;
     }
 
     private List<String> extractPath(Set<PageObject> pageObjects) {
@@ -65,38 +72,34 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public Subject authenticateWithUsername(String requestId, String username, String password) throws Exception {
+    public Subject authenticateWithUsername(String username, String password) throws Exception {
         ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ScholagestThreadLocal.setTransaction(transaction);
 
         Subject subject = null;
         try {
-            subject = userBusinessComponent.authenticateUser(requestId, transaction, username, password);
+            subject = userBusinessComponent.authenticateUser(username, password);
             transaction.commit();
-        } catch (ShiroException e) {
-            transaction.rollback();
-            throw e;
         } catch (Exception e) {
             transaction.rollback();
-            e.printStackTrace();
+            throw e;
         }
 
         return subject;
     }
 
     @Override
-    public Subject authenticateWithToken(String requestId, String token) throws Exception {
+    public Subject authenticateWithToken(String token) throws Exception {
         ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ScholagestThreadLocal.setTransaction(transaction);
 
         Subject subject = null;
         try {
-            subject = userBusinessComponent.authenticateToken(requestId, transaction, token);
+            subject = userBusinessComponent.authenticateToken(token);
             transaction.commit();
-        } catch (ShiroException e) {
-            transaction.rollback();
-            throw e;
         } catch (Exception e) {
             transaction.rollback();
-            e.printStackTrace();
+            throw e;
         }
 
         return subject;

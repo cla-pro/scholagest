@@ -1,8 +1,8 @@
 package net.scholagest.objects;
 
 import net.scholagest.managers.impl.AuthorizationNamespace;
-import net.scholagest.managers.impl.CoreNamespace;
 import net.scholagest.managers.ontology.types.DBSet;
+import net.scholagest.namespace.CoreNamespace;
 
 public class UserObject extends BaseObject {
     public UserObject(String key) {

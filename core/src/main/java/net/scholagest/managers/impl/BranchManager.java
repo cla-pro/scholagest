@@ -7,7 +7,9 @@ import net.scholagest.database.ITransaction;
 import net.scholagest.managers.IBranchManager;
 import net.scholagest.managers.ontology.OntologyManager;
 import net.scholagest.managers.ontology.types.DBSet;
+import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
+import net.scholagest.utils.ScholagestThreadLocal;
 
 import com.google.inject.Inject;
 
@@ -18,10 +20,12 @@ public class BranchManager extends ObjectManager implements IBranchManager {
     }
 
     @Override
-    public BaseObject createBranch(String requestId, ITransaction transaction, String branchName, String className, String yearName) throws Exception {
+    public BaseObject createBranch(String branchName, String className, String yearName) throws Exception {
+        ITransaction transaction = ScholagestThreadLocal.getTransaction();
+
         String branchKey = CoreNamespace.branchNs + "/" + yearName + "/" + className + "#" + branchName;
 
-        BaseObject branch = super.createObject(requestId, transaction, branchKey, CoreNamespace.tBranch);
+        BaseObject branch = super.createObject(transaction, branchKey, CoreNamespace.tBranch);
 
         String periodSetKey = generateBranchPeriodsKey(branchKey);
         DBSet.createDBSet(transaction, periodSetKey);
@@ -35,15 +39,18 @@ public class BranchManager extends ObjectManager implements IBranchManager {
     }
 
     @Override
-    public void setBranchProperties(String requestId, ITransaction transaction, String branchKey, Map<String, Object> branchProperties)
-            throws Exception {
-        super.setObjectProperties(requestId, transaction, branchKey, branchProperties);
+    public void setBranchProperties(String branchKey, Map<String, Object> branchProperties) throws Exception {
+        ITransaction transaction = ScholagestThreadLocal.getTransaction();
+
+        super.setObjectProperties(transaction, branchKey, branchProperties);
     }
 
     @Override
-    public BaseObject getBranchProperties(String requestId, ITransaction transaction, String branchKey, Set<String> properties) throws Exception {
+    public BaseObject getBranchProperties(String branchKey, Set<String> properties) throws Exception {
+        ITransaction transaction = ScholagestThreadLocal.getTransaction();
+
         BaseObject branch = new BaseObject(branchKey, CoreNamespace.tBranch);
-        branch.setProperties(super.getObjectProperties(requestId, transaction, branchKey, properties));
+        branch.setProperties(super.getObjectProperties(transaction, branchKey, properties));
 
         return branch;
     }

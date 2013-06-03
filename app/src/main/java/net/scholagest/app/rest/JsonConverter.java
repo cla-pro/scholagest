@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import net.scholagest.managers.impl.CoreNamespace;
 import net.scholagest.managers.ontology.OntologyElement;
 import net.scholagest.managers.ontology.RDFS;
+import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.ScholagestObject;
 import net.scholagest.services.IOntologyService;
 

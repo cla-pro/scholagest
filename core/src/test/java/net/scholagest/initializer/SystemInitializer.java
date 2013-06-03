@@ -1,4 +1,4 @@
-package net.scholagest;
+package net.scholagest.initializer;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -27,23 +27,30 @@ import net.scholagest.managers.ontology.Ontology;
 import net.scholagest.managers.ontology.OntologyElement;
 import net.scholagest.managers.ontology.OntologyHandler;
 import net.scholagest.managers.ontology.OntologyManager;
+import net.scholagest.managers.ontology.types.DBSet;
+import net.scholagest.objects.UserObject;
+import net.scholagest.utils.ScholagestThreadLocal;
 
 import org.w3c.dom.Document;
 
 public class SystemInitializer {
+    private final String keyspace;
+
     public static void main(String[] args) throws Exception {
-        new SystemInitializer().initialize();
+        new SystemInitializer("ScholagestSecheron").initialize();
+    }
+
+    public SystemInitializer(String keyspace) {
+        this.keyspace = keyspace;
     }
 
     public void initialize() throws Exception {
         Database database = new Database(new DefaultDatabaseConfiguration());
 
-        ITransaction transaction = database.getTransaction("ScholagestSecheron");
+        ITransaction transaction = database.getTransaction(keyspace);
+        ScholagestThreadLocal.setTransaction(transaction);
         try {
-            OntologyManager ontologyManager = new OntologyManager();
-
-            importOntology(transaction);
-            importInitialData(transaction, ontologyManager);
+            fillDatabase(transaction);
 
             transaction.commit();
         } catch (Exception e) {
@@ -56,6 +63,13 @@ public class SystemInitializer {
         }
 
         database.shutdown();
+    }
+
+    protected void fillDatabase(ITransaction transaction) throws Exception {
+        OntologyManager ontologyManager = new OntologyManager();
+
+        importOntology(transaction);
+        importInitialData(ontologyManager);
     }
 
     private void importOntology(ITransaction transaction) throws Exception {
@@ -73,35 +87,46 @@ public class SystemInitializer {
         }
     }
 
-    private void importInitialData(ITransaction transaction, OntologyManager ontologyManager) throws Exception {
-        importPages(transaction, ontologyManager);
-        importUsers(transaction, ontologyManager);
+    private void importInitialData(OntologyManager ontologyManager) throws Exception {
+        importPages(ontologyManager);
+        importUsers(ontologyManager);
     }
 
-    private void importPages(ITransaction transaction, OntologyManager ontologyManager) throws Exception {
+    private void importPages(OntologyManager ontologyManager) throws Exception {
         IPageManager pageManager = new PageManager(ontologyManager);
 
-        List<List<String>> pages = readFile("pages.sga");
+        List<List<String>> pages = readFile("initializer/pages.sga");
 
         for (List<String> page : pages) {
             System.out.println("Insert page: " + page.get(0) + ";" + page.get(1) + ";" + page.get(2));
-            pageManager.createPage(UUID.randomUUID().toString(), transaction, page.get(0), page.get(1),
-                    new HashSet<String>(Arrays.asList(page.get(2).split(","))));
+            pageManager.createPage(page.get(0), page.get(1), new HashSet<String>(Arrays.asList(page.get(2).split(","))));
         }
     }
 
-    private void importUsers(ITransaction transaction, OntologyManager ontologyManager) throws Exception {
+    private void importUsers(OntologyManager ontologyManager) throws Exception {
         IUserManager userManager = new UserManager(ontologyManager);
 
-        List<List<String>> users = readFile("users.sga");
+        List<List<String>> users = readFile("initializer/users.sga");
 
         for (List<String> user : users) {
             System.out.println("Insert user: " + user.get(0) + ";" + user.get(1));
-            userManager.createUser(UUID.randomUUID().toString(), transaction, user.get(0), user.get(1));
+            UserObject userObject = userManager.createUser(user.get(0), user.get(1));
+            if (user.size() > 2) {
+                addRoles(userObject, user.get(2).split("::"));
+            }
         }
     }
 
-    private List<List<String>> readFile(String filename) throws IOException {
+    private void addRoles(UserObject userObject, String[] roleList) throws DatabaseException {
+        DBSet rolesSet = userObject.getRoles();
+
+        for (String role : roleList) {
+            System.out.println(" --- Add role: " + role);
+            rolesSet.add(role);
+        }
+    }
+
+    protected List<List<String>> readFile(String filename) throws IOException {
         BufferedReader br = null;
         List<List<String>> file = new ArrayList<>();
 

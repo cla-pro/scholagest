@@ -4,17 +4,18 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import net.scholagest.database.ITransaction;
 import net.scholagest.managers.IBranchManager;
 import net.scholagest.managers.ontology.OntologyManager;
 import net.scholagest.managers.ontology.RDF;
+import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.utils.AbstractTestWithTransaction;
 import net.scholagest.utils.DatabaseReaderWriter;
 import net.scholagest.utils.InMemoryDatabase;
 import net.scholagest.utils.InMemoryDatabase.InMemoryTransaction;
+import net.scholagest.utils.ScholagestThreadLocal;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -29,7 +30,7 @@ public class BranchManagerTest extends AbstractTestWithTransaction {
 
     @Test
     public void testCreateNewBranch() throws Exception {
-        BaseObject branch = branchManager.createBranch(requestId, transaction, BRANCH_NAME, CLASS_NAME, YEAR_NAME);
+        BaseObject branch = branchManager.createBranch(BRANCH_NAME, CLASS_NAME, YEAR_NAME);
 
         assertEquals(BRANCH_KEY, branch.getKey());
         assertEquals(CoreNamespace.tBranch, branch.getType());
@@ -41,8 +42,8 @@ public class BranchManagerTest extends AbstractTestWithTransaction {
         super.fillTransactionWithDataSets(new String[] { "Branch" });
 
         Map<String, Object> properties = createClassProperties();
-        branchManager.setBranchProperties(requestId, transaction, BRANCH_KEY, properties);
-        BaseObject branch = branchManager.getBranchProperties(requestId, transaction, BRANCH_KEY, properties.keySet());
+        branchManager.setBranchProperties(BRANCH_KEY, properties);
+        BaseObject branch = branchManager.getBranchProperties(BRANCH_KEY, properties.keySet());
 
         assertEquals(BRANCH_KEY, branch.getKey());
         assertEquals(CoreNamespace.tBranch, branch.getType());
@@ -59,6 +60,7 @@ public class BranchManagerTest extends AbstractTestWithTransaction {
 
     public static void main(String[] args) throws Exception {
         InMemoryTransaction transaction = new InMemoryDatabase().getTransaction("Branch");
+        ScholagestThreadLocal.setTransaction(transaction);
 
         IBranchManager classManager = new BranchManager(new OntologyManager());
 
@@ -74,11 +76,11 @@ public class BranchManagerTest extends AbstractTestWithTransaction {
 
     private static void createBranch(ITransaction transaction, IBranchManager branchManager, String branchName, String className, String yearName)
             throws Exception {
-        BaseObject clazz = branchManager.createBranch(UUID.randomUUID().toString(), transaction, branchName, className, yearName);
+        BaseObject clazz = branchManager.createBranch(branchName, className, yearName);
 
         Map<String, Object> properties = new HashMap<>();
         properties.put(CoreNamespace.pBranchName, branchName);
 
-        branchManager.setBranchProperties(UUID.randomUUID().toString(), transaction, clazz.getKey(), properties);
+        branchManager.setBranchProperties(clazz.getKey(), properties);
     }
 }

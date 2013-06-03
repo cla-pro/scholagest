@@ -1,6 +1,6 @@
 package net.scholagest.objects;
 
-import net.scholagest.managers.impl.CoreNamespace;
+import net.scholagest.namespace.CoreNamespace;
 
 import org.joda.time.DateTime;
 

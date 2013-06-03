@@ -4,7 +4,41 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Map;
 
+import net.scholagest.namespace.AuthorizationNamespace;
+
+import org.apache.shiro.subject.Subject;
+import org.mockito.Mockito;
+
 public abstract class AbstractTest {
+    public String getKeyspace() {
+        return ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE);
+    }
+
+    public void defineAdminSubject() {
+        defineSubject(AuthorizationNamespace.ROLE_ADMIN, false);
+    }
+
+    public void defineClassTeacherSubject() {
+        defineSubject(AuthorizationNamespace.ROLE_TEACHER, true);
+    }
+
+    public void defineClassHelpTeacherSubject() {
+        defineSubject(AuthorizationNamespace.ROLE_HELP_TEACHER, false);
+    }
+
+    public void defineOtherTeacherSubject() {
+        defineSubject(AuthorizationNamespace.ROLE_TEACHER, false);
+    }
+
+    private void defineSubject(String role, boolean isPermitted) {
+        Subject subject = Mockito.mock(Subject.class);
+
+        Mockito.when(subject.hasRole(role)).thenReturn(true);
+        Mockito.when(subject.isPermitted(Mockito.anyString())).thenReturn(isPermitted);
+
+        ScholagestThreadLocal.setSubject(subject);
+    }
+
     public void assertMapEquals(Map<?, ?> mock, Map<?, ?> testee) {
         assertEquals(mock.size(), testee.size());
 

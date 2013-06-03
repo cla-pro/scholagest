@@ -7,16 +7,17 @@ import static org.mockito.Mockito.spy;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import net.scholagest.exception.ScholagestException;
 import net.scholagest.managers.IYearManager;
 import net.scholagest.managers.ontology.OntologyManager;
+import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.utils.AbstractTestWithTransaction;
 import net.scholagest.utils.DatabaseReaderWriter;
 import net.scholagest.utils.InMemoryDatabase;
 import net.scholagest.utils.InMemoryDatabase.InMemoryTransaction;
+import net.scholagest.utils.ScholagestThreadLocal;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -28,7 +29,7 @@ public class YearManagerTest extends AbstractTestWithTransaction {
 
     @Test
     public void testCreateNewYear() throws Exception {
-        BaseObject year = yearManager.createNewYear(requestId, transaction, YEAR_NAME);
+        BaseObject year = yearManager.createNewYear(YEAR_NAME);
 
         Mockito.verify(transaction).insert(Mockito.anyString(), Mockito.eq(CoreNamespace.pYearName), Mockito.eq(YEAR_NAME), Mockito.anyString());
         assertEquals(YEAR_KEY, year.getKey());
@@ -38,23 +39,23 @@ public class YearManagerTest extends AbstractTestWithTransaction {
     public void testGetCurrentYearKey() throws Exception {
         super.fillTransactionWithDataSets(new String[] { "YearRunning" });
 
-        assertEquals(YEAR_KEY, yearManager.getCurrentYearKey(requestId, transaction).getKey());
+        assertEquals(YEAR_KEY, yearManager.getCurrentYearKey().getKey());
     }
 
     @Test
     public void testRestoreYear() throws Exception {
         super.fillTransactionWithDataSets(new String[] { "Year" });
 
-        assertNull(yearManager.getCurrentYearKey(requestId, transaction));
-        yearManager.restoreYear(requestId, transaction, YEAR_KEY);
-        assertEquals(YEAR_KEY, yearManager.getCurrentYearKey(requestId, transaction).getKey());
+        assertNull(yearManager.getCurrentYearKey());
+        yearManager.restoreYear(YEAR_KEY);
+        assertEquals(YEAR_KEY, yearManager.getCurrentYearKey().getKey());
     }
 
     @Test(expected = ScholagestException.class)
     public void testRestoreInexistentYear() throws Exception {
         super.fillTransactionWithDataSets(new String[] { "Year" });
 
-        yearManager.restoreYear(requestId, transaction, YEAR_KEY + "bla");
+        yearManager.restoreYear(YEAR_KEY + "bla");
 
         fail("Exception expected");
     }
@@ -63,7 +64,7 @@ public class YearManagerTest extends AbstractTestWithTransaction {
     public void testRestoreYearWithAlreadyRunning() throws Exception {
         super.fillTransactionWithDataSets(new String[] { "YearRunning" });
 
-        yearManager.restoreYear(requestId, transaction, YEAR_KEY);
+        yearManager.restoreYear(YEAR_KEY);
 
         fail("Exception expected");
     }
@@ -72,18 +73,19 @@ public class YearManagerTest extends AbstractTestWithTransaction {
     public void testBackupYear() throws Exception {
         super.fillTransactionWithDataSets(new String[] { "YearRunning" });
 
-        assertEquals(YEAR_KEY, yearManager.getCurrentYearKey(requestId, transaction).getKey());
-        yearManager.backupYear(requestId, transaction);
-        assertNull(yearManager.getCurrentYearKey(requestId, transaction));
+        assertEquals(YEAR_KEY, yearManager.getCurrentYearKey().getKey());
+        yearManager.backupYear();
+        assertNull(yearManager.getCurrentYearKey());
     }
 
     public static void main(String[] args) throws Exception {
         InMemoryTransaction transaction = new InMemoryDatabase().getTransaction("YearRunning");
+        ScholagestThreadLocal.setTransaction(transaction);
 
         IYearManager yearManager = new YearManager(new OntologyManager());
 
-        BaseObject year = yearManager.createNewYear(UUID.randomUUID().toString(), transaction, YEAR_NAME);
-        yearManager.restoreYear(UUID.randomUUID().toString(), transaction, year.getKey());
+        BaseObject year = yearManager.createNewYear(YEAR_NAME);
+        yearManager.restoreYear(year.getKey());
         Map<String, Map<String, Map<String, Object>>> databaseContent = new HashMap<>();
         databaseContent.put(transaction.getKeyspace(), transaction.getValues());
 

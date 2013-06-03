@@ -18,15 +18,16 @@ import net.scholagest.app.rest.object.RestObject;
 import net.scholagest.app.rest.object.RestRequest;
 import net.scholagest.app.rest.object.RestStudentGradeList;
 import net.scholagest.app.utils.JerseyHelper;
-import net.scholagest.managers.impl.CoreNamespace;
+import net.scholagest.exception.ScholagestException;
 import net.scholagest.managers.ontology.OntologyElement;
+import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IOntologyService;
 import net.scholagest.services.IStudentService;
 import net.scholagest.services.IUserService;
+import net.scholagest.utils.ScholagestThreadLocal;
 
 import org.apache.shiro.ShiroException;
-import org.apache.shiro.subject.Subject;
 
 import com.google.gson.Gson;
 import com.google.inject.Inject;
@@ -52,23 +53,23 @@ public class RestStudentService extends AbstractService {
     @Path("/create")
     @Produces("text/json")
     public String createStudent(@QueryParam("token") String token, @QueryParam("keys") List<String> keys, @QueryParam("values") List<String> values) {
-        String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
-        // TODO 1. Check the token and if this token allows to create a new
-        // student.
+        ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         try {
-            Subject subject = userService.authenticateWithToken(requestId, token);
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
 
             Map<String, Object> personalInfo = JerseyHelper.listToMap(keys, new ArrayList<Object>(values));
 
             // 2. Update the database.
-            BaseObject student = studentService.createStudent(requestId, personalInfo);
+            BaseObject student = studentService.createStudent(personalInfo);
 
             Gson gson = new Gson();
             String json = gson.toJson(converter.convertObjectToJson(student, null));
             return "{info: " + json + "}";
         } catch (ShiroException e) {
             return generateSessionExpiredMessage(e);
+        } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode:0, message:'" + e.getMessage() + "'}";
@@ -79,18 +80,20 @@ public class RestStudentService extends AbstractService {
     @Path("/getStudents")
     @Produces("text/json")
     public String getStudents(@QueryParam("token") String token, @QueryParam("properties") Set<String> properties) {
-        String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+        ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         try {
-            Subject subject = userService.authenticateWithToken(requestId, token);
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
 
-            Set<BaseObject> students = studentService.getStudentsWithProperties(requestId, properties);
+            Set<BaseObject> students = studentService.getStudentsWithProperties(properties);
             List<RestObject> restStudents = new RestToKdomConverter().restObjectsFromKdoms(students);
 
             String json = new Gson().toJson(restStudents);
             return "{info: " + json + "}";
         } catch (ShiroException e) {
             return generateSessionExpiredMessage(e);
+        } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode:0, message:'" + e.getMessage() + "'}";
@@ -102,14 +105,14 @@ public class RestStudentService extends AbstractService {
     @Produces("text/json")
     public String getStudentsInfo(@QueryParam("token") String token, @QueryParam("students") Set<String> studentKeyList,
             @QueryParam("properties") Set<String> properties) {
-        String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+        ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         try {
-            Subject subject = userService.authenticateWithToken(requestId, token);
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
 
             Set<BaseObject> students = new HashSet<>();
             for (String studentKey : studentKeyList) {
-                BaseObject studentPersonalInfo = studentService.getStudentPersonalProperties(requestId, studentKey, properties);
+                BaseObject studentPersonalInfo = studentService.getStudentPersonalProperties(studentKey, properties);
                 BaseObject student = new BaseObject(studentKey, CoreNamespace.tStudent);
                 student.setProperties(studentPersonalInfo.getProperties());
 
@@ -122,6 +125,8 @@ public class RestStudentService extends AbstractService {
             return "{info: " + json + "}";
         } catch (ShiroException e) {
             return generateSessionExpiredMessage(e);
+        } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode:0, message:'" + e.getMessage() + "'}";
@@ -133,15 +138,15 @@ public class RestStudentService extends AbstractService {
     @Produces("text/json")
     public String getStudentProperties(@QueryParam("token") String token, @QueryParam("studentKey") String studentKey,
             @QueryParam("properties") Set<String> properties) {
-        String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+        ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         try {
-            Subject subject = userService.authenticateWithToken(requestId, token);
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
 
             if (properties == null || properties.isEmpty()) {
                 properties = ontologyService.getPropertiesForType(CoreNamespace.tStudent);
             }
-            BaseObject studentInfo = studentService.getStudentProperties(requestId, studentKey, new HashSet<String>(properties));
+            BaseObject studentInfo = studentService.getStudentProperties(studentKey, new HashSet<String>(properties));
             Map<String, OntologyElement> ontology = extractOntology(studentInfo.getProperties().keySet());
 
             RestObject restStudentInfo = new RestToKdomConverter().restObjectFromKdom(studentInfo);
@@ -151,6 +156,8 @@ public class RestStudentService extends AbstractService {
             return "{info: " + json + "}";
         } catch (ShiroException e) {
             return generateSessionExpiredMessage(e);
+        } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode:0, message:'" + e.getMessage() + "'}";
@@ -162,10 +169,10 @@ public class RestStudentService extends AbstractService {
     @Produces("text/json")
     public String getStudentPersonalInfo(@QueryParam("token") String token, @QueryParam("studentKey") String studentKey,
             @QueryParam("properties") Set<String> properties) {
-        String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+        ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         try {
-            Subject subject = userService.authenticateWithToken(requestId, token);
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
 
             if (properties == null || properties.isEmpty()) {
                 properties = ontologyService.getPropertiesForType(CoreNamespace.tStudentPersonalInfo);
@@ -174,7 +181,7 @@ public class RestStudentService extends AbstractService {
             Set<String> personalInfoProperties = ontologyService.filterPropertiesWithCorrectDomain(ScholagestNamespace.tStudentPersonalInfo,
                     new HashSet<String>(properties));
 
-            BaseObject personalObject = studentService.getStudentPersonalProperties(requestId, studentKey, personalInfoProperties);
+            BaseObject personalObject = studentService.getStudentPersonalProperties(studentKey, personalInfoProperties);
             Map<String, OntologyElement> personalOntology = extractOntology(personalObject.getProperties().keySet());
 
             RestObject restPersonalInfo = new RestToKdomConverter().restObjectFromKdom(personalObject);
@@ -184,6 +191,8 @@ public class RestStudentService extends AbstractService {
             return "{info: " + json + "}";
         } catch (ShiroException e) {
             return generateSessionExpiredMessage(e);
+        } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode:0, message:'" + e.getMessage() + "'}";
@@ -194,19 +203,21 @@ public class RestStudentService extends AbstractService {
     @Path("/setPersonalProperties")
     @Produces("text/json")
     public String setStudentPersonalInfo(String content) {
-        String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+        ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         try {
             RestRequest request = new Gson().fromJson(content, RestRequest.class);
 
-            Subject subject = userService.authenticateWithToken(requestId, request.getToken());
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(request.getToken()));
 
             RestObject requestObject = request.getObject();
             BaseObject baseObject = new RestToKdomConverter().baseObjectFromRest(requestObject);
 
-            studentService.updateStudentProperties(requestId, baseObject.getKey(), baseObject.getProperties(), new HashMap<String, Object>());
+            studentService.updateStudentProperties(baseObject.getKey(), baseObject.getProperties(), new HashMap<String, Object>());
         } catch (ShiroException e) {
             return generateSessionExpiredMessage(e);
+        } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode:0, message:'" + e.getMessage() + "'}";
@@ -220,10 +231,10 @@ public class RestStudentService extends AbstractService {
     @Produces("text/json")
     public String getStudentMedicalInfo(@QueryParam("token") String token, @QueryParam("studentKey") String studentKey,
             @QueryParam("properties") Set<String> properties) {
-        String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+        ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         try {
-            Subject subject = userService.authenticateWithToken(requestId, token);
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
 
             if (properties == null || properties.isEmpty()) {
                 properties = ontologyService.getPropertiesForType(CoreNamespace.tStudentMedicalInfo);
@@ -231,7 +242,7 @@ public class RestStudentService extends AbstractService {
             Set<String> medicalInfoProperties = ontologyService.filterPropertiesWithCorrectDomain(ScholagestNamespace.tStudentMedicalInfo,
                     new HashSet<String>(properties));
 
-            BaseObject medicalObject = studentService.getStudentMedicalProperties(requestId, studentKey, medicalInfoProperties);
+            BaseObject medicalObject = studentService.getStudentMedicalProperties(studentKey, medicalInfoProperties);
             Map<String, OntologyElement> medicalOntology = extractOntology(medicalObject.getProperties().keySet());
 
             RestObject restMedicalInfo = new RestToKdomConverter().restObjectFromKdom(medicalObject);
@@ -241,6 +252,8 @@ public class RestStudentService extends AbstractService {
             return "{info: " + json + "}";
         } catch (ShiroException e) {
             return generateSessionExpiredMessage(e);
+        } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode:0, message:'" + e.getMessage() + "'}";
@@ -251,19 +264,21 @@ public class RestStudentService extends AbstractService {
     @Path("/setMedicalProperties")
     @Produces("text/json")
     public String setStudentMedicalInfo(String content) {
-        String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+        ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         try {
             RestRequest request = new Gson().fromJson(content, RestRequest.class);
 
-            Subject subject = userService.authenticateWithToken(requestId, request.getToken());
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(request.getToken()));
 
             RestObject requestObject = request.getObject();
             BaseObject baseObject = new RestToKdomConverter().baseObjectFromRest(requestObject);
 
-            studentService.updateStudentProperties(requestId, baseObject.getKey(), new HashMap<String, Object>(), baseObject.getProperties());
+            studentService.updateStudentProperties(baseObject.getKey(), new HashMap<String, Object>(), baseObject.getProperties());
         } catch (ShiroException e) {
             return generateSessionExpiredMessage(e);
+        } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode:0, message:'" + e.getMessage() + "'}";
@@ -277,17 +292,19 @@ public class RestStudentService extends AbstractService {
     @Produces("text/json")
     public String getStudentsGrades(@QueryParam("token") String token, @QueryParam("studentKeys") Set<String> studentKeys,
             @QueryParam("examKeys") Set<String> examKeys, @QueryParam("yearKey") String yearKey) {
-        String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+        ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         try {
-            Subject subject = userService.authenticateWithToken(requestId, token);
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
 
-            Map<String, Map<String, BaseObject>> grades = studentService.getGrades(requestId, studentKeys, examKeys, yearKey);
+            Map<String, Map<String, BaseObject>> grades = studentService.getGrades(studentKeys, examKeys, yearKey);
 
             String json = gradeMapToJson(grades);
             return "{info: " + json + "}";
         } catch (ShiroException e) {
             return generateSessionExpiredMessage(e);
+        } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode:0, message:'" + e.getMessage() + "'}";
@@ -320,12 +337,12 @@ public class RestStudentService extends AbstractService {
     @Path("/setGrades")
     @Produces("text/json")
     public String setStudentsGrades(String content) {
-        String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+        ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         try {
             RestStudentGradeList request = new Gson().fromJson(content, RestStudentGradeList.class);
 
-            Subject subject = userService.authenticateWithToken(requestId, request.getToken());
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(request.getToken()));
 
             Map<String, Map<String, RestObject>> restStudentGrades = request.getGrades();
 
@@ -333,11 +350,13 @@ public class RestStudentService extends AbstractService {
                 Map<String, RestObject> restSingleStudentGrades = restStudentGrades.get(studentKey);
                 Map<String, BaseObject> studentGrades = convertRestObjectMapToBaseObjectMap(restSingleStudentGrades);
 
-                studentService.setGrades(requestId, studentKey, studentGrades, request.getYearKey(), request.getClassKey(), request.getBranchKey(),
+                studentService.setGrades(studentKey, studentGrades, request.getYearKey(), request.getClassKey(), request.getBranchKey(),
                         request.getPeriodKey());
             }
         } catch (ShiroException e) {
             return generateSessionExpiredMessage(e);
+        } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode:0, message:'" + e.getMessage() + "'}";

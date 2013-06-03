@@ -9,7 +9,9 @@ import net.scholagest.database.ITransaction;
 import net.scholagest.managers.IPageManager;
 import net.scholagest.managers.ontology.OntologyManager;
 import net.scholagest.managers.ontology.types.DBSet;
+import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.PageObject;
+import net.scholagest.utils.ScholagestThreadLocal;
 
 import com.google.inject.Inject;
 
@@ -20,10 +22,12 @@ public class PageManager extends ObjectManager implements IPageManager {
     }
 
     @Override
-    public PageObject createPage(String requestId, ITransaction transaction, String pageName, String pagePath, Set<String> roles) throws Exception {
+    public PageObject createPage(String pageName, String pagePath, Set<String> roles) throws Exception {
+        ITransaction transaction = ScholagestThreadLocal.getTransaction();
+
         PageObject pageObject = createPageObject(transaction, pageName, pagePath, roles);
 
-        persistObject(requestId, transaction, pageObject);
+        persistObject(transaction, pageObject);
         transaction.insert(CoreNamespace.pageBase, pageName, pageObject.getKey(), null);
 
         return pageObject;
@@ -44,14 +48,16 @@ public class PageManager extends ObjectManager implements IPageManager {
     }
 
     @Override
-    public Set<PageObject> getAllPages(String requestId, ITransaction transaction) throws Exception {
+    public Set<PageObject> getAllPages() throws Exception {
+        ITransaction transaction = ScholagestThreadLocal.getTransaction();
+
         Set<PageObject> pages = new HashSet<>();
 
         for (String pageName : transaction.getColumns(CoreNamespace.pageBase)) {
             String pageKey = (String) transaction.get(CoreNamespace.pageBase, pageName, null);
             PageObject pageObject = new PageObject(pageKey);
 
-            pageObject.setProperties(getAllObjectProperties(requestId, transaction, pageKey));
+            pageObject.setProperties(getAllObjectProperties(transaction, pageKey));
 
             pages.add(pageObject);
         }

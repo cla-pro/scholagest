@@ -2,13 +2,12 @@ package net.scholagest.managers.ontology;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 import net.scholagest.database.Database;
 import net.scholagest.database.DatabaseException;
 import net.scholagest.database.DefaultDatabaseConfiguration;
 import net.scholagest.database.ITransaction;
-import net.scholagest.managers.impl.CoreNamespace;
+import net.scholagest.namespace.CoreNamespace;
 
 public class OntologyReader {
     public static void main(String[] args) {
@@ -20,10 +19,10 @@ public class OntologyReader {
         ITransaction transaction = database.getTransaction("ScholagestSecheron");
         try {
             // System.out.println("IsSubtypeOf: " +
-            // manager.isSubtypeOf(UUID.randomUUID().toString(), transaction,
+            // manager.isSubtypeOf(
             // CoreNamespace.tStudentPersonalInfo, CoreNamespace.tGroup));
             // System.out.println("IsSubtypeOf: " +
-            // manager.isSubtypeOf(UUID.randomUUID().toString(), transaction,
+            // manager.isSubtypeOf(
             // CoreNamespace.tStudent, CoreNamespace.tGroup));
 
             Set<String> propertySet = new HashSet<>();
@@ -31,8 +30,7 @@ public class OntologyReader {
             propertySet.add("pStudentFirstName");
             propertySet.add("pStudentLastName");
             propertySet.add("pTeacherFirstName");
-            Set<String> filtered = manager.filterPropertiesWithCorrectDomain(UUID.randomUUID().toString(), transaction,
-                    CoreNamespace.tStudentPersonalInfo, propertySet);
+            Set<String> filtered = manager.filterPropertiesWithCorrectDomain(CoreNamespace.tStudentPersonalInfo, propertySet);
 
             System.out.println(filtered);
 

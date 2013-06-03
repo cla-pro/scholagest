@@ -67,11 +67,20 @@
 		<rdfs:range rdf:resource="sg:String"/>
 		<sg:displayText rdf:resource="Téléphone" />
 	</rdfs:Property>
-	<rdfs:Property rdf:ID="pTeacherAddress" rdfs:comment="Teacher's address">
-		<rdfs:domain rdf:resource="sg:tTeacher"/>
-		<rdfs:range rdf:resource="sg:String"/>
-		<sg:displayText rdf:resource="Adresse" />
-	</rdfs:Property>
+    <rdfs:Property rdf:ID="pTeacherAddress" rdfs:comment="Teacher's address">
+        <rdfs:domain rdf:resource="sg:tTeacher"/>
+        <rdfs:range rdf:resource="sg:String"/>
+        <sg:displayText rdf:resource="Adresse" />
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pTeacherAddress" rdfs:comment="Teacher's address">
+        <rdfs:domain rdf:resource="sg:tTeacher"/>
+        <rdfs:range rdf:resource="sg:String"/>
+        <sg:displayText rdf:resource="Adresse" />
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pTeacherUser" rdfs:comment="Teacher's user">
+        <rdfs:domain rdf:resource="sg:tTeacher"/>
+        <rdfs:range rdf:resource="sg:tUser"/>
+    </rdfs:Property>
 	
     <rdfs:Property rdf:ID="pStudentPersonalInfo" rdfs:comment="Student's personal info">
         <rdfs:domain rdf:resource="sg:tStudent"/>
@@ -159,6 +168,10 @@
         <rdfs:domain rdf:resource="sg:tBranch"/>
         <rdfs:range rdf:resource="sg:String"/>
     </rdfs:Property>
+    <rdfs:Property rdf:ID="pBranchClass" rdfs:comment="Branch's class">
+        <rdfs:domain rdf:resource="sg:tBranch"/>
+        <rdfs:range rdf:resource="sg:tClass"/>
+    </rdfs:Property>
     <rdfs:Property rdf:ID="pBranchPeriods" rdfs:comment="Branch's periods">
         <rdfs:domain rdf:resource="sg:tBranch"/>
         <rdfs:range rdf:resource="sg:Set"/>
@@ -184,6 +197,10 @@
     <rdfs:Property rdf:ID="pExamCoeff" rdfs:comment="Exam's coeff">
         <rdfs:domain rdf:resource="sg:tExam"/>
         <rdfs:range rdf:resource="sg:Double"/>
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pExamClass" rdfs:comment="Exam's class">
+        <rdfs:domain rdf:resource="sg:tExam"/>
+        <rdfs:range rdf:resource="sg:tClass"/>
     </rdfs:Property>
     
     <rdfs:Property rdf:ID="pGradeValue" rdfs:comment="Grade's value">

@@ -5,11 +5,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import net.scholagest.managers.impl.CoreNamespace;
 import net.scholagest.managers.ontology.OWL;
 import net.scholagest.managers.ontology.OntologyElement;
 import net.scholagest.managers.ontology.RDF;
 import net.scholagest.managers.ontology.RDFS;
+import net.scholagest.namespace.CoreNamespace;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

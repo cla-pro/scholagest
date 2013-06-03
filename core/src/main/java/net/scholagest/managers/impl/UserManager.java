@@ -6,8 +6,10 @@ import net.scholagest.database.ITransaction;
 import net.scholagest.managers.IUserManager;
 import net.scholagest.managers.ontology.OntologyManager;
 import net.scholagest.managers.ontology.types.DBSet;
+import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.TokenObject;
 import net.scholagest.objects.UserObject;
+import net.scholagest.utils.ScholagestThreadLocal;
 
 import org.joda.time.DateTime;
 
@@ -20,10 +22,12 @@ public class UserManager extends ObjectManager implements IUserManager {
     }
 
     @Override
-    public UserObject createUser(String requestId, ITransaction transaction, String username, String password) throws Exception {
+    public UserObject createUser(String username, String password) throws Exception {
+        ITransaction transaction = ScholagestThreadLocal.getTransaction();
+
         UserObject userObject = createUserObject(transaction, username, password);
 
-        persistObject(requestId, transaction, userObject);
+        persistObject(transaction, userObject);
         transaction.insert(CoreNamespace.userBase, username, userObject.getKey(), null);
 
         return userObject;
@@ -41,28 +45,34 @@ public class UserManager extends ObjectManager implements IUserManager {
     }
 
     @Override
-    public UserObject getUser(String requestId, ITransaction transaction, String userKey) throws Exception {
+    public UserObject getUser(String userKey) throws Exception {
+        ITransaction transaction = ScholagestThreadLocal.getTransaction();
+
         UserObject userObject = new UserObject(userKey);
 
-        userObject.setProperties(getAllObjectProperties(requestId, transaction, userKey));
+        userObject.setProperties(getAllObjectProperties(transaction, userKey));
 
         return userObject;
     }
 
     @Override
-    public UserObject getUserWithUsername(String requestId, ITransaction transaction, String username) throws Exception {
+    public UserObject getUserWithUsername(String username) throws Exception {
+        ITransaction transaction = ScholagestThreadLocal.getTransaction();
+
         String userKey = (String) transaction.get(CoreNamespace.userBase, username, null);
         if (userKey != null) {
-            return getUser(requestId, transaction, userKey);
+            return getUser(userKey);
         }
         return null;
     }
 
     @Override
-    public TokenObject createToken(String requestId, ITransaction transaction, String userKey, String tokenId) throws Exception {
+    public TokenObject createToken(String userKey, String tokenId) throws Exception {
+        ITransaction transaction = ScholagestThreadLocal.getTransaction();
+
         TokenObject tokenObject = createTokenObject(userKey, tokenId);
 
-        persistObject(requestId, transaction, tokenObject);
+        persistObject(transaction, tokenObject);
 
         transaction.insert(CoreNamespace.tokenBase, tokenObject.getKey(), userKey, null);
 
@@ -79,34 +89,40 @@ public class UserManager extends ObjectManager implements IUserManager {
     }
 
     @Override
-    public TokenObject getToken(String requestId, ITransaction transaction, String tokenId) throws Exception {
+    public TokenObject getToken(String tokenId) throws Exception {
         TokenObject tokenObject = null;
 
-        if (isTokenExists(transaction, tokenId)) {
-            return readTokenObject(requestId, transaction, tokenId);
+        if (isTokenExists(tokenId)) {
+            return readTokenObject(tokenId);
         }
 
         return tokenObject;
     }
 
-    private TokenObject readTokenObject(String requestId, ITransaction transaction, String tokenId) throws Exception {
+    private TokenObject readTokenObject(String tokenId) throws Exception {
+        ITransaction transaction = ScholagestThreadLocal.getTransaction();
+
         TokenObject tokenObject = new TokenObject(tokenId);
 
-        tokenObject.setProperties(getAllObjectProperties(requestId, transaction, tokenId));
+        tokenObject.setProperties(getAllObjectProperties(transaction, tokenId));
 
         return tokenObject;
     }
 
-    private boolean isTokenExists(ITransaction transaction, String tokenId) throws Exception {
+    private boolean isTokenExists(String tokenId) throws Exception {
+        ITransaction transaction = ScholagestThreadLocal.getTransaction();
+
         return transaction.get(CoreNamespace.tokenBase, tokenId, null) != null;
     }
 
     @Override
-    public void deleteToken(String requestId, ITransaction transaction, String tokenId) throws Exception {
+    public void deleteToken(String tokenId) throws Exception {
+        ITransaction transaction = ScholagestThreadLocal.getTransaction();
+
         String tokenKey = (String) transaction.get(CoreNamespace.tokenBase, tokenId, null);
         if (tokenKey != null) {
             transaction.delete(CoreNamespace.tokenBase, tokenId, null);
-            deleteObject(requestId, transaction, tokenKey);
+            deleteObject(transaction, tokenKey);
         }
     }
 }
