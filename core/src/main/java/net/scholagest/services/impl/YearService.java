@@ -2,10 +2,11 @@ package net.scholagest.services.impl;
 
 import java.util.Set;
 
+import net.scholagest.business.IOntologyBusinessComponent;
 import net.scholagest.business.IYearBusinessComponent;
 import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
-import net.scholagest.namespace.AuthorizationNamespace;
+import net.scholagest.namespace.AuthorizationRolesNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IYearService;
 import net.scholagest.shiro.AuthorizationHelper;
@@ -18,11 +19,13 @@ import com.google.inject.Inject;
 public class YearService implements IYearService {
     private IDatabase database = null;
     private IYearBusinessComponent yearBusinessComponent;
+    private AuthorizationHelper authorizationHelper;
 
     @Inject
-    public YearService(IDatabase database, IYearBusinessComponent yearBusinessComponent) {
+    public YearService(IDatabase database, IYearBusinessComponent yearBusinessComponent, IOntologyBusinessComponent ontologyBusinessComponent) {
         this.database = database;
         this.yearBusinessComponent = yearBusinessComponent;
+        this.authorizationHelper = new AuthorizationHelper(ontologyBusinessComponent);
     }
 
     @Override
@@ -33,7 +36,7 @@ public class YearService implements IYearService {
                 .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
-            new AuthorizationHelper().checkAuthorizationRoles(AuthorizationNamespace.getAdminRole());
+            authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAdminRole());
 
             year = yearBusinessComponent.startYear(yearName);
 
@@ -52,7 +55,7 @@ public class YearService implements IYearService {
                 .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
-            new AuthorizationHelper().checkAuthorizationRoles(AuthorizationNamespace.getAdminRole());
+            authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAdminRole());
 
             yearBusinessComponent.stopYear();
 
@@ -71,7 +74,7 @@ public class YearService implements IYearService {
                 .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
-            new AuthorizationHelper().checkAuthorizationRoles(AuthorizationNamespace.getAllRoles());
+            authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
 
             currentYear = yearBusinessComponent.getCurrentYearKey();
 
@@ -91,7 +94,7 @@ public class YearService implements IYearService {
         ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
-            new AuthorizationHelper().checkAuthorizationRoles(AuthorizationNamespace.getAllRoles());
+            authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
 
             years = yearBusinessComponent.getYearsWithProperties(properties);
 

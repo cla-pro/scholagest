@@ -6,9 +6,10 @@ import java.util.Map;
 import java.util.Set;
 
 import net.scholagest.business.IExamBusinessComponent;
+import net.scholagest.business.IOntologyBusinessComponent;
 import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
-import net.scholagest.namespace.AuthorizationNamespace;
+import net.scholagest.namespace.AuthorizationRolesNamespace;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IExamService;
@@ -22,11 +23,13 @@ import com.google.inject.Inject;
 public class ExamService implements IExamService {
     private final IDatabase database;
     private final IExamBusinessComponent examBusinessComponent;
+    private AuthorizationHelper authorizationHelper;
 
     @Inject
-    public ExamService(IDatabase database, IExamBusinessComponent examBusinessComponent) {
+    public ExamService(IDatabase database, IExamBusinessComponent examBusinessComponent, IOntologyBusinessComponent ontologyBusinessComponent) {
         this.database = database;
         this.examBusinessComponent = examBusinessComponent;
+        this.authorizationHelper = new AuthorizationHelper(ontologyBusinessComponent);
     }
 
     @Override
@@ -36,7 +39,7 @@ public class ExamService implements IExamService {
         ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
-            new AuthorizationHelper().checkAuthorization(AuthorizationNamespace.getAdminRole(), Arrays.asList(classKey));
+            authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(classKey));
 
             exam = examBusinessComponent.createExam(yearKey, classKey, branchKey, periodKey, examInfo);
 
@@ -61,7 +64,7 @@ public class ExamService implements IExamService {
                 return null;
             }
 
-            new AuthorizationHelper().checkAuthorization(AuthorizationNamespace.getAdminRole(), Arrays.asList(classKey));
+            authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(classKey));
 
             properties = examBusinessComponent.getExamProperties(examKey, propertiesName);
 

@@ -5,11 +5,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import net.scholagest.business.IOntologyBusinessComponent;
 import net.scholagest.business.ITeacherBusinessComponent;
 import net.scholagest.business.IUserBusinessComponent;
 import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
-import net.scholagest.namespace.AuthorizationNamespace;
+import net.scholagest.namespace.AuthorizationRolesNamespace;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.objects.UserObject;
@@ -25,12 +26,15 @@ public class TeacherService implements ITeacherService {
     private final IDatabase database;
     private final ITeacherBusinessComponent teacherBusinessComponent;
     private final IUserBusinessComponent userBusinessComponent;
+    private AuthorizationHelper authorizationHelper;
 
     @Inject
-    public TeacherService(IDatabase database, ITeacherBusinessComponent teacherBusinessComponent, IUserBusinessComponent userBusinessComponent) {
+    public TeacherService(IDatabase database, ITeacherBusinessComponent teacherBusinessComponent, IUserBusinessComponent userBusinessComponent,
+            IOntologyBusinessComponent ontologyBusinessComponent) {
         this.database = database;
         this.teacherBusinessComponent = teacherBusinessComponent;
         this.userBusinessComponent = userBusinessComponent;
+        this.authorizationHelper = new AuthorizationHelper(ontologyBusinessComponent);
     }
 
     @Override
@@ -40,12 +44,12 @@ public class TeacherService implements ITeacherService {
         ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
-            new AuthorizationHelper().checkAuthorizationRoles(AuthorizationNamespace.getAdminRole());
+            authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAdminRole());
 
             teacher = teacherBusinessComponent.createTeacher(teacherType, teacherProperties);
 
             UserObject userObject = userBusinessComponent.createUser(teacher.getKey());
-            userObject.getRoles().add(AuthorizationNamespace.ROLE_TEACHER);
+            userObject.getRoles().add(AuthorizationRolesNamespace.ROLE_TEACHER);
             userObject.getPermissions().add(teacher.getKey());
 
             Map<String, Object> userProperty = new HashMap<String, Object>();
@@ -68,7 +72,7 @@ public class TeacherService implements ITeacherService {
         ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
-            new AuthorizationHelper().checkAuthorizationRoles(AuthorizationNamespace.getAllRoles());
+            authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
 
             teachers = teacherBusinessComponent.getTeachers();
             transaction.commit();
@@ -87,7 +91,7 @@ public class TeacherService implements ITeacherService {
         ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
-            new AuthorizationHelper().checkAuthorizationRoles(AuthorizationNamespace.getAllRoles());
+            authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
             // Roles:
             // - All data: Admin, teacher itself
             // - TODO Without restricted data: other teachers
@@ -107,8 +111,7 @@ public class TeacherService implements ITeacherService {
         ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
-            new AuthorizationHelper().checkAuthorization(AuthorizationNamespace.getAdminRole(), Arrays.asList(teacherKey));
-            // TODO Roles: Admin, teacher itself
+            authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(teacherKey));
 
             teacherBusinessComponent.setTeacherProperties(teacherKey, properties);
             transaction.commit();
@@ -125,7 +128,7 @@ public class TeacherService implements ITeacherService {
         ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
-            new AuthorizationHelper().checkAuthorizationRoles(AuthorizationNamespace.getAllRoles());
+            authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
             // Roles:
             // - All data: Admin, teacher itself
             // - TODO Without restricted data: other teachers

@@ -3,13 +3,13 @@ package net.scholagest.services.kdom;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.scholagest.managers.IOntologyManager;
 import net.scholagest.managers.ontology.OntologyElement;
-import net.scholagest.managers.ontology.OntologyManager;
 import net.scholagest.managers.ontology.RDFS;
 import net.scholagest.namespace.CoreNamespace;
 
 public class KdomToDBConverter {
-    public Map<String, Object> convertKdomToDB(OntologyManager ontologyManager, Map<String, Object> toConvert) throws Exception {
+    public Map<String, Object> convertKdomToDB(IOntologyManager ontologyManager, Map<String, Object> toConvert) throws Exception {
         Map<String, Object> converted = new HashMap<>();
 
         for (String propertyName : toConvert.keySet()) {

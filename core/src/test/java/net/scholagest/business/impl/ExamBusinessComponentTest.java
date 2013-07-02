@@ -17,6 +17,8 @@ import net.scholagest.objects.BaseObject;
 import net.scholagest.objects.BaseObjectMock;
 import net.scholagest.utils.AbstractTestWithTransaction;
 
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -77,6 +79,17 @@ public class ExamBusinessComponentTest extends AbstractTestWithTransaction {
         BaseObject exam = testee.createExam(YEAR_KEY, CLASS_KEY, BRANCH_KEY, PERIOD_KEY, createProperties());
 
         Mockito.verify(examManager).createExam(EXAM_NAME, PERIOD_NAME, BRANCH_NAME, CLASS_NAME, YEAR_NAME);
+        Mockito.verify(examManager).setExamProperties(Mockito.eq(EXAM_KEY), Mockito.argThat(new BaseMatcher<Map<String, Object>>() {
+            @Override
+            @SuppressWarnings("unchecked")
+            public boolean matches(Object item) {
+                Map<String, Object> properties = (Map<String, Object>) item;
+                return properties.get(CoreNamespace.pExamClass).equals(CLASS_KEY);
+            }
+
+            @Override
+            public void describeTo(Description description) {}
+        }));
 
         assertEquals(EXAM_KEY, exam.getKey());
         assertEquals(CoreNamespace.tExam, exam.getType());

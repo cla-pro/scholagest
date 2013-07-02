@@ -19,14 +19,15 @@ import net.scholagest.managers.ontology.namesolving.OntologyNamesolver;
 import net.scholagest.managers.ontology.parser.OntologyParser;
 import net.scholagest.managers.ontology.saver.OntologySaver;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class OntologyHandler {
-    private static Logger LOG = Logger.getLogger(OntologyHandler.class);
+    private static Logger LOG = LogManager.getLogger(OntologyHandler.class.getName());
 
     public Ontology compileAndSaveOntology(String requestId, ITransaction transaction, Document xmlOntology) throws Exception {
         Set<Document> allOntologyAsXmlSet = extractAndDownloadsImport(xmlOntology, new HashSet<String>());
@@ -100,7 +101,7 @@ public class OntologyHandler {
         URL url = null;
         InputStream urlStream = null;
         try {
-        	System.out.println("Downloading ontology from " + urlString);
+            LOG.debug("Downloading ontology from " + urlString);
             url = new URL(urlString);
             urlStream = url.openStream();
 

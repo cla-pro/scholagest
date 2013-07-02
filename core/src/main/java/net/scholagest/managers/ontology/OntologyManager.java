@@ -6,16 +6,18 @@ import java.util.Set;
 
 import net.scholagest.database.DatabaseException;
 import net.scholagest.database.ITransaction;
+import net.scholagest.managers.IOntologyManager;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.utils.ScholagestThreadLocal;
 
 import com.google.inject.Inject;
 
-public class OntologyManager {
+public class OntologyManager implements IOntologyManager {
 
     @Inject
     public OntologyManager() {}
 
+    @Override
     public OntologyElement getElementWithName(String elementName) throws Exception {
         ITransaction transaction = ScholagestThreadLocal.getTransaction();
 
@@ -38,6 +40,7 @@ public class OntologyManager {
         return element;
     }
 
+    @Override
     public boolean isSubtypeOf(String type, String supertype) throws Exception {
         if (type.equals(supertype)) {
             return true;
@@ -61,6 +64,7 @@ public class OntologyManager {
         return false;
     }
 
+    @Override
     public Set<String> filterPropertiesWithCorrectDomain(String domain, Set<String> properties) throws Exception {
         Set<String> filteredProperties = new HashSet<>();
 
@@ -78,6 +82,7 @@ public class OntologyManager {
         return filteredProperties;
     }
 
+    @Override
     public Set<String> getPropertiesForType(String type) throws DatabaseException {
         ITransaction transaction = ScholagestThreadLocal.getTransaction();
 

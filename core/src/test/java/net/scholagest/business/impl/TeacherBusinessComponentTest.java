@@ -36,8 +36,7 @@ public class TeacherBusinessComponentTest extends AbstractTestWithTransaction {
         BaseObject teacherObject = new BaseObject(TEACHER_KEY, CoreNamespace.tTeacher);
         teacherObject.setProperties(createTeacherProperties());
 
-        Mockito.when(teacherManager.getTeacherProperties(Mockito.eq(TEACHER_KEY), Mockito.eq(createTeacherProperties().keySet()))).thenReturn(
-                teacherObject);
+        Mockito.when(teacherManager.getTeacherProperties(TEACHER_KEY, createTeacherProperties().keySet())).thenReturn(teacherObject);
         Mockito.when(teacherManager.getTeachers()).thenReturn(
                 new HashSet<BaseObject>(Arrays.asList(new BaseObject(TEACHER_KEY, CoreNamespace.tTeacher))));
 
@@ -66,6 +65,18 @@ public class TeacherBusinessComponentTest extends AbstractTestWithTransaction {
 
         assertEquals(TEACHER_KEY, teacher.getKey());
         Mockito.verify(teacherManager).createTeacher();
+        Mockito.verify(teacherManager).setTeacherProperties(teacher.getKey(), teacherProperties);
+        assertNoCallToTransaction();
+    }
+
+    @Test
+    public void testCreateTeacherNoProperties() throws Exception {
+        Map<String, Object> teacherProperties = null;
+        BaseObject teacher = testee.createTeacher(null, teacherProperties);
+
+        assertEquals(TEACHER_KEY, teacher.getKey());
+        Mockito.verify(teacherManager).createTeacher();
+        Mockito.verify(teacherManager, Mockito.never()).setTeacherProperties(teacher.getKey(), teacherProperties);
         assertNoCallToTransaction();
     }
 
@@ -102,7 +113,7 @@ public class TeacherBusinessComponentTest extends AbstractTestWithTransaction {
         Map<String, Object> teacherProperties = createTeacherProperties();
         testee.setTeacherProperties(TEACHER_KEY, teacherProperties);
 
-        Mockito.verify(teacherManager).setTeacherProperties(Mockito.eq(TEACHER_KEY), Mockito.eq(teacherProperties));
+        Mockito.verify(teacherManager).setTeacherProperties(TEACHER_KEY, teacherProperties);
         assertNoCallToTransaction();
     }
 
@@ -111,7 +122,7 @@ public class TeacherBusinessComponentTest extends AbstractTestWithTransaction {
         Map<String, Object> teacherProperties = createTeacherProperties();
         BaseObject teacher = testee.getTeacherProperties(TEACHER_KEY, teacherProperties.keySet());
 
-        Mockito.verify(teacherManager).getTeacherProperties(Mockito.eq(TEACHER_KEY), Mockito.eq(teacherProperties.keySet()));
+        Mockito.verify(teacherManager).getTeacherProperties(TEACHER_KEY, teacherProperties.keySet());
 
         assertMapEquals(teacherProperties, teacher.getProperties());
         assertNoCallToTransaction();

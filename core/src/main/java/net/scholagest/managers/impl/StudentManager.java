@@ -8,8 +8,8 @@ import java.util.UUID;
 
 import net.scholagest.database.DatabaseException;
 import net.scholagest.database.ITransaction;
+import net.scholagest.managers.IOntologyManager;
 import net.scholagest.managers.IStudentManager;
-import net.scholagest.managers.ontology.OntologyManager;
 import net.scholagest.managers.ontology.RDF;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
@@ -23,7 +23,7 @@ public class StudentManager extends ObjectManager implements IStudentManager {
     private final static String YEARS_INFO_SUFFIX = "#yearsInfo";
 
     @Inject
-    public StudentManager(OntologyManager ontologyManager) {
+    public StudentManager(IOntologyManager ontologyManager) {
         super(ontologyManager);
     }
 

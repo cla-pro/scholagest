@@ -5,10 +5,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import net.scholagest.business.IOntologyBusinessComponent;
 import net.scholagest.business.IPeriodBusinessComponent;
 import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
-import net.scholagest.namespace.AuthorizationNamespace;
+import net.scholagest.namespace.AuthorizationRolesNamespace;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IPeriodService;
@@ -22,11 +23,13 @@ import com.google.inject.Inject;
 public class PeriodService implements IPeriodService {
     private final IDatabase database;
     private final IPeriodBusinessComponent periodBusinessComponent;
+    private AuthorizationHelper authorizationHelper;
 
     @Inject
-    public PeriodService(IDatabase database, IPeriodBusinessComponent periodBusinessComponent) {
+    public PeriodService(IDatabase database, IPeriodBusinessComponent periodBusinessComponent, IOntologyBusinessComponent ontologyBusinessComponent) {
         this.database = database;
         this.periodBusinessComponent = periodBusinessComponent;
+        this.authorizationHelper = new AuthorizationHelper(ontologyBusinessComponent);
     }
 
     @Override
@@ -39,7 +42,7 @@ public class PeriodService implements IPeriodService {
                 return;
             }
 
-            new AuthorizationHelper().checkAuthorization(AuthorizationNamespace.getAdminRole(), Arrays.asList(classKey));
+            authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(classKey));
 
             periodBusinessComponent.setPeriodProperties(periodKey, periodProperties);
             transaction.commit();
@@ -61,7 +64,7 @@ public class PeriodService implements IPeriodService {
                 return null;
             }
 
-            new AuthorizationHelper().checkAuthorization(AuthorizationNamespace.getAdminRole(), Arrays.asList(classKey));
+            authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(classKey));
 
             periodInfo = periodBusinessComponent.getPeriodProperties(periodKey, properties);
 

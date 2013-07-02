@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import net.scholagest.business.IOntologyBusinessComponent;
 import net.scholagest.business.IPeriodBusinessComponent;
 import net.scholagest.exception.ScholagestException;
 import net.scholagest.exception.ScholagestExceptionErrorCode;
@@ -25,6 +26,7 @@ public class PeriodServiceTest extends AbstractTest {
 
     private InMemoryDatabase database;
     private IPeriodBusinessComponent periodBusinessComponent;
+    private IOntologyBusinessComponent ontologyBusinessComponent;
 
     private IPeriodService testee;
 
@@ -34,8 +36,9 @@ public class PeriodServiceTest extends AbstractTest {
         defineAdminSubject();
 
         periodBusinessComponent = Mockito.mock(IPeriodBusinessComponent.class);
+        ontologyBusinessComponent = Mockito.mock(IOntologyBusinessComponent.class);
 
-        testee = new PeriodService(database, periodBusinessComponent);
+        testee = new PeriodService(database, periodBusinessComponent, ontologyBusinessComponent);
     }
 
     @Test

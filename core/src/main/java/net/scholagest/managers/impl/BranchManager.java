@@ -5,7 +5,7 @@ import java.util.Set;
 
 import net.scholagest.database.ITransaction;
 import net.scholagest.managers.IBranchManager;
-import net.scholagest.managers.ontology.OntologyManager;
+import net.scholagest.managers.IOntologyManager;
 import net.scholagest.managers.ontology.types.DBSet;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
@@ -15,7 +15,7 @@ import com.google.inject.Inject;
 
 public class BranchManager extends ObjectManager implements IBranchManager {
     @Inject
-    public BranchManager(OntologyManager ontologyManager) {
+    public BranchManager(IOntologyManager ontologyManager) {
         super(ontologyManager);
     }
 

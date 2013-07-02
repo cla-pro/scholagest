@@ -5,6 +5,7 @@ import net.scholagest.database.DatabaseException;
 import net.scholagest.database.DefaultDatabaseConfiguration;
 import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
+import net.scholagest.managers.IOntologyManager;
 import net.scholagest.managers.IUserManager;
 import net.scholagest.managers.ontology.OntologyManager;
 import net.scholagest.services.impl.SecheronNamespace;
@@ -12,7 +13,7 @@ import net.scholagest.utils.ScholagestThreadLocal;
 
 public class UserTest {
     public static void main(String[] args) throws DatabaseException {
-        OntologyManager ontologyManager = new OntologyManager();
+        IOntologyManager ontologyManager = new OntologyManager();
         IUserManager userManager = new UserManager(ontologyManager);
 
         IDatabase database = new Database(new DefaultDatabaseConfiguration());

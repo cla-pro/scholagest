@@ -3,7 +3,7 @@ package net.scholagest.namespace;
 import java.util.Arrays;
 import java.util.List;
 
-public class AuthorizationNamespace {
+public class AuthorizationRolesNamespace {
     public static final String ROLE_ADMIN = "admin";
     public static final String ROLE_TEACHER = "teacher";
     public static final String ROLE_HELP_TEACHER = "helpteacher";

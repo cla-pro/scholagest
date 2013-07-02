@@ -7,11 +7,12 @@ import net.scholagest.database.Database;
 import net.scholagest.database.DatabaseException;
 import net.scholagest.database.DefaultDatabaseConfiguration;
 import net.scholagest.database.ITransaction;
+import net.scholagest.managers.IOntologyManager;
 import net.scholagest.namespace.CoreNamespace;
 
 public class OntologyReader {
     public static void main(String[] args) {
-        OntologyManager manager = new OntologyManager();
+        IOntologyManager manager = new OntologyManager();
 
         Database database = new Database(new DefaultDatabaseConfiguration());
         database.startup();

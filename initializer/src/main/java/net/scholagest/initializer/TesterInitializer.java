@@ -27,17 +27,22 @@ public class TesterInitializer extends SystemInitializer {
     private final IUserService userService;
 
     public static void main(String[] args) throws Exception {
+        String baseFolder = "initializer/tester/";
+        if (args.length > 0) {
+            baseFolder = args[0];
+        }
+
         Injector injector = Guice.createInjector(new GuiceContext(), new ShiroGuiceContext());
 
         org.apache.shiro.mgt.SecurityManager securityManager = injector.getInstance(org.apache.shiro.mgt.SecurityManager.class);
         SecurityUtils.setSecurityManager(securityManager);
 
-        injector.getInstance(TesterInitializer.class).initialize();
+        injector.getInstance(TesterInitializer.class).initialize(baseFolder);
     }
 
     @Inject
     public TesterInitializer(IStudentService studentService, ITeacherService teacherService, IUserService userService) {
-        super(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        super.setKeyspace(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         this.studentService = studentService;
         this.teacherService = teacherService;
         this.userService = userService;
@@ -62,7 +67,7 @@ public class TesterInitializer extends SystemInitializer {
     }
 
     private void createStudents() throws Exception {
-        List<Map<String, Object>> studentList = readFileAndConvertToMap("initializer/students.sga");
+        List<Map<String, Object>> studentList = readFileAndConvertToMap(getBaseFolder() + "students.sga");
 
         for (Map<String, Object> studentProperties : studentList) {
             studentService.createStudent(studentProperties);
@@ -70,10 +75,9 @@ public class TesterInitializer extends SystemInitializer {
     }
 
     private void createTeachers() throws Exception {
-        List<Map<String, Object>> teacherList = readFileAndConvertToMap("initializer/teachers.sga");
+        List<Map<String, Object>> teacherList = readFileAndConvertToMap(getBaseFolder() + "teachers.sga");
 
         for (Map<String, Object> teacherProperties : teacherList) {
-            System.out.println("Insert teacher: " + teacherProperties);
             teacherService.createTeacher("", teacherProperties);
         }
     }

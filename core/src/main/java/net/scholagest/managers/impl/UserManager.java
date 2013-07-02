@@ -3,8 +3,8 @@ package net.scholagest.managers.impl;
 import java.util.UUID;
 
 import net.scholagest.database.ITransaction;
+import net.scholagest.managers.IOntologyManager;
 import net.scholagest.managers.IUserManager;
-import net.scholagest.managers.ontology.OntologyManager;
 import net.scholagest.managers.ontology.types.DBSet;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.TokenObject;
@@ -17,7 +17,7 @@ import com.google.inject.Inject;
 
 public class UserManager extends ObjectManager implements IUserManager {
     @Inject
-    public UserManager(OntologyManager ontologyManager) {
+    public UserManager(IOntologyManager ontologyManager) {
         super(ontologyManager);
     }
 

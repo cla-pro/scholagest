@@ -2,13 +2,15 @@ package net.scholagest.services.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import net.scholagest.business.IOntologyBusinessComponent;
 import net.scholagest.business.IStudentBusinessComponent;
 import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
-import net.scholagest.namespace.AuthorizationNamespace;
+import net.scholagest.namespace.AuthorizationRolesNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IStudentService;
 import net.scholagest.shiro.AuthorizationHelper;
@@ -21,11 +23,13 @@ import com.google.inject.Inject;
 public class StudentService implements IStudentService {
     private IDatabase database = null;
     private IStudentBusinessComponent studentBusinessComponent;
+    private AuthorizationHelper authorizationHelper;
 
     @Inject
-    public StudentService(IDatabase database, IStudentBusinessComponent studentBusinessComponent) {
+    public StudentService(IDatabase database, IStudentBusinessComponent studentBusinessComponent, IOntologyBusinessComponent ontologyBusinessComponent) {
         this.database = database;
         this.studentBusinessComponent = studentBusinessComponent;
+        this.authorizationHelper = new AuthorizationHelper(ontologyBusinessComponent);
     }
 
     @Override
@@ -36,7 +40,7 @@ public class StudentService implements IStudentService {
                 .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
-            new AuthorizationHelper().checkAuthorizationRoles(AuthorizationNamespace.getAdminRole());
+            authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAdminRole());
 
             student = studentBusinessComponent.createStudent(personalProperties);
             transaction.commit();
@@ -55,7 +59,7 @@ public class StudentService implements IStudentService {
                 .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
-            new AuthorizationHelper().checkAuthorization(AuthorizationNamespace.getAdminRole(), Arrays.asList(studentKey));
+            authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(studentKey));
 
             studentBusinessComponent.updateStudentProperties(studentKey, personalProperties, medicalProperties);
             transaction.commit();
@@ -73,12 +77,12 @@ public class StudentService implements IStudentService {
                 .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
-            new AuthorizationHelper().checkAuthorizationRoles(AuthorizationNamespace.getAllRoles());
-            // TODO Roles:
-            // - All data: Admin + ClassTeacher
-            // - Without restricted data: Other teachers and help teachers
+            authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
 
-            personalProperties = studentBusinessComponent.getStudentPersonalProperties(studentKey, properties);
+            BaseObject fullObject = studentBusinessComponent.getStudentPersonalProperties(studentKey, properties);
+            personalProperties = authorizationHelper.filterObjectProperties(fullObject, AuthorizationRolesNamespace.getAdminRole(),
+                    Arrays.asList(studentKey));
+
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
@@ -96,12 +100,12 @@ public class StudentService implements IStudentService {
                 .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
-            new AuthorizationHelper().checkAuthorizationRoles(AuthorizationNamespace.getAllRoles());
-            // TODO Roles:
-            // - All data: Admin + ClassTeacher
-            // - Without restricted data: Other teachers and help teachers
+            authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
 
-            medicalProperties = studentBusinessComponent.getStudentMedicalProperties(studentKey, properties);
+            BaseObject fullObject = studentBusinessComponent.getStudentMedicalProperties(studentKey, properties);
+            medicalProperties = authorizationHelper.filterObjectProperties(fullObject, AuthorizationRolesNamespace.getAdminRole(),
+                    Arrays.asList(studentKey));
+
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
@@ -113,18 +117,20 @@ public class StudentService implements IStudentService {
 
     @Override
     public Set<BaseObject> getStudentsWithProperties(Set<String> properties) throws Exception {
-        Set<BaseObject> students = null;
+        Set<BaseObject> students = new HashSet<>();
 
         ITransaction transaction = this.database
                 .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
-            new AuthorizationHelper().checkAuthorizationRoles(AuthorizationNamespace.getAllRoles());
-            // TODO Roles:
-            // - All data: Admin + ClassTeacher
-            // - Without restricted data: Other teachers and help teachers
+            authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
 
-            students = studentBusinessComponent.getStudentsWithProperties(properties);
+            for (BaseObject baseObject : studentBusinessComponent.getStudentsWithProperties(properties)) {
+                BaseObject filtered = authorizationHelper.filterObjectProperties(baseObject, AuthorizationRolesNamespace.getAdminRole(),
+                        Arrays.asList(baseObject.getKey()));
+                students.add(filtered);
+            }
+
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
@@ -142,12 +148,11 @@ public class StudentService implements IStudentService {
                 .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
-            new AuthorizationHelper().checkAuthorizationRoles(AuthorizationNamespace.getAllRoles());
-            // TODO Roles:
-            // - All data: Admin + ClassTeacher
-            // - Without restricted data: Other teachers and help teachers
+            authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
 
-            studentObject = studentBusinessComponent.getStudentProperties(studentKey, properties);
+            BaseObject fullObject = studentBusinessComponent.getStudentProperties(studentKey, properties);
+            studentObject = authorizationHelper.filterObjectProperties(fullObject, AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(studentKey));
+
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
@@ -165,7 +170,7 @@ public class StudentService implements IStudentService {
                 .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
-            new AuthorizationHelper().checkAuthorization(AuthorizationNamespace.getAdminRole(), new ArrayList<>(studentKeys));
+            authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), new ArrayList<>(studentKeys));
 
             grades = studentBusinessComponent.getGrades(studentKeys, examKeys, yearKey);
             transaction.commit();
@@ -184,7 +189,7 @@ public class StudentService implements IStudentService {
                 .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
-            new AuthorizationHelper().checkAuthorization(AuthorizationNamespace.getAdminRole(), Arrays.asList(studentKey));
+            authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(studentKey));
 
             studentBusinessComponent.setStudentGrades(studentKey, studentGrades, yearKey, classKey, branchKey, periodKey);
             transaction.commit();

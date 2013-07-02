@@ -6,7 +6,7 @@ import java.util.Set;
 import net.scholagest.objects.BaseObject;
 
 public interface IClassBusinessComponent {
-    public BaseObject createClass(Map<String, Object> classProperties) throws Exception;
+    public BaseObject createClass(Map<String, Object> classProperties, String className, String yearKey) throws Exception;
 
     public Map<String, Set<BaseObject>> getClassesForYears(Set<String> yearKeySet) throws Exception;
 

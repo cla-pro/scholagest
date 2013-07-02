@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Map;
 
-import net.scholagest.namespace.AuthorizationNamespace;
+import net.scholagest.namespace.AuthorizationRolesNamespace;
 
 import org.apache.shiro.subject.Subject;
 import org.mockito.Mockito;
@@ -15,19 +15,19 @@ public abstract class AbstractTest {
     }
 
     public void defineAdminSubject() {
-        defineSubject(AuthorizationNamespace.ROLE_ADMIN, false);
+        defineSubject(AuthorizationRolesNamespace.ROLE_ADMIN, false);
     }
 
     public void defineClassTeacherSubject() {
-        defineSubject(AuthorizationNamespace.ROLE_TEACHER, true);
+        defineSubject(AuthorizationRolesNamespace.ROLE_TEACHER, true);
     }
 
     public void defineClassHelpTeacherSubject() {
-        defineSubject(AuthorizationNamespace.ROLE_HELP_TEACHER, false);
+        defineSubject(AuthorizationRolesNamespace.ROLE_HELP_TEACHER, false);
     }
 
     public void defineOtherTeacherSubject() {
-        defineSubject(AuthorizationNamespace.ROLE_TEACHER, false);
+        defineSubject(AuthorizationRolesNamespace.ROLE_TEACHER, false);
     }
 
     private void defineSubject(String role, boolean isPermitted) {

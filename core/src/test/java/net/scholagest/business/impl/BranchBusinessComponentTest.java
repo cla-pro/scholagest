@@ -19,6 +19,8 @@ import net.scholagest.objects.BaseObjectMock;
 import net.scholagest.services.kdom.KSet;
 import net.scholagest.utils.AbstractTestWithTransaction;
 
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -112,7 +114,21 @@ public class BranchBusinessComponentTest extends AbstractTestWithTransaction {
         BaseObject branch = testee.createBranch(CLASS_KEY, mockProperties);
 
         assertEquals(BRANCH_KEY, branch.getKey());
-        Mockito.verify(branchManager).createBranch(Mockito.eq(BRANCH_NAME), Mockito.eq(CLASS_NAME), Mockito.eq(YEAR_NAME));
+        Mockito.verify(branchManager).createBranch(BRANCH_NAME, CLASS_NAME, YEAR_NAME);
+        Mockito.verify(branchManager).setBranchProperties(Mockito.eq(BRANCH_KEY), Mockito.argThat(new BaseMatcher<Map<String, Object>>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public boolean matches(Object item) {
+                Map<String, Object> properties = (Map<String, Object>) item;
+                return properties.get(CoreNamespace.pBranchClass).equals(CLASS_KEY);
+            }
+
+            @Override
+            public void describeTo(Description description) {}
+        }));
+
+        Mockito.verify(periodManager, Mockito.times(3)).createPeriod(Mockito.anyString(), Mockito.eq(BRANCH_NAME), Mockito.eq(CLASS_NAME),
+                Mockito.eq(YEAR_NAME));
     }
 
     @Test

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import net.scholagest.business.IBranchBusinessComponent;
+import net.scholagest.business.IOntologyBusinessComponent;
 import net.scholagest.exception.ScholagestException;
 import net.scholagest.exception.ScholagestExceptionErrorCode;
 import net.scholagest.namespace.CoreNamespace;
@@ -22,9 +23,11 @@ import org.mockito.Mockito;
 
 public class BranchServiceTest extends AbstractTest {
     private static final String CLASS_KEY = "classKey";
-    private InMemoryDatabase database;
 
+    private InMemoryDatabase database;
     private IBranchBusinessComponent branchBusinessComponent;
+    private IOntologyBusinessComponent ontologyBusinessComponent;
+
     private IBranchService testee;
 
     @Before
@@ -33,8 +36,9 @@ public class BranchServiceTest extends AbstractTest {
         defineAdminSubject();
 
         branchBusinessComponent = Mockito.mock(IBranchBusinessComponent.class);
+        ontologyBusinessComponent = Mockito.mock(IOntologyBusinessComponent.class);
 
-        testee = new BranchService(database, branchBusinessComponent);
+        testee = new BranchService(database, branchBusinessComponent, ontologyBusinessComponent);
     }
 
     @Test

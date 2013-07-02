@@ -166,9 +166,9 @@ public class RestUserService extends AbstractService {
     }
 
     @GET
-    @Path("/closeSession")
+    @Path("/logout")
     @Produces("text/json")
-    public String closeSession(@QueryParam("token") String token) {
+    public String logout(@QueryParam("token") String token) {
         ITransaction transaction = this.database.getTransaction(ScholagestNamespace.scholagestKeyspace);
         try {
             for (String column : transaction.getColumns(token)) {

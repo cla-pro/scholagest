@@ -8,7 +8,7 @@ import net.scholagest.objects.BaseObject;
 public interface IClassService {
     // Create a new class into the current year. Throws an exception if no year
     // is currently running or if a class with the same name already exists.
-    public BaseObject createClass(Map<String, Object> classProperties) throws Exception;
+    public BaseObject createClass(Map<String, Object> classProperties, String className, String yearKey) throws Exception;
 
     public Map<String, Set<BaseObject>> getClassesForYears(Set<String> yearKeyList) throws Exception;
 

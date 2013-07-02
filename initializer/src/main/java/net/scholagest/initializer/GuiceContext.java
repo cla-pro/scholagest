@@ -3,6 +3,7 @@ package net.scholagest.initializer;
 import net.scholagest.business.IBranchBusinessComponent;
 import net.scholagest.business.IClassBusinessComponent;
 import net.scholagest.business.IExamBusinessComponent;
+import net.scholagest.business.IOntologyBusinessComponent;
 import net.scholagest.business.IPageBusinessComponent;
 import net.scholagest.business.IPeriodBusinessComponent;
 import net.scholagest.business.IStudentBusinessComponent;
@@ -12,6 +13,7 @@ import net.scholagest.business.IYearBusinessComponent;
 import net.scholagest.business.impl.BranchBusinessComponent;
 import net.scholagest.business.impl.ClassBusinessComponent;
 import net.scholagest.business.impl.ExamBusinessComponent;
+import net.scholagest.business.impl.OntologyBusinessComponent;
 import net.scholagest.business.impl.PageBusinessComponent;
 import net.scholagest.business.impl.PeriodBusinessComponent;
 import net.scholagest.business.impl.StudentBusinessComponent;
@@ -25,6 +27,7 @@ import net.scholagest.database.IDatabaseConfiguration;
 import net.scholagest.managers.IBranchManager;
 import net.scholagest.managers.IClassManager;
 import net.scholagest.managers.IExamManager;
+import net.scholagest.managers.IOntologyManager;
 import net.scholagest.managers.IPageManager;
 import net.scholagest.managers.IPeriodManager;
 import net.scholagest.managers.IStudentManager;
@@ -72,7 +75,8 @@ public class GuiceContext extends AbstractModule {
         bind(ITeacherBusinessComponent.class).to(TeacherBusinessComponent.class);
         bind(ITeacherService.class).to(TeacherService.class);
 
-        bind(OntologyManager.class);
+        bind(IOntologyManager.class).to(OntologyManager.class);
+        bind(IOntologyBusinessComponent.class).to(OntologyBusinessComponent.class);
         bind(IOntologyService.class).to(OntologyService.class);
 
         bind(IUserManager.class).to(UserManager.class);

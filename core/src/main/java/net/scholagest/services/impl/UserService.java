@@ -5,11 +5,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import net.scholagest.business.IOntologyBusinessComponent;
 import net.scholagest.business.IPageBusinessComponent;
 import net.scholagest.business.IUserBusinessComponent;
 import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
-import net.scholagest.namespace.AuthorizationNamespace;
+import net.scholagest.namespace.AuthorizationRolesNamespace;
 import net.scholagest.objects.PageObject;
 import net.scholagest.services.IUserService;
 import net.scholagest.shiro.AuthorizationHelper;
@@ -25,12 +26,15 @@ public class UserService implements IUserService {
     private IDatabase database;
     private IUserBusinessComponent userBusinessComponent;
     private IPageBusinessComponent pageBusinessComponent;
+    private AuthorizationHelper authorizationHelper;
 
     @Inject
-    public UserService(IDatabase database, IUserBusinessComponent userBusinessComponent, IPageBusinessComponent pageBusinessComponent) {
+    public UserService(IDatabase database, IUserBusinessComponent userBusinessComponent, IPageBusinessComponent pageBusinessComponent,
+            IOntologyBusinessComponent ontologyBusinessComponent) {
         this.database = database;
         this.userBusinessComponent = userBusinessComponent;
         this.pageBusinessComponent = pageBusinessComponent;
+        this.authorizationHelper = new AuthorizationHelper(ontologyBusinessComponent);
     }
 
     @Override
@@ -40,10 +44,12 @@ public class UserService implements IUserService {
 
         List<String> modules = Collections.emptyList();
         try {
-            new AuthorizationHelper().checkAuthorizationRoles(AuthorizationNamespace.getAllRoles());
+            authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
 
             Set<PageObject> pageObjects = pageBusinessComponent.getAllPages();
-            modules = extractPath(pageObjects);
+            Set<PageObject> filteredPageObjects = authorizationHelper.filterPages(pageObjects);
+
+            modules = extractPath(filteredPageObjects);
             // TODO read in DB
             // return new String[] { "js/base.js", "js/base-html.js",
             // "modules/teacher.html", "js/teacher.js", "modules/student.html",

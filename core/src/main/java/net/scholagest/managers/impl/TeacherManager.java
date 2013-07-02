@@ -6,8 +6,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import net.scholagest.database.ITransaction;
+import net.scholagest.managers.IOntologyManager;
 import net.scholagest.managers.ITeacherManager;
-import net.scholagest.managers.ontology.OntologyManager;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.utils.ScholagestThreadLocal;
@@ -16,7 +16,7 @@ import com.google.inject.Inject;
 
 public class TeacherManager extends ObjectManager implements ITeacherManager {
     @Inject
-    public TeacherManager(OntologyManager ontologyManager) {
+    public TeacherManager(IOntologyManager ontologyManager) {
         super(ontologyManager);
     }
 

@@ -4,8 +4,8 @@ import java.util.Map;
 import java.util.Set;
 
 import net.scholagest.database.ITransaction;
+import net.scholagest.managers.IOntologyManager;
 import net.scholagest.managers.IPeriodManager;
-import net.scholagest.managers.ontology.OntologyManager;
 import net.scholagest.managers.ontology.types.DBSet;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
@@ -15,7 +15,7 @@ import com.google.inject.Inject;
 
 public class PeriodManager extends ObjectManager implements IPeriodManager {
     @Inject
-    protected PeriodManager(OntologyManager ontologyManager) {
+    protected PeriodManager(IOntologyManager ontologyManager) {
         super(ontologyManager);
     }
 

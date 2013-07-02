@@ -8,8 +8,8 @@ import java.util.UUID;
 
 import net.scholagest.database.DatabaseException;
 import net.scholagest.database.ITransaction;
+import net.scholagest.managers.IOntologyManager;
 import net.scholagest.managers.ontology.OntologyElement;
-import net.scholagest.managers.ontology.OntologyManager;
 import net.scholagest.managers.ontology.RDF;
 import net.scholagest.managers.ontology.RDFS;
 import net.scholagest.managers.ontology.types.DBSet;
@@ -23,11 +23,11 @@ import org.joda.time.format.DateTimeFormatter;
 public class ObjectManager {
     private static final String DATE_TIME_FORMAT_PATTERN = "YYYY-MM-dd HH:mm:ss:SSS";
 
-    private OntologyManager ontologyManager;
+    private IOntologyManager ontologyManager;
 
     private DateTimeFormatter dateTimeFormatter;
 
-    protected ObjectManager(OntologyManager ontologyManager) {
+    protected ObjectManager(IOntologyManager ontologyManager) {
         this.ontologyManager = ontologyManager;
         dateTimeFormatter = DateTimeFormat.forPattern(DATE_TIME_FORMAT_PATTERN);
     }

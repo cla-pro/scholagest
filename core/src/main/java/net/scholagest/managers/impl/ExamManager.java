@@ -5,7 +5,7 @@ import java.util.Set;
 
 import net.scholagest.database.ITransaction;
 import net.scholagest.managers.IExamManager;
-import net.scholagest.managers.ontology.OntologyManager;
+import net.scholagest.managers.IOntologyManager;
 import net.scholagest.managers.ontology.types.DBSet;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
@@ -15,7 +15,7 @@ import com.google.inject.Inject;
 
 public class ExamManager extends ObjectManager implements IExamManager {
     @Inject
-    public ExamManager(OntologyManager ontologyManager) {
+    public ExamManager(IOntologyManager ontologyManager) {
         super(ontologyManager);
     }
 

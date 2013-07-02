@@ -6,10 +6,10 @@
 	<owl:Ontology rdf:about="http://scholagest.net/2012/06/rdf-schema#">
 		<rdfs:comment>The scholagest ontology</rdfs:comment>
 <!--         <owl:imports rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns"/> -->
-        <owl:imports rdf:resource="file:///D:/Programming/eclipse-workspace/scholagest/core/src/test/resources/22-rdf-syntax-ns.rdfs" />
+        <owl:imports rdf:resource="file:///D:/Programming/eclipse-workspace/scholagest/initializer/src/main/resources/initializer/tester/ontology/22-rdf-syntax-ns.rdfs" />
 <!--         <owl:imports rdf:resource="http://www.w3.org/2000/01/rdf-schema"/> -->
-        <owl:imports rdf:resource="file:///D:/Programming/eclipse-workspace/scholagest/core/src/test/resources/rdf-schema.rdfs" />
-        <owl:imports rdf:resource="file:///D:/Programming/eclipse-workspace/scholagest/core/src/test/resources/scholagest-types.rdfs" />
+        <owl:imports rdf:resource="file:///D:/Programming/eclipse-workspace/scholagest/initializer/src/main/resources/initializer/tester/ontology/rdf-schema.rdfs" />
+        <owl:imports rdf:resource="file:///D:/Programming/eclipse-workspace/scholagest/initializer/src/main/resources/initializer/tester/ontology/scholagest-types.rdfs" />
 	</owl:Ontology>
     
     <rdfs:Property rdf:ID="pUserUsername" rdfs:comment="User's username">
@@ -38,7 +38,7 @@
         <rdfs:range rdf:resource="sg:Calendar"/>
     </rdfs:Property>
     
-    <rdfs:Property rdf:ID="pPageRole" rdfs:comment="Page's roles">
+    <rdfs:Property rdf:ID="pPageRoles" rdfs:comment="Page's roles">
         <rdfs:domain rdf:resource="sg:tPage"/>
         <rdfs:range rdf:resource="sg:Set"/>
     </rdfs:Property>
@@ -91,10 +91,12 @@
         <rdfs:domain rdf:resource="sg:tStudent"/>
         <rdfs:range rdf:resource="sg:tStudentMedicalInfo"/>
         <sg:displayText rdf:resource="Informations Médicales" />
+        <sg:restricted rdf:resource="Restricted" />
     </rdfs:Property>
     <rdfs:Property rdf:ID="pStudentYears" rdfs:comment="Student years' list">
         <rdfs:domain rdf:resource="sg:tStudent"/>
         <rdfs:range rdf:resource="sg:tStudentYears"/>
+        <sg:restricted rdf:resource="Restricted" />
     </rdfs:Property>
 	
     <rdfs:Property rdf:ID="pStudentFirstName" rdfs:comment="Student's first name">
@@ -121,6 +123,12 @@
         <rdfs:domain rdf:resource="sg:tStudentPersonalInfo"/>
         <rdfs:range rdf:resource="sg:String"/>
         <sg:displayText rdf:resource="Code postal" />
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pStudentReligion" rdfs:comment="Student's religion">
+        <rdfs:domain rdf:resource="sg:tStudentPersonalInfo"/>
+        <rdfs:range rdf:resource="sg:String"/>
+        <sg:displayText rdf:resource="Religion" />
+        <sg:restricted rdf:resource="Restricted" />
     </rdfs:Property>
     
     <rdfs:Property rdf:ID="pStudentDoctor" rdfs:comment="Student doctor">

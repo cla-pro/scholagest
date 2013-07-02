@@ -5,12 +5,16 @@ import java.net.URLEncoder;
 
 import net.scholagest.tester.jaxb.TCall;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.mortbay.io.Buffer;
 import org.mortbay.io.ByteArrayBuffer;
 import org.mortbay.jetty.client.ContentExchange;
 import org.mortbay.jetty.client.HttpClient;
 
 public class CallHandler {
+    private static Logger LOG = LogManager.getLogger(CallHandler.class);
+
     private final ResponseAnalyzer responseAnalyzer;
     private final Placeholder placeholder;
 
@@ -22,6 +26,7 @@ public class CallHandler {
     public void handleCallAndException(String baseUrl, TCall call) {
         try {
             ContentExchange contentExchange = handleCall(baseUrl, call);
+            LOG.info("Analyze call response");
             responseAnalyzer.analyzeContentExchange(call, contentExchange);
         } catch (Exception e) {
             e.printStackTrace();
@@ -46,6 +51,8 @@ public class CallHandler {
             if (httpMethod.equals("POST")) {
                 contentExchange.setRequestContent(createContent(parameters));
             }
+
+            LOG.debug("Call URL: " + encoded);
 
             httpClient.send(contentExchange);
             contentExchange.waitForDone();

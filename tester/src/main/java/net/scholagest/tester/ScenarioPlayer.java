@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.scholagest.initializer.TesterInitializer;
 import net.scholagest.tester.jaxb.TCall;
 import net.scholagest.tester.jaxb.TScenario;
 import net.scholagest.tester.result.CallResult;
@@ -11,10 +12,16 @@ import net.scholagest.tester.result.FieldResult;
 import net.scholagest.tester.result.TestResult;
 import net.scholagest.tester.result.TestResultStatus;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class ScenarioPlayer {
+    private static Logger LOG = LogManager.getLogger(ScenarioPlayer.class);
+
     public void playScenarioList(List<TScenario> scenarioList) {
         List<TestResult> testResultList = new ArrayList<>();
         for (TScenario scenario : scenarioList) {
+            LOG.info("Playing scenario: " + scenario.getName());
             testResultList.add(playScenario(scenario));
         }
 
@@ -24,12 +31,27 @@ public class ScenarioPlayer {
     private TestResult playScenario(TScenario scenario) {
         Placeholder placeholder = new Placeholder();
         ResponseAnalyzer responseAnalyzer = new ResponseAnalyzer(placeholder, scenario.getName());
+        initializeSzenario(scenario.getInitializationFolder());
 
         for (TCall call : scenario.getCalls().getCall()) {
+            LOG.info("Handle call: " + call.getId());
             new CallHandler(responseAnalyzer, placeholder).handleCallAndException(scenario.getBaseURL(), call);
         }
 
         return responseAnalyzer.getTestResult();
+    }
+
+    private void initializeSzenario(String initializationFolder) {
+        // String keyspace =
+        // ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE);
+        // DBReset.resetKeyspace(new DefaultDatabaseConfiguration(), keyspace);
+
+        LOG.info("Reinitializing the DB");
+        try {
+            TesterInitializer.main(new String[] { initializationFolder });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private TestResultStatus areAllTestResultsOk(List<TestResult> testResultList) {

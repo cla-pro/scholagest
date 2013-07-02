@@ -6,9 +6,10 @@ import java.util.Map;
 import java.util.Set;
 
 import net.scholagest.business.IBranchBusinessComponent;
+import net.scholagest.business.IOntologyBusinessComponent;
 import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
-import net.scholagest.namespace.AuthorizationNamespace;
+import net.scholagest.namespace.AuthorizationRolesNamespace;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IBranchService;
@@ -21,11 +22,13 @@ import com.google.inject.Inject;
 public class BranchService implements IBranchService {
     private final IDatabase database;
     private final IBranchBusinessComponent branchBusinessComponent;
+    private AuthorizationHelper authorizationHelper;
 
     @Inject
-    public BranchService(IDatabase database, IBranchBusinessComponent branchBusinessComponent) {
+    public BranchService(IDatabase database, IBranchBusinessComponent branchBusinessComponent, IOntologyBusinessComponent ontologyBusinessComponent) {
         this.database = database;
         this.branchBusinessComponent = branchBusinessComponent;
+        this.authorizationHelper = new AuthorizationHelper(ontologyBusinessComponent);
     }
 
     @Override
@@ -34,7 +37,7 @@ public class BranchService implements IBranchService {
 
         ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         try {
-            new AuthorizationHelper().checkAuthorization(AuthorizationNamespace.getAdminRole(), Arrays.asList(classKey));
+            authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(classKey));
 
             branch = branchBusinessComponent.createBranch(classKey, branchProperties);
 
@@ -58,7 +61,7 @@ public class BranchService implements IBranchService {
                 return null;
             }
 
-            new AuthorizationHelper().checkAuthorization(AuthorizationNamespace.getAdminRole(), Arrays.asList(classKey));
+            authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(classKey));
 
             branchInfo = branchBusinessComponent.getBranchProperties(branchKey, propertiesName);
 
@@ -80,7 +83,7 @@ public class BranchService implements IBranchService {
                 return;
             }
 
-            new AuthorizationHelper().checkAuthorization(AuthorizationNamespace.getAdminRole(), Arrays.asList(classKey));
+            authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(classKey));
 
             branchBusinessComponent.setBranchProperties(branchKey, properties);
             transaction.commit();

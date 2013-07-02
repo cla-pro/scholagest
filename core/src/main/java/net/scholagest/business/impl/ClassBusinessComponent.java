@@ -25,14 +25,15 @@ public class ClassBusinessComponent implements IClassBusinessComponent {
     }
 
     @Override
-    public BaseObject createClass(Map<String, Object> classProperties) throws Exception {
-        String yearKey = (String) classProperties.get(CoreNamespace.pClassYear);
-
+    public BaseObject createClass(Map<String, Object> classProperties, String className, String yearKey) throws Exception {
         Set<String> properties = new HashSet<>();
         properties.add(CoreNamespace.pYearName);
         String yearName = (String) yearManager.getYearProperties(yearKey, properties).getProperty(CoreNamespace.pYearName);
 
-        BaseObject clazz = classManager.createClass((String) classProperties.get(CoreNamespace.pClassName), yearName);
+        BaseObject clazz = classManager.createClass(className, yearName);
+
+        classProperties.put(CoreNamespace.pClassName, className);
+        classProperties.put(CoreNamespace.pClassYear, yearKey);
         classManager.setClassProperties(clazz.getKey(), classProperties);
 
         yearManager.addClassToYear(yearKey, clazz.getKey());

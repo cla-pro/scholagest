@@ -7,10 +7,11 @@ import java.util.Map;
 import java.util.Set;
 
 import net.scholagest.business.IClassBusinessComponent;
+import net.scholagest.business.IOntologyBusinessComponent;
 import net.scholagest.business.IUserBusinessComponent;
 import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
-import net.scholagest.namespace.AuthorizationNamespace;
+import net.scholagest.namespace.AuthorizationRolesNamespace;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IClassService;
@@ -26,24 +27,27 @@ public class ClassService implements IClassService {
     private final IDatabase database;
     private final IClassBusinessComponent classBusinessComponent;
     private final IUserBusinessComponent userBusinessComponent;
+    private AuthorizationHelper authorizationHelper;
 
     @Inject
-    public ClassService(IDatabase database, IClassBusinessComponent classBusinessComponent, IUserBusinessComponent userBusinessComponent) {
+    public ClassService(IDatabase database, IClassBusinessComponent classBusinessComponent, IUserBusinessComponent userBusinessComponent,
+            IOntologyBusinessComponent ontologyBusinessComponent) {
         this.database = database;
         this.classBusinessComponent = classBusinessComponent;
         this.userBusinessComponent = userBusinessComponent;
+        this.authorizationHelper = new AuthorizationHelper(ontologyBusinessComponent);
     }
 
     @Override
-    public BaseObject createClass(Map<String, Object> classProperties) throws Exception {
+    public BaseObject createClass(Map<String, Object> classProperties, String className, String yearKey) throws Exception {
         BaseObject clazz = null;
 
         ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
-            new AuthorizationHelper().checkAuthorizationRoles(AuthorizationNamespace.getAdminRole());
+            authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAdminRole());
 
-            clazz = classBusinessComponent.createClass(classProperties);
+            clazz = classBusinessComponent.createClass(classProperties, className, yearKey);
 
             transaction.commit();
         } catch (Exception e) {
@@ -61,7 +65,7 @@ public class ClassService implements IClassService {
         ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
-            new AuthorizationHelper().checkAuthorizationRoles(AuthorizationNamespace.getAllRoles());
+            authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
 
             classes = classBusinessComponent.getClassesForYears(yearKeySet);
 
@@ -81,7 +85,7 @@ public class ClassService implements IClassService {
         ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
-            new AuthorizationHelper().checkAuthorizationRoles(AuthorizationNamespace.getAllRoles());
+            authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
 
             classInfo = classBusinessComponent.getClassProperties(classKey, propertiesName);
 
@@ -99,7 +103,7 @@ public class ClassService implements IClassService {
         ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
-            new AuthorizationHelper().checkAuthorizationRoles(AuthorizationNamespace.getAdminRole());
+            authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAdminRole());
 
             BaseObject oldClass = classBusinessComponent.getClassProperties(classKey,
                     new HashSet<String>(Arrays.asList(CoreNamespace.pClassStudents, CoreNamespace.pClassTeachers)));

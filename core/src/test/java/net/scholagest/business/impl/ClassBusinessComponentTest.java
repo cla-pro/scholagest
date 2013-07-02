@@ -15,6 +15,8 @@ import net.scholagest.objects.BaseObject;
 import net.scholagest.objects.BaseObjectMock;
 import net.scholagest.utils.AbstractTestWithTransaction;
 
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -61,13 +63,25 @@ public class ClassBusinessComponentTest extends AbstractTestWithTransaction {
 
     @Test
     public void testCreateClass() throws Exception {
-        Map<String, Object> properties = new HashMap<String, Object>();
-        properties.put(CoreNamespace.pClassYear, YEAR_KEY);
-        BaseObject classKey = testee.createClass(properties);
+        Map<String, Object> classProperties = new HashMap<>();
+        BaseObject classKey = testee.createClass(classProperties, CLASS_NAME, YEAR_KEY);
 
         assertEquals(CLASS_KEY, classKey.getKey());
-        Mockito.verify(classManager).createClass(Mockito.anyString(), Mockito.anyString());
-        Mockito.verify(yearManager).addClassToYear(Mockito.eq(YEAR_KEY), Mockito.eq(CLASS_KEY));
+        Mockito.verify(classManager).createClass(CLASS_NAME, null);
+        Mockito.verify(classManager).setClassProperties(Mockito.eq(CLASS_KEY), Mockito.argThat(new BaseMatcher<Map<String, Object>>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public boolean matches(Object item) {
+                Map<String, Object> properties = (Map<String, Object>) item;
+                boolean hasClassName = properties.get(CoreNamespace.pClassName).equals(CLASS_NAME);
+                boolean hasYearKey = properties.get(CoreNamespace.pClassYear).equals(YEAR_KEY);
+                return hasClassName && hasYearKey;
+            }
+
+            @Override
+            public void describeTo(Description description) {}
+        }));
+        Mockito.verify(yearManager).addClassToYear(YEAR_KEY, CLASS_KEY);
     }
 
     @Test

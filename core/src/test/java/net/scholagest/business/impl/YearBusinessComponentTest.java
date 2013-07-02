@@ -51,7 +51,7 @@ public class YearBusinessComponentTest extends AbstractTestWithTransaction {
         BaseObject year = testee.startYear(YEAR_NAME);
 
         assertEquals(YEAR_KEY, year.getKey());
-        Mockito.verify(yearManager).restoreYear(Mockito.eq(year.getKey()));
+        Mockito.verify(yearManager).restoreYear(year.getKey());
         assertNoCallToTransaction();
     }
 

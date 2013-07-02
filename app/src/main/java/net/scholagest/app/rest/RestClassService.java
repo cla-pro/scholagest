@@ -59,7 +59,7 @@ public class RestClassService extends AbstractService {
             Map<String, Object> classInfo = JerseyHelper.listToMap(keys, new ArrayList<Object>(values));
             classInfo.put(CoreNamespace.pClassYear, yearKey);
 
-            BaseObject clazz = classService.createClass(classInfo);
+            BaseObject clazz = classService.createClass(classInfo, (String) classInfo.get(CoreNamespace.pClassName), yearKey);
             RestObject restClass = new RestToKdomConverter().restObjectFromKdom(clazz);
 
             String json = new Gson().toJson(restClass);

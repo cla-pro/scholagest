@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scenario xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="xsd/scenario.xsd">
-    <name>Scenario 1</name>
+    <name>Teacher authorization</name>
     <description></description>
     <baseURL>http://localhost:8080/scholagest-app/services</baseURL>
+    <initializationFolder>initializer/tester/</initializationFolder>
     <calls>
         <call>
             <id>1.1 - Authenticate admin</id>
             <url>/user/authenticate</url>
             <httpMethod>GET</httpMethod>
-            <parameters>username=admin&password=admin</parameters>
+            <parameters>username=admin&amp;password=admin</parameters>
             <expectedResult>
                 <result>
                     <path>token</path>
@@ -21,7 +22,7 @@
             <id>1.2 - Authenticate class teacher</id>
             <url>/user/authenticate</url>
             <httpMethod>GET</httpMethod>
-            <parameters>username=clavanchy&password=</parameters>
+            <parameters>username=clavanchy&amp;password=</parameters>
             <expectedResult>
                 <result>
                     <path>token</path>
@@ -33,7 +34,7 @@
             <id>1.3 - Authenticate other teacher</id>
             <url>/user/authenticate</url>
             <httpMethod>GET</httpMethod>
-            <parameters>username=vparvex&password=</parameters>
+            <parameters>username=vparvex&amp;password=</parameters>
             <expectedResult>
                 <result>
                     <path>token</path>
@@ -45,7 +46,7 @@
             <id>2.1 - Check the authorization (getTeachers) with the admin rights</id>
             <url>/teacher/getTeachers</url>
             <httpMethod>GET</httpMethod>
-            <parameters>token=$$adminToken$$&properties=pTeacherFirstName&properties=pTeacherLastName</parameters>
+            <parameters>token=$$adminToken$$&amp;properties=pTeacherFirstName&amp;properties=pTeacherLastName</parameters>
             <expectedResult>
                 <result>
                     <path>info/0/properties/pTeacherFirstName</path>
@@ -57,7 +58,7 @@
             <id>2.2 - Check the authorization (getTeachers) with the class teacher rights</id>
             <url>/teacher/getTeachers</url>
             <httpMethod>GET</httpMethod>
-            <parameters>token=$$classTeacherToken$$&properties=pTeacherFirstName&properties=pTeacherLastName</parameters>
+            <parameters>token=$$classTeacherToken$$&amp;properties=pTeacherFirstName&amp;properties=pTeacherLastName</parameters>
             <expectedResult>
                 <result>
                     <path>info/0/properties/pTeacherFirstName</path>
@@ -69,7 +70,7 @@
             <id>2.3 - Check the authorization (getTeachers) with the other teacher rights</id>
             <url>/teacher/getTeachers</url>
             <httpMethod>GET</httpMethod>
-            <parameters>token=$$otherTeacherToken$$&properties=pTeacherFirstName&properties=pTeacherLastName</parameters>
+            <parameters>token=$$otherTeacherToken$$&amp;properties=pTeacherFirstName&amp;properties=pTeacherLastName</parameters>
             <expectedResult>
                 <result>
                     <path>info/0/properties/pTeacherFirstName</path>
@@ -81,7 +82,7 @@
             <id>3.1 - Check the authorization (getTeachersInfo) with the admin rights</id>
             <url>/teacher/getTeachersInfo</url>
             <httpMethod>GET</httpMethod>
-            <parameters>token=$$adminToken$$&teachers=&properties=pTeacherFirstName&properties=pTeacherLastName</parameters>
+            <parameters>token=$$adminToken$$&amp;teachers=&amp;properties=pTeacherFirstName&amp;properties=pTeacherLastName</parameters>
             <expectedResult>
                 <result>
                     <path>info/0/properties/pTeacherFirstName</path>
@@ -93,7 +94,7 @@
             <id>3.2 - Check the authorization (getTeachersInfo) with the class teacher rights</id>
             <url>/teacher/getTeachersInfo</url>
             <httpMethod>GET</httpMethod>
-            <parameters>token=$$classTeacherToken$$&teachers=&properties=pTeacherFirstName&properties=pTeacherLastName</parameters>
+            <parameters>token=$$classTeacherToken$$&amp;teachers=&amp;properties=pTeacherFirstName&amp;properties=pTeacherLastName</parameters>
             <expectedResult>
                 <result>
                     <path>info/0/properties/pTeacherFirstName</path>
@@ -105,7 +106,7 @@
             <id>3.3 - Check the authorization (getTeachersInfo) with the other teacher rights</id>
             <url>/teacher/getTeachersInfo</url>
             <httpMethod>GET</httpMethod>
-            <parameters>token=$$otherTeacherToken$$&teachers=&properties=pTeacherFirstName&properties=pTeacherLastName</parameters>
+            <parameters>token=$$otherTeacherToken$$&amp;teachers=&amp;properties=pTeacherFirstName&amp;properties=pTeacherLastName</parameters>
             <expectedResult>
                 <result>
                     <path>info/0/properties/pTeacherFirstName</path>
@@ -117,7 +118,7 @@
             <id>4.1 - Check the authorization (getProperties) with the admin rights</id>
             <url>/teacher/getProperties</url>
             <httpMethod>GET</httpMethod>
-            <parameters>token=$$adminToken$$&teacherKey=&properties=pTeacherFirstName&properties=pTeacherLastName</parameters>
+            <parameters>token=$$adminToken$$&amp;teacherKey=&amp;properties=pTeacherFirstName&amp;properties=pTeacherLastName</parameters>
             <expectedResult>
                 <result>
                     <path>info/properties/pTeacherFirstName</path>
@@ -129,7 +130,7 @@
             <id>4.2 - Check the authorization (getProperties) with the class teacher rights</id>
             <url>/teacher/getProperties</url>
             <httpMethod>GET</httpMethod>
-            <parameters>token=$$classTeacherToken$$&teacherKey=&properties=pTeacherFirstName&properties=pTeacherLastName</parameters>
+            <parameters>token=$$classTeacherToken$$&amp;teacherKey=&amp;properties=pTeacherFirstName&amp;properties=pTeacherLastName</parameters>
             <expectedResult>
                 <result>
                     <path>info/0roperties/pTeacherFirstName</path>
@@ -141,7 +142,7 @@
             <id>4.3 - Check the authorization (getProperties) with the other teacher rights</id>
             <url>/teacher/getProperties</url>
             <httpMethod>GET</httpMethod>
-            <parameters>token=$$otherTeacherToken$$&teacherKey=&properties=pTeacherFirstName&properties=pTeacherLastName</parameters>
+            <parameters>token=$$otherTeacherToken$$&amp;teacherKey=&amp;properties=pTeacherFirstName&amp;properties=pTeacherLastName</parameters>
             <expectedResult>
                 <result>
                     <path>info/properties/pTeacherFirstName</path>
@@ -153,7 +154,7 @@
             <id>5.1 - Check the authorization (setProperties) with the admin rights</id>
             <url>/teacher/setProperties</url>
             <httpMethod>POST</httpMethod>
-            <parameters>{token=$$adminToken$$&teacherKey=&properties=pTeacherFirstName&properties=pTeacherLastName}</parameters>
+            <parameters>{token=$$adminToken$$&amp;teacherKey=&amp;properties=pTeacherFirstName&amp;properties=pTeacherLastName}</parameters>
             <expectedResult>
                 <result>
                     <path>info</path>
@@ -165,7 +166,7 @@
             <id>5.2 - Check the authorization (setProperties) with the class teacher rights</id>
             <url>/teacher/setProperties</url>
             <httpMethod>POST</httpMethod>
-            <parameters>{token=$$classTeacherToken$$&teacherKey=&properties=pTeacherFirstName&properties=pTeacherLastName}</parameters>
+            <parameters>{token=$$classTeacherToken$$&amp;teacherKey=&amp;properties=pTeacherFirstName&amp;properties=pTeacherLastName}</parameters>
             <expectedResult>
                 <result>
                     <path>info</path>
@@ -177,7 +178,7 @@
             <id>5.3 - Check the authorization (setProperties) with the other teacher rights</id>
             <url>/teacher/setProperties</url>
             <httpMethod>POST</httpMethod>
-            <parameters>{token=$$otherTeacherToken$$&teacherKey=&properties=pTeacherFirstName&properties=pTeacherLastName}</parameters>
+            <parameters>{token=$$otherTeacherToken$$&amp;teacherKey=&amp;properties=pTeacherFirstName&amp;properties=pTeacherLastName}</parameters>
             <expectedResult>
                 <result>
                     <path>errorCode</path>
@@ -189,7 +190,7 @@
             <id>11.1 - Check the authorization (create) with the admin rights</id>
             <url>/teacher/create</url>
             <httpMethod>GET</httpMethod>
-            <parameters>token=$$adminToken$$&properties=pTeacherFirstName&properties=pTeacherLastName</parameters>
+            <parameters>token=$$adminToken$$&amp;properties=pTeacherFirstName&amp;properties=pTeacherLastName</parameters>
             <expectedResult>
                 <result>
                     <path>info</path>
@@ -201,7 +202,7 @@
             <id>11.2 - Check the authorization (create) with the class teacher rights</id>
             <url>/teacher/create</url>
             <httpMethod>GET</httpMethod>
-            <parameters>token=$$classTeacherToken$$&properties=pTeacherFirstName&properties=pTeacherLastName</parameters>
+            <parameters>token=$$classTeacherToken$$&amp;properties=pTeacherFirstName&amp;properties=pTeacherLastName</parameters>
             <expectedResult>
                 <result>
                     <path>errorCode</path>
@@ -213,7 +214,7 @@
             <id>11.3 - Check the authorization (create) with the other teacher rights</id>
             <url>/teacher/create</url>
             <httpMethod>GET</httpMethod>
-            <parameters>token=$$otherTeacherToken$$&properties=pTeacherFirstName&properties=pTeacherLastName</parameters>
+            <parameters>token=$$otherTeacherToken$$&amp;properties=pTeacherFirstName&amp;properties=pTeacherLastName</parameters>
             <expectedResult>
                 <result>
                     <path>errorCode</path>

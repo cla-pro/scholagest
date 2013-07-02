@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import net.scholagest.business.IOntologyBusinessComponent;
 import net.scholagest.business.ITeacherBusinessComponent;
 import net.scholagest.business.IUserBusinessComponent;
 import net.scholagest.database.ITransaction;
@@ -26,9 +27,10 @@ import org.mockito.Mockito;
 
 public class TeacherServiceTest extends AbstractTest {
     private InMemoryDatabase database;
-
     private ITeacherBusinessComponent teacherBusinessComponent;
     private IUserBusinessComponent userBusinessComponent;
+    private IOntologyBusinessComponent ontologyBusinessComponent;
+
     private ITeacherService testee;
 
     @Before
@@ -38,8 +40,9 @@ public class TeacherServiceTest extends AbstractTest {
 
         teacherBusinessComponent = Mockito.mock(ITeacherBusinessComponent.class);
         userBusinessComponent = Mockito.mock(IUserBusinessComponent.class);
+        ontologyBusinessComponent = Mockito.mock(IOntologyBusinessComponent.class);
 
-        testee = new TeacherService(database, teacherBusinessComponent, userBusinessComponent);
+        testee = new TeacherService(database, teacherBusinessComponent, userBusinessComponent, ontologyBusinessComponent);
     }
 
     @Test

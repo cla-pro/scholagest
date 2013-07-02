@@ -8,8 +8,8 @@ import java.util.Set;
 import net.scholagest.database.ITransaction;
 import net.scholagest.exception.ScholagestException;
 import net.scholagest.exception.ScholagestExceptionErrorCode;
+import net.scholagest.managers.IOntologyManager;
 import net.scholagest.managers.IYearManager;
-import net.scholagest.managers.ontology.OntologyManager;
 import net.scholagest.managers.ontology.RDF;
 import net.scholagest.managers.ontology.types.DBSet;
 import net.scholagest.namespace.CoreNamespace;
@@ -21,7 +21,7 @@ import com.google.inject.Inject;
 public class YearManager extends ObjectManager implements IYearManager {
 
     @Inject
-    public YearManager(OntologyManager ontologyManager) {
+    public YearManager(IOntologyManager ontologyManager) {
         super(ontologyManager);
     }
 

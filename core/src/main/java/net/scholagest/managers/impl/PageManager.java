@@ -6,8 +6,8 @@ import java.util.UUID;
 
 import net.scholagest.database.DatabaseException;
 import net.scholagest.database.ITransaction;
+import net.scholagest.managers.IOntologyManager;
 import net.scholagest.managers.IPageManager;
-import net.scholagest.managers.ontology.OntologyManager;
 import net.scholagest.managers.ontology.types.DBSet;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.PageObject;
@@ -17,7 +17,7 @@ import com.google.inject.Inject;
 
 public class PageManager extends ObjectManager implements IPageManager {
     @Inject
-    public PageManager(OntologyManager ontologyManager) {
+    public PageManager(IOntologyManager ontologyManager) {
         super(ontologyManager);
     }
 

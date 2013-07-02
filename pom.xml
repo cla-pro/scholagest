@@ -40,18 +40,18 @@
 		</plugins>
 	</build>
     
-<!--     <modules> -->
-<!--         <module>core</module> -->
-<!--         <module>app</module> -->
-<!--         <module>tester</module> -->
-<!--     </modules> -->
-    
     <profiles>
         <profile>
             <id>application</id>
             <modules>
                 <module>core</module>
                 <module>app</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>initializer</id>
+            <modules>
+                <module>initializer</module>
             </modules>
         </profile>
         <profile>

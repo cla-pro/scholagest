@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.scholagest.managers.IOntologyManager;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.utils.AbstractTestWithTransaction;
 
@@ -18,7 +19,7 @@ public class OntologyManagerTest extends AbstractTestWithTransaction {
     public void testGetElementWithNameClass() throws Exception {
         super.fillTransactionWithDataSets(new String[] { "Ontology" });
 
-        OntologyManager manager = new OntologyManager();
+        IOntologyManager manager = new OntologyManager();
         OntologyElement elementWithName = manager.getElementWithName(CoreNamespace.tStudent);
         assertNotNull(elementWithName);
         assertEquals(RDFS.clazz, elementWithName.getType());
@@ -29,7 +30,7 @@ public class OntologyManagerTest extends AbstractTestWithTransaction {
     public void testGetElementWithNameProperty() throws Exception {
         super.fillTransactionWithDataSets(new String[] { "Ontology" });
 
-        OntologyManager manager = new OntologyManager();
+        IOntologyManager manager = new OntologyManager();
         OntologyElement elementWithName = manager.getElementWithName(CoreNamespace.pStudentPersonalInfo);
         assertNotNull(elementWithName);
         assertEquals(RDFS.property, elementWithName.getType());
@@ -43,7 +44,7 @@ public class OntologyManagerTest extends AbstractTestWithTransaction {
     public void testIsSubTypeOf() throws Exception {
         super.fillTransactionWithDataSets(new String[] { "Ontology" });
 
-        OntologyManager manager = new OntologyManager();
+        IOntologyManager manager = new OntologyManager();
         assertFalse(manager.isSubtypeOf(CoreNamespace.tStudent, CoreNamespace.tGroup));
         assertTrue(manager.isSubtypeOf(CoreNamespace.tStudentPersonalInfo, CoreNamespace.tGroup));
     }
@@ -52,7 +53,7 @@ public class OntologyManagerTest extends AbstractTestWithTransaction {
     public void testFilterPropertiesWithCorrectDomain() throws Exception {
         super.fillTransactionWithDataSets(new String[] { "Ontology" });
 
-        OntologyManager manager = new OntologyManager();
+        IOntologyManager manager = new OntologyManager();
 
         String domain = CoreNamespace.tTeacher;
         Set<String> notFilteredProperties = new HashSet<>();
@@ -71,7 +72,7 @@ public class OntologyManagerTest extends AbstractTestWithTransaction {
 
         String[] expectedProperties = { CoreNamespace.pStudentPersonalInfo, CoreNamespace.pStudentMedicalInfo };
 
-        OntologyManager manager = new OntologyManager();
+        IOntologyManager manager = new OntologyManager();
         Set<String> propertiesForType = manager.getPropertiesForType(CoreNamespace.tStudent);
 
         assertNotNull(propertiesForType);

@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import net.scholagest.business.IClassBusinessComponent;
+import net.scholagest.business.IOntologyBusinessComponent;
 import net.scholagest.business.IUserBusinessComponent;
 import net.scholagest.exception.ScholagestException;
 import net.scholagest.exception.ScholagestExceptionErrorCode;
@@ -25,9 +26,10 @@ import org.mockito.Mockito;
 
 public class ClassServiceTest extends AbstractTest {
     private InMemoryDatabase database;
-
     private IClassBusinessComponent classBusinessComponent;
     private IUserBusinessComponent userBusinessComponent;
+    private IOntologyBusinessComponent ontologyBusinessComponent;
+
     private IClassService testee;
 
     @Before
@@ -37,23 +39,30 @@ public class ClassServiceTest extends AbstractTest {
 
         classBusinessComponent = Mockito.mock(IClassBusinessComponent.class);
         userBusinessComponent = Mockito.mock(IUserBusinessComponent.class);
+        ontologyBusinessComponent = Mockito.mock(IOntologyBusinessComponent.class);
 
-        testee = new ClassService(database, classBusinessComponent, userBusinessComponent);
+        testee = new ClassService(database, classBusinessComponent, userBusinessComponent, ontologyBusinessComponent);
     }
 
     @Test
     public void testCreateClass() throws Exception {
-        testee.createClass(new HashMap<String, Object>());
+        String className = "CLASS NAME";
+        String yearKey = "YEAR KEY";
+        HashMap<String, Object> classProperties = new HashMap<String, Object>();
+        testee.createClass(classProperties, className, yearKey);
 
-        Mockito.verify(classBusinessComponent).createClass(Mockito.anyMapOf(String.class, Object.class));
+        Mockito.verify(classBusinessComponent).createClass(classProperties, className, yearKey);
         Mockito.verify(database).getTransaction(getKeyspace());
     }
 
     @Test
     public void testCreateClassInsufficientPrivileges() throws Exception {
+        String className = "CLASS NAME";
+        String yearKey = "YEAR KEY";
+        HashMap<String, Object> classProperties = new HashMap<String, Object>();
         try {
             defineClassTeacherSubject();
-            testee.createClass(new HashMap<String, Object>());
+            testee.createClass(classProperties, className, yearKey);
             fail("ScholagestException expected");
         } catch (ScholagestException e) {
             assertEquals(ScholagestExceptionErrorCode.INSUFFICIENT_PRIVILEGES, e.getErrorCode());
@@ -61,7 +70,7 @@ public class ClassServiceTest extends AbstractTest {
 
         try {
             defineClassHelpTeacherSubject();
-            testee.createClass(new HashMap<String, Object>());
+            testee.createClass(classProperties, className, yearKey);
             fail("ScholagestException expected");
         } catch (ScholagestException e) {
             assertEquals(ScholagestExceptionErrorCode.INSUFFICIENT_PRIVILEGES, e.getErrorCode());
@@ -69,7 +78,7 @@ public class ClassServiceTest extends AbstractTest {
 
         try {
             defineOtherTeacherSubject();
-            testee.createClass(new HashMap<String, Object>());
+            testee.createClass(classProperties, className, yearKey);
             fail("ScholagestException expected");
         } catch (ScholagestException e) {
             assertEquals(ScholagestExceptionErrorCode.INSUFFICIENT_PRIVILEGES, e.getErrorCode());

@@ -5,6 +5,7 @@ import static org.junit.Assert.fail;
 
 import java.util.HashSet;
 
+import net.scholagest.business.IOntologyBusinessComponent;
 import net.scholagest.business.IYearBusinessComponent;
 import net.scholagest.exception.ScholagestException;
 import net.scholagest.exception.ScholagestExceptionErrorCode;
@@ -18,8 +19,9 @@ import org.mockito.Mockito;
 
 public class YearServiceTest extends AbstractTest {
     private InMemoryDatabase database;
-
     private IYearBusinessComponent yearBusinessComponent;
+    private IOntologyBusinessComponent ontologyBusinessComponent;
+
     private IYearService testee;
 
     @Before
@@ -28,8 +30,9 @@ public class YearServiceTest extends AbstractTest {
         defineAdminSubject();
 
         yearBusinessComponent = Mockito.mock(IYearBusinessComponent.class);
+        ontologyBusinessComponent = Mockito.mock(IOntologyBusinessComponent.class);
 
-        testee = new YearService(database, yearBusinessComponent);
+        testee = new YearService(database, yearBusinessComponent, ontologyBusinessComponent);
     }
 
     @Test
