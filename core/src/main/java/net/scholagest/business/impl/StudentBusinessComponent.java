@@ -1,5 +1,6 @@
 package net.scholagest.business.impl;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -7,6 +8,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import net.scholagest.business.IStudentBusinessComponent;
+import net.scholagest.exception.ScholagestException;
+import net.scholagest.exception.ScholagestExceptionErrorCode;
 import net.scholagest.managers.IBranchManager;
 import net.scholagest.managers.IClassManager;
 import net.scholagest.managers.IExamManager;
@@ -15,7 +18,8 @@ import net.scholagest.managers.IStudentManager;
 import net.scholagest.managers.IYearManager;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
-import net.scholagest.services.kdom.DBToKdomConverter;
+import net.scholagest.objects.BranchObject;
+import net.scholagest.objects.BranchType;
 
 import com.google.inject.Inject;
 
@@ -26,8 +30,6 @@ public class StudentBusinessComponent implements IStudentBusinessComponent {
     private IBranchManager branchManager;
     private IClassManager classManager;
     private IYearManager yearManager;
-
-    private DBToKdomConverter converter = new DBToKdomConverter();
 
     @Inject
     public StudentBusinessComponent(IStudentManager studentManager, IYearManager yearManager, IClassManager classManager,
@@ -48,7 +50,7 @@ public class StudentBusinessComponent implements IStudentBusinessComponent {
             studentManager.setPersonalProperties(student.getKey(), personalProperties);
         }
 
-        return converter.convertDbToKdom(student);
+        return student;
     }
 
     @Override
@@ -60,14 +62,12 @@ public class StudentBusinessComponent implements IStudentBusinessComponent {
 
     @Override
     public BaseObject getStudentPersonalProperties(String studentKey, Set<String> properties) throws Exception {
-        BaseObject personalProperties = studentManager.getPersonalProperties(studentKey, properties);
-        return converter.convertDbToKdom(personalProperties);
+        return studentManager.getPersonalProperties(studentKey, properties);
     }
 
     @Override
     public BaseObject getStudentMedicalProperties(String studentKey, Set<String> properties) throws Exception {
-        BaseObject medicalProperties = studentManager.getMedicalProperties(studentKey, properties);
-        return converter.convertDbToKdom(medicalProperties);
+        return studentManager.getMedicalProperties(studentKey, properties);
     }
 
     @Override
@@ -77,7 +77,7 @@ public class StudentBusinessComponent implements IStudentBusinessComponent {
         for (BaseObject student : studentManager.getStudents()) {
             BaseObject personalInfo = studentManager.getPersonalProperties(student.getKey(), properties);
             student.setProperties(personalInfo.getProperties());
-            students.add(converter.convertDbToKdom(student));
+            students.add(student);
         }
 
         return students;
@@ -85,8 +85,7 @@ public class StudentBusinessComponent implements IStudentBusinessComponent {
 
     @Override
     public BaseObject getStudentProperties(String studentKey, Set<String> properties) throws Exception {
-        BaseObject studentObject = studentManager.getStudentProperties(studentKey, properties);
-        return converter.convertDbToKdom(studentObject);
+        return studentManager.getStudentProperties(studentKey, properties);
     }
 
     @Override
@@ -105,7 +104,29 @@ public class StudentBusinessComponent implements IStudentBusinessComponent {
     public void setStudentGrades(String studentKey, Map<String, BaseObject> studentGrades, String yearKey, String classKey, String branchKey,
             String periodKey) throws Exception {
         for (String examKey : studentGrades.keySet()) {
+            checkGradesType(studentGrades, branchKey);
             setGradeForExam(studentKey, yearKey, classKey, branchKey, periodKey, examKey, studentGrades.get(examKey));
+        }
+    }
+
+    private void checkGradesType(Map<String, BaseObject> studentGrades, String branchKey) throws Exception {
+        BranchObject branch = branchManager.getBranchProperties(branchKey, new HashSet<String>(Arrays.asList(CoreNamespace.pBranchType)));
+        boolean isNumerical = branch.getBranchType() == BranchType.NUMERICAL;
+
+        if (isNumerical) {
+            for (String examKey : studentGrades.keySet()) {
+                BaseObject grade = studentGrades.get(examKey);
+                String gradeValue = (String) grade.getProperty(CoreNamespace.pGradeValue);
+
+                try {
+                    if (gradeValue != null) {
+                        Double.parseDouble(gradeValue);
+                    }
+                } catch (NumberFormatException e) {
+                    throw new ScholagestException(ScholagestExceptionErrorCode.GRADE_NOT_NUMERICAL, "Invalid numerical grade for branch " + branchKey
+                            + ", exam: " + examKey + " and value: " + gradeValue);
+                }
+            }
         }
     }
 

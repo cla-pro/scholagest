@@ -12,7 +12,9 @@ import net.scholagest.database.ITransaction;
 import net.scholagest.namespace.AuthorizationRolesNamespace;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
+import net.scholagest.objects.BranchObject;
 import net.scholagest.services.IBranchService;
+import net.scholagest.services.kdom.DBToKdomConverter;
 import net.scholagest.shiro.AuthorizationHelper;
 import net.scholagest.utils.ConfigurationServiceImpl;
 import net.scholagest.utils.ScholagestProperty;
@@ -39,7 +41,8 @@ public class BranchService implements IBranchService {
         try {
             authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(classKey));
 
-            branch = branchBusinessComponent.createBranch(classKey, branchProperties);
+            BranchObject dbBranch = branchBusinessComponent.createBranch(classKey, branchProperties);
+            branch = new DBToKdomConverter().convertDbToKdom(dbBranch);
 
             transaction.commit();
         } catch (Exception e) {
@@ -63,7 +66,8 @@ public class BranchService implements IBranchService {
 
             authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(classKey));
 
-            branchInfo = branchBusinessComponent.getBranchProperties(branchKey, propertiesName);
+            BranchObject dbBranch = branchBusinessComponent.getBranchProperties(branchKey, propertiesName);
+            branchInfo = new DBToKdomConverter().convertDbToKdom(dbBranch);
 
             transaction.commit();
         } catch (Exception e) {
@@ -86,6 +90,7 @@ public class BranchService implements IBranchService {
             authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(classKey));
 
             branchBusinessComponent.setBranchProperties(branchKey, properties);
+
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();

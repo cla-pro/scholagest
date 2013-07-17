@@ -13,7 +13,7 @@ import net.scholagest.managers.IPeriodManager;
 import net.scholagest.managers.IYearManager;
 import net.scholagest.managers.ontology.types.DBSet;
 import net.scholagest.namespace.CoreNamespace;
-import net.scholagest.objects.BaseObject;
+import net.scholagest.objects.ExamObject;
 
 import com.google.inject.Inject;
 
@@ -35,16 +35,16 @@ public class ExamBusinessComponent implements IExamBusinessComponent {
     }
 
     @Override
-    public BaseObject createExam(String yearKey, String classKey, String branchKey, String periodKey, Map<String, Object> examProperties)
+    public ExamObject createExam(String yearKey, String classKey, String branchKey, String periodKey, Map<String, Object> examProperties)
             throws Exception {
         String yearName = getYearName(yearKey);
         String className = getClassName(classKey);
         String branchName = getBranchName(branchKey);
         String periodName = getPeriodName(periodKey);
 
-        BaseObject exam = examManager.createExam((String) examProperties.get(CoreNamespace.pExamName), periodName, branchName, className, yearName);
+        ExamObject exam = examManager.createExam((String) examProperties.get(CoreNamespace.pExamName), classKey, periodName, branchName, className,
+                yearName);
 
-        examProperties.put(CoreNamespace.pExamClass, classKey);
         examManager.setExamProperties(exam.getKey(), examProperties);
 
         DBSet periodExams = (DBSet) periodManager.getPeriodProperties(periodKey, new HashSet<>(Arrays.asList(CoreNamespace.pPeriodExams)))
@@ -79,7 +79,7 @@ public class ExamBusinessComponent implements IExamBusinessComponent {
     }
 
     @Override
-    public BaseObject getExamProperties(String examKey, Set<String> propertiesName) throws Exception {
+    public ExamObject getExamProperties(String examKey, Set<String> propertiesName) throws Exception {
         return examManager.getExamProperties(examKey, propertiesName);
     }
 }

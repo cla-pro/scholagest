@@ -76,6 +76,7 @@ public class CallHandler {
     }
 
     private String encodeParameters(String parameters) throws UnsupportedEncodingException {
+        System.err.println("Parameters " + parameters);
         String[] allParams = parameters.split("&");
 
         StringBuilder paramBuilder = new StringBuilder();
@@ -90,7 +91,11 @@ public class CallHandler {
             String[] keyValue = param.split("=");
             paramBuilder.append(keyValue[0]);
             paramBuilder.append("=");
-            paramBuilder.append(encoreUrl(keyValue[1]));
+            if (keyValue.length == 2) {
+                paramBuilder.append(encoreUrl(keyValue[1]));
+            } else {
+                paramBuilder.append("");
+            }
         }
 
         return paramBuilder.toString();

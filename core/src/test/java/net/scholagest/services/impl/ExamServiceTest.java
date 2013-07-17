@@ -13,7 +13,8 @@ import net.scholagest.business.IOntologyBusinessComponent;
 import net.scholagest.exception.ScholagestException;
 import net.scholagest.exception.ScholagestExceptionErrorCode;
 import net.scholagest.namespace.CoreNamespace;
-import net.scholagest.objects.BaseObject;
+import net.scholagest.objects.BaseObjectMock;
+import net.scholagest.objects.ExamObject;
 import net.scholagest.services.IExamService;
 import net.scholagest.utils.AbstractTest;
 import net.scholagest.utils.InMemoryDatabase;
@@ -128,8 +129,8 @@ public class ExamServiceTest extends AbstractTest {
         }
     }
 
-    private BaseObject createClassKeyObject() {
-        BaseObject classKeyObject = new BaseObject(null, null);
+    private ExamObject createClassKeyObject() {
+        ExamObject classKeyObject = BaseObjectMock.createExamObject(null, new HashMap<String, Object>());
 
         classKeyObject.putProperty(CoreNamespace.pExamClass, CLASS_KEY);
 

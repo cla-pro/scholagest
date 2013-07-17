@@ -2,6 +2,7 @@ package net.scholagest.business.impl;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import net.scholagest.business.IUserBusinessComponent;
@@ -10,7 +11,6 @@ import net.scholagest.managers.IUserManager;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.objects.UserObject;
-import net.scholagest.services.kdom.KSet;
 import net.scholagest.shiro.ScholagestTokenToken;
 import net.scholagest.shiro.ScholagestUsernameToken;
 
@@ -66,22 +66,22 @@ public class UserBusinessComponent implements IUserBusinessComponent {
     }
 
     @Override
-    public void removeUsersPermissions(String teacherKey, KSet students) throws Exception {
+    public void removeUsersPermissions(String teacherKey, Set<String> rights) throws Exception {
         BaseObject teacher = teacherManager.getTeacherProperties(teacherKey, new HashSet<>(Arrays.asList(CoreNamespace.pTeacherUser)));
         UserObject userObject = userManager.getUser((String) teacher.getProperties().get(CoreNamespace.pTeacherUser));
 
-        for (Object studentKey : students.getValues()) {
-            userObject.getPermissions().remove((String) studentKey);
+        for (String singleRight : rights) {
+            userObject.getPermissions().remove(singleRight);
         }
     }
 
     @Override
-    public void addUsersPermissions(String teacherKey, KSet students) throws Exception {
+    public void addUsersPermissions(String teacherKey, Set<String> rights) throws Exception {
         BaseObject teacher = teacherManager.getTeacherProperties(teacherKey, new HashSet<>(Arrays.asList(CoreNamespace.pTeacherUser)));
         UserObject userObject = userManager.getUser((String) teacher.getProperties().get(CoreNamespace.pTeacherUser));
 
-        for (Object studentKey : students.getValues()) {
-            userObject.getPermissions().add((String) studentKey);
+        for (String singleRight : rights) {
+            userObject.getPermissions().add(singleRight);
         }
     }
 }

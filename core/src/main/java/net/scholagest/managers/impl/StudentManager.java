@@ -149,11 +149,11 @@ public class StudentManager extends ObjectManager implements IStudentManager {
             if (gradeKey == null) {
                 studentGrades.put(examKey, null);
             } else {
-                BaseObject examObject = new BaseObject(gradeKey, CoreNamespace.tGrade);
+                BaseObject gradeObject = new BaseObject(gradeKey, CoreNamespace.tGrade);
                 Map<String, Object> examProperties = new HashMap<>();
                 examProperties.put(CoreNamespace.pGradeValue, transaction.get(gradeKey, CoreNamespace.pGradeValue, null));
-                examObject.setProperties(examProperties);
-                studentGrades.put(examKey, examObject);
+                gradeObject.setProperties(examProperties);
+                studentGrades.put(examKey, gradeObject);
             }
         }
 

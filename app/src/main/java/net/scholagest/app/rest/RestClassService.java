@@ -117,23 +117,6 @@ public class RestClassService extends AbstractService {
         return classesInfo;
     }
 
-    // private String buildJsonForClasses(Map<String, Set<BaseObject>>
-    // yearClassesInfo) {
-    // String jsonString = "{";
-    // Gson gson = new Gson();
-    //
-    // for (String yearKey : yearClassesInfo.keySet()) {
-    // if (!jsonString.equals("{")) {
-    // jsonString += ",";
-    // }
-    //
-    // jsonString += "\"" + yearKey + "\": " +
-    // gson.toJson(converter.convertObjectToJson(yearClassesInfo.get(yearKey)));
-    // }
-    //
-    // return jsonString + "}";
-    // }
-
     @GET
     @Path("/getProperties")
     @Produces("text/json")
@@ -169,13 +152,14 @@ public class RestClassService extends AbstractService {
     @POST
     @Path("/setProperties")
     @Produces("text/json")
-    public String setClassProperties(@QueryParam("token") String token, String content) {
+    public String setClassProperties(String content) {
         ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         try {
-            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
-
             RestRequest request = new Gson().fromJson(content, RestRequest.class);
+
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(request.getToken()));
+
             RestObject requestObject = request.getObject();
             BaseObject baseObject = new RestToKdomConverter().baseObjectFromRest(requestObject);
 

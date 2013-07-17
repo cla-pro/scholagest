@@ -9,6 +9,7 @@ import net.scholagest.database.ITransaction;
 import net.scholagest.namespace.AuthorizationRolesNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IYearService;
+import net.scholagest.services.kdom.DBToKdomConverter;
 import net.scholagest.shiro.AuthorizationHelper;
 import net.scholagest.utils.ConfigurationServiceImpl;
 import net.scholagest.utils.ScholagestProperty;
@@ -38,7 +39,8 @@ public class YearService implements IYearService {
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAdminRole());
 
-            year = yearBusinessComponent.startYear(yearName);
+            BaseObject dbYear = yearBusinessComponent.startYear(yearName);
+            year = new DBToKdomConverter().convertDbToKdom(dbYear);
 
             transaction.commit();
         } catch (Exception e) {
@@ -76,7 +78,8 @@ public class YearService implements IYearService {
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
 
-            currentYear = yearBusinessComponent.getCurrentYearKey();
+            BaseObject dbCurrentYear = yearBusinessComponent.getCurrentYearKey();
+            currentYear = new DBToKdomConverter().convertDbToKdom(dbCurrentYear);
 
             transaction.commit();
         } catch (Exception e) {
@@ -96,7 +99,8 @@ public class YearService implements IYearService {
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
 
-            years = yearBusinessComponent.getYearsWithProperties(properties);
+            Set<BaseObject> dbYears = yearBusinessComponent.getYearsWithProperties(properties);
+            years = new DBToKdomConverter().convertDbSetToKdom(dbYears);
 
             transaction.commit();
         } catch (Exception e) {

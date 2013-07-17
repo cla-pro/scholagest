@@ -83,8 +83,8 @@ public class RestUserService extends AbstractService {
 
             pages = userService.getVisibleModules(token);
         } catch (Exception e) {
-            e.printStackTrace();
-            return "";
+            // e.printStackTrace();
+            return "<meta http-equiv=\"refresh\" content=\"0; url=" + getBaseUrl() + "html/login.html\" />";
         }
 
         StringBuilder builder = new StringBuilder();

@@ -12,7 +12,8 @@ import net.scholagest.business.IPeriodBusinessComponent;
 import net.scholagest.exception.ScholagestException;
 import net.scholagest.exception.ScholagestExceptionErrorCode;
 import net.scholagest.namespace.CoreNamespace;
-import net.scholagest.objects.BaseObject;
+import net.scholagest.objects.BaseObjectMock;
+import net.scholagest.objects.PeriodObject;
 import net.scholagest.services.IPeriodService;
 import net.scholagest.utils.AbstractTest;
 import net.scholagest.utils.InMemoryDatabase;
@@ -127,11 +128,11 @@ public class PeriodServiceTest extends AbstractTest {
         }
     }
 
-    private BaseObject createClassKeyObject() {
-        BaseObject classKeyObject = new BaseObject(null, null);
+    private PeriodObject createClassKeyObject() {
+        PeriodObject periodObject = BaseObjectMock.createPeriodObject(null, new HashMap<String, Object>());
 
-        classKeyObject.putProperty(CoreNamespace.pPeriodClass, CLASS_KEY);
+        periodObject.putProperty(CoreNamespace.pPeriodClass, CLASS_KEY);
 
-        return classKeyObject;
+        return periodObject;
     }
 }

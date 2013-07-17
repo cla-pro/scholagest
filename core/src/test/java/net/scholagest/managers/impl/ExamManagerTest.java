@@ -23,6 +23,7 @@ import org.mockito.Mockito;
 public class ExamManagerTest extends AbstractTestWithTransaction {
     private static final String YEAR_NAME = "2012-2013";
     private static final String CLASS_NAME = "1P A";
+    private static final String CLASS_KEY = "classKey";
     private static final String BRANCH_NAME = "Math";
     private static final String PERIOD_NAME = "Trimestre 1";
     private static final String EXAM_NAME = "Recitation 1";
@@ -33,7 +34,7 @@ public class ExamManagerTest extends AbstractTestWithTransaction {
 
     @Test
     public void testCreateNewExam() throws Exception {
-        BaseObject exam = examManager.createExam(EXAM_NAME, PERIOD_NAME, BRANCH_NAME, CLASS_NAME, YEAR_NAME);
+        BaseObject exam = examManager.createExam(EXAM_NAME, CLASS_KEY, PERIOD_NAME, BRANCH_NAME, CLASS_NAME, YEAR_NAME);
 
         assertEquals(EXAM_KEY, exam.getKey());
         Mockito.verify(transaction).insert(EXAM_KEY, RDF.type, CoreNamespace.tExam, null);
@@ -70,7 +71,7 @@ public class ExamManagerTest extends AbstractTestWithTransaction {
 
         Map<String, Object> examProperties = new ExamManagerTest().createExamProperties();
 
-        BaseObject exam = examManager.createExam(EXAM_NAME, PERIOD_NAME, BRANCH_NAME, CLASS_NAME, YEAR_NAME);
+        BaseObject exam = examManager.createExam(EXAM_NAME, CLASS_KEY, PERIOD_NAME, BRANCH_NAME, CLASS_NAME, YEAR_NAME);
         examManager.setExamProperties(exam.getKey(), examProperties);
 
         Map<String, Map<String, Map<String, Object>>> databaseContent = new HashMap<>();

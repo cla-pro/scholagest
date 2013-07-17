@@ -1,0 +1,77 @@
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+		xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+		xmlns:owl="http://www.w3.org/2002/07/owl#"
+		xmlns:sg="http://scholagest.net#">
+	
+	<owl:Ontology rdf:about="http://scholagest.net/2012/06/rdf-schema#">
+		<rdfs:comment>The scholagest ontology</rdfs:comment>
+<!-- 		<owl:imports rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns"/> -->
+        <owl:imports rdf:resource="file:///D:/Programming/eclipse-workspace/scholagest/core/src/test/resources/22-rdf-syntax-ns.rdfs" />
+<!-- 		<owl:imports rdf:resource="http://www.w3.org/2000/01/rdf-schema"/> -->
+        <owl:imports rdf:resource="file:///D:/Programming/eclipse-workspace/scholagest/core/src/test/resources/rdf-schema.rdfs" />
+        <owl:imports rdf:resource="file:///D:/Programming/eclipse-workspace/scholagest/core/src/test/resources/scholagest-base-types.rdfs"/>
+	</owl:Ontology>
+    
+    <rdfs:Property rdf:ID="http://scholagest.net#displayText" rdfs:comment="Display text">
+        <rdfs:domain rdf:resource="rdfs:Property"/>
+        <rdfs:range rdf:resource="String"/>
+    </rdfs:Property>
+    
+    <rdfs:Property rdf:ID="http://scholagest.net#restricted" rdfs:comment="Restricted field">
+        <rdfs:domain rdf:resource="rdfs:Property"/>
+        <rdfs:range rdf:resource="String"/>
+    </rdfs:Property>
+    
+    <rdfs:Class rdf:ID="http://scholagest.net#tUser">
+        <rdfs:comment>User representation</rdfs:comment>
+    </rdfs:Class>
+    <rdfs:Class rdf:ID="http://scholagest.net#tToken">
+        <rdfs:comment>Token representation</rdfs:comment>
+    </rdfs:Class>
+    <rdfs:Class rdf:ID="http://scholagest.net#tPage">
+        <rdfs:comment>Page representation</rdfs:comment>
+    </rdfs:Class>
+	
+    <rdfs:Class rdf:ID="http://scholagest.net#tTeacher">
+        <rdfs:comment>Teacher representation</rdfs:comment>
+    </rdfs:Class>
+    <rdfs:Class rdf:ID="http://scholagest.net#tStudent">
+        <rdfs:comment>Student representation</rdfs:comment>
+    </rdfs:Class>
+    <rdfs:Class rdf:ID="http://scholagest.net#tGroup">
+        <rdfs:comment></rdfs:comment>
+    </rdfs:Class>
+    <rdfs:Class rdf:ID="http://scholagest.net#tStudentPersonalInfo">
+        <rdfs:comment>Student's personal info</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="sg:tGroup" />
+    </rdfs:Class>
+    <rdfs:Class rdf:ID="http://scholagest.net#tStudentMedicalInfo">
+        <rdfs:comment>Student's medical info</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="sg:tGroup" />
+    </rdfs:Class>
+    <rdfs:Class rdf:ID="http://scholagest.net#tStudentScholarInfo">
+        <rdfs:comment>Student's scholar info</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="sg:tGroup" />
+    </rdfs:Class>
+    <rdfs:Class rdf:ID="http://scholagest.net#tYear">
+        <rdfs:comment>Year</rdfs:comment>
+    </rdfs:Class>
+    <rdfs:Class rdf:ID="http://scholagest.net#tClass">
+        <rdfs:comment>Class</rdfs:comment>
+    </rdfs:Class>
+    <rdfs:Class rdf:ID="http://scholagest.net#tBranch">
+        <rdfs:comment>Branch</rdfs:comment>
+    </rdfs:Class>
+    <rdfs:Class rdf:ID="http://scholagest.net#tPeriod">
+        <rdfs:comment>Period</rdfs:comment>
+    </rdfs:Class>
+    <rdfs:Class rdf:ID="http://scholagest.net#tExam">
+        <rdfs:comment>Exam</rdfs:comment>
+    </rdfs:Class>
+    <rdfs:Class rdf:ID="http://scholagest.net#tGrade">
+        <rdfs:comment>Grade</rdfs:comment>
+    </rdfs:Class>
+    <rdfs:Class rdf:ID="http://scholagest.net#tStudentYears">
+        <rdfs:comment>Student's year info</rdfs:comment>
+    </rdfs:Class>
+</rdf:RDF>

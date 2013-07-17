@@ -16,13 +16,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class ScenarioPlayer {
-    private static Logger LOG = LogManager.getLogger(ScenarioPlayer.class);
+    private static Logger LOG = LogManager.getLogger(ScenarioPlayer.class.getName());
+    private static Logger LOG_RESULT = LogManager.getLogger("RESULT");
 
     public void playScenarioList(List<TScenario> scenarioList) {
         List<TestResult> testResultList = new ArrayList<>();
         for (TScenario scenario : scenarioList) {
-            LOG.info("Playing scenario: " + scenario.getName());
+            LOG.info("============================= Playing scenario: " + scenario.getName());
             testResultList.add(playScenario(scenario));
+            LOG.info("============================= Scenario complete: " + scenario.getName());
         }
 
         printResults(testResultList);
@@ -42,10 +44,6 @@ public class ScenarioPlayer {
     }
 
     private void initializeSzenario(String initializationFolder) {
-        // String keyspace =
-        // ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE);
-        // DBReset.resetKeyspace(new DefaultDatabaseConfiguration(), keyspace);
-
         LOG.info("Reinitializing the DB");
         try {
             TesterInitializer.main(new String[] { initializationFolder });
@@ -65,23 +63,26 @@ public class ScenarioPlayer {
     }
 
     private void printResults(List<TestResult> testResultList) {
+        LOG_RESULT.info("=======================================");
+        LOG_RESULT.info("==================== All results");
+
         for (TestResult testResult : testResultList) {
             displayResults(testResult);
         }
 
-        System.out.println("End result: " + areAllTestResultsOk(testResultList));
+        LOG_RESULT.info("End result: " + areAllTestResultsOk(testResultList));
     }
 
     private void displayResults(TestResult testResult) {
-        System.out.println(String.format("========================== Test: %s", testResult.getTestName()));
+        LOG_RESULT.info(String.format("========================== Test: %s", testResult.getTestName()));
 
         for (CallResult result : testResult.getResults()) {
-            System.out.println(String.format("-------------- Call id: %s", result.getCall().getId()));
-            System.out.println(String.format("Url: %s", result.getCall().getUrl()));
-            System.out.println(String.format("Parameters: %s", result.getCall().getParameters()));
-            System.out.println(String.format("Result status: %s", result.getStatus()));
+            LOG_RESULT.info(String.format("-------------- Call id: %s", result.getCall().getId()));
+            LOG_RESULT.info(String.format("Url: %s", result.getCall().getUrl()));
+            LOG_RESULT.info(String.format("Parameters: %s", result.getCall().getParameters()));
+            LOG_RESULT.info(String.format("Result status: %s", result.getStatus()));
             try {
-                System.out.println(String.format("Response: %s", result.getContentExchange().getResponseContent()));
+                LOG_RESULT.info(String.format("Response: %s", result.getContentExchange().getResponseContent()));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -92,7 +93,7 @@ public class ScenarioPlayer {
             }
         }
 
-        System.out.println(String.format("========================== Result: %s", testResult.getTestStatus().name()));
-        System.out.println("==============================================================================");
+        LOG_RESULT.info(String.format("========================== Result: %s", testResult.getTestStatus().name()));
+        LOG_RESULT.info("==============================================================================");
     }
 }

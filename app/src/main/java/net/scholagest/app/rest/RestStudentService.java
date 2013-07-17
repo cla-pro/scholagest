@@ -17,6 +17,7 @@ import javax.ws.rs.QueryParam;
 import net.scholagest.app.rest.object.RestObject;
 import net.scholagest.app.rest.object.RestRequest;
 import net.scholagest.app.rest.object.RestStudentGradeList;
+import net.scholagest.app.rest.object.RestStudentGradeRequest;
 import net.scholagest.app.utils.JerseyHelper;
 import net.scholagest.exception.ScholagestException;
 import net.scholagest.managers.ontology.OntologyElement;
@@ -340,18 +341,19 @@ public class RestStudentService extends AbstractService {
         ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         try {
-            RestStudentGradeList request = new Gson().fromJson(content, RestStudentGradeList.class);
+            RestStudentGradeRequest request = new Gson().fromJson(content, RestStudentGradeRequest.class);
+            RestStudentGradeList gradeList = request.getGrades();
 
             ScholagestThreadLocal.setSubject(userService.authenticateWithToken(request.getToken()));
 
-            Map<String, Map<String, RestObject>> restStudentGrades = request.getGrades();
+            Map<String, Map<String, RestObject>> restStudentGrades = gradeList.getGrades();
 
             for (String studentKey : restStudentGrades.keySet()) {
                 Map<String, RestObject> restSingleStudentGrades = restStudentGrades.get(studentKey);
                 Map<String, BaseObject> studentGrades = convertRestObjectMapToBaseObjectMap(restSingleStudentGrades);
 
-                studentService.setGrades(studentKey, studentGrades, request.getYearKey(), request.getClassKey(), request.getBranchKey(),
-                        request.getPeriodKey());
+                studentService.setGrades(studentKey, studentGrades, gradeList.getYearKey(), gradeList.getClassKey(), gradeList.getBranchKey(),
+                        gradeList.getPeriodKey());
             }
         } catch (ShiroException e) {
             return generateSessionExpiredMessage(e);

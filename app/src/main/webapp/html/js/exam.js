@@ -15,31 +15,6 @@ function createExam(closeId, txtIds) {
 			periodKey: periodKey
 		};
 	sendGetRequest("../exam/create", parameters, function(info) { loadStudents(); });
-	/*var xhrArgs = {
-			url: "../exam/create",
-			preventCache: true,
-			content: {token: dojo.cookie("scholagest_token"),
-				keys: keyValues.keys,
-				values: keyValues.values,
-				yearKey: yearKey,
-				classKey: classKey,
-				branchKey: branchKey,
-				periodKey: periodKey},
-				handleAs: "json",
-				load: function(data) {
-					if (data.errorCode == null) {
-						loadStudents();
-					}
-					else {
-						handleServiceError(data);
-					}
-				},
-				error: function(error) {
-					alert("error = " + error);
-				}
-	}
-
-	var deferred = dojo.xhrGet(xhrArgs);*/
 
 	if (closeId != null) {
 		dialog.hide();
@@ -48,25 +23,4 @@ function createExam(closeId, txtIds) {
 
 function getExamsInfo(examList, properties, callback) {
 	sendGetRequest("../exam/getExamsInfo", { exams: examList, properties: properties }, callback);
-	/*var xhrArgs = {
-			url: "../exam/getExamsInfo",
-			preventCache: true,
-			content: {token: dojo.cookie("scholagest_token"),
-				exams: examList,
-				properties: properties},
-			handleAs: "json",
-			load: function(data) {
-				if (data.errorCode == null) {
-					callback(data.info);
-				}
-				else {
-					handleServiceError(data);
-				}
-			},
-			error: function(error) {
-				alert("error = " + error);
-			}
-	}
-
-	var deferred = dojo.xhrGet(xhrArgs);*/
 };

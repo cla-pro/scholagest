@@ -7,9 +7,9 @@ import java.util.Map;
 
 import net.scholagest.business.IPeriodBusinessComponent;
 import net.scholagest.managers.IPeriodManager;
-import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.objects.BaseObjectMock;
+import net.scholagest.objects.PeriodObject;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -41,14 +41,14 @@ public class PeriodBusinessComponentTest {
         String periodKey = "PERIOD_KEY";
         Map<String, Object> periodProperties = createPeriodProperties();
         new BaseObjectMock();
-        BaseObject baseObject = BaseObjectMock.createBaseObject(periodKey, CoreNamespace.tPeriod, periodProperties);
-        Mockito.when(periodManager.getPeriodProperties(periodKey, periodProperties.keySet())).thenReturn(baseObject);
+        PeriodObject mockPeriod = BaseObjectMock.createPeriodObject(periodKey, periodProperties);
+        Mockito.when(periodManager.getPeriodProperties(periodKey, periodProperties.keySet())).thenReturn(mockPeriod);
 
         BaseObject periodObject = testee.getPeriodProperties(periodKey, periodProperties.keySet());
 
-        assertEquals(baseObject.getKey(), periodObject.getKey());
-        assertEquals(baseObject.getType(), periodObject.getType());
-        assertEquals(baseObject.getProperties(), periodObject.getProperties());
+        assertEquals(mockPeriod.getKey(), periodObject.getKey());
+        assertEquals(mockPeriod.getType(), periodObject.getType());
+        assertEquals(mockPeriod.getProperties(), periodObject.getProperties());
         Mockito.verify(periodManager).getPeriodProperties(periodKey, periodProperties.keySet());
     }
 

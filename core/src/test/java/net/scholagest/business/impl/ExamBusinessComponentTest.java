@@ -15,10 +15,9 @@ import net.scholagest.managers.ontology.types.DBSet;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.objects.BaseObjectMock;
+import net.scholagest.objects.BranchObjectMock;
 import net.scholagest.utils.AbstractTestWithTransaction;
 
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -49,19 +48,19 @@ public class ExamBusinessComponentTest extends AbstractTestWithTransaction {
     @Before
     public void setup() throws Exception {
         examManager = Mockito.mock(IExamManager.class);
-        Mockito.when(examManager.createExam(EXAM_NAME, PERIOD_NAME, BRANCH_NAME, CLASS_NAME, YEAR_NAME)).thenReturn(
-                BaseObjectMock.createBaseObject(EXAM_KEY, CoreNamespace.tExam, new HashMap<String, Object>()));
+        Mockito.when(examManager.createExam(EXAM_NAME, CLASS_KEY, PERIOD_NAME, BRANCH_NAME, CLASS_NAME, YEAR_NAME)).thenReturn(
+                BaseObjectMock.createExamObject(EXAM_KEY, new HashMap<String, Object>()));
         Mockito.when(examManager.getExamProperties(Mockito.eq(EXAM_KEY), Mockito.anySet())).thenReturn(
-                BaseObjectMock.createBaseObject(EXAM_KEY, CoreNamespace.tExam, createProperties()));
+                BaseObjectMock.createExamObject(EXAM_KEY, createProperties()));
 
         periodManager = Mockito.mock(IPeriodManager.class);
         Mockito.when(periodManager.getPeriodProperties(Mockito.eq(PERIOD_KEY), Mockito.anySet())).thenReturn(
-                BaseObjectMock.createBaseObject(PERIOD_KEY, CoreNamespace.tPeriod,
+                BaseObjectMock.createPeriodObject(PERIOD_KEY,
                         createMap(CoreNamespace.pPeriodName, PERIOD_NAME, CoreNamespace.pPeriodExams, new DBSet(transaction, null))));
 
         branchManager = Mockito.mock(IBranchManager.class);
         Mockito.when(branchManager.getBranchProperties(Mockito.eq(BRANCH_KEY), Mockito.anySet())).thenReturn(
-                BaseObjectMock.createBaseObject(BRANCH_KEY, CoreNamespace.tBranch, createMap(CoreNamespace.pBranchName, BRANCH_NAME)));
+                BranchObjectMock.createBranchObject(BRANCH_KEY, createMap(CoreNamespace.pBranchName, BRANCH_NAME)));
 
         classManager = Mockito.mock(IClassManager.class);
         Mockito.when(classManager.getClassProperties(Mockito.eq(CLASS_KEY), Mockito.anySet())).thenReturn(
@@ -78,18 +77,8 @@ public class ExamBusinessComponentTest extends AbstractTestWithTransaction {
     public void testCreateExam() throws Exception {
         BaseObject exam = testee.createExam(YEAR_KEY, CLASS_KEY, BRANCH_KEY, PERIOD_KEY, createProperties());
 
-        Mockito.verify(examManager).createExam(EXAM_NAME, PERIOD_NAME, BRANCH_NAME, CLASS_NAME, YEAR_NAME);
-        Mockito.verify(examManager).setExamProperties(Mockito.eq(EXAM_KEY), Mockito.argThat(new BaseMatcher<Map<String, Object>>() {
-            @Override
-            @SuppressWarnings("unchecked")
-            public boolean matches(Object item) {
-                Map<String, Object> properties = (Map<String, Object>) item;
-                return properties.get(CoreNamespace.pExamClass).equals(CLASS_KEY);
-            }
-
-            @Override
-            public void describeTo(Description description) {}
-        }));
+        Mockito.verify(examManager).createExam(EXAM_NAME, CLASS_KEY, PERIOD_NAME, BRANCH_NAME, CLASS_NAME, YEAR_NAME);
+        Mockito.verify(examManager).setExamProperties(Mockito.eq(EXAM_KEY), Mockito.anyMapOf(String.class, Object.class));
 
         assertEquals(EXAM_KEY, exam.getKey());
         assertEquals(CoreNamespace.tExam, exam.getType());

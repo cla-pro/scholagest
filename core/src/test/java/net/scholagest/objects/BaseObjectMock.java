@@ -8,4 +8,22 @@ public class BaseObjectMock {
         object.setProperties(properties);
         return object;
     }
+
+    public static BranchObject createBranchObject(String key, Map<String, Object> properties) {
+        BranchObject object = new BranchObject(key);
+        object.setProperties(properties);
+        return object;
+    }
+
+    public static PeriodObject createPeriodObject(String key, Map<String, Object> properties) {
+        PeriodObject object = new PeriodObject(key);
+        object.setProperties(properties);
+        return object;
+    }
+
+    public static ExamObject createExamObject(String key, Map<String, Object> properties) {
+        ExamObject object = new ExamObject(key);
+        object.setProperties(properties);
+        return object;
+    }
 }

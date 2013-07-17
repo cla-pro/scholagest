@@ -6,8 +6,8 @@ public enum ScholagestExceptionErrorCode {
     USER_NOT_FOUND(1),
     WRONG_PASSWORD(2),
     INSUFFICIENT_PRIVILEGES(3),
-
-    YEAR_ALREADY_RUNNING(1000);
+    YEAR_ALREADY_RUNNING(1000),
+    GRADE_NOT_NUMERICAL(2000);
 
     private int code;
 

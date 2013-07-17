@@ -77,16 +77,20 @@ public class CoreNamespace {
     public static final String pBranchName = "pBranchName";
     public static final String pBranchClass = "pBranchClass";
     public static final String pBranchPeriods = "pBranchPeriods";
+    public static final String pBranchType = "pBranchType";
+    public static final String pBranchMean = "pBranchMean";
 
     public static final String periodNs = scholagestNs + "/period";
     public static final String pPeriodName = "pPeriodName";
     public static final String pPeriodClass = "pPeriodClass";
     public static final String pPeriodExams = "pPeriodExams";
+    public static final String pPeriodMean = "pPeriodMean";
 
     public static final String examNs = scholagestNs + "/exam";
     public static final String pExamName = "pExamName";
     public static final String pExamCoeff = "pExamCoeff";
     public static final String pExamClass = "pExamClass";
+    public static final String pExamGrades = "pExamGrades";;
 
     public static final String gradeNs = scholagestNs + "/grade";
     public static final String pGradeValue = "pGradeValue";

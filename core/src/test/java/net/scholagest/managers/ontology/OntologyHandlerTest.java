@@ -16,22 +16,18 @@ import org.xml.sax.InputSource;
 
 public class OntologyHandlerTest {
     @Test
-    public void testExtractImportURLWithImport() {
+    public void testExtractImportURLWithImport() throws Exception {
         String url1 = "file:///D:/Programming/eclipse-workspace/scholagest/core/src/test/resources/22-rdf-syntax-ns.rdfs";
         String url2 = "file:///D:/Programming/eclipse-workspace/scholagest/core/src/test/resources/rdf-schema.rdfs";
 
         OntologyHandler ontologyHandler = new OntologyHandler();
-        try {
-            Document scholagestTypeOntologyXmlDocument = loadXmlAsDocument("scholagest-types.rdfs");
-            List<String> urls = ontologyHandler.extractImportURL(scholagestTypeOntologyXmlDocument);
-            System.out.println(urls);
-            assertEquals("3 imports should be found", 3, urls.size());
-            assertTrue("Missing url: \"" + url1 + "\"", urls.contains(url1));
-            assertTrue("Missing url: \"" + url2 + "\"", urls.contains(url2));
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail("No exception expected");
-        }
+
+        Document scholagestTypeOntologyXmlDocument = loadXmlAsDocument("scholagest-types.rdfs");
+        List<String> urls = ontologyHandler.extractImportURL(scholagestTypeOntologyXmlDocument);
+        System.out.println(urls);
+        assertEquals("3 imports should be found", 3, urls.size());
+        assertTrue("Missing url: \"" + url1 + "\"", urls.contains(url1));
+        assertTrue("Missing url: \"" + url2 + "\"", urls.contains(url2));
     }
 
     @Test

@@ -15,6 +15,7 @@ import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.objects.UserObject;
 import net.scholagest.services.ITeacherService;
+import net.scholagest.services.kdom.DBToKdomConverter;
 import net.scholagest.shiro.AuthorizationHelper;
 import net.scholagest.utils.ConfigurationServiceImpl;
 import net.scholagest.utils.ScholagestProperty;
@@ -46,15 +47,18 @@ public class TeacherService implements ITeacherService {
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAdminRole());
 
-            teacher = teacherBusinessComponent.createTeacher(teacherType, teacherProperties);
+            BaseObject dbTeacher = teacherBusinessComponent.createTeacher(teacherType, teacherProperties);
+            String teacherKey = dbTeacher.getKey();
 
-            UserObject userObject = userBusinessComponent.createUser(teacher.getKey());
+            UserObject userObject = userBusinessComponent.createUser(teacherKey);
             userObject.getRoles().add(AuthorizationRolesNamespace.ROLE_TEACHER);
-            userObject.getPermissions().add(teacher.getKey());
+            userObject.getPermissions().add(teacherKey);
 
             Map<String, Object> userProperty = new HashMap<String, Object>();
             userProperty.put(CoreNamespace.pTeacherUser, userObject.getKey());
-            teacherBusinessComponent.setTeacherProperties(teacher.getKey(), userProperty);
+            teacherBusinessComponent.setTeacherProperties(teacherKey, userProperty);
+
+            teacher = new DBToKdomConverter().convertDbToKdom(dbTeacher);
 
             transaction.commit();
         } catch (Exception e) {
@@ -74,7 +78,9 @@ public class TeacherService implements ITeacherService {
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
 
-            teachers = teacherBusinessComponent.getTeachers();
+            Set<BaseObject> dbTeachers = teacherBusinessComponent.getTeachers();
+            teachers = new DBToKdomConverter().convertDbSetToKdom(dbTeachers);
+
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
@@ -96,7 +102,9 @@ public class TeacherService implements ITeacherService {
             // - All data: Admin, teacher itself
             // - TODO Without restricted data: other teachers
 
-            teachers = teacherBusinessComponent.getTeachersWithProperties(propertiesName);
+            Set<BaseObject> dbTeachers = teacherBusinessComponent.getTeachersWithProperties(propertiesName);
+            teachers = new DBToKdomConverter().convertDbSetToKdom(dbTeachers);
+
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
@@ -114,6 +122,7 @@ public class TeacherService implements ITeacherService {
             authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(teacherKey));
 
             teacherBusinessComponent.setTeacherProperties(teacherKey, properties);
+
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
@@ -123,7 +132,7 @@ public class TeacherService implements ITeacherService {
 
     @Override
     public BaseObject getTeacherProperties(String teacherKey, Set<String> propertiesName) throws Exception {
-        BaseObject properties = null;
+        BaseObject teacher = null;
 
         ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
@@ -133,13 +142,15 @@ public class TeacherService implements ITeacherService {
             // - All data: Admin, teacher itself
             // - TODO Without restricted data: other teachers
 
-            properties = teacherBusinessComponent.getTeacherProperties(teacherKey, propertiesName);
+            BaseObject dbTeacher = teacherBusinessComponent.getTeacherProperties(teacherKey, propertiesName);
+            teacher = new DBToKdomConverter().convertDbToKdom(dbTeacher);
+
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
             throw e;
         }
 
-        return properties;
+        return teacher;
     }
 }

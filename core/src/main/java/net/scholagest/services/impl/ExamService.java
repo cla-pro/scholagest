@@ -13,6 +13,7 @@ import net.scholagest.namespace.AuthorizationRolesNamespace;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IExamService;
+import net.scholagest.services.kdom.DBToKdomConverter;
 import net.scholagest.shiro.AuthorizationHelper;
 import net.scholagest.utils.ConfigurationServiceImpl;
 import net.scholagest.utils.ScholagestProperty;
@@ -41,7 +42,8 @@ public class ExamService implements IExamService {
         try {
             authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(classKey));
 
-            exam = examBusinessComponent.createExam(yearKey, classKey, branchKey, periodKey, examInfo);
+            BaseObject dbExam = examBusinessComponent.createExam(yearKey, classKey, branchKey, periodKey, examInfo);
+            exam = new DBToKdomConverter().convertDbToKdom(dbExam);
 
             transaction.commit();
         } catch (Exception e) {
@@ -54,7 +56,7 @@ public class ExamService implements IExamService {
 
     @Override
     public BaseObject getExamProperties(String examKey, Set<String> propertiesName) throws Exception {
-        BaseObject properties = null;
+        BaseObject exam = null;
 
         ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
@@ -66,7 +68,8 @@ public class ExamService implements IExamService {
 
             authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(classKey));
 
-            properties = examBusinessComponent.getExamProperties(examKey, propertiesName);
+            BaseObject dbExam = examBusinessComponent.getExamProperties(examKey, propertiesName);
+            exam = new DBToKdomConverter().convertDbToKdom(dbExam);
 
             transaction.commit();
         } catch (Exception e) {
@@ -74,7 +77,7 @@ public class ExamService implements IExamService {
             throw e;
         }
 
-        return properties;
+        return exam;
     }
 
     private String getClassKey(String examKey) throws Exception {

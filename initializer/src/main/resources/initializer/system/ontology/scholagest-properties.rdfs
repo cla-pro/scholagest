@@ -184,6 +184,14 @@
         <rdfs:domain rdf:resource="sg:tBranch"/>
         <rdfs:range rdf:resource="sg:Set"/>
     </rdfs:Property>
+    <rdfs:Property rdf:ID="pBranchType" rdfs:comment="Branch's type">
+        <rdfs:domain rdf:resource="sg:tBranch"/>
+        <rdfs:range rdf:resource="sg:String"/>
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pBranchMean" rdfs:comment="Branch's mean">
+        <rdfs:domain rdf:resource="sg:tBranch"/>
+        <rdfs:range rdf:resource="sg:tExam"/>
+    </rdfs:Property>
     
     <rdfs:Property rdf:ID="pPeriodName" rdfs:comment="Period's name">
         <rdfs:domain rdf:resource="sg:tPeriod"/>
@@ -192,6 +200,14 @@
     <rdfs:Property rdf:ID="pPeriodExams" rdfs:comment="Period's exams">
         <rdfs:domain rdf:resource="sg:tPeriod"/>
         <rdfs:range rdf:resource="sg:Set"/>
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pPeriodClass" rdfs:comment="Period's class">
+        <rdfs:domain rdf:resource="sg:tPeriod"/>
+        <rdfs:range rdf:resource="sg:String"/>
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pPeriodMean" rdfs:comment="Period's mean">
+        <rdfs:domain rdf:resource="sg:tPeriod"/>
+        <rdfs:range rdf:resource="sg:tExam"/>
     </rdfs:Property>
     
     <rdfs:Property rdf:ID="pExamName" rdfs:comment="Exam's name">

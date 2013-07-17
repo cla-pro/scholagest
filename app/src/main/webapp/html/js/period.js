@@ -1,29 +1,7 @@
 function callGetPeriodsInfo(periods, properties, callback) {
 	sendGetRequest("../period/getPropertiesForList", { periodKeys: periods, properties: properties }, callback)
-	/*var xhrArgs = {
-			url: "../period/getPropertiesForList",
-			preventCache: true,
-			content: {token: dojo.cookie("scholagest_token"),
-				periodKeys: periods,
-				properties: properties},
-			handleAs: "json",
-			load: function(data) {
-				if (data.errorCode == null) {
-					var info = data.info;
-					callback(info);
-				}
-				else {
-					handleServiceError(data);
-				}
-			},
-			error: function(error) {
-				alert("error = " + error);
-			}
-		}
-
-		var deferred = dojo.xhrGet(xhrArgs);*/
 };
-function getPeriodsInfo(periods, branchKey, classKey, yearKey, divName) {
+function getPeriodsInfo(periods, branchKey, classKey, yearKey, divName, isBranchNumerical) {
 	callGetPeriodsInfo(periods, ["pPeriodName"], function(periods) {
 		clearDOM(divName);
 		
@@ -52,7 +30,7 @@ function getPeriodsInfo(periods, branchKey, classKey, yearKey, divName) {
 			first = false;
 	        tabContainer.addChild(periodContentPane);
 	        
-			getStudentsAndExamsAndGradesForClassAndPeriod(examDiv, yearKey, classKey, branchKey, periodKey);
+			getStudentsAndExamsAndGradesForClassAndPeriod(examDiv, yearKey, classKey, branchKey, periodKey, isBranchNumerical);
 		}
 		
 		tabContainer.placeAt(divName);
@@ -73,34 +51,34 @@ function createAndAddExamButtons(parentDom, yearKey, classKey, branchKey, period
 		dialog.show();
 	};
 };
-function getStudentsAndExamsAndGradesForClassAndPeriod(parentDom, yearKey, classKey, branchKey, periodKey) {
+function getStudentsAndExamsAndGradesForClassAndPeriod(parentDom, yearKey, classKey, branchKey, periodKey, isBranchNumerical) {
 	callGetClassInfo(classKey, ["pClassStudents"], function (classInfo) {
 		var students = classInfo.properties["pClassStudents"].value;
-		getExamsAndGradesForClassAndPeriodAndStudents(parentDom, yearKey, classKey, branchKey, periodKey, students);
+		getExamsAndGradesForClassAndPeriodAndStudents(parentDom, yearKey, classKey, branchKey, periodKey, students, isBranchNumerical);
 	});
 };
-function getExamsAndGradesForClassAndPeriodAndStudents(parentDom, yearKey, classKey, branchKey, periodKey, students) {
+function getExamsAndGradesForClassAndPeriodAndStudents(parentDom, yearKey, classKey, branchKey, periodKey, students, isBranchNumerical) {
 	callGetPeriodsInfo([periodKey], ["pPeriodExams"], function (periodInfo) {
 		var exams = periodInfo[periodKey].properties["pPeriodExams"].value;
-		getGradesForClassAndPeriodAndStudentsAndExams(parentDom, yearKey, classKey, branchKey, periodKey, students, exams);
+		getGradesForClassAndPeriodAndStudentsAndExams(parentDom, yearKey, classKey, branchKey, periodKey, students, exams, isBranchNumerical);
 	});
 };
-function getGradesForClassAndPeriodAndStudentsAndExams(parentDom, yearKey, classKey, branchKey, periodKey, students, exams) {
+function getGradesForClassAndPeriodAndStudentsAndExams(parentDom, yearKey, classKey, branchKey, periodKey, students, exams, isBranchNumerical) {
 	callGetStudentGrades(students, exams, yearKey, function(grades) {
-		getStudentNamesForGrades(parentDom, yearKey, classKey, branchKey, periodKey, students, exams, grades);
+		getStudentNamesForGrades(parentDom, yearKey, classKey, branchKey, periodKey, students, exams, grades, isBranchNumerical);
 	});
 };
-function getStudentNamesForGrades(parentDom, yearKey, classKey, branchKey, periodKey, students, exams, grades) {
+function getStudentNamesForGrades(parentDom, yearKey, classKey, branchKey, periodKey, students, exams, grades, isBranchNumerical) {
 	getStudentsInfo(students, ["pStudentFirstName", "pStudentLastName"], function(studentsInfo) {
-		getExamNamesForGrades(parentDom, yearKey, classKey, branchKey, periodKey, studentsInfo, exams, grades);
+		getExamNamesForGrades(parentDom, yearKey, classKey, branchKey, periodKey, studentsInfo, exams, grades, isBranchNumerical);
 	});
 };
-function getExamNamesForGrades(parentDom, yearKey, classKey, branchKey, periodKey, studentsInfo, exams, grades) {
+function getExamNamesForGrades(parentDom, yearKey, classKey, branchKey, periodKey, studentsInfo, exams, grades, isBranchNumerical) {
 	getExamsInfo(exams, ["pExamName"], function(examsInfo) {
-		buildGradesTable(parentDom, yearKey, classKey, branchKey, periodKey, studentsInfo, examsInfo, grades);
+		buildGradesTable(parentDom, yearKey, classKey, branchKey, periodKey, studentsInfo, examsInfo, grades, isBranchNumerical);
 	});
 };
-function buildGradesTable(parentDom, yearKey, classKey, branchKey, periodKey, students, exams, grades) {
+function buildGradesTable(parentDom, yearKey, classKey, branchKey, periodKey, students, exams, grades, isBranchNumerical) {
 	var table = dojo.create("table", {
 		style: "border: 1px black solid"
 	}, parentDom);
@@ -145,15 +123,16 @@ function buildGradesTable(parentDom, yearKey, classKey, branchKey, periodKey, st
 	}
 	
 	dojo.create("button", {
-		onclick: saveGrades(table, yearKey, classKey, branchKey, periodKey, students, exams),
+		onclick: saveGrades(table, yearKey, classKey, branchKey, periodKey, students, exams, isBranchNumerical),
 		innerHTML: "Enregistrer"
 	}, parentDom);
 };
-function saveGrades(tableDom, yearKey, classKey, branchKey, periodKey, students, exams) {
+function saveGrades(tableDom, yearKey, classKey, branchKey, periodKey, students, exams, isBranchNumerical) {
 	return function(e) {
 		var grades = {};
 		
 		var rows = tableDom.childNodes;
+		var hasErrors = false;
 		for (var i = 1; i < rows.length; i++) {
 			var row = rows[i];
 			var studentGrades = {};
@@ -170,16 +149,37 @@ function saveGrades(tableDom, yearKey, classKey, branchKey, periodKey, students,
 						properties: {"pGradeValue": {}}
 					};
 				}
-				grade.properties["pGradeValue"].value = text.value;
+				
+				var gradeValue = text.value;
+				hasErrors = hasErrors || checkGradeAndSetTextColor(gradeValue, text, isBranchNumerical);
+				grade.properties["pGradeValue"].value = gradeValue;
 				studentGrades[examKey] = grade;
 			}
 			
 			grades[studentKey] = studentGrades;
 		}
 		
-		sendSaveGradesRequest(yearKey, classKey, branchKey, periodKey, grades);
+		if (hasErrors) {
+			alert('Erreurs dans les notes.');
+		} else {
+			sendSaveGradesRequest(yearKey, classKey, branchKey, periodKey, grades);
+		}
 	};
 };
+function checkGradeAndSetTextColor(gradeValue, textField, isBranchNumerical) {
+	if (isBranchNumerical && gradeValue != null && gradeValue != '') {
+		if (isNaN(gradeValue)) {
+			textField.style.color = 'red';
+			return true;
+		} else {
+			textField.style.color = 'black';
+		}
+	} else {
+		textField.style.color = 'black';
+	}
+	
+	return false;
+}
 function sendSaveGradesRequest(yearKey, classKey, branchKey, periodKey, grades) {
 	var postContent = {
 			yearKey: yearKey,
@@ -189,27 +189,4 @@ function sendSaveGradesRequest(yearKey, classKey, branchKey, periodKey, grades) 
 			grades: grades
 		};
 	sendPostRequest("../student/setGrades", postContent, function(info) {});
-	/*var xhrArgs = {
-			url: "../student/setGrades",
-			preventCache: true,
-			postData: dojo.toJson({
-				token: dojo.cookie("scholagest_token"),
-				yearKey: yearKey,
-				classKey: classKey,
-				branchKey: branchKey,
-				periodKey: periodKey,
-				grades: grades
-			}),
-			handleAs: "json",
-			load: function(data) {
-				if (data.errorCode != null) {
-					handleServiceError(data);
-				}
-			},
-			error: function(error) {
-				alert("error = " + error);
-			}
-	}
-
-	var deferred = dojo.xhrPost(xhrArgs);*/
 };

@@ -8,7 +8,7 @@ import net.scholagest.managers.IExamManager;
 import net.scholagest.managers.IOntologyManager;
 import net.scholagest.managers.ontology.types.DBSet;
 import net.scholagest.namespace.CoreNamespace;
-import net.scholagest.objects.BaseObject;
+import net.scholagest.objects.ExamObject;
 import net.scholagest.utils.ScholagestThreadLocal;
 
 import com.google.inject.Inject;
@@ -20,16 +20,19 @@ public class ExamManager extends ObjectManager implements IExamManager {
     }
 
     @Override
-    public BaseObject createExam(String examName, String periodName, String branchName, String className, String yearName) throws Exception {
+    public ExamObject createExam(String examName, String classKey, String periodName, String branchName, String className, String yearName)
+            throws Exception {
         ITransaction transaction = ScholagestThreadLocal.getTransaction();
 
         String examKey = CoreNamespace.examNs + "/" + yearName + "/" + className + "/" + branchName + "/" + periodName + "#" + examName;
 
-        BaseObject exam = super.createObject(transaction, examKey, CoreNamespace.tExam);
+        ExamObject exam = new ExamObject(examKey);
 
-        String gradeSetKey = generatePeriodExamsKey(examKey);
-        DBSet.createDBSet(transaction, gradeSetKey);
-        transaction.insert(examKey, CoreNamespace.pPeriodExams, gradeSetKey, null);
+        DBSet gradeSet = DBSet.createDBSet(transaction, generatePeriodExamsKey(examKey));
+        exam.setGrades(gradeSet);
+        exam.setClassKey(classKey);
+
+        persistObject(transaction, exam);
 
         return exam;
     }
@@ -42,16 +45,16 @@ public class ExamManager extends ObjectManager implements IExamManager {
     public void setExamProperties(String examKey, Map<String, Object> examProperties) throws Exception {
         ITransaction transaction = ScholagestThreadLocal.getTransaction();
 
-        super.setObjectProperties(transaction, examKey, examProperties);
+        setObjectProperties(transaction, examKey, examProperties);
     }
 
     @Override
-    public BaseObject getExamProperties(String examKey, Set<String> properties) throws Exception {
+    public ExamObject getExamProperties(String examKey, Set<String> properties) throws Exception {
         ITransaction transaction = ScholagestThreadLocal.getTransaction();
 
-        BaseObject branch = new BaseObject(examKey, CoreNamespace.tBranch);
-        branch.setProperties(super.getObjectProperties(transaction, examKey, properties));
+        ExamObject exam = new ExamObject(examKey);
+        exam.setProperties(getObjectProperties(transaction, examKey, properties));
 
-        return branch;
+        return exam;
     }
 }

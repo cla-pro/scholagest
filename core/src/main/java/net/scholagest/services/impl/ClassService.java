@@ -9,12 +9,14 @@ import java.util.Set;
 import net.scholagest.business.IClassBusinessComponent;
 import net.scholagest.business.IOntologyBusinessComponent;
 import net.scholagest.business.IUserBusinessComponent;
+import net.scholagest.database.DatabaseException;
 import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
 import net.scholagest.namespace.AuthorizationRolesNamespace;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IClassService;
+import net.scholagest.services.kdom.DBToKdomConverter;
 import net.scholagest.services.kdom.KSet;
 import net.scholagest.shiro.AuthorizationHelper;
 import net.scholagest.utils.ConfigurationServiceImpl;
@@ -47,7 +49,8 @@ public class ClassService implements IClassService {
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAdminRole());
 
-            clazz = classBusinessComponent.createClass(classProperties, className, yearKey);
+            BaseObject dbClazz = classBusinessComponent.createClass(classProperties, className, yearKey);
+            clazz = new DBToKdomConverter().convertDbToKdom(dbClazz);
 
             transaction.commit();
         } catch (Exception e) {
@@ -67,7 +70,8 @@ public class ClassService implements IClassService {
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
 
-            classes = classBusinessComponent.getClassesForYears(yearKeySet);
+            Map<String, Set<BaseObject>> dbClasses = classBusinessComponent.getClassesForYears(yearKeySet);
+            classes = convertToKdom(dbClasses);
 
             transaction.commit();
         } catch (Exception e) {
@@ -78,16 +82,28 @@ public class ClassService implements IClassService {
         return classes;
     }
 
+    private Map<String, Set<BaseObject>> convertToKdom(Map<String, Set<BaseObject>> dbClasses) throws DatabaseException {
+        Map<String, Set<BaseObject>> converted = new HashMap<>();
+
+        DBToKdomConverter dbConvertor = new DBToKdomConverter();
+        for (String classKey : dbClasses.keySet()) {
+            converted.put(classKey, dbConvertor.convertDbSetToKdom(dbClasses.get(classKey)));
+        }
+
+        return converted;
+    }
+
     @Override
     public BaseObject getClassProperties(String classKey, Set<String> propertiesName) throws Exception {
-        BaseObject classInfo = null;
+        BaseObject clazz = null;
 
         ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
 
-            classInfo = classBusinessComponent.getClassProperties(classKey, propertiesName);
+            BaseObject dbClazz = classBusinessComponent.getClassProperties(classKey, propertiesName);
+            clazz = new DBToKdomConverter().convertDbToKdom(dbClazz);
 
             transaction.commit();
         } catch (Exception e) {
@@ -95,7 +111,7 @@ public class ClassService implements IClassService {
             throw e;
         }
 
-        return classInfo;
+        return clazz;
     }
 
     @Override
@@ -112,7 +128,7 @@ public class ClassService implements IClassService {
 
             BaseObject newClass = classBusinessComponent.getClassProperties(classKey,
                     new HashSet<String>(Arrays.asList(CoreNamespace.pClassStudents, CoreNamespace.pClassTeachers)));
-            updateUserAuthorizations(oldClass.getProperties(), newClass.getProperties());
+            updateUserAuthorizations(oldClass.getProperties(), newClass.getProperties(), classKey);
 
             transaction.commit();
         } catch (Exception e) {
@@ -121,26 +137,37 @@ public class ClassService implements IClassService {
         }
     }
 
-    private void updateUserAuthorizations(Map<String, Object> oldProperties, Map<String, Object> newProperties) throws Exception {
+    private void updateUserAuthorizations(Map<String, Object> oldProperties, Map<String, Object> newProperties, String classKey) throws Exception {
         removeUserAuthorizations(oldProperties);
-        addUserAuthorizations(newProperties);
+        addUserAuthorizations(newProperties, classKey);
     }
 
     private void removeUserAuthorizations(Map<String, Object> oldProperties) throws Exception {
         KSet teachers = (KSet) oldProperties.get(CoreNamespace.pClassTeachers);
         KSet students = (KSet) oldProperties.get(CoreNamespace.pClassStudents);
 
-        for (Object teacherKey : teachers.getValues()) {
-            userBusinessComponent.removeUsersPermissions((String) teacherKey, students);
+        for (Object teacherKey : convertToSetString(teachers)) {
+            userBusinessComponent.removeUsersPermissions((String) teacherKey, convertToSetString(students));
         }
     }
 
-    private void addUserAuthorizations(Map<String, Object> newProperties) throws Exception {
+    private void addUserAuthorizations(Map<String, Object> newProperties, String classKey) throws Exception {
         KSet teachers = (KSet) newProperties.get(CoreNamespace.pClassTeachers);
         KSet students = (KSet) newProperties.get(CoreNamespace.pClassStudents);
 
-        for (Object teacherKey : teachers.getValues()) {
-            userBusinessComponent.addUsersPermissions((String) teacherKey, students);
+        for (Object teacherKey : convertToSetString(teachers)) {
+            userBusinessComponent.addUsersPermissions((String) teacherKey, new HashSet<String>(Arrays.asList(classKey)));
+            userBusinessComponent.addUsersPermissions((String) teacherKey, convertToSetString(students));
         }
+    }
+
+    private Set<String> convertToSetString(KSet students) {
+        Set<String> converted = new HashSet<>();
+
+        for (Object student : students.getValues()) {
+            converted.add((String) student);
+        }
+
+        return converted;
     }
 }

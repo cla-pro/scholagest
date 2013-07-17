@@ -5,8 +5,7 @@ import java.util.Set;
 
 import net.scholagest.business.IPeriodBusinessComponent;
 import net.scholagest.managers.IPeriodManager;
-import net.scholagest.objects.BaseObject;
-import net.scholagest.services.kdom.DBToKdomConverter;
+import net.scholagest.objects.PeriodObject;
 
 import com.google.inject.Inject;
 
@@ -24,8 +23,8 @@ public class PeriodBusinessComponent implements IPeriodBusinessComponent {
     }
 
     @Override
-    public BaseObject getPeriodProperties(String periodKey, Set<String> properties) throws Exception {
-        return new DBToKdomConverter().convertDbToKdom(periodManager.getPeriodProperties(periodKey, properties));
+    public PeriodObject getPeriodProperties(String periodKey, Set<String> properties) throws Exception {
+        return periodManager.getPeriodProperties(periodKey, properties);
     }
 
 }

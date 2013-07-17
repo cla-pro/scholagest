@@ -13,6 +13,7 @@ import net.scholagest.database.ITransaction;
 import net.scholagest.namespace.AuthorizationRolesNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IStudentService;
+import net.scholagest.services.kdom.DBToKdomConverter;
 import net.scholagest.shiro.AuthorizationHelper;
 import net.scholagest.utils.ConfigurationServiceImpl;
 import net.scholagest.utils.ScholagestProperty;
@@ -42,7 +43,9 @@ public class StudentService implements IStudentService {
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAdminRole());
 
-            student = studentBusinessComponent.createStudent(personalProperties);
+            BaseObject dbStudent = studentBusinessComponent.createStudent(personalProperties);
+            student = new DBToKdomConverter().convertDbToKdom(dbStudent);
+
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
@@ -62,6 +65,7 @@ public class StudentService implements IStudentService {
             authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(studentKey));
 
             studentBusinessComponent.updateStudentProperties(studentKey, personalProperties, medicalProperties);
+
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
@@ -71,7 +75,7 @@ public class StudentService implements IStudentService {
 
     @Override
     public BaseObject getStudentPersonalProperties(String studentKey, Set<String> properties) throws Exception {
-        BaseObject personalProperties = null;
+        BaseObject personalInfo = null;
 
         ITransaction transaction = this.database
                 .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
@@ -79,9 +83,10 @@ public class StudentService implements IStudentService {
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
 
-            BaseObject fullObject = studentBusinessComponent.getStudentPersonalProperties(studentKey, properties);
-            personalProperties = authorizationHelper.filterObjectProperties(fullObject, AuthorizationRolesNamespace.getAdminRole(),
+            BaseObject fullPersonalInfo = studentBusinessComponent.getStudentPersonalProperties(studentKey, properties);
+            BaseObject dbPersonalInfo = authorizationHelper.filterObjectProperties(fullPersonalInfo, AuthorizationRolesNamespace.getAdminRole(),
                     Arrays.asList(studentKey));
+            personalInfo = new DBToKdomConverter().convertDbToKdom(dbPersonalInfo);
 
             transaction.commit();
         } catch (Exception e) {
@@ -89,12 +94,12 @@ public class StudentService implements IStudentService {
             throw e;
         }
 
-        return personalProperties;
+        return personalInfo;
     }
 
     @Override
     public BaseObject getStudentMedicalProperties(String studentKey, Set<String> properties) throws Exception {
-        BaseObject medicalProperties = null;
+        BaseObject medicalInfo = null;
 
         ITransaction transaction = this.database
                 .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
@@ -102,9 +107,10 @@ public class StudentService implements IStudentService {
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
 
-            BaseObject fullObject = studentBusinessComponent.getStudentMedicalProperties(studentKey, properties);
-            medicalProperties = authorizationHelper.filterObjectProperties(fullObject, AuthorizationRolesNamespace.getAdminRole(),
+            BaseObject fullMedicalInfo = studentBusinessComponent.getStudentMedicalProperties(studentKey, properties);
+            BaseObject dbMedicalInfo = authorizationHelper.filterObjectProperties(fullMedicalInfo, AuthorizationRolesNamespace.getAdminRole(),
                     Arrays.asList(studentKey));
+            medicalInfo = new DBToKdomConverter().convertDbToKdom(dbMedicalInfo);
 
             transaction.commit();
         } catch (Exception e) {
@@ -112,7 +118,7 @@ public class StudentService implements IStudentService {
             throw e;
         }
 
-        return medicalProperties;
+        return medicalInfo;
     }
 
     @Override
@@ -125,10 +131,11 @@ public class StudentService implements IStudentService {
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
 
-            for (BaseObject baseObject : studentBusinessComponent.getStudentsWithProperties(properties)) {
-                BaseObject filtered = authorizationHelper.filterObjectProperties(baseObject, AuthorizationRolesNamespace.getAdminRole(),
-                        Arrays.asList(baseObject.getKey()));
-                students.add(filtered);
+            for (BaseObject dbFullStudent : studentBusinessComponent.getStudentsWithProperties(properties)) {
+                BaseObject dbFilteredStudent = authorizationHelper.filterObjectProperties(dbFullStudent, AuthorizationRolesNamespace.getAdminRole(),
+                        Arrays.asList(dbFullStudent.getKey()));
+                BaseObject student = new DBToKdomConverter().convertDbToKdom(dbFilteredStudent);
+                students.add(student);
             }
 
             transaction.commit();
@@ -142,7 +149,7 @@ public class StudentService implements IStudentService {
 
     @Override
     public BaseObject getStudentProperties(String studentKey, Set<String> properties) throws Exception {
-        BaseObject studentObject = null;
+        BaseObject student = null;
 
         ITransaction transaction = this.database
                 .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
@@ -150,8 +157,10 @@ public class StudentService implements IStudentService {
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
 
-            BaseObject fullObject = studentBusinessComponent.getStudentProperties(studentKey, properties);
-            studentObject = authorizationHelper.filterObjectProperties(fullObject, AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(studentKey));
+            BaseObject dbFullStudent = studentBusinessComponent.getStudentProperties(studentKey, properties);
+            BaseObject dbFilteredStudent = authorizationHelper.filterObjectProperties(dbFullStudent, AuthorizationRolesNamespace.getAdminRole(),
+                    Arrays.asList(studentKey));
+            student = new DBToKdomConverter().convertDbToKdom(dbFilteredStudent);
 
             transaction.commit();
         } catch (Exception e) {
@@ -159,7 +168,7 @@ public class StudentService implements IStudentService {
             throw e;
         }
 
-        return studentObject;
+        return student;
     }
 
     @Override
@@ -173,6 +182,8 @@ public class StudentService implements IStudentService {
             authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), new ArrayList<>(studentKeys));
 
             grades = studentBusinessComponent.getGrades(studentKeys, examKeys, yearKey);
+            // TODO convert grades
+
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
@@ -192,6 +203,7 @@ public class StudentService implements IStudentService {
             authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(studentKey));
 
             studentBusinessComponent.setStudentGrades(studentKey, studentGrades, yearKey, classKey, branchKey, periodKey);
+
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();

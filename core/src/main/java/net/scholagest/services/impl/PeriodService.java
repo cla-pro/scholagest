@@ -13,6 +13,7 @@ import net.scholagest.namespace.AuthorizationRolesNamespace;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IPeriodService;
+import net.scholagest.services.kdom.DBToKdomConverter;
 import net.scholagest.shiro.AuthorizationHelper;
 import net.scholagest.utils.ConfigurationServiceImpl;
 import net.scholagest.utils.ScholagestProperty;
@@ -54,7 +55,7 @@ public class PeriodService implements IPeriodService {
 
     @Override
     public BaseObject getPeriodProperties(String periodKey, Set<String> properties) throws Exception {
-        BaseObject periodInfo = null;
+        BaseObject period = null;
 
         ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
@@ -66,7 +67,8 @@ public class PeriodService implements IPeriodService {
 
             authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(classKey));
 
-            periodInfo = periodBusinessComponent.getPeriodProperties(periodKey, properties);
+            BaseObject dbPeriod = periodBusinessComponent.getPeriodProperties(periodKey, properties);
+            period = new DBToKdomConverter().convertDbToKdom(dbPeriod);
 
             transaction.commit();
         } catch (Exception e) {
@@ -74,7 +76,7 @@ public class PeriodService implements IPeriodService {
             throw e;
         }
 
-        return periodInfo;
+        return period;
     }
 
     private String getClassKey(String periodKey) throws Exception {

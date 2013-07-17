@@ -9,23 +9,28 @@ import java.util.Set;
 import net.scholagest.business.IBranchBusinessComponent;
 import net.scholagest.managers.IBranchManager;
 import net.scholagest.managers.IClassManager;
+import net.scholagest.managers.IExamManager;
 import net.scholagest.managers.IPeriodManager;
 import net.scholagest.managers.IYearManager;
 import net.scholagest.managers.ontology.types.DBSet;
 import net.scholagest.namespace.CoreNamespace;
-import net.scholagest.objects.BaseObject;
-import net.scholagest.services.kdom.DBToKdomConverter;
+import net.scholagest.objects.BranchObject;
+import net.scholagest.objects.ExamObject;
+import net.scholagest.objects.PeriodObject;
 
 import com.google.inject.Inject;
 
 public class BranchBusinessComponent implements IBranchBusinessComponent {
+    private IExamManager examManager;
     private IPeriodManager periodManager;
     private IBranchManager branchManager;
     private IClassManager classManager;
     private IYearManager yearManager;
 
     @Inject
-    public BranchBusinessComponent(IPeriodManager periodManager, IBranchManager branchManager, IClassManager classManager, IYearManager yearManager) {
+    public BranchBusinessComponent(IExamManager examManager, IPeriodManager periodManager, IBranchManager branchManager, IClassManager classManager,
+            IYearManager yearManager) {
+        this.examManager = examManager;
         this.periodManager = periodManager;
         this.branchManager = branchManager;
         this.classManager = classManager;
@@ -33,29 +38,38 @@ public class BranchBusinessComponent implements IBranchBusinessComponent {
     }
 
     @Override
-    public BaseObject createBranch(String classKey, Map<String, Object> branchProperties) throws Exception {
+    public BranchObject createBranch(String classKey, Map<String, Object> branchProperties) throws Exception {
         String className = getClassName(classKey);
         String yearName = getYearName(classKey);
 
         String branchName = (String) branchProperties.get(CoreNamespace.pBranchName);
-        BaseObject branch = branchManager.createBranch(branchName, className, yearName);
-
         branchProperties.put(CoreNamespace.pBranchClass, classKey);
-        branchManager.setBranchProperties(branch.getKey(), branchProperties);
+        BranchObject branch = branchManager.createBranch(branchName, className, yearName, branchProperties);
 
-        addBranchToClass(classKey, branch.getKey());
+        addBranchToClass(classKey, branch);
 
-        createPeriods(branch.getKey(), className, yearName, branchName);
+        ExamObject branchMean = createMeanExam(branch, classKey, className, yearName, branchName, "");
+        branch.setMeanKey(branchMean.getKey());
+
+        createPeriods(branch, classKey, className, yearName, branchName);
 
         return branch;
     }
 
-    private void createPeriods(String branchKey, String className, String yearName, String branchName) throws Exception {
-        BaseObject branchProperties = branchManager.getBranchProperties(branchKey, new HashSet<>(Arrays.asList(CoreNamespace.pBranchPeriods)));
-        DBSet periodsSet = (DBSet) branchProperties.getProperty(CoreNamespace.pBranchPeriods);
+    private ExamObject createMeanExam(BranchObject branch, String classKey, String className, String yearName, String branchName, String periodName)
+            throws Exception {
+        return examManager.createExam("mean", classKey, periodName, branchName, className, yearName);
+    }
+
+    private void createPeriods(BranchObject branch, String classKey, String className, String yearName, String branchName) throws Exception {
+        DBSet periodsSet = branch.getPeriods();
         for (int i = 1; i < 4; i++) {
             String periodName = "Trimestre " + i;
-            BaseObject period = periodManager.createPeriod(periodName, branchName, className, yearName);
+            PeriodObject period = periodManager.createPeriod(periodName, classKey, branchName, className, yearName);
+
+            ExamObject branchMean = createMeanExam(branch, classKey, className, yearName, branchName, "");
+            // TODO not saved!!!!!!
+            period.setMeanKey(branchMean.getKey());
 
             Map<String, Object> periodProperties = createPeriodProperties(periodName);
             periodManager.setPeriodProperties(period.getKey(), periodProperties);
@@ -70,11 +84,11 @@ public class BranchBusinessComponent implements IBranchBusinessComponent {
         return periodProperties;
     }
 
-    private void addBranchToClass(String classKey, String branchKey) throws Exception {
+    private void addBranchToClass(String classKey, BranchObject branch) throws Exception {
         Set<String> properties = new HashSet<>(Arrays.asList(CoreNamespace.pClassBranches));
         DBSet branchesSet = (DBSet) classManager.getClassProperties(classKey, properties).getProperty(CoreNamespace.pClassBranches);
 
-        branchesSet.add(branchKey);
+        branchesSet.add(branch.getKey());
     }
 
     private String getClassName(String classKey) throws Exception {
@@ -94,8 +108,8 @@ public class BranchBusinessComponent implements IBranchBusinessComponent {
     }
 
     @Override
-    public BaseObject getBranchProperties(String branchKey, Set<String> propertiesName) throws Exception {
-        return new DBToKdomConverter().convertDbToKdom(branchManager.getBranchProperties(branchKey, propertiesName));
+    public BranchObject getBranchProperties(String branchKey, Set<String> propertiesName) throws Exception {
+        return branchManager.getBranchProperties(branchKey, propertiesName);
     }
 
     @Override
