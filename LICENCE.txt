@@ -1,0 +1,85 @@
+﻿Scholagest LICENCE 
+--------------------------------------------------------- 
+
+Merci de lire attentivement cette licence avant d'acheter, d'installer et d'utiliser le logiciel Scholagest. En achetant, installant et/ou utilisant ce logiciel, vous acceptez d'être liés aux termes de cette licence. Si vous n'êtes pas d'accord avec les termes de cette licence, vous ne pouvez ni acheter, ni installer, ni utiliser ce logiciel. 
+
+
+1. Définitions 
+
+* Logiciel/Scholagest : ces termes désignent le produit vendu en tant que tel et dans son ensemble. 
+
+* Services : services mis à disposition par le logiciel pour que l'affichage puisse récupérer les informations. 
+
+* Ecole : établissement scolaire unique se portant acquéreur du logiciel Scholagest. L'école est une entité unique ayant une direction, un certain nombre de professeurs ainsi que d'élèves. 
+
+* Client : école se portant acquéreuse du logiciel. 
+
+* Vendeur : entité se chargeant du développement, de la vente et de la livraison du logiciel. 
+
+* Base de données : espace où sont stockées les informations affichées et insérées dans le logiciel Scholagest et ses services. 
+
+* Serveur (Web + DB) : machine contenant les services et la base de données du logiciel Scholagest. 
+
+* Canaux de communication : le logiciel Scholagest se présente sous forme d'une page web. La page web est ouverte sur l'ordinateur de l'utilisateur et accède à des services présents sur un serveur central. La communication entre l'ordinateur de l'utilisateur ainsi que le ou les serveurs se passe à travers les canaux de communication. 
+
+
+2. Général 
+
+Le logiciel Scholagest ainsi que tous les logiciels liés à Scholagest accompagnant cette licence, qu'ils soient sauvegardés sur le disque, en mémoire ou sur tout autre média, vous sont fournis sous  forme de licence et non vendus. Le Vendeur se réserve tous les droits qui ne vous sont pas explicitement accordés. Les termes de cette licence régiront les mises à jour qui remplaceront ou complèteront Scholagest, à moins que la mise à jour soit accompagnée d'une licence séparée qui, auquel cas, régira les termes de la licence. Le Vendeur reste le propriétaire exclusif du logiciel Scholagest, de ses mises à jour ainsi que de tous les logiciels liés à Scholagest. 
+
+3. Permissions et restrictions 
+
+A. Assujettis aux termes de cette licence, vous êtes autorisés à effectuer une installation et une utilisation de Scholagest dans le cadre d'une et une seule école. 
+
+B. Vous n'avez pas l'autorisation et vous acceptez de ne pas décompiler, effectuer une ingénierie inverse, désassembler, obtenir le code source, décrypter, modifier ou créer un produit dérivé de Scholagest. De plus, vous n'êtes pas autorisés à réutiliser un ou plusieurs composants de Scholagest dans le contexte d'un autre logiciel. 
+
+4. Transfert 
+
+Vous ne pouvez louer, prêter, redistribuer ni concéder des licences de Scholagest. 
+
+5. Résiliation 
+
+Cette licence demeure valide jusqu'à résiliation. Vos droits découlant de cette Licence prendront automatiquement fin sans notification de la part du Vendeur si vous ne vous conformez pas à l'un des termes de cette licence. Les deux parties, Client ET Vendeur, ont le droit de résilier la licence pour la fin du mois avec un mois de préavis et par écrit. Dès la résiliation de cette licence, vous n'êtes plus autorisés à utiliser Scholagest et vous êtes tenus de le désinstaller. 
+
+6. Exclusion de garanties 
+
+A. Vous reconnaissez expressément et acceptez que dans toute la portée permise par la législation en vigueur, l'usage du logiciel Scholagest et des services restent à vos seuls risques quant à la qualité satisfaisante, les performances, l'exactitude et l'effort qui restent de votre ressort. 
+
+B. Dans les limites maximales autorisées par la législation en vigueur, le logiciel et les services Scholagest sont fournis "TELS QUELS" et "TELS QUE DISPONIBLES" avec tous les défauts et sans aucune garantie d'aucune sorte. 
+
+C. Le Vendeur ne garantit nullement l'absence de troubles lors de l'installation et de l'utilisation de Scholagest et de ses services, que les fonctions contenues dans Scholagest correspondront à vos besoins, que le fonctionnement du logiciel et des services sera ininterrompu ou exempt d'erreur, que tout service restera disponible, que des défauts dans le logiciel ou les services seront corrigés, ou que le logiciel sera compatible ou fonctionnera avec n'importe quels logiciels de tierce partie, d'applications ou de services de tierce partie. 
+
+D. Le logiciel et les services Scholagest ainsi que le Vendeur ne sont en aucun cas responsables dans le cas où une défaillance, des erreurs ou des inexactitudes du contenu, des données ou des informations fournies par le logiciel ou ses services risquent d'entraîner ou entraînent des blessures, des accidents graves ou mortels pour des personnes ou des dommages physiques ou environnementaux. 
+
+E. Aucune information ni aucun conseil communiqués verbalement ou par écrit par le Vendeur ou par l'un de ses représentants autorisés ne pourra constituer une garantie. Si le logiciel ou les services Scholagest s'avéraient défectueux, vous assumeriez seul l'intégralité du coût de toute révision, réparation ou rectification nécessaires. 
+
+F. La responsabilité d'effectuer des sauvegardes régulières de la base de données est du ressort du Client. Le Vendeur n'a aucune responsabilité en cas de pertes de données dans le cas où ces sauvegardes n'auraient pas été effectuées. 
+
+G. Le Vendeur n'est pas responsable d'un mauvais comportement de l'application ou d'un arrêt de son fonctionnement dans le cas où: 
+- Le Client a modifié directement la base de données sans passer par le logiciel Scholagest. 
+- Le Client a modifié le code source ou la configuration d'une quelconque manière. 
+
+H. Le logiciel Scholagest limite l'accès à ses services grâce à un nom d'utilisateur et un mot de passe. La sécurisation des canaux de communications (tels que la communication entre l'ordinateur Client et le serveur, etc.) ainsi que de l'accès au serveur est du ressort du Client. Ni le logiciel Scholagest, ni ses services, ni le Vendeur ne sont responsables de la récupération des données par une personne tierce dans le cas où la communication est piratée (un logiciel ou une personne accède aux informations transmises) par un logiciel ou une personne tierce. 
+
+7. Limitation de responsabilité 
+
+Dans toute la mesure permise par la loi en vigueur, Scholagest et le Vendeur ne sont en aucun cas responsables de dommages corporels ni de tout dommage accidentel, spécial, indirect ou accessoire, y compris de façon non limitative, des dommages dus aux pertes de bénéfices, à la corruption ou à la perte de données, à l'échec de transmission ou de réception de données quelconques, à l'interruption d'activités ou tout autre dommage commercial ou perte commerciale résultant de ou relatifs à votre utilisation ou à votre inaptitude à utiliser le logiciel ou les services Scholagest, quelle qu'en soit la cause, sans tenir compte de la théorie de la responsabilité (que ce soit pour rupture de contrat, en responsabilité civile, ou autre) et ce, même si le Vendeur a été informé de la possibilité de tels dommages. 
+
+8. Propriété des données 
+
+A. Le Client est le seul et unique propriétaire des données. Le Vendeur n'a la possibilité ni de visionner ni de copier les informations enregistrées dans Scholagest par le Client. Ni le logiciel Scholagest ni ses services ne transmettent de données à une quelconque entreprise, personne ou logiciel en dehors de l'utilisateur de Scholagest. 
+
+B. Le Vendeur n'est pas responsable de la transmission et de l'utilisation des documents qui sont générés (bulletin scolaire, etc.) par l'utilisateur du Logiciel. 
+
+9. Loi applicable 
+
+Si pour une raison quelconque, un tribunal ayant juridiction là où siège le Vendeur et en vertu du droit suisse juge qu'un terme de la licence est inapplicable, en totalité ou en partie, les autres termes de la licence resteront entièrement applicables. 
+
+10. Intégralité de l'accord 
+
+Cette licence constitue l'intégralité de l'accord entre les parties quant à l'utilisation du Logiciel Scholagest faisant l'objet de la Licence et remplace toutes les propositions ou accords antérieurs ou actuels, écrits ou verbaux à ce sujet 
+
+11. Arrêt de développement 
+
+À tout moment et sans préavis, le Vendeur a le droit d'arrêter le développement du logiciel ainsi que la correction des problèmes éventuels. Le logiciel ne sera plus maintenu mais les licences resteront valides. 
+

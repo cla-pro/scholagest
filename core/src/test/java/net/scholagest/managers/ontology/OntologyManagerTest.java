@@ -7,9 +7,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
-import net.scholagest.managers.impl.CoreNamespace;
+import net.scholagest.managers.IOntologyManager;
+import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.utils.AbstractTestWithTransaction;
 
 import org.junit.Test;
@@ -19,8 +19,8 @@ public class OntologyManagerTest extends AbstractTestWithTransaction {
     public void testGetElementWithNameClass() throws Exception {
         super.fillTransactionWithDataSets(new String[] { "Ontology" });
 
-        OntologyManager manager = new OntologyManager();
-        OntologyElement elementWithName = manager.getElementWithName(UUID.randomUUID().toString(), transaction, CoreNamespace.tStudent);
+        IOntologyManager manager = new OntologyManager();
+        OntologyElement elementWithName = manager.getElementWithName(CoreNamespace.tStudent);
         assertNotNull(elementWithName);
         assertEquals(RDFS.clazz, elementWithName.getType());
         assertEquals(CoreNamespace.tStudent, elementWithName.getName());
@@ -30,8 +30,8 @@ public class OntologyManagerTest extends AbstractTestWithTransaction {
     public void testGetElementWithNameProperty() throws Exception {
         super.fillTransactionWithDataSets(new String[] { "Ontology" });
 
-        OntologyManager manager = new OntologyManager();
-        OntologyElement elementWithName = manager.getElementWithName(UUID.randomUUID().toString(), transaction, CoreNamespace.pStudentPersonalInfo);
+        IOntologyManager manager = new OntologyManager();
+        OntologyElement elementWithName = manager.getElementWithName(CoreNamespace.pStudentPersonalInfo);
         assertNotNull(elementWithName);
         assertEquals(RDFS.property, elementWithName.getType());
         assertEquals(CoreNamespace.pStudentPersonalInfo, elementWithName.getName());
@@ -44,23 +44,23 @@ public class OntologyManagerTest extends AbstractTestWithTransaction {
     public void testIsSubTypeOf() throws Exception {
         super.fillTransactionWithDataSets(new String[] { "Ontology" });
 
-        OntologyManager manager = new OntologyManager();
-        assertFalse(manager.isSubtypeOf(UUID.randomUUID().toString(), transaction, CoreNamespace.tStudent, CoreNamespace.tGroup));
-        assertTrue(manager.isSubtypeOf(UUID.randomUUID().toString(), transaction, CoreNamespace.tStudentPersonalInfo, CoreNamespace.tGroup));
+        IOntologyManager manager = new OntologyManager();
+        assertFalse(manager.isSubtypeOf(CoreNamespace.tStudent, CoreNamespace.tGroup));
+        assertTrue(manager.isSubtypeOf(CoreNamespace.tStudentPersonalInfo, CoreNamespace.tGroup));
     }
 
     @Test
     public void testFilterPropertiesWithCorrectDomain() throws Exception {
         super.fillTransactionWithDataSets(new String[] { "Ontology" });
 
-        OntologyManager manager = new OntologyManager();
+        IOntologyManager manager = new OntologyManager();
 
         String domain = CoreNamespace.tTeacher;
         Set<String> notFilteredProperties = new HashSet<>();
         notFilteredProperties.add("pTeacherLastName");
         notFilteredProperties.add("pStudentLastName");
 
-        Set<String> filtered = manager.filterPropertiesWithCorrectDomain(UUID.randomUUID().toString(), transaction, domain, notFilteredProperties);
+        Set<String> filtered = manager.filterPropertiesWithCorrectDomain(domain, notFilteredProperties);
         assertNotNull(filtered);
         assertEquals(1, filtered.size());
         assertTrue(filtered.contains("pTeacherLastName"));
@@ -72,8 +72,8 @@ public class OntologyManagerTest extends AbstractTestWithTransaction {
 
         String[] expectedProperties = { CoreNamespace.pStudentPersonalInfo, CoreNamespace.pStudentMedicalInfo };
 
-        OntologyManager manager = new OntologyManager();
-        Set<String> propertiesForType = manager.getPropertiesForType(UUID.randomUUID().toString(), transaction, CoreNamespace.tStudent);
+        IOntologyManager manager = new OntologyManager();
+        Set<String> propertiesForType = manager.getPropertiesForType(CoreNamespace.tStudent);
 
         assertNotNull(propertiesForType);
         assertEquals(2, propertiesForType.size());

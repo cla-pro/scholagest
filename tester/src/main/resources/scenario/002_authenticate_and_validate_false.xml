@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scenario xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="xsd/scenario.xsd">
-    <name>Scenario 1</name>
+    <name>User service authentication with invalid token</name>
     <description></description>
     <baseURL>http://localhost:8080/scholagest-app/services</baseURL>
+    <initializationFolder>initializer/tester/</initializationFolder>
     <calls>
         <call>
             <id>1 - Authenticate the token</id>

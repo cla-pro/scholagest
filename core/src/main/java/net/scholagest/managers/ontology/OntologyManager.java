@@ -6,16 +6,21 @@ import java.util.Set;
 
 import net.scholagest.database.DatabaseException;
 import net.scholagest.database.ITransaction;
-import net.scholagest.managers.impl.CoreNamespace;
+import net.scholagest.managers.IOntologyManager;
+import net.scholagest.namespace.CoreNamespace;
+import net.scholagest.utils.ScholagestThreadLocal;
 
 import com.google.inject.Inject;
 
-public class OntologyManager {
+public class OntologyManager implements IOntologyManager {
 
     @Inject
     public OntologyManager() {}
 
-    public OntologyElement getElementWithName(String requestId, ITransaction transaction, String elementName) throws Exception {
+    @Override
+    public OntologyElement getElementWithName(String elementName) throws Exception {
+        ITransaction transaction = ScholagestThreadLocal.getTransaction();
+
         String type = (String) transaction.get(elementName, RDF.type, null);
 
         if (type == null) {
@@ -35,12 +40,13 @@ public class OntologyManager {
         return element;
     }
 
-    public boolean isSubtypeOf(String requestId, ITransaction transaction, String type, String supertype) throws Exception {
+    @Override
+    public boolean isSubtypeOf(String type, String supertype) throws Exception {
         if (type.equals(supertype)) {
             return true;
         }
 
-        OntologyElement typeElement = getElementWithName(requestId, transaction, type);
+        OntologyElement typeElement = getElementWithName(type);
         if (typeElement == null) {
             throw new Exception("Type \"" + type + "\" does not exists");
         }
@@ -50,7 +56,7 @@ public class OntologyManager {
             if (parent == null) {
                 return false;
             }
-            if (isSubtypeOf(requestId, transaction, parent, supertype)) {
+            if (isSubtypeOf(parent, supertype)) {
                 return true;
             }
         }
@@ -58,16 +64,16 @@ public class OntologyManager {
         return false;
     }
 
-    public Set<String> filterPropertiesWithCorrectDomain(String requestId, ITransaction transaction, String domain, Set<String> properties)
-            throws Exception {
+    @Override
+    public Set<String> filterPropertiesWithCorrectDomain(String domain, Set<String> properties) throws Exception {
         Set<String> filteredProperties = new HashSet<>();
 
         for (String propertyName : properties) {
-            OntologyElement propertyElement = getElementWithName(requestId, transaction, propertyName);
+            OntologyElement propertyElement = getElementWithName(propertyName);
             if (propertyElement != null) {
                 Map<String, String> attributes = propertyElement.getAttributes();
                 String propertyDomain = attributes.get(RDFS.domain);
-                if (isSubtypeOf(requestId, transaction, domain, propertyDomain)) {
+                if (isSubtypeOf(domain, propertyDomain)) {
                     filteredProperties.add(propertyName);
                 }
             }
@@ -76,7 +82,10 @@ public class OntologyManager {
         return filteredProperties;
     }
 
-    public Set<String> getPropertiesForType(String requestId, ITransaction transaction, String type) throws DatabaseException {
+    @Override
+    public Set<String> getPropertiesForType(String type) throws DatabaseException {
+        ITransaction transaction = ScholagestThreadLocal.getTransaction();
+
         String domainPropertiesKey = (String) transaction.get(type, CoreNamespace.pOntologyClassDomain, null);
         if (domainPropertiesKey == null) {
             return new HashSet<>();

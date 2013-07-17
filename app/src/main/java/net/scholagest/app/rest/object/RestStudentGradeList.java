@@ -3,20 +3,11 @@ package net.scholagest.app.rest.object;
 import java.util.Map;
 
 public class RestStudentGradeList {
-    private String token;
     private Map<String, Map<String, RestObject>> grades;
     private String yearKey;
     private String classKey;
     private String branchKey;
     private String periodKey;
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
 
     public Map<String, Map<String, RestObject>> getGrades() {
         return grades;

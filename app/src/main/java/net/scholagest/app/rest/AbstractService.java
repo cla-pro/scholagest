@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import net.scholagest.exception.ScholagestExceptionErrorCode;
 import net.scholagest.managers.ontology.OntologyElement;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IOntologyService;
@@ -30,6 +31,10 @@ public abstract class AbstractService {
 
     protected String generateSessionExpiredMessage(ShiroException e) {
         return "{errorCode:0, msg:''}";
+    }
+
+    protected String generateScholagestExceptionMessage(ScholagestExceptionErrorCode errorCode, String message) {
+        return String.format("{errorCode:%d, msg:'%s'}", errorCode.getCode(), message);
     }
 
     protected Map<String, OntologyElement> extractOntology(Set<String> properties) throws Exception {

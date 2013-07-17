@@ -5,12 +5,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import net.scholagest.managers.impl.CoreNamespace;
 import net.scholagest.managers.ontology.OWL;
 import net.scholagest.managers.ontology.OntologyElement;
 import net.scholagest.managers.ontology.RDF;
 import net.scholagest.managers.ontology.RDFS;
+import net.scholagest.namespace.CoreNamespace;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -19,6 +21,8 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
 public class OntologyParser {
+    private static Logger LOG = LogManager.getLogger(OntologyParser.class.getName());
+
     public Map<String, Set<OntologyElement>> parseOntology(Document document) {
         Element root = document.getDocumentElement();
 
@@ -49,7 +53,7 @@ public class OntologyParser {
     }
 
     private OntologyElement parseElement(Element element) {
-        String type = this.resolveNamespace(element.getTagName());
+        String type = resolveNamespace(element.getTagName());
         OntologyElement ontologyElement = new OntologyElementFactory().createOntologyElement(type);
 
         ontologyElement.setType(type);
@@ -65,6 +69,7 @@ public class OntologyParser {
         for (int i = 0; i < attributes.getLength(); i++) {
             Node attribute = attributes.item(i);
             ontologyElement.setAttribute(resolveNamespace(attribute.getNodeName()), resolveNamespace(attribute.getNodeValue()));
+            LOG.debug("---- Add attribute to node (" + ontologyElement.getName() + "): " + attribute.getNodeName());
         }
 
         NodeList childNodes = element.getChildNodes();
@@ -75,6 +80,7 @@ public class OntologyParser {
                 OntologyElement subElement = parseElement((Element) child);
                 if (subElement != null) {
                     ontologyElement.putSubElement(subElement.getType(), subElement);
+                    LOG.debug("---- Add sub-element to node (" + ontologyElement.getName() + "): " + subElement.getType());
                 }
             }
         }

@@ -1,0 +1,234 @@
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+		xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+		xmlns:owl="http://www.w3.org/2002/07/owl#"
+		xmlns:sg="http://scholagest.net#">
+	
+	<owl:Ontology rdf:about="http://scholagest.net/2012/06/rdf-schema#">
+		<rdfs:comment>The scholagest ontology</rdfs:comment>
+<!--         <owl:imports rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns"/> -->
+        <owl:imports rdf:resource="file:///D:/Programming/eclipse-workspace/scholagest/initializer/src/main/resources/initializer/system/ontology/22-rdf-syntax-ns.rdfs" />
+<!--         <owl:imports rdf:resource="http://www.w3.org/2000/01/rdf-schema"/> -->
+        <owl:imports rdf:resource="file:///D:/Programming/eclipse-workspace/scholagest/initializer/src/main/resources/initializer/system/ontology/rdf-schema.rdfs" />
+        <owl:imports rdf:resource="file:///D:/Programming/eclipse-workspace/scholagest/initializer/src/main/resources/initializer/system/ontology/scholagest-types.rdfs" />
+	</owl:Ontology>
+    
+    <rdfs:Property rdf:ID="pUserUsername" rdfs:comment="User's username">
+        <rdfs:domain rdf:resource="sg:tUser"/>
+        <rdfs:range rdf:resource="sg:String"/>
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="Password" rdfs:comment="User's password">
+        <rdfs:domain rdf:resource="sg:tUser"/>
+        <rdfs:range rdf:resource="sg:String"/>
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pUserRoles" rdfs:comment="User's roles">
+        <rdfs:domain rdf:resource="sg:tUser"/>
+        <rdfs:range rdf:resource="sg:Set"/>
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pUserPermissions" rdfs:comment="User's permissions">
+        <rdfs:domain rdf:resource="sg:tUser"/>
+        <rdfs:range rdf:resource="sg:Set"/>
+    </rdfs:Property>
+    
+    <rdfs:Property rdf:ID="pTokenUser" rdfs:comment="Token's user">
+        <rdfs:domain rdf:resource="sg:tToken"/>
+        <rdfs:range rdf:resource="sg:tUser"/>
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pTokenEndValidityTime" rdfs:comment="Token's end validity time">
+        <rdfs:domain rdf:resource="sg:tToken"/>
+        <rdfs:range rdf:resource="sg:Calendar"/>
+    </rdfs:Property>
+    
+    <rdfs:Property rdf:ID="pPageRoles" rdfs:comment="Page's roles">
+        <rdfs:domain rdf:resource="sg:tPage"/>
+        <rdfs:range rdf:resource="sg:Set"/>
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pPagePath" rdfs:comment="Page's path">
+        <rdfs:domain rdf:resource="sg:tPage"/>
+        <rdfs:range rdf:resource="sg:String"/>
+    </rdfs:Property>
+    
+    <rdfs:Property rdf:ID="pTeacherFirstName" rdfs:comment="Teacher's first name">
+        <rdfs:domain rdf:resource="sg:tTeacher"/>
+        <rdfs:range rdf:resource="sg:String"/>
+        <sg:displayText rdf:resource="Prénom" />
+    </rdfs:Property>
+	<rdfs:Property rdf:ID="pTeacherLastName" rdfs:comment="Teacher's last name">
+		<rdfs:domain rdf:resource="sg:tTeacher"/>
+		<rdfs:range rdf:resource="sg:String"/>
+		<sg:displayText rdf:resource="Nom" />
+	</rdfs:Property>
+	<rdfs:Property rdf:ID="pTeacherMail" rdfs:comment="Teacher's mail">
+		<rdfs:domain rdf:resource="sg:tTeacher"/>
+		<rdfs:range rdf:resource="sg:String"/>
+		<sg:displayText rdf:resource="EMail" />
+	</rdfs:Property>
+	<rdfs:Property rdf:ID="pTeacherPhone" rdfs:comment="Teacher's phone number">
+		<rdfs:domain rdf:resource="sg:tTeacher"/>
+		<rdfs:range rdf:resource="sg:String"/>
+		<sg:displayText rdf:resource="Téléphone" />
+	</rdfs:Property>
+    <rdfs:Property rdf:ID="pTeacherAddress" rdfs:comment="Teacher's address">
+        <rdfs:domain rdf:resource="sg:tTeacher"/>
+        <rdfs:range rdf:resource="sg:String"/>
+        <sg:displayText rdf:resource="Adresse" />
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pTeacherAddress" rdfs:comment="Teacher's address">
+        <rdfs:domain rdf:resource="sg:tTeacher"/>
+        <rdfs:range rdf:resource="sg:String"/>
+        <sg:displayText rdf:resource="Adresse" />
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pTeacherUser" rdfs:comment="Teacher's user">
+        <rdfs:domain rdf:resource="sg:tTeacher"/>
+        <rdfs:range rdf:resource="sg:tUser"/>
+    </rdfs:Property>
+	
+    <rdfs:Property rdf:ID="pStudentPersonalInfo" rdfs:comment="Student's personal info">
+        <rdfs:domain rdf:resource="sg:tStudent"/>
+        <rdfs:range rdf:resource="sg:tStudentPersonalInfo"/>
+        <sg:displayText rdf:resource="Informations Personelles" />
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pStudentMedicalInfo" rdfs:comment="Student's medical info">
+        <rdfs:domain rdf:resource="sg:tStudent"/>
+        <rdfs:range rdf:resource="sg:tStudentMedicalInfo"/>
+        <sg:displayText rdf:resource="Informations Médicales" />
+        <sg:restricted rdf:resource="Restricted" />
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pStudentYears" rdfs:comment="Student years' list">
+        <rdfs:domain rdf:resource="sg:tStudent"/>
+        <rdfs:range rdf:resource="sg:tStudentYears"/>
+        <sg:restricted rdf:resource="Restricted" />
+    </rdfs:Property>
+	
+    <rdfs:Property rdf:ID="pStudentFirstName" rdfs:comment="Student's first name">
+        <rdfs:domain rdf:resource="sg:tStudentPersonalInfo"/>
+        <rdfs:range rdf:resource="sg:String"/>
+        <sg:displayText rdf:resource="Prénom" />
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pStudentLastName" rdfs:comment="Student's last name">
+        <rdfs:domain rdf:resource="sg:tStudentPersonalInfo"/>
+        <rdfs:range rdf:resource="sg:String"/>
+        <sg:displayText rdf:resource="Nom" />
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pStudentAddressStreet" rdfs:comment="Student address's street">
+        <rdfs:domain rdf:resource="sg:tStudentPersonalInfo"/>
+        <rdfs:range rdf:resource="sg:String"/>
+        <sg:displayText rdf:resource="Rue et n°" />
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pStudentAddressCity" rdfs:comment="Student address's city">
+        <rdfs:domain rdf:resource="sg:tStudentPersonalInfo"/>
+        <rdfs:range rdf:resource="sg:String"/>
+        <sg:displayText rdf:resource="Ville" />
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pStudentAddressPostcode" rdfs:comment="Student address's postcode">
+        <rdfs:domain rdf:resource="sg:tStudentPersonalInfo"/>
+        <rdfs:range rdf:resource="sg:String"/>
+        <sg:displayText rdf:resource="Code postal" />
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pStudentReligion" rdfs:comment="Student's religion">
+        <rdfs:domain rdf:resource="sg:tStudentPersonalInfo"/>
+        <rdfs:range rdf:resource="sg:String"/>
+        <sg:displayText rdf:resource="Religion" />
+        <sg:restricted rdf:resource="Restricted" />
+    </rdfs:Property>
+    
+    <rdfs:Property rdf:ID="pStudentDoctor" rdfs:comment="Student doctor">
+        <rdfs:domain rdf:resource="sg:tStudentMedicalInfo"/>
+        <rdfs:range rdf:resource="sg:String"/>
+        <sg:displayText rdf:resource="Docteur" />
+    </rdfs:Property>
+    
+    <rdfs:Property rdf:ID="pYearName" rdfs:comment="Year name">
+        <rdfs:domain rdf:resource="sg:tYear"/>
+        <rdfs:range rdf:resource="sg:String"/>
+        <sg:displayText rdf:resource="Nom" />
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pYearClasses" rdfs:comment="Year's classes">
+        <rdfs:domain rdf:resource="sg:tYear"/>
+        <rdfs:range rdf:resource="sg:Set"/>
+        <sg:displayText rdf:resource="Classes" />
+    </rdfs:Property>
+    
+    <rdfs:Property rdf:ID="pClassName" rdfs:comment="Class's name">
+        <rdfs:domain rdf:resource="sg:tClass"/>
+        <rdfs:range rdf:resource="sg:String"/>
+        <sg:displayText rdf:resource="Nom" />
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pClassYear" rdfs:comment="Class's year">
+        <rdfs:domain rdf:resource="sg:tClass"/>
+        <rdfs:range rdf:resource="sg:tYear"/>
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pClassStudents" rdfs:comment="Class's students">
+        <rdfs:domain rdf:resource="sg:tClass"/>
+        <rdfs:range rdf:resource="sg:Set"/>
+        <sg:displayText rdf:resource="Elèves" />
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pClassTeachers" rdfs:comment="Class's teachers">
+        <rdfs:domain rdf:resource="sg:tClass"/>
+        <rdfs:range rdf:resource="sg:Set"/>
+        <sg:displayText rdf:resource="Professeurs" />
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pClassBranches" rdfs:comment="Class's branches">
+        <rdfs:domain rdf:resource="sg:tClass"/>
+        <rdfs:range rdf:resource="sg:Set"/>
+    </rdfs:Property>
+    
+    <rdfs:Property rdf:ID="pBranchName" rdfs:comment="Branch's name">
+        <rdfs:domain rdf:resource="sg:tBranch"/>
+        <rdfs:range rdf:resource="sg:String"/>
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pBranchClass" rdfs:comment="Branch's class">
+        <rdfs:domain rdf:resource="sg:tBranch"/>
+        <rdfs:range rdf:resource="sg:tClass"/>
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pBranchPeriods" rdfs:comment="Branch's periods">
+        <rdfs:domain rdf:resource="sg:tBranch"/>
+        <rdfs:range rdf:resource="sg:Set"/>
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pBranchType" rdfs:comment="Branch's type">
+        <rdfs:domain rdf:resource="sg:tBranch"/>
+        <rdfs:range rdf:resource="sg:String"/>
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pBranchMean" rdfs:comment="Branch's mean">
+        <rdfs:domain rdf:resource="sg:tBranch"/>
+        <rdfs:range rdf:resource="sg:tExam"/>
+    </rdfs:Property>
+    
+    <rdfs:Property rdf:ID="pPeriodName" rdfs:comment="Period's name">
+        <rdfs:domain rdf:resource="sg:tPeriod"/>
+        <rdfs:range rdf:resource="sg:String"/>
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pPeriodExams" rdfs:comment="Period's exams">
+        <rdfs:domain rdf:resource="sg:tPeriod"/>
+        <rdfs:range rdf:resource="sg:Set"/>
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pPeriodClass" rdfs:comment="Period's class">
+        <rdfs:domain rdf:resource="sg:tPeriod"/>
+        <rdfs:range rdf:resource="sg:String"/>
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pPeriodMean" rdfs:comment="Period's mean">
+        <rdfs:domain rdf:resource="sg:tPeriod"/>
+        <rdfs:range rdf:resource="sg:tExam"/>
+    </rdfs:Property>
+    
+    <rdfs:Property rdf:ID="pExamName" rdfs:comment="Exam's name">
+        <rdfs:domain rdf:resource="sg:tExam"/>
+        <rdfs:range rdf:resource="sg:String"/>
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pExamGrades" rdfs:comment="Exam's grades">
+        <rdfs:domain rdf:resource="sg:tExam"/>
+        <rdfs:range rdf:resource="sg:Set"/>
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pExamCoeff" rdfs:comment="Exam's coeff">
+        <rdfs:domain rdf:resource="sg:tExam"/>
+        <rdfs:range rdf:resource="sg:Double"/>
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pExamClass" rdfs:comment="Exam's class">
+        <rdfs:domain rdf:resource="sg:tExam"/>
+        <rdfs:range rdf:resource="sg:tClass"/>
+    </rdfs:Property>
+    
+    <rdfs:Property rdf:ID="pGradeValue" rdfs:comment="Grade's value">
+        <rdfs:domain rdf:resource="sg:tGrade"/>
+        <rdfs:range rdf:resource="sg:Double"/>
+    </rdfs:Property>
+</rdf:RDF>

@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.scholagest.business.IYearBusinessComponent;
-import net.scholagest.database.ITransaction;
 import net.scholagest.managers.IYearManager;
 import net.scholagest.objects.BaseObject;
 
@@ -19,29 +18,29 @@ public class YearBusinessComponent implements IYearBusinessComponent {
     }
 
     @Override
-    public BaseObject startYear(String requestId, ITransaction transaction, String yearName) throws Exception {
-        BaseObject year = yearManager.createNewYear(requestId, transaction, yearName);
-        yearManager.restoreYear(requestId, transaction, year.getKey());
+    public BaseObject startYear(String yearName) throws Exception {
+        BaseObject year = yearManager.createNewYear(yearName);
+        yearManager.restoreYear(year.getKey());
 
         return year;
     }
 
     @Override
-    public void stopYear(String requestId, ITransaction transaction) throws Exception {
-        yearManager.backupYear(requestId, transaction);
+    public void stopYear() throws Exception {
+        yearManager.backupYear();
     }
 
     @Override
-    public BaseObject getCurrentYearKey(String requestId, ITransaction transaction) throws Exception {
-        return yearManager.getCurrentYearKey(requestId, transaction);
+    public BaseObject getCurrentYearKey() throws Exception {
+        return yearManager.getCurrentYearKey();
     }
 
     @Override
-    public Set<BaseObject> getYearsWithProperties(String requestId, ITransaction transaction, Set<String> properties) throws Exception {
+    public Set<BaseObject> getYearsWithProperties(Set<String> properties) throws Exception {
         Set<BaseObject> years = new HashSet<>();
 
-        for (BaseObject year : yearManager.getYears(requestId, transaction)) {
-            BaseObject yearInfo = yearManager.getYearProperties(requestId, transaction, year.getKey(), properties);
+        for (BaseObject year : yearManager.getYears()) {
+            BaseObject yearInfo = yearManager.getYearProperties(year.getKey(), properties);
             years.add(yearInfo);
         }
 

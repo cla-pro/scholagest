@@ -125,28 +125,6 @@ function setClassInfo(classKey) {
 	var keyValues = getKeyValues("class-data");
 	
 	sendPostRequest("../class/setProperties", { key: classKey, properties: keyValues }, function(info) {});
-	/*var xhrArgs = {
-			url: "../class/setProperties",
-			preventCache: true,
-			postData: dojo.toJson({
-				token: dojo.cookie("scholagest_token"),
-				object: {
-					key: classKey,
-					properties: keyValues
-				}
-			}),
-			handleAs: "json",
-			load: function(data) {
-				if (data.errorCode != null) {
-					handleServiceError(data);
-				}
-			},
-			error: function(error) {
-				alert("error = " + error);
-			}
-	}
-
-	var deferred = dojo.xhrPost(xhrArgs);*/
 }
 function getClassInfo(classKey) {
 	callGetClassInfo(classKey, null, function(info) {
@@ -168,25 +146,6 @@ function callGetClassInfo(classKey, classProperties, callback) {
 	}
 	
 	sendGetRequest("../class/getProperties", content, callback);
-	/*var xhrArgs = {
-			url: "../class/getProperties",
-			preventCache: true,
-			content: content,
-			handleAs: "json",
-			load: function(data) {
-				if (data.errorCode == null) {
-					callback(data.info);
-				}
-				else {
-					handleServiceError(data);
-				}
-			},
-			error: function(error) {
-				alert("error = " + error);
-			}
-	}
-
-	var deferred = dojo.xhrGet(xhrArgs);*/
 }
 function mergeAndDisplayYearAndClassLists(yearList, classList) {
 	var liItemsList = [];
@@ -215,51 +174,8 @@ function loadClasses(yearList) {
 		clearDOM("year-search-list-div");
 		mergeAndDisplayYearAndClassLists(yearList, info);
 	});
-	/*var xhrArgs = {
-			url: "../class/getClasses",
-			preventCache: true,
-			content: {token: dojo.cookie("scholagest_token"),
-				properties: ["pClassName"], years: yearKeyList },
-			handleAs: "json",
-			load: function(data) {
-				if (data.errorCode == null) {
-					clearDOM("year-search-list-div");
-					mergeAndDisplayYearAndClassLists(yearList, data.info);
-				}
-				else {
-					handleServiceError(data);
-				}
-			},
-			error: function(error) {
-				alert("error = " + error);
-			}
-	}
-
-	var deferred = dojo.xhrGet(xhrArgs);*/
 }
 function createClass(yearKey, className) {
 	sendGetRequest("../class/create", { yearKey: yearKey, keys: ["pClassName"], values: [className] },
 			function(info) { loadClasses(dojo.byId('year-search-list-div').yearsList); });
-	
-	/*var xhrArgs = {
-			url: "../class/create",
-			preventCache: true,
-			content: {token: dojo.cookie("scholagest_token"),
-				yearKey: yearKey,
-				keys: ["pClassName"], values: [className] },
-			handleAs: "json",
-			load: function(data) {
-				if (data.errorCode == null) {
-					loadClasses(dojo.byId('year-search-list-div').yearsList);
-				}
-				else {
-					handleServiceError(data);
-				}
-			},
-			error: function(error) {
-				alert("error = " + error);
-			}
-	}
-
-	var deferred = dojo.xhrGet(xhrArgs);*/
 }

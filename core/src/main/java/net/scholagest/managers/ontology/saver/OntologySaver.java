@@ -5,13 +5,18 @@ import java.util.Set;
 
 import net.scholagest.database.DatabaseException;
 import net.scholagest.database.ITransaction;
-import net.scholagest.managers.impl.CoreNamespace;
 import net.scholagest.managers.ontology.Ontology;
 import net.scholagest.managers.ontology.OntologyClass;
 import net.scholagest.managers.ontology.OntologyElement;
 import net.scholagest.managers.ontology.RDF;
+import net.scholagest.namespace.CoreNamespace;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class OntologySaver {
+    private static Logger LOG = LogManager.getLogger(OntologySaver.class.getName());
+
     public void saveOntology(String requestId, ITransaction transaction, Ontology ontology) throws Exception {
         for (OntologyElement element : ontology.getAllOntologyElement()) {
             this.saveElement(requestId, transaction, element);
@@ -30,6 +35,7 @@ public class OntologySaver {
         for (Map.Entry<String, Set<OntologyElement>> subElement : element.getSubElements().entrySet()) {
             for (OntologyElement sub : subElement.getValue()) {
                 if (sub.getAttributes().containsKey(RDF.resource)) {
+                    LOG.debug("Insert sub-element " + sub.getType() + " on node " + element.getName());
                     transaction.insert(element.getName(), sub.getType(), sub.getAttributes().get(RDF.resource), null);
                 }
             }

@@ -23,9 +23,11 @@ import net.scholagest.app.utils.JsonObject;
 import net.scholagest.database.DatabaseException;
 import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
+import net.scholagest.exception.ScholagestException;
 import net.scholagest.services.IOntologyService;
 import net.scholagest.services.IUserService;
 import net.scholagest.shiro.RealmAuthenticationAndAuthorization;
+import net.scholagest.utils.ScholagestThreadLocal;
 
 import org.apache.shiro.ShiroException;
 import org.apache.shiro.subject.Subject;
@@ -35,7 +37,7 @@ import com.google.inject.Inject;
 
 @Path("/user")
 public class RestUserService extends AbstractService {
-    private final static String REQUEST_ID_PREFIX = "student-";
+    private final static String REQUEST_ID_PREFIX = "user-";
 
     private final IDatabase database;
     private final IUserService userService;
@@ -55,7 +57,7 @@ public class RestUserService extends AbstractService {
     @Produces("text/json")
     public String authenticate(@QueryParam("username") String username, @QueryParam("password") String password) {
         try {
-            Subject subject = userService.authenticateWithUsername(UUID.randomUUID().toString(), username, password);
+            Subject subject = userService.authenticateWithUsername(username, password);
 
             String token = (String) subject.getPrincipals().fromRealm(RealmAuthenticationAndAuthorization.TOKEN_KEY).iterator().next();
 
@@ -63,6 +65,8 @@ public class RestUserService extends AbstractService {
             return new JsonObject("token", token, "nextpage", getBaseUrl() + "services/user/getPage?token=" + token).toString();
         } catch (ShiroException e) {
             return generateSessionExpiredMessage(e);
+        } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode:0, message:'" + e.getMessage() + "'}";
@@ -75,10 +79,12 @@ public class RestUserService extends AbstractService {
     public String getPage(@QueryParam("token") String token) {
         List<String> pages = new ArrayList<>();
         try {
-            pages = userService.getVisibleModules(UUID.randomUUID().toString(), token);
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
+
+            pages = userService.getVisibleModules(token);
         } catch (Exception e) {
-            e.printStackTrace();
-            return "";
+            // e.printStackTrace();
+            return "<meta http-equiv=\"refresh\" content=\"0; url=" + getBaseUrl() + "html/login.html\" />";
         }
 
         StringBuilder builder = new StringBuilder();
@@ -137,7 +143,7 @@ public class RestUserService extends AbstractService {
     @Path("/validateToken")
     @Produces("text/json")
     public String validateToken(String content) {
-        String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+        ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         try {
             if (content == null || content.equals("")) {
@@ -146,11 +152,13 @@ public class RestUserService extends AbstractService {
 
             RestRequest request = new Gson().fromJson(content, RestRequest.class);
 
-            userService.authenticateWithToken(requestId, request.getToken());
+            userService.authenticateWithToken(request.getToken());
 
             return "{info: {}}";
         } catch (ShiroException e) {
             return generateSessionExpiredMessage(e);
+        } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode:0, message:'" + e.getMessage() + "'}";
@@ -158,9 +166,9 @@ public class RestUserService extends AbstractService {
     }
 
     @GET
-    @Path("/closeSession")
+    @Path("/logout")
     @Produces("text/json")
-    public String closeSession(@QueryParam("token") String token) {
+    public String logout(@QueryParam("token") String token) {
         ITransaction transaction = this.database.getTransaction(ScholagestNamespace.scholagestKeyspace);
         try {
             for (String column : transaction.getColumns(token)) {

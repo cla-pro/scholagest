@@ -14,13 +14,14 @@ import javax.ws.rs.QueryParam;
 
 import net.scholagest.app.rest.object.RestObject;
 import net.scholagest.app.utils.JerseyHelper;
+import net.scholagest.exception.ScholagestException;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IExamService;
 import net.scholagest.services.IOntologyService;
 import net.scholagest.services.IUserService;
+import net.scholagest.utils.ScholagestThreadLocal;
 
 import org.apache.shiro.ShiroException;
-import org.apache.shiro.subject.Subject;
 
 import com.google.gson.Gson;
 import com.google.inject.Inject;
@@ -44,20 +45,22 @@ public class RestExamService extends AbstractService {
     public String createExam(@QueryParam("token") String token, @QueryParam("yearKey") String yearKey, @QueryParam("classKey") String classKey,
             @QueryParam("branchKey") String branchKey, @QueryParam("periodKey") String periodKey, @QueryParam("keys") List<String> keys,
             @QueryParam("values") List<String> values) {
-        String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+        ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         try {
-            Subject subject = userService.authenticateWithToken(requestId, token);
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
 
             Map<String, Object> classInfo = JerseyHelper.listToMap(keys, new ArrayList<Object>(values));
 
-            BaseObject exam = examService.createExam(requestId, yearKey, classKey, branchKey, periodKey, classInfo);
+            BaseObject exam = examService.createExam(yearKey, classKey, branchKey, periodKey, classInfo);
             RestObject restClass = new RestToKdomConverter().restObjectFromKdom(exam);
 
             String json = new Gson().toJson(restClass);
             return "{info: " + json + "}";
         } catch (ShiroException e) {
             return generateSessionExpiredMessage(e);
+        } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode:0, message:'" + e.getMessage() + "'}";
@@ -69,14 +72,14 @@ public class RestExamService extends AbstractService {
     @Produces("text/json")
     public String getTeachersInfo(@QueryParam("token") String token, @QueryParam("exams") Set<String> examKeyList,
             @QueryParam("properties") Set<String> properties) {
-        String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+        ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         try {
-            Subject subject = userService.authenticateWithToken(requestId, token);
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
 
             Set<BaseObject> teachers = new HashSet<>();
             for (String teacherKey : examKeyList) {
-                BaseObject exam = examService.getExamProperties(requestId, teacherKey, properties);
+                BaseObject exam = examService.getExamProperties(teacherKey, properties);
 
                 teachers.add(exam);
             }
@@ -87,6 +90,8 @@ public class RestExamService extends AbstractService {
             return "{info: " + json + "}";
         } catch (ShiroException e) {
             return generateSessionExpiredMessage(e);
+        } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode:0, message:'" + e.getMessage() + "'}";

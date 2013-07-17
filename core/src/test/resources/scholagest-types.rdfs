@@ -11,11 +11,16 @@
         <owl:imports rdf:resource="file:///D:/Programming/eclipse-workspace/scholagest/core/src/test/resources/rdf-schema.rdfs" />
         <owl:imports rdf:resource="file:///D:/Programming/eclipse-workspace/scholagest/core/src/test/resources/scholagest-base-types.rdfs"/>
 	</owl:Ontology>
-	
-	<rdfs:Property rdf:ID="http://scholagest.net#displayText" rdfs:comment="Display text">
-		<rdfs:domain rdf:resource="rdfs:Property"/>
-		<rdfs:range rdf:resource="String"/>
-	</rdfs:Property>
+    
+    <rdfs:Property rdf:ID="http://scholagest.net#displayText" rdfs:comment="Display text">
+        <rdfs:domain rdf:resource="rdfs:Property"/>
+        <rdfs:range rdf:resource="String"/>
+    </rdfs:Property>
+    
+    <rdfs:Property rdf:ID="http://scholagest.net#restricted" rdfs:comment="Restricted field">
+        <rdfs:domain rdf:resource="rdfs:Property"/>
+        <rdfs:range rdf:resource="String"/>
+    </rdfs:Property>
     
     <rdfs:Class rdf:ID="http://scholagest.net#tUser">
         <rdfs:comment>User representation</rdfs:comment>

@@ -3,14 +3,12 @@ package net.scholagest.managers;
 import java.util.Map;
 import java.util.Set;
 
-import net.scholagest.database.ITransaction;
-import net.scholagest.objects.BaseObject;
+import net.scholagest.objects.BranchObject;
 
 public interface IBranchManager {
-    public BaseObject createBranch(String requestId, ITransaction transaction, String branchName, String className, String yearName) throws Exception;
+    public BranchObject createBranch(String branchName, String className, String yearName, Map<String, Object> properties) throws Exception;
 
-    public void setBranchProperties(String requestId, ITransaction transaction, String branchKey, Map<String, Object> branchProperties)
-            throws Exception;
+    public void setBranchProperties(String branchKey, Map<String, Object> branchProperties) throws Exception;
 
-    public BaseObject getBranchProperties(String requestId, ITransaction transaction, String branchKey, Set<String> properties) throws Exception;
+    public BranchObject getBranchProperties(String branchKey, Set<String> properties) throws Exception;
 }

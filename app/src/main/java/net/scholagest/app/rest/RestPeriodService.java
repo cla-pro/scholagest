@@ -13,15 +13,16 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
 import net.scholagest.app.rest.object.RestObject;
-import net.scholagest.managers.impl.CoreNamespace;
+import net.scholagest.exception.ScholagestException;
 import net.scholagest.managers.ontology.OntologyElement;
+import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IOntologyService;
 import net.scholagest.services.IPeriodService;
 import net.scholagest.services.IUserService;
+import net.scholagest.utils.ScholagestThreadLocal;
 
 import org.apache.shiro.ShiroException;
-import org.apache.shiro.subject.Subject;
 
 import com.google.gson.Gson;
 import com.google.inject.Inject;
@@ -46,9 +47,9 @@ public class RestPeriodService extends AbstractService {
     @Produces("text/json")
     public String getPeriodProperties(@QueryParam("token") String token, @QueryParam("periodKeys") List<String> periodKeys,
             @QueryParam("properties") Set<String> properties) {
-        String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+        ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
         try {
-            Subject subject = userService.authenticateWithToken(requestId, token);
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
 
             if (properties == null || properties.isEmpty()) {
                 properties = ontologyService.getPropertiesForType(CoreNamespace.tPeriod);
@@ -56,7 +57,7 @@ public class RestPeriodService extends AbstractService {
 
             Map<String, Object> jsonObjects = new HashMap<>();
             for (String periodKey : periodKeys) {
-                BaseObject periodInfo = periodService.getPeriodProperties(requestId, periodKey, new HashSet<String>(properties));
+                BaseObject periodInfo = periodService.getPeriodProperties(periodKey, new HashSet<String>(properties));
 
                 Map<String, OntologyElement> ontology = extractOntology(periodInfo.getProperties().keySet());
                 RestObject restPeriodInfo = new RestToKdomConverter().restObjectFromKdom(periodInfo);
@@ -69,6 +70,8 @@ public class RestPeriodService extends AbstractService {
             return "{info: " + json + "}";
         } catch (ShiroException e) {
             return generateSessionExpiredMessage(e);
+        } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode:0, message:'" + e.getMessage() + "'}";

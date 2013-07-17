@@ -2,42 +2,48 @@ package net.scholagest.services.impl;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
+import net.scholagest.business.IOntologyBusinessComponent;
 import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
 import net.scholagest.managers.ontology.OntologyElement;
-import net.scholagest.managers.ontology.OntologyManager;
+import net.scholagest.namespace.AuthorizationRolesNamespace;
 import net.scholagest.services.IOntologyService;
+import net.scholagest.shiro.AuthorizationHelper;
 import net.scholagest.utils.ConfigurationServiceImpl;
 import net.scholagest.utils.ScholagestProperty;
+import net.scholagest.utils.ScholagestThreadLocal;
 
 import com.google.inject.Inject;
 
 public class OntologyService implements IOntologyService {
     private IDatabase database = null;
-    private OntologyManager ontologyManager = null;
+    private IOntologyBusinessComponent ontologyBusinessComponent;
+    private AuthorizationHelper authorizationHelper;
 
     @Inject
-    public OntologyService(IDatabase database, OntologyManager ontologyManager) {
+    public OntologyService(IDatabase database, IOntologyBusinessComponent ontologyBusinessComponent) {
         this.database = database;
-        this.ontologyManager = ontologyManager;
+        this.ontologyBusinessComponent = ontologyBusinessComponent;
+        this.authorizationHelper = new AuthorizationHelper(ontologyBusinessComponent);
     }
 
     @Override
     public OntologyElement getElementWithName(String elementName) throws Exception {
         OntologyElement result = null;
-        String requestId = UUID.randomUUID().toString();
 
         ITransaction transaction = this.database
                 .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ScholagestThreadLocal.setTransaction(transaction);
         try {
-            result = this.ontologyManager.getElementWithName(requestId, transaction, elementName);
+            authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
+
+            result = ontologyBusinessComponent.getElementWithName(elementName);
 
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
-            e.printStackTrace();
+            throw e;
         }
 
         return result;
@@ -46,17 +52,18 @@ public class OntologyService implements IOntologyService {
     @Override
     public boolean isSubtypeOf(String type, String supertype) throws Exception {
         boolean result = false;
-        String requestId = UUID.randomUUID().toString();
 
-        ITransaction transaction = this.database
-                .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ScholagestThreadLocal.setTransaction(transaction);
         try {
-            result = this.ontologyManager.isSubtypeOf(requestId, transaction, type, supertype);
+            authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
+
+            result = ontologyBusinessComponent.isSubtypeOf(type, supertype);
 
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
-            e.printStackTrace();
+            throw e;
         }
 
         return result;
@@ -65,17 +72,18 @@ public class OntologyService implements IOntologyService {
     @Override
     public Set<String> filterPropertiesWithCorrectDomain(String domain, Set<String> properties) throws Exception {
         Set<String> result = new HashSet<>();
-        String requestId = UUID.randomUUID().toString();
 
-        ITransaction transaction = this.database
-                .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ScholagestThreadLocal.setTransaction(transaction);
         try {
-            result = this.ontologyManager.filterPropertiesWithCorrectDomain(requestId, transaction, domain, properties);
+            authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
+
+            result = ontologyBusinessComponent.filterPropertiesWithCorrectDomain(domain, properties);
 
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
-            e.printStackTrace();
+            throw e;
         }
 
         return result;
@@ -84,17 +92,18 @@ public class OntologyService implements IOntologyService {
     @Override
     public Set<String> getPropertiesForType(String type) throws Exception {
         Set<String> result = new HashSet<>();
-        String requestId = UUID.randomUUID().toString();
 
-        ITransaction transaction = this.database
-                .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ScholagestThreadLocal.setTransaction(transaction);
         try {
-            result = this.ontologyManager.getPropertiesForType(requestId, transaction, type);
+            authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
+
+            result = ontologyBusinessComponent.getPropertiesForType(type);
 
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
-            e.printStackTrace();
+            throw e;
         }
 
         return result;

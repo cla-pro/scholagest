@@ -1,6 +1,7 @@
 package net.scholagest.services.kdom;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,5 +27,10 @@ public class DBToKdomConverterTest extends AbstractTest {
         assertEquals(toConvert.getKey(), converted.getKey());
         assertEquals(toConvert.getType(), converted.getType());
         assertMapEquals(values, converted.getProperties());
+    }
+
+    @Test
+    public void testConvertDBToKdomNull() throws DatabaseException {
+        assertNull(new DBToKdomConverter().convertDbToKdom(null));
     }
 }

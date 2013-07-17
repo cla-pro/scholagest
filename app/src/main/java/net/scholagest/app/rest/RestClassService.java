@@ -17,15 +17,16 @@ import javax.ws.rs.QueryParam;
 import net.scholagest.app.rest.object.RestObject;
 import net.scholagest.app.rest.object.RestRequest;
 import net.scholagest.app.utils.JerseyHelper;
-import net.scholagest.managers.impl.CoreNamespace;
+import net.scholagest.exception.ScholagestException;
 import net.scholagest.managers.ontology.OntologyElement;
+import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IClassService;
 import net.scholagest.services.IOntologyService;
 import net.scholagest.services.IUserService;
+import net.scholagest.utils.ScholagestThreadLocal;
 
 import org.apache.shiro.ShiroException;
-import org.apache.shiro.subject.Subject;
 
 import com.google.gson.Gson;
 import com.google.inject.Inject;
@@ -50,21 +51,23 @@ public class RestClassService extends AbstractService {
     @Produces("text/json")
     public String createClass(@QueryParam("token") String token, @QueryParam("yearKey") String yearKey, @QueryParam("keys") List<String> keys,
             @QueryParam("values") List<String> values) {
-        String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+        ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         try {
-            Subject subject = userService.authenticateWithToken(requestId, token);
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
 
             Map<String, Object> classInfo = JerseyHelper.listToMap(keys, new ArrayList<Object>(values));
             classInfo.put(CoreNamespace.pClassYear, yearKey);
 
-            BaseObject clazz = classService.createClass(requestId, classInfo);
+            BaseObject clazz = classService.createClass(classInfo, (String) classInfo.get(CoreNamespace.pClassName), yearKey);
             RestObject restClass = new RestToKdomConverter().restObjectFromKdom(clazz);
 
             String json = new Gson().toJson(restClass);
             return "{info: " + json + "}";
         } catch (ShiroException e) {
             return generateSessionExpiredMessage(e);
+        } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode:0, message:'" + e.getMessage() + "'}";
@@ -76,34 +79,36 @@ public class RestClassService extends AbstractService {
     @Produces("text/json")
     public String getClasses(@QueryParam("token") String token, @QueryParam("years") Set<String> yearKeyList,
             @QueryParam("properties") Set<String> properties) {
-        String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+        ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         try {
-            Subject subject = userService.authenticateWithToken(requestId, token);
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
 
-            Map<String, Set<BaseObject>> classesKeySet = classService.getClassesForYears(requestId, yearKeyList);
+            Map<String, Set<BaseObject>> classesKeySet = classService.getClassesForYears(yearKeyList);
             RestToKdomConverter converter = new RestToKdomConverter();
 
-            Map<String, Set<RestObject>> classesInfo = getClassesPropertiesAndConvertToRest(properties, requestId, classesKeySet, converter);
+            Map<String, Set<RestObject>> classesInfo = getClassesPropertiesAndConvertToRest(properties, classesKeySet, converter);
 
             String json = new Gson().toJson(classesInfo);
             return "{info: " + json + "}";
         } catch (ShiroException e) {
             return generateSessionExpiredMessage(e);
+        } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
     }
 
-    private Map<String, Set<RestObject>> getClassesPropertiesAndConvertToRest(Set<String> properties, String requestId,
-            Map<String, Set<BaseObject>> classesKeySet, RestToKdomConverter converter) throws Exception {
+    private Map<String, Set<RestObject>> getClassesPropertiesAndConvertToRest(Set<String> properties, Map<String, Set<BaseObject>> classesKeySet,
+            RestToKdomConverter converter) throws Exception {
         Map<String, Set<RestObject>> classesInfo = new HashMap<>();
 
         for (String yearKey : classesKeySet.keySet()) {
             Set<RestObject> yearClassesInfo = new HashSet<>();
             for (BaseObject clazz : classesKeySet.get(yearKey)) {
-                BaseObject classInfo = classService.getClassProperties(requestId, clazz.getKey(), properties);
+                BaseObject classInfo = classService.getClassProperties(clazz.getKey(), properties);
                 yearClassesInfo.add(converter.restObjectFromKdom(classInfo));
             }
             classesInfo.put(yearKey, yearClassesInfo);
@@ -112,38 +117,21 @@ public class RestClassService extends AbstractService {
         return classesInfo;
     }
 
-    // private String buildJsonForClasses(Map<String, Set<BaseObject>>
-    // yearClassesInfo) {
-    // String jsonString = "{";
-    // Gson gson = new Gson();
-    //
-    // for (String yearKey : yearClassesInfo.keySet()) {
-    // if (!jsonString.equals("{")) {
-    // jsonString += ",";
-    // }
-    //
-    // jsonString += "\"" + yearKey + "\": " +
-    // gson.toJson(converter.convertObjectToJson(yearClassesInfo.get(yearKey)));
-    // }
-    //
-    // return jsonString + "}";
-    // }
-
     @GET
     @Path("/getProperties")
     @Produces("text/json")
     public String getClassProperties(@QueryParam("token") String token, @QueryParam("classKey") String classKey,
             @QueryParam("properties") Set<String> properties) {
-        String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+        ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         try {
-            Subject subject = userService.authenticateWithToken(requestId, token);
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
 
             if (properties == null || properties.isEmpty()) {
                 properties = ontologyService.getPropertiesForType(CoreNamespace.tClass);
             }
 
-            BaseObject classInfo = classService.getClassProperties(requestId, classKey, new HashSet<String>(properties));
+            BaseObject classInfo = classService.getClassProperties(classKey, new HashSet<String>(properties));
             Map<String, OntologyElement> ontology = extractOntology(classInfo.getProperties().keySet());
 
             RestObject restClassInfo = new RestToKdomConverter().restObjectFromKdom(classInfo);
@@ -153,6 +141,8 @@ public class RestClassService extends AbstractService {
             return "{info: " + json + "}";
         } catch (ShiroException e) {
             return generateSessionExpiredMessage(e);
+        } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode:0, message:'" + e.getMessage() + "'}";
@@ -162,19 +152,22 @@ public class RestClassService extends AbstractService {
     @POST
     @Path("/setProperties")
     @Produces("text/json")
-    public String setClassProperties(@QueryParam("token") String token, String content) {
-        String requestId = REQUEST_ID_PREFIX + UUID.randomUUID();
+    public String setClassProperties(String content) {
+        ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         try {
-            Subject subject = userService.authenticateWithToken(requestId, token);
-
             RestRequest request = new Gson().fromJson(content, RestRequest.class);
+
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(request.getToken()));
+
             RestObject requestObject = request.getObject();
             BaseObject baseObject = new RestToKdomConverter().baseObjectFromRest(requestObject);
 
-            classService.setClassProperties(requestId, requestObject.getKey(), baseObject.getProperties());
+            classService.setClassProperties(requestObject.getKey(), baseObject.getProperties());
         } catch (ShiroException e) {
             return generateSessionExpiredMessage(e);
+        } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode:0, message:'" + e.getMessage() + "'}";

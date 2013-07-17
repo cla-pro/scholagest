@@ -3,12 +3,10 @@ package net.scholagest.business;
 import java.util.Map;
 import java.util.Set;
 
-import net.scholagest.database.ITransaction;
-import net.scholagest.objects.BaseObject;
+import net.scholagest.objects.PeriodObject;
 
 public interface IPeriodBusinessComponent {
-    public void setPeriodProperties(String requestId, ITransaction transaction, String periodKey, Map<String, Object> periodProperties)
-            throws Exception;
+    public void setPeriodProperties(String periodKey, Map<String, Object> periodProperties) throws Exception;
 
-    public BaseObject getPeriodProperties(String requestId, ITransaction transaction, String periodKey, Set<String> properties) throws Exception;
+    public PeriodObject getPeriodProperties(String periodKey, Set<String> properties) throws Exception;
 }

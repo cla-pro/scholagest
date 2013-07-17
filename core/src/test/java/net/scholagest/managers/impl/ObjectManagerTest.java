@@ -13,6 +13,7 @@ import java.util.Set;
 import net.scholagest.database.DatabaseException;
 import net.scholagest.managers.ontology.OntologyManager;
 import net.scholagest.managers.ontology.RDF;
+import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.utils.AbstractTestWithTransaction;
 
 import org.junit.Test;
@@ -23,7 +24,7 @@ public class ObjectManagerTest extends AbstractTestWithTransaction {
     @Test
     public void testCreateObject() throws Exception {
         String objectKey = "objectKey";
-        objectManager.createObject(requestId, transaction, objectKey, CoreNamespace.tGroup);
+        objectManager.createObject(transaction, objectKey, CoreNamespace.tGroup);
 
         verify(transaction).insert(objectKey, RDF.type, CoreNamespace.tGroup, null);
     }
@@ -32,7 +33,7 @@ public class ObjectManagerTest extends AbstractTestWithTransaction {
     public void testSetObjectProperties() throws Exception {
         Map<String, Object> properties = createProperties();
 
-        objectManager.setObjectProperties(requestId, transaction, "objectKey", properties);
+        objectManager.setObjectProperties(transaction, "objectKey", properties);
 
         for (Map.Entry<String, Object> prop : properties.entrySet()) {
             verify(transaction).insert(anyString(), eq(prop.getKey()), eq(prop.getValue()), anyString());
@@ -49,7 +50,7 @@ public class ObjectManagerTest extends AbstractTestWithTransaction {
         properties.add("prop1");
         properties.add("prop2");
 
-        objectManager.getObjectProperties(requestId, transaction, objectKey, properties);
+        objectManager.getObjectProperties(transaction, objectKey, properties);
 
         for (String prop : properties) {
             verify(transaction).get(anyString(), eq(prop), anyString());
@@ -66,9 +67,9 @@ public class ObjectManagerTest extends AbstractTestWithTransaction {
     public void testGetSetObjectProperties() throws Exception {
         Map<String, Object> propertiesMap = createProperties();
 
-        objectManager.setObjectProperties(requestId, transaction, "objectKey", propertiesMap);
+        objectManager.setObjectProperties(transaction, "objectKey", propertiesMap);
 
-        Map<String, Object> resultProperties = objectManager.getObjectProperties(requestId, transaction, "objectKey", propertiesMap.keySet());
+        Map<String, Object> resultProperties = objectManager.getObjectProperties(transaction, "objectKey", propertiesMap.keySet());
 
         assertEquals("Returned properties should habe the same size as the saved one", propertiesMap.size(), resultProperties.size());
         for (String propertyName : propertiesMap.keySet()) {

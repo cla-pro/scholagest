@@ -6,24 +6,28 @@ import java.util.Set;
 import java.util.UUID;
 
 import net.scholagest.database.ITransaction;
+import net.scholagest.managers.IOntologyManager;
 import net.scholagest.managers.ITeacherManager;
-import net.scholagest.managers.ontology.OntologyManager;
+import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
+import net.scholagest.utils.ScholagestThreadLocal;
 
 import com.google.inject.Inject;
 
 public class TeacherManager extends ObjectManager implements ITeacherManager {
     @Inject
-    public TeacherManager(OntologyManager ontologyManager) {
+    public TeacherManager(IOntologyManager ontologyManager) {
         super(ontologyManager);
     }
 
     @Override
-    public BaseObject createTeacher(String requestId, ITransaction transaction) throws Exception {
+    public BaseObject createTeacher() throws Exception {
+        ITransaction transaction = ScholagestThreadLocal.getTransaction();
+
         String id = UUID.randomUUID().toString();
         String teacherKey = CoreNamespace.teacherNs + "#" + id;
 
-        BaseObject teacherObject = super.createObject(requestId, transaction, teacherKey, CoreNamespace.tTeacher);
+        BaseObject teacherObject = createObject(transaction, teacherKey, CoreNamespace.tTeacher);
 
         String teacherBase = CoreNamespace.teacherNs + "/" + id;
         transaction.insert(CoreNamespace.teachersBase, teacherKey, teacherKey, null);
@@ -40,7 +44,9 @@ public class TeacherManager extends ObjectManager implements ITeacherManager {
     }
 
     @Override
-    public Set<BaseObject> getTeachers(String requestId, ITransaction transaction) throws Exception {
+    public Set<BaseObject> getTeachers() throws Exception {
+        ITransaction transaction = ScholagestThreadLocal.getTransaction();
+
         Set<BaseObject> teachers = new HashSet<>();
 
         for (String col : transaction.getColumns(CoreNamespace.teachersBase)) {
@@ -52,16 +58,18 @@ public class TeacherManager extends ObjectManager implements ITeacherManager {
     }
 
     @Override
-    public void setTeacherProperties(String requestId, ITransaction transaction, String teacherKey, Map<String, Object> teacherProperties)
-            throws Exception {
-        super.setObjectProperties(requestId, transaction, teacherKey, teacherProperties);
+    public void setTeacherProperties(String teacherKey, Map<String, Object> teacherProperties) throws Exception {
+        ITransaction transaction = ScholagestThreadLocal.getTransaction();
+
+        setObjectProperties(transaction, teacherKey, teacherProperties);
     }
 
     @Override
-    public BaseObject getTeacherProperties(String requestId, ITransaction transaction, String teacherKey, Set<String> propertiesName)
-            throws Exception {
+    public BaseObject getTeacherProperties(String teacherKey, Set<String> propertiesName) throws Exception {
+        ITransaction transaction = ScholagestThreadLocal.getTransaction();
+
         BaseObject teacherObject = new BaseObject(teacherKey, CoreNamespace.tTeacher);
-        teacherObject.setProperties(super.getObjectProperties(requestId, transaction, teacherKey, propertiesName));
+        teacherObject.setProperties(getObjectProperties(transaction, teacherKey, propertiesName));
 
         return teacherObject;
     }

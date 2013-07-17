@@ -2,114 +2,110 @@ package net.scholagest.services.impl;
 
 import java.util.Set;
 
+import net.scholagest.business.IOntologyBusinessComponent;
 import net.scholagest.business.IYearBusinessComponent;
 import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
+import net.scholagest.namespace.AuthorizationRolesNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IYearService;
+import net.scholagest.services.kdom.DBToKdomConverter;
+import net.scholagest.shiro.AuthorizationHelper;
 import net.scholagest.utils.ConfigurationServiceImpl;
 import net.scholagest.utils.ScholagestProperty;
+import net.scholagest.utils.ScholagestThreadLocal;
 
 import com.google.inject.Inject;
 
 public class YearService implements IYearService {
     private IDatabase database = null;
     private IYearBusinessComponent yearBusinessComponent;
+    private AuthorizationHelper authorizationHelper;
 
     @Inject
-    public YearService(IDatabase database, IYearBusinessComponent yearBusinessComponent) {
+    public YearService(IDatabase database, IYearBusinessComponent yearBusinessComponent, IOntologyBusinessComponent ontologyBusinessComponent) {
         this.database = database;
         this.yearBusinessComponent = yearBusinessComponent;
+        this.authorizationHelper = new AuthorizationHelper(ontologyBusinessComponent);
     }
 
     @Override
-    public BaseObject startYear(String requestId, String yearName) throws Exception {
+    public BaseObject startYear(String yearName) throws Exception {
         BaseObject year = null;
 
         ITransaction transaction = this.database
                 .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ScholagestThreadLocal.setTransaction(transaction);
         try {
-            year = yearBusinessComponent.startYear(requestId, transaction, yearName);
+            authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAdminRole());
+
+            BaseObject dbYear = yearBusinessComponent.startYear(yearName);
+            year = new DBToKdomConverter().convertDbToKdom(dbYear);
 
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
-            e.printStackTrace();
+            throw e;
         }
 
         return year;
     }
 
     @Override
-    public void stopYear(String requestId) throws Exception {
+    public void stopYear() throws Exception {
         ITransaction transaction = this.database
                 .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ScholagestThreadLocal.setTransaction(transaction);
         try {
-            yearBusinessComponent.stopYear(requestId, transaction);
+            authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAdminRole());
+
+            yearBusinessComponent.stopYear();
 
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
-            e.printStackTrace();
+            throw e;
         }
     }
 
     @Override
-    public BaseObject getCurrentYearKey(String requestId) throws Exception {
+    public BaseObject getCurrentYearKey() throws Exception {
         BaseObject currentYear = null;
 
         ITransaction transaction = this.database
                 .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ScholagestThreadLocal.setTransaction(transaction);
         try {
-            currentYear = yearBusinessComponent.getCurrentYearKey(requestId, transaction);
+            authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
+
+            BaseObject dbCurrentYear = yearBusinessComponent.getCurrentYearKey();
+            currentYear = new DBToKdomConverter().convertDbToKdom(dbCurrentYear);
 
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
-            e.printStackTrace();
+            throw e;
         }
 
         return currentYear;
     }
 
-    // @Override
-    // public Set<String> getYearClasses(String yearKey) throws Exception {
-    // // TODO Auto-generated method stub
-    // return null;
-    // }
-    //
-    // @Override
-    // public void addClass(String yearKey, String classKey) throws Exception {
-    // // TODO Auto-generated method stub
-    //
-    // }
-    //
-    // @Override
-    // public void setInfo(String yearKey, Map<String, Object> properties)
-    // throws Exception {
-    // // TODO Auto-generated method stub
-    //
-    // }
-    //
-    // @Override
-    // public Map<String, Object> getInfo(String yearKey, Set<String>
-    // propertiesName) throws Exception {
-    // // TODO Auto-generated method stub
-    // return null;
-    // }
-
     @Override
-    public Set<BaseObject> getYearsWithProperties(String requestId, Set<String> properties) throws Exception {
+    public Set<BaseObject> getYearsWithProperties(Set<String> properties) throws Exception {
         Set<BaseObject> years = null;
 
         ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ScholagestThreadLocal.setTransaction(transaction);
         try {
-            years = yearBusinessComponent.getYearsWithProperties(requestId, transaction, properties);
+            authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
+
+            Set<BaseObject> dbYears = yearBusinessComponent.getYearsWithProperties(properties);
+            years = new DBToKdomConverter().convertDbSetToKdom(dbYears);
 
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
-            e.printStackTrace();
+            throw e;
         }
 
         return years;

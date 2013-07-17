@@ -1,56 +1,90 @@
 package net.scholagest.services.impl;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import net.scholagest.business.IExamBusinessComponent;
+import net.scholagest.business.IOntologyBusinessComponent;
 import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
+import net.scholagest.namespace.AuthorizationRolesNamespace;
+import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IExamService;
+import net.scholagest.services.kdom.DBToKdomConverter;
+import net.scholagest.shiro.AuthorizationHelper;
 import net.scholagest.utils.ConfigurationServiceImpl;
 import net.scholagest.utils.ScholagestProperty;
+import net.scholagest.utils.ScholagestThreadLocal;
 
 import com.google.inject.Inject;
 
 public class ExamService implements IExamService {
     private final IDatabase database;
     private final IExamBusinessComponent examBusinessComponent;
+    private AuthorizationHelper authorizationHelper;
 
     @Inject
-    public ExamService(IDatabase database, IExamBusinessComponent examBusinessComponent) {
+    public ExamService(IDatabase database, IExamBusinessComponent examBusinessComponent, IOntologyBusinessComponent ontologyBusinessComponent) {
         this.database = database;
         this.examBusinessComponent = examBusinessComponent;
+        this.authorizationHelper = new AuthorizationHelper(ontologyBusinessComponent);
     }
 
     @Override
-    public BaseObject createExam(String requestId, String yearKey, String classKey, String branchKey, String periodKey, Map<String, Object> examInfo)
-            throws Exception {
+    public BaseObject createExam(String yearKey, String classKey, String branchKey, String periodKey, Map<String, Object> examInfo) throws Exception {
         BaseObject exam = null;
 
         ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ScholagestThreadLocal.setTransaction(transaction);
         try {
-            exam = examBusinessComponent.createExam(requestId, transaction, yearKey, classKey, branchKey, periodKey, examInfo);
+            authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(classKey));
+
+            BaseObject dbExam = examBusinessComponent.createExam(yearKey, classKey, branchKey, periodKey, examInfo);
+            exam = new DBToKdomConverter().convertDbToKdom(dbExam);
 
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
-            e.printStackTrace();
+            throw e;
         }
 
         return exam;
     }
 
     @Override
-    public BaseObject getExamProperties(String requestId, String examKey, Set<String> propertiesName) throws Exception {
+    public BaseObject getExamProperties(String examKey, Set<String> propertiesName) throws Exception {
+        BaseObject exam = null;
+
         ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ScholagestThreadLocal.setTransaction(transaction);
         try {
-            BaseObject properties = examBusinessComponent.getExamProperties(requestId, transaction, examKey, propertiesName);
+            String classKey = getClassKey(examKey);
+            if (classKey == null) {
+                return null;
+            }
+
+            authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(classKey));
+
+            BaseObject dbExam = examBusinessComponent.getExamProperties(examKey, propertiesName);
+            exam = new DBToKdomConverter().convertDbToKdom(dbExam);
+
             transaction.commit();
-            return properties;
         } catch (Exception e) {
             transaction.rollback();
-            e.printStackTrace();
+            throw e;
+        }
+
+        return exam;
+    }
+
+    private String getClassKey(String examKey) throws Exception {
+        Set<String> examClassProperties = new HashSet<>(Arrays.asList(CoreNamespace.pExamClass));
+        BaseObject prop = examBusinessComponent.getExamProperties(examKey, examClassProperties);
+        if (prop != null) {
+            return (String) prop.getProperty(CoreNamespace.pExamClass);
         }
 
         return null;

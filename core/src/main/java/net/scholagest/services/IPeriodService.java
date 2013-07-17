@@ -6,7 +6,7 @@ import java.util.Set;
 import net.scholagest.objects.BaseObject;
 
 public interface IPeriodService {
-    public void setPeriodProperties(String requestId, String periodKey, Map<String, Object> periodProperties) throws Exception;
+    public void setPeriodProperties(String periodKey, Map<String, Object> periodProperties) throws Exception;
 
-    public BaseObject getPeriodProperties(String requestId, String periodKey, Set<String> properties) throws Exception;
+    public BaseObject getPeriodProperties(String periodKey, Set<String> properties) throws Exception;
 }

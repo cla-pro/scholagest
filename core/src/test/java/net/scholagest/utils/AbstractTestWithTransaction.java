@@ -4,7 +4,6 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.spy;
 
 import java.util.Map;
-import java.util.UUID;
 
 import net.scholagest.database.DatabaseException;
 import net.scholagest.utils.InMemoryDatabase.InMemoryTransaction;
@@ -19,13 +18,13 @@ public abstract class AbstractTestWithTransaction extends AbstractTest {
     private InMemoryDatabase database;
 
     protected InMemoryTransaction transaction;
-    protected String requestId = UUID.randomUUID().toString();
 
     @Before
     public void setUpTest() {
         database = new InMemoryDatabase();
         database.startup();
         transaction = spy(database.getTransaction(KEYSPACE));
+        ScholagestThreadLocal.setTransaction(transaction);
     }
 
     @After
@@ -43,8 +42,7 @@ public abstract class AbstractTestWithTransaction extends AbstractTest {
     }
 
     public void fillTransactionWithDataSets(String[] dataSets) {
-        Map<String, Map<String, Map<String, Object>>> dataSetsValues = new DatabaseReaderWriter().
-        		readDataSetsFromResource("data", dataSets);
+        Map<String, Map<String, Map<String, Object>>> dataSetsValues = new DatabaseReaderWriter().readDataSetsFromResource("data", dataSets);
 
         for (String set : dataSets) {
             transaction.addValues(dataSetsValues.get(set));

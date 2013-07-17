@@ -6,7 +6,7 @@
 	
 	<groupId>net</groupId>
 	<artifactId>scholagest</artifactId>
-	<version>0.3.0</version>
+	<version>0.4.0-SNAPSHOT</version>
 	<name>Scholagest Base Project</name>
 	<packaging>pom</packaging>
 
@@ -40,18 +40,18 @@
 		</plugins>
 	</build>
     
-<!--     <modules> -->
-<!--         <module>core</module> -->
-<!--         <module>app</module> -->
-<!--         <module>tester</module> -->
-<!--     </modules> -->
-    
     <profiles>
         <profile>
             <id>application</id>
             <modules>
                 <module>core</module>
                 <module>app</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>initializer</id>
+            <modules>
+                <module>initializer</module>
             </modules>
         </profile>
         <profile>

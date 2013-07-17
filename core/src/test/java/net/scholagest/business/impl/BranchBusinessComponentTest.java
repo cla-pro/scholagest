@@ -1,30 +1,43 @@
 package net.scholagest.business.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.anyMapOf;
+import static org.mockito.Matchers.anySetOf;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 
 import net.scholagest.business.IBranchBusinessComponent;
-import net.scholagest.business.impl.BranchBusinessComponent;
 import net.scholagest.managers.IBranchManager;
 import net.scholagest.managers.IClassManager;
+import net.scholagest.managers.IExamManager;
 import net.scholagest.managers.IPeriodManager;
 import net.scholagest.managers.IYearManager;
-import net.scholagest.managers.impl.CoreNamespace;
 import net.scholagest.managers.ontology.types.DBSet;
+import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.objects.BaseObjectMock;
-import net.scholagest.services.kdom.KSet;
+import net.scholagest.objects.BranchObjectMock;
+import net.scholagest.objects.BranchType;
 import net.scholagest.utils.AbstractTestWithTransaction;
 
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 public class BranchBusinessComponentTest extends AbstractTestWithTransaction {
+    private static final String MEAN_NAME = "mean";
     private static final String BRANCH_PERIOD_SET = UUID.randomUUID().toString();
     private static final String BRANCH_NAME = "Math";
     private static final String CLASS_NAME = "1P A";
@@ -33,6 +46,7 @@ public class BranchBusinessComponentTest extends AbstractTestWithTransaction {
     private static final String CLASS_KEY = CoreNamespace.classNs + "/" + YEAR_NAME + "#" + CLASS_NAME;
     private static final String YEAR_KEY = CoreNamespace.yearNs + "#" + YEAR_NAME;
 
+    private IExamManager examManager;
     private IPeriodManager periodManager;
     private IBranchManager branchManager;
     private IClassManager classManager;
@@ -40,39 +54,39 @@ public class BranchBusinessComponentTest extends AbstractTestWithTransaction {
 
     private IBranchBusinessComponent testee;
 
-    @SuppressWarnings("unchecked")
     @Before
     public void setup() throws Exception {
-        yearManager = Mockito.mock(IYearManager.class);
-        Mockito.when(yearManager.getYearProperties(Mockito.anyString(), Mockito.eq(transaction), Mockito.anyString(), Mockito.anySet())).thenReturn(
+        yearManager = mock(IYearManager.class);
+        when(yearManager.getYearProperties(anyString(), anySetOf(String.class))).thenReturn(
                 BaseObjectMock.createBaseObject(YEAR_KEY, CoreNamespace.tYear, createYearProperties()));
 
-        classManager = Mockito.mock(IClassManager.class);
-        Mockito.when(classManager.getClassProperties(Mockito.anyString(), Mockito.eq(transaction), Mockito.eq(CLASS_KEY), Mockito.anySet()))
-                .thenReturn(BaseObjectMock.createBaseObject(CLASS_KEY, CoreNamespace.tClass, createClassProperties()));
+        classManager = mock(IClassManager.class);
+        when(classManager.getClassProperties(eq(CLASS_KEY), anySetOf(String.class))).thenReturn(
+                BaseObjectMock.createBaseObject(CLASS_KEY, CoreNamespace.tClass, createClassProperties()));
 
-        branchManager = Mockito.mock(IBranchManager.class);
-        Mockito.when(
-                branchManager.createBranch(Mockito.anyString(), Mockito.eq(transaction), Mockito.eq(BRANCH_NAME), Mockito.eq(CLASS_NAME),
-                        Mockito.eq(YEAR_NAME))).thenReturn(BaseObjectMock.createBaseObject(BRANCH_KEY, CoreNamespace.tBranch, createProperties()));
-        Mockito.when(branchManager.getBranchProperties(Mockito.anyString(), Mockito.eq(transaction), Mockito.anyString(), Mockito.anySet()))
-                .thenReturn(null);
-        Mockito.when(branchManager.getBranchProperties(Mockito.anyString(), Mockito.eq(transaction), Mockito.eq(BRANCH_KEY), Mockito.anySet()))
-                .thenReturn(BaseObjectMock.createBaseObject(BRANCH_KEY, CoreNamespace.tBranch, createReadProperties()));
+        branchManager = mock(IBranchManager.class);
+        when(branchManager.createBranch(eq(BRANCH_NAME), eq(CLASS_NAME), eq(YEAR_NAME), anyMapOf(String.class, Object.class))).thenReturn(
+                BranchObjectMock.createBranchObject(BRANCH_KEY, createProperties()));
+        when(branchManager.getBranchProperties(eq(BRANCH_KEY), anySetOf(String.class))).thenReturn(
+                BranchObjectMock.createBranchObject(BRANCH_KEY, createReadProperties()));
 
-        periodManager = Mockito.mock(IPeriodManager.class);
-        Mockito.when(
-                periodManager.createPeriod(Mockito.anyString(), Mockito.eq(transaction), Mockito.anyString(), Mockito.anyString(),
-                        Mockito.anyString(), Mockito.anyString())).thenReturn(
-                BaseObjectMock.createBaseObject(BRANCH_PERIOD_SET.toString(), CoreNamespace.tPeriod, createReadProperties()));
+        periodManager = mock(IPeriodManager.class);
+        when(periodManager.createPeriod(anyString(), anyString(), anyString(), anyString(), anyString())).thenReturn(
+                BaseObjectMock.createPeriodObject(BRANCH_PERIOD_SET.toString(), createReadProperties()));
 
-        testee = new BranchBusinessComponent(periodManager, branchManager, classManager, yearManager);
+        examManager = mock(IExamManager.class);
+        when(examManager.createExam(eq(MEAN_NAME), eq(CLASS_KEY), anyString(), eq(BRANCH_NAME), eq(CLASS_NAME), eq(YEAR_NAME))).thenReturn(
+                BaseObjectMock.createExamObject(UUID.randomUUID().toString(), new HashMap<String, Object>()));
+
+        testee = new BranchBusinessComponent(examManager, periodManager, branchManager, classManager, yearManager);
     }
 
     private Map<String, Object> createProperties() {
         Map<String, Object> properties = new HashMap<>();
 
         properties.put(CoreNamespace.pBranchName, BRANCH_NAME);
+        properties.put(CoreNamespace.pBranchType, BranchType.NUMERICAL.name());
+        properties.put(CoreNamespace.pBranchPeriods, new DBSet(transaction, UUID.randomUUID().toString()));
 
         return properties;
     }
@@ -80,6 +94,7 @@ public class BranchBusinessComponentTest extends AbstractTestWithTransaction {
     private Map<String, Object> createReadProperties() {
         Map<String, Object> properties = createProperties();
 
+        properties.put(CoreNamespace.pBranchType, BranchType.NUMERICAL.name());
         properties.put(CoreNamespace.pBranchPeriods, new DBSet(transaction, BRANCH_PERIOD_SET));
 
         return properties;
@@ -88,7 +103,7 @@ public class BranchBusinessComponentTest extends AbstractTestWithTransaction {
     private Map<String, Object> createExpectedProperties() {
         Map<String, Object> properties = createProperties();
 
-        properties.put(CoreNamespace.pBranchPeriods, new KSet(BRANCH_PERIOD_SET, new HashSet<>()));
+        properties.put(CoreNamespace.pBranchPeriods, new DBSet(transaction, BRANCH_PERIOD_SET));
 
         return properties;
     }
@@ -114,29 +129,39 @@ public class BranchBusinessComponentTest extends AbstractTestWithTransaction {
     @Test
     public void testCreateBranch() throws Exception {
         Map<String, Object> mockProperties = createProperties();
-        BaseObject branch = testee.createBranch(requestId, transaction, CLASS_KEY, mockProperties);
+        BaseObject branch = testee.createBranch(CLASS_KEY, mockProperties);
 
         assertEquals(BRANCH_KEY, branch.getKey());
-        Mockito.verify(branchManager).createBranch(Mockito.anyString(), Mockito.eq(transaction), Mockito.eq(BRANCH_NAME), Mockito.eq(CLASS_NAME),
-                Mockito.eq(YEAR_NAME));
+        verify(branchManager).createBranch(eq(BRANCH_NAME), eq(CLASS_NAME), eq(YEAR_NAME), argThat(new BaseMatcher<Map<String, Object>>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public boolean matches(Object item) {
+                Map<String, Object> properties = (Map<String, Object>) item;
+                return properties.get(CoreNamespace.pBranchClass).equals(CLASS_KEY);
+            }
+
+            @Override
+            public void describeTo(Description description) {}
+        }));
+
+        verify(periodManager, Mockito.times(3)).createPeriod(anyString(), eq(CLASS_KEY), eq(BRANCH_NAME), eq(CLASS_NAME), eq(YEAR_NAME));
+        verify(classManager).getClassProperties(CLASS_KEY, new HashSet<String>(Arrays.asList(CoreNamespace.pClassBranches)));
     }
 
     @Test
     public void testSetBranchProperties() throws Exception {
         Map<String, Object> mockProperties = createProperties();
-        testee.setBranchProperties(requestId, transaction, BRANCH_KEY, mockProperties);
+        testee.setBranchProperties(BRANCH_KEY, mockProperties);
 
-        Mockito.verify(branchManager).setBranchProperties(Mockito.anyString(), Mockito.eq(transaction), Mockito.eq(BRANCH_KEY),
-                Mockito.eq(mockProperties));
+        Mockito.verify(branchManager).setBranchProperties(Mockito.eq(BRANCH_KEY), Mockito.eq(mockProperties));
     }
 
     @Test
     public void testGetBranchProperties() throws Exception {
         Map<String, Object> mockProperties = createExpectedProperties();
-        BaseObject branchProperties = testee.getBranchProperties(requestId, transaction, BRANCH_KEY, mockProperties.keySet());
+        BaseObject branchProperties = testee.getBranchProperties(BRANCH_KEY, mockProperties.keySet());
 
-        Mockito.verify(branchManager).getBranchProperties(Mockito.anyString(), Mockito.eq(transaction), Mockito.eq(BRANCH_KEY),
-                Mockito.eq(mockProperties.keySet()));
+        Mockito.verify(branchManager).getBranchProperties(Mockito.eq(BRANCH_KEY), Mockito.eq(mockProperties.keySet()));
 
         assertMapEquals(mockProperties, branchProperties.getProperties());
     }

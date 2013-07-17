@@ -4,29 +4,36 @@ import java.util.Map;
 import java.util.Set;
 
 import net.scholagest.database.ITransaction;
+import net.scholagest.managers.IOntologyManager;
 import net.scholagest.managers.IPeriodManager;
-import net.scholagest.managers.ontology.OntologyManager;
 import net.scholagest.managers.ontology.types.DBSet;
-import net.scholagest.objects.BaseObject;
+import net.scholagest.namespace.CoreNamespace;
+import net.scholagest.objects.PeriodObject;
+import net.scholagest.utils.ScholagestThreadLocal;
 
 import com.google.inject.Inject;
 
 public class PeriodManager extends ObjectManager implements IPeriodManager {
     @Inject
-    protected PeriodManager(OntologyManager ontologyManager) {
+    protected PeriodManager(IOntologyManager ontologyManager) {
         super(ontologyManager);
     }
 
     @Override
-    public BaseObject createPeriod(String requestId, ITransaction transaction, String periodName, String branchName, String className, String yearName)
-            throws Exception {
+    public PeriodObject createPeriod(String periodName, String classKey, String branchName, String className, String yearName) throws Exception {
+        ITransaction transaction = ScholagestThreadLocal.getTransaction();
+
         String periodKey = CoreNamespace.periodNs + "/" + yearName + "/" + className + "/" + branchName + "#" + periodName;
 
-        BaseObject period = super.createObject(requestId, transaction, periodKey, CoreNamespace.tPeriod);
-
         String examSetKey = generatePeriodExamsKey(periodKey);
-        DBSet.createDBSet(transaction, examSetKey);
-        transaction.insert(periodKey, CoreNamespace.pPeriodExams, examSetKey, null);
+        DBSet examSet = DBSet.createDBSet(transaction, examSetKey);
+
+        PeriodObject period = new PeriodObject(periodKey);
+        period.setExams(examSet);
+        period.setClassKey(classKey);
+        period.putProperty(CoreNamespace.pPeriodName, periodName);
+
+        persistObject(transaction, period);
 
         return period;
     }
@@ -36,15 +43,18 @@ public class PeriodManager extends ObjectManager implements IPeriodManager {
     }
 
     @Override
-    public void setPeriodProperties(String requestId, ITransaction transaction, String periodKey, Map<String, Object> periodProperties)
-            throws Exception {
-        super.setObjectProperties(requestId, transaction, periodKey, periodProperties);
+    public void setPeriodProperties(String periodKey, Map<String, Object> periodProperties) throws Exception {
+        ITransaction transaction = ScholagestThreadLocal.getTransaction();
+
+        setObjectProperties(transaction, periodKey, periodProperties);
     }
 
     @Override
-    public BaseObject getPeriodProperties(String requestId, ITransaction transaction, String periodKey, Set<String> properties) throws Exception {
-        BaseObject branch = new BaseObject(periodKey, CoreNamespace.tPeriod);
-        branch.setProperties(super.getObjectProperties(requestId, transaction, periodKey, properties));
+    public PeriodObject getPeriodProperties(String periodKey, Set<String> properties) throws Exception {
+        ITransaction transaction = ScholagestThreadLocal.getTransaction();
+
+        PeriodObject branch = new PeriodObject(periodKey);
+        branch.setProperties(getObjectProperties(transaction, periodKey, properties));
 
         return branch;
     }

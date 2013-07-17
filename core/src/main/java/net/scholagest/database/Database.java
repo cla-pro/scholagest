@@ -32,26 +32,26 @@ public class Database implements IDatabase {
     @Inject
     public Database(IDatabaseConfiguration databaseConfiguration) {
         this.databaseConfiguration = databaseConfiguration;
-        this.startup();
+        startup();
     }
 
     @Override
     public void startup() {
-        if (this.cluster != null) {
+        if (cluster != null) {
             return;
         }
 
-        this.cluster = HFactory.getOrCreateCluster(this.databaseConfiguration.getClusterName(), this.databaseConfiguration.getHostConfigurator());
+        cluster = HFactory.getOrCreateCluster(databaseConfiguration.getClusterName(), databaseConfiguration.getHostConfigurator());
     }
 
     @Override
     public void shutdown() {
-        HFactory.shutdownCluster(this.cluster);
+        HFactory.shutdownCluster(cluster);
     }
 
     @Override
     public ITransaction getTransaction(String keyspaceName) {
-        Keyspace keyspace = this.getOrCreateKeyspace(keyspaceName);
+        Keyspace keyspace = getOrCreateKeyspace(keyspaceName);
         ColumnFamilyTemplate<String, String> columnFamilyTemplate = new ThriftColumnFamilyTemplate<>(keyspace, COLUMN_FAMILY_NAME,
                 StringSerializer.get(), StringSerializer.get());
 
@@ -69,12 +69,12 @@ public class Database implements IDatabase {
             ColumnFamilyDefinition cfDef = HFactory.createColumnFamilyDefinition(keyspaceName, COLUMN_FAMILY_NAME, ComparatorType.UTF8TYPE);
 
             KeyspaceDefinition newKeyspace = HFactory.createKeyspaceDefinition(keyspaceName, ThriftKsDef.DEF_STRATEGY_CLASS,
-                    this.databaseConfiguration.getReplicationFactor(), Arrays.asList(cfDef));
+                    databaseConfiguration.getReplicationFactor(), Arrays.asList(cfDef));
 
-            this.cluster.addKeyspace(newKeyspace, true);
+            cluster.addKeyspace(newKeyspace, true);
         }
 
-        return HFactory.createKeyspace(keyspaceName, this.cluster);
+        return HFactory.createKeyspace(keyspaceName, cluster);
     }
 
     private class Transaction implements ITransaction {

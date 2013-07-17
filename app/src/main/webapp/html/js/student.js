@@ -1,52 +1,10 @@
 function callGetStudentGrades(students, exams, yearKey, callback) {
 	sendGetRequest("../student/getStudentsGrades", { studentKeys: students, examKeys: exams, yearKey: yearKey }, callback);
-	/*var xhrArgs = {
-			url: "../student/getStudentsGrades",
-			preventCache: true,
-			content: {token: dojo.cookie("scholagest_token"),
-				studentKeys: students,
-				examKeys: exams,
-				yearKey: yearKey},
-				handleAs: "json",
-				load: function(data) {
-					if (data.errorCode == null) {
-						callback(data.info);
-					}
-					else {
-						handleServiceError(data);
-					}
-				},
-				error: function(error) {
-					alert("error = " + error);
-				}
-	}
-
-	var deferred = dojo.xhrGet(xhrArgs);*/
 };
 function createStudent(closeId, txtIds) {
 	var keyValues = getKeysAndValues(txtIds);
 
 	sendGetRequest("../student/create", { keys: keyValues.keys, values: keyValues.values }, function(info) { loadStudents(); });
-	/*var xhrArgs = {
-			url: "../student/create",
-			preventCache: true,
-			content: {token: dojo.cookie("scholagest_token"),
-				keys: keyValues.keys, values: keyValues.values},
-				handleAs: "json",
-				load: function(data) {
-					if (data.errorCode == null) {
-						loadStudents();
-					}
-					else {
-						handleServiceError(data);
-					}
-				},
-				error: function(error) {
-					alert("error = " + error);
-				}
-	}
-
-	var deferred = dojo.xhrGet(xhrArgs);*/
 
 	if (closeId != null) {
 		dijit.byId(closeId).hide();
@@ -54,50 +12,9 @@ function createStudent(closeId, txtIds) {
 };
 function getStudentList(callback) {
 	sendGetRequest("../student/getStudents", { properties: ["pStudentLastName", "pStudentFirstName"] }, callback);
-	/*var xhrArgs = {
-			url: "../student/getStudents",
-			preventCache: true,
-			content: {token: dojo.cookie("scholagest_token"),
-				properties: ["pStudentLastName", "pStudentFirstName"] },
-				handleAs: "json",
-				load: function(data) {
-					if (data.errorCode == null) {
-						callback(data.info);
-					}
-					else {
-						handleServiceError(data);
-					}
-				},
-				error: function(error) {
-					alert("error = " + error);
-				}
-	}
-
-	var deferred = dojo.xhrGet(xhrArgs);*/
 };
 function getStudentsInfo(studentList, properties, callback) {
 	sendGetRequest("../student/getStudentsInfo", { students: studentList, properties: properties }, callback);
-	/*var xhrArgs = {
-			url: "../student/getStudentsInfo",
-			preventCache: true,
-			content: {token: dojo.cookie("scholagest_token"),
-				students: studentList,
-				properties: properties},
-			handleAs: "json",
-			load: function(data) {
-				if (data.errorCode == null) {
-					callback(data.info);
-				}
-				else {
-					handleServiceError(data);
-				}
-			},
-			error: function(error) {
-				alert("error = " + error);
-			}
-	}
-
-	var deferred = dojo.xhrGet(xhrArgs);*/
 };
 function loadStudents() {
 	getStudentList(function(students) {
@@ -150,27 +67,13 @@ function selectStudent(studentKey) {
 		var deferred = dojo.xhrGet(xhrArgs);
 	};
 };
-//function selectStudent(studentKey) {
-//	return function(e) {
-//		var list = dojo.byId('student-search-list');
-//		var old = list.selectedStudent;
-//		if (old != null)
-//			old.className = 'search-list-item';
-//
-//		this.className = 'search-list-item-selected';
-//		list.selectedStudent = this;
-//
-//		getStudentPersonalInfo(studentKey);
-//		getStudentMedicalInfo(studentKey);
-//	};
-//}
 function getStudentPersonalInfo(studentKey) {
-	getStudentInfo(studentKey, "getPersonalProperties", "setPersonalProperties", "student-personal-info");
+	getStudentSubInfo(studentKey, "getPersonalProperties", "setPersonalProperties", "student-personal-info");
 }
 function getStudentMedicalInfo(studentKey) {
-	getStudentInfo(studentKey, "getMedicalProperties", "setMedicalProperties", "student-medical-info");
+	getStudentSubInfo(studentKey, "getMedicalProperties", "setMedicalProperties", "student-medical-info");
 }
-function getStudentInfo(studentKey, getInfoServiceName, setInfoServiceName, domId) {
+function getStudentSubInfo(studentKey, getInfoServiceName, setInfoServiceName, domId) {
 	sendGetRequest("../student/" + getInfoServiceName, { studentKey: studentKey }, function(info) {
 		var base = dojo.byId(domId + "-content-table");
 		createInfoHtmlTable(base, info.properties);
@@ -178,58 +81,10 @@ function getStudentInfo(studentKey, getInfoServiceName, setInfoServiceName, domI
 		var save = dojo.create("button",
 				{type: "button", onclick:setStudentInfo(studentKey, domId + "-content-table", setInfoServiceName), innerHTML: "Enregistrer"}, base);
 	});
-	/*var xhrArgs = {
-			url: "../student/" + getInfoServiceName,
-			preventCache: true,
-			content: {token: dojo.cookie("scholagest_token"),
-				studentKey: studentKey},
-			handleAs: "json",
-			load: function(data) {
-				if (data.errorCode == null) {
-
-					var info = data.info;
-					var base = dojo.byId(domId + "-content-table");
-					createInfoHtmlTable(base, info.properties);
-					
-					var save = dojo.create("button",
-							{type: "button", onclick:setStudentInfo(studentKey, domId + "-content-table", setInfoServiceName), innerHTML: "Enregistrer"}, base);
-				}
-				else {
-					handleServiceError(data);
-				}
-			},
-			error: function(error) {
-				alert("error = " + error);
-			}
-	}
-
-	var deferred = dojo.xhrGet(xhrArgs);*/
 }
 function setStudentInfo(studentKey, domId, webServiceName) {
 	return function() {
 		var keyValues = getKeyValues(domId);
 		sendPostRequest("../student/" + webServiceName, { key: studentKey, properties: keyValues }, function(info) {});
-		/*var xhrArgs = {
-				url: "../student/" + webServiceName,
-				preventCache: true,
-				postData: dojo.toJson({
-					token: dojo.cookie("scholagest_token"),
-					object: {
-						key: studentKey,
-						properties: keyValues
-					}
-				}),
-				handleAs: "json",
-				load: function(data) {
-					if (data.errorCode != null) {
-						handleServiceError(data);
-					}
-				},
-				error: function(error) {
-					alert("error = " + error);
-				}
-		}
-
-		var deferred = dojo.xhrPost(xhrArgs);*/
 	}
 }

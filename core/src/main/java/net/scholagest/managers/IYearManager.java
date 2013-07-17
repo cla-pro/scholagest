@@ -2,21 +2,20 @@ package net.scholagest.managers;
 
 import java.util.Set;
 
-import net.scholagest.database.ITransaction;
 import net.scholagest.objects.BaseObject;
 
 public interface IYearManager {
-    public BaseObject createNewYear(String requestId, ITransaction transaction, String yearName) throws Exception;
+    public BaseObject createNewYear(String yearName) throws Exception;
 
-    public void restoreYear(String requestId, ITransaction transaction, String yearKey) throws Exception;
+    public void restoreYear(String yearKey) throws Exception;
 
-    public void backupYear(String requestId, ITransaction transaction) throws Exception;
+    public void backupYear() throws Exception;
 
-    public BaseObject getCurrentYearKey(String requestId, ITransaction transaction) throws Exception;
+    public BaseObject getCurrentYearKey() throws Exception;
 
-    public Set<BaseObject> getYears(String requestId, ITransaction transaction) throws Exception;
+    public Set<BaseObject> getYears() throws Exception;
 
-    public BaseObject getYearProperties(String requestId, ITransaction transaction, String yearKey, Set<String> propertiesName) throws Exception;
+    public BaseObject getYearProperties(String yearKey, Set<String> propertiesName) throws Exception;
 
-    public void addClassToYear(String requestId, ITransaction transaction, String yearKey, String classKey) throws Exception;
+    public void addClassToYear(String yearKey, String classKey) throws Exception;
 }

@@ -161,7 +161,7 @@ function handleJsonError(errorJson, errorCallback) {
 
 function handleWebServiceError(error) {
 	alert("error = " + error);
-}
+};
 
 function handleServiceError(errorJson) {
 	if (errorJson.errorCode >= 0 && errorJson.errorCode < 100) {
@@ -171,3 +171,10 @@ function handleServiceError(errorJson) {
 		alert("Error with code: " + errorJson.errorCode + " and message: " + errorJson.msg);
 	}
 };
+
+
+function logout() {
+	sendGetRequest(BASE_URL + 'services/user/logout', { token: dojo.cookie("scholagest_token") }, function(data) {
+		window.location = BASE_URL + "html/login.html";
+	});
+}

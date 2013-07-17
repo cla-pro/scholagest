@@ -6,6 +6,7 @@
       <xs:element name="name" type="xs:string" />
       <xs:element name="description" type="xs:string" />
       <xs:element name="baseURL" type="xs:string" />
+      <xs:element name="initializationFolder" type="xs:string" />
       <xs:element name="calls" minOccurs="0" type="t_calls" />
     </xs:sequence>
   </xs:complexType>
