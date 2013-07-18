@@ -13,6 +13,7 @@ import net.scholagest.database.ITransaction;
 import net.scholagest.namespace.AuthorizationRolesNamespace;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
+import net.scholagest.objects.TeacherObject;
 import net.scholagest.objects.UserObject;
 import net.scholagest.services.ITeacherService;
 import net.scholagest.services.kdom.DBToKdomConverter;
@@ -58,7 +59,7 @@ public class TeacherService implements ITeacherService {
             userProperty.put(CoreNamespace.pTeacherUser, userObject.getKey());
             teacherBusinessComponent.setTeacherProperties(teacherKey, userProperty);
 
-            teacher = new DBToKdomConverter().convertDbToKdom(dbTeacher);
+            teacher = new DBToKdomConverter().convertDbToKdom(dbTeacher, null);
 
             transaction.commit();
         } catch (Exception e) {
@@ -78,8 +79,8 @@ public class TeacherService implements ITeacherService {
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
 
-            Set<BaseObject> dbTeachers = teacherBusinessComponent.getTeachers();
-            teachers = new DBToKdomConverter().convertDbSetToKdom(dbTeachers);
+            Set<TeacherObject> dbTeachers = teacherBusinessComponent.getTeachers();
+            teachers = new DBToKdomConverter().convertDbSetToKdom(dbTeachers, null);
 
             transaction.commit();
         } catch (Exception e) {
@@ -91,7 +92,7 @@ public class TeacherService implements ITeacherService {
     }
 
     @Override
-    public Set<BaseObject> getTeachersWithProperties(Set<String> propertiesName) throws Exception {
+    public Set<BaseObject> getTeachersWithProperties(Set<String> propertyNames) throws Exception {
         Set<BaseObject> teachers = null;
 
         ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
@@ -102,8 +103,8 @@ public class TeacherService implements ITeacherService {
             // - All data: Admin, teacher itself
             // - TODO Without restricted data: other teachers
 
-            Set<BaseObject> dbTeachers = teacherBusinessComponent.getTeachersWithProperties(propertiesName);
-            teachers = new DBToKdomConverter().convertDbSetToKdom(dbTeachers);
+            Set<TeacherObject> dbTeachers = teacherBusinessComponent.getTeachersWithProperties(propertyNames);
+            teachers = new DBToKdomConverter().convertDbSetToKdom(dbTeachers, propertyNames);
 
             transaction.commit();
         } catch (Exception e) {
@@ -131,7 +132,7 @@ public class TeacherService implements ITeacherService {
     }
 
     @Override
-    public BaseObject getTeacherProperties(String teacherKey, Set<String> propertiesName) throws Exception {
+    public BaseObject getTeacherProperties(String teacherKey, Set<String> propertyNames) throws Exception {
         BaseObject teacher = null;
 
         ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
@@ -142,8 +143,8 @@ public class TeacherService implements ITeacherService {
             // - All data: Admin, teacher itself
             // - TODO Without restricted data: other teachers
 
-            BaseObject dbTeacher = teacherBusinessComponent.getTeacherProperties(teacherKey, propertiesName);
-            teacher = new DBToKdomConverter().convertDbToKdom(dbTeacher);
+            BaseObject dbTeacher = teacherBusinessComponent.getTeacherProperties(teacherKey, propertyNames);
+            teacher = new DBToKdomConverter().convertDbToKdom(dbTeacher, propertyNames);
 
             transaction.commit();
         } catch (Exception e) {

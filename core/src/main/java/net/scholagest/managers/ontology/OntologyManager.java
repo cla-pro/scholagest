@@ -18,7 +18,7 @@ public class OntologyManager implements IOntologyManager {
     public OntologyManager() {}
 
     @Override
-    public OntologyElement getElementWithName(String elementName) throws Exception {
+    public OntologyElement getElementWithName(String elementName) throws DatabaseException {
         ITransaction transaction = ScholagestThreadLocal.getTransaction();
 
         String type = (String) transaction.get(elementName, RDF.type, null);
@@ -41,14 +41,15 @@ public class OntologyManager implements IOntologyManager {
     }
 
     @Override
-    public boolean isSubtypeOf(String type, String supertype) throws Exception {
+    public boolean isSubtypeOf(String type, String supertype) throws DatabaseException {
         if (type.equals(supertype)) {
             return true;
         }
 
         OntologyElement typeElement = getElementWithName(type);
         if (typeElement == null) {
-            throw new Exception("Type \"" + type + "\" does not exists");
+            // throw new Exception("Type \"" + type + "\" does not exists");
+            // TODO
         }
         Map<String, String> subElements = typeElement.getAttributes();
         if (subElements.containsKey(RDFS.isSubclassOf)) {
@@ -65,7 +66,7 @@ public class OntologyManager implements IOntologyManager {
     }
 
     @Override
-    public Set<String> filterPropertiesWithCorrectDomain(String domain, Set<String> properties) throws Exception {
+    public Set<String> filterPropertiesWithCorrectDomain(String domain, Set<String> properties) throws DatabaseException {
         Set<String> filteredProperties = new HashSet<>();
 
         for (String propertyName : properties) {

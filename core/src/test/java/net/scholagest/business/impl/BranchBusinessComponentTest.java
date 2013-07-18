@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Matchers.anySetOf;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -26,12 +25,9 @@ import net.scholagest.managers.ontology.types.DBSet;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.objects.BaseObjectMock;
-import net.scholagest.objects.BranchObjectMock;
 import net.scholagest.objects.BranchType;
 import net.scholagest.utils.AbstractTestWithTransaction;
 
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -62,20 +58,22 @@ public class BranchBusinessComponentTest extends AbstractTestWithTransaction {
 
         classManager = mock(IClassManager.class);
         when(classManager.getClassProperties(eq(CLASS_KEY), anySetOf(String.class))).thenReturn(
-                BaseObjectMock.createBaseObject(CLASS_KEY, CoreNamespace.tClass, createClassProperties()));
+                BaseObjectMock.createClassObject(CLASS_KEY, createClassProperties()));
 
         branchManager = mock(IBranchManager.class);
-        when(branchManager.createBranch(eq(BRANCH_NAME), eq(CLASS_NAME), eq(YEAR_NAME), anyMapOf(String.class, Object.class))).thenReturn(
-                BranchObjectMock.createBranchObject(BRANCH_KEY, createProperties()));
+        when(branchManager.createBranch(eq(BRANCH_NAME), eq(CLASS_KEY), eq(CLASS_NAME), eq(YEAR_NAME), anyMapOf(String.class, Object.class)))
+                .thenReturn(BaseObjectMock.createBranchObject(BRANCH_KEY, createProperties()));
         when(branchManager.getBranchProperties(eq(BRANCH_KEY), anySetOf(String.class))).thenReturn(
-                BranchObjectMock.createBranchObject(BRANCH_KEY, createReadProperties()));
+                BaseObjectMock.createBranchObject(BRANCH_KEY, createReadProperties()));
 
         periodManager = mock(IPeriodManager.class);
         when(periodManager.createPeriod(anyString(), anyString(), anyString(), anyString(), anyString())).thenReturn(
                 BaseObjectMock.createPeriodObject(BRANCH_PERIOD_SET.toString(), createReadProperties()));
 
         examManager = mock(IExamManager.class);
-        when(examManager.createExam(eq(MEAN_NAME), eq(CLASS_KEY), anyString(), eq(BRANCH_NAME), eq(CLASS_NAME), eq(YEAR_NAME))).thenReturn(
+        when(
+                examManager.createExam(eq(MEAN_NAME), eq(CLASS_KEY), anyString(), eq(BRANCH_NAME), eq(CLASS_NAME), eq(YEAR_NAME),
+                        anyMapOf(String.class, Object.class))).thenReturn(
                 BaseObjectMock.createExamObject(UUID.randomUUID().toString(), new HashMap<String, Object>()));
 
         testee = new BranchBusinessComponent(examManager, periodManager, branchManager, classManager, yearManager);
@@ -94,6 +92,7 @@ public class BranchBusinessComponentTest extends AbstractTestWithTransaction {
     private Map<String, Object> createReadProperties() {
         Map<String, Object> properties = createProperties();
 
+        properties.put(CoreNamespace.pBranchType, BranchType.NUMERICAL.name());
         properties.put(CoreNamespace.pBranchType, BranchType.NUMERICAL.name());
         properties.put(CoreNamespace.pBranchPeriods, new DBSet(transaction, BRANCH_PERIOD_SET));
 
@@ -132,17 +131,7 @@ public class BranchBusinessComponentTest extends AbstractTestWithTransaction {
         BaseObject branch = testee.createBranch(CLASS_KEY, mockProperties);
 
         assertEquals(BRANCH_KEY, branch.getKey());
-        verify(branchManager).createBranch(eq(BRANCH_NAME), eq(CLASS_NAME), eq(YEAR_NAME), argThat(new BaseMatcher<Map<String, Object>>() {
-            @SuppressWarnings("unchecked")
-            @Override
-            public boolean matches(Object item) {
-                Map<String, Object> properties = (Map<String, Object>) item;
-                return properties.get(CoreNamespace.pBranchClass).equals(CLASS_KEY);
-            }
-
-            @Override
-            public void describeTo(Description description) {}
-        }));
+        verify(branchManager).createBranch(eq(BRANCH_NAME), eq(CLASS_KEY), eq(CLASS_NAME), eq(YEAR_NAME), anyMapOf(String.class, Object.class));
 
         verify(periodManager, Mockito.times(3)).createPeriod(anyString(), eq(CLASS_KEY), eq(BRANCH_NAME), eq(CLASS_NAME), eq(YEAR_NAME));
         verify(classManager).getClassProperties(CLASS_KEY, new HashSet<String>(Arrays.asList(CoreNamespace.pClassBranches)));

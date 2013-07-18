@@ -4,12 +4,12 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import net.scholagest.database.DatabaseException;
 import net.scholagest.database.ITransaction;
 import net.scholagest.managers.IOntologyManager;
 import net.scholagest.managers.IPageManager;
 import net.scholagest.managers.ontology.types.DBSet;
 import net.scholagest.namespace.CoreNamespace;
+import net.scholagest.objects.ObjectHelper;
 import net.scholagest.objects.PageObject;
 import net.scholagest.utils.ScholagestThreadLocal;
 
@@ -22,7 +22,7 @@ public class PageManager extends ObjectManager implements IPageManager {
     }
 
     @Override
-    public PageObject createPage(String pageName, String pagePath, Set<String> roles) throws Exception {
+    public PageObject createPage(String pageName, String pagePath, Set<String> roles) {
         ITransaction transaction = ScholagestThreadLocal.getTransaction();
 
         PageObject pageObject = createPageObject(transaction, pageName, pagePath, roles);
@@ -33,7 +33,7 @@ public class PageManager extends ObjectManager implements IPageManager {
         return pageObject;
     }
 
-    private PageObject createPageObject(ITransaction transaction, String pageName, String pagePath, Set<String> roles) throws DatabaseException {
+    private PageObject createPageObject(ITransaction transaction, String pageName, String pagePath, Set<String> roles) {
         PageObject pageObject = new PageObject(UUID.randomUUID().toString());
 
         pageObject.setPath(pagePath);
@@ -48,16 +48,14 @@ public class PageManager extends ObjectManager implements IPageManager {
     }
 
     @Override
-    public Set<PageObject> getAllPages() throws Exception {
+    public Set<PageObject> getAllPages() {
         ITransaction transaction = ScholagestThreadLocal.getTransaction();
 
         Set<PageObject> pages = new HashSet<>();
 
         for (String pageName : transaction.getColumns(CoreNamespace.pageBase)) {
             String pageKey = (String) transaction.get(CoreNamespace.pageBase, pageName, null);
-            PageObject pageObject = new PageObject(pageKey);
-
-            pageObject.setProperties(getAllObjectProperties(transaction, pageKey));
+            PageObject pageObject = new PageObject(transaction, new ObjectHelper(getOntologyManager()), pageKey);
 
             pages.add(pageObject);
         }

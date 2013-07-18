@@ -3,14 +3,14 @@ package net.scholagest.managers;
 import java.util.Map;
 import java.util.Set;
 
-import net.scholagest.objects.BaseObject;
+import net.scholagest.objects.TeacherObject;
 
 public interface ITeacherManager {
-    public BaseObject createTeacher() throws Exception;
+    public TeacherObject createTeacher();
 
-    public Set<BaseObject> getTeachers() throws Exception;
+    public Set<TeacherObject> getTeachers();
 
-    public void setTeacherProperties(String teacherKey, Map<String, Object> teacherProperties) throws Exception;
+    public void setTeacherProperties(String teacherKey, Map<String, Object> teacherProperties);
 
-    public BaseObject getTeacherProperties(String teacherKey, Set<String> propertiesName) throws Exception;
+    public TeacherObject getTeacherProperties(String teacherKey, Set<String> propertiesName);
 }

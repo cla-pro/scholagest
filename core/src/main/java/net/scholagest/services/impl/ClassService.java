@@ -50,7 +50,7 @@ public class ClassService implements IClassService {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAdminRole());
 
             BaseObject dbClazz = classBusinessComponent.createClass(classProperties, className, yearKey);
-            clazz = new DBToKdomConverter().convertDbToKdom(dbClazz);
+            clazz = new DBToKdomConverter().convertDbToKdom(dbClazz, null);
 
             transaction.commit();
         } catch (Exception e) {
@@ -87,7 +87,7 @@ public class ClassService implements IClassService {
 
         DBToKdomConverter dbConvertor = new DBToKdomConverter();
         for (String classKey : dbClasses.keySet()) {
-            converted.put(classKey, dbConvertor.convertDbSetToKdom(dbClasses.get(classKey)));
+            converted.put(classKey, dbConvertor.convertDbSetToKdom(dbClasses.get(classKey), null));
         }
 
         return converted;
@@ -103,7 +103,7 @@ public class ClassService implements IClassService {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
 
             BaseObject dbClazz = classBusinessComponent.getClassProperties(classKey, propertiesName);
-            clazz = new DBToKdomConverter().convertDbToKdom(dbClazz);
+            clazz = new DBToKdomConverter().convertDbToKdom(dbClazz, propertiesName);
 
             transaction.commit();
         } catch (Exception e) {

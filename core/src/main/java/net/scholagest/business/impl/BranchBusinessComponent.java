@@ -43,8 +43,7 @@ public class BranchBusinessComponent implements IBranchBusinessComponent {
         String yearName = getYearName(classKey);
 
         String branchName = (String) branchProperties.get(CoreNamespace.pBranchName);
-        branchProperties.put(CoreNamespace.pBranchClass, classKey);
-        BranchObject branch = branchManager.createBranch(branchName, className, yearName, branchProperties);
+        BranchObject branch = branchManager.createBranch(branchName, classKey, className, yearName, branchProperties);
 
         addBranchToClass(classKey, branch);
 
@@ -58,7 +57,7 @@ public class BranchBusinessComponent implements IBranchBusinessComponent {
 
     private ExamObject createMeanExam(BranchObject branch, String classKey, String className, String yearName, String branchName, String periodName)
             throws Exception {
-        return examManager.createExam("mean", classKey, periodName, branchName, className, yearName);
+        return examManager.createExam("mean", classKey, periodName, branchName, className, yearName, new HashMap<String, Object>());
     }
 
     private void createPeriods(BranchObject branch, String classKey, String className, String yearName, String branchName) throws Exception {
@@ -68,7 +67,6 @@ public class BranchBusinessComponent implements IBranchBusinessComponent {
             PeriodObject period = periodManager.createPeriod(periodName, classKey, branchName, className, yearName);
 
             ExamObject branchMean = createMeanExam(branch, classKey, className, yearName, branchName, "");
-            // TODO not saved!!!!!!
             period.setMeanKey(branchMean.getKey());
 
             Map<String, Object> periodProperties = createPeriodProperties(periodName);
@@ -86,7 +84,7 @@ public class BranchBusinessComponent implements IBranchBusinessComponent {
 
     private void addBranchToClass(String classKey, BranchObject branch) throws Exception {
         Set<String> properties = new HashSet<>(Arrays.asList(CoreNamespace.pClassBranches));
-        DBSet branchesSet = (DBSet) classManager.getClassProperties(classKey, properties).getProperty(CoreNamespace.pClassBranches);
+        DBSet branchesSet = classManager.getClassProperties(classKey, properties).getBranches();
 
         branchesSet.add(branch.getKey());
     }

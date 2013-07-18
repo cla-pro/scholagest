@@ -12,6 +12,7 @@ import net.scholagest.database.ITransaction;
 import net.scholagest.namespace.AuthorizationRolesNamespace;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
+import net.scholagest.objects.PeriodObject;
 import net.scholagest.services.IPeriodService;
 import net.scholagest.services.kdom.DBToKdomConverter;
 import net.scholagest.shiro.AuthorizationHelper;
@@ -54,7 +55,7 @@ public class PeriodService implements IPeriodService {
     }
 
     @Override
-    public BaseObject getPeriodProperties(String periodKey, Set<String> properties) throws Exception {
+    public BaseObject getPeriodProperties(String periodKey, Set<String> propertyNames) throws Exception {
         BaseObject period = null;
 
         ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
@@ -67,8 +68,8 @@ public class PeriodService implements IPeriodService {
 
             authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(classKey));
 
-            BaseObject dbPeriod = periodBusinessComponent.getPeriodProperties(periodKey, properties);
-            period = new DBToKdomConverter().convertDbToKdom(dbPeriod);
+            BaseObject dbPeriod = periodBusinessComponent.getPeriodProperties(periodKey, propertyNames);
+            period = new DBToKdomConverter().convertDbToKdom(dbPeriod, propertyNames);
 
             transaction.commit();
         } catch (Exception e) {
@@ -81,9 +82,9 @@ public class PeriodService implements IPeriodService {
 
     private String getClassKey(String periodKey) throws Exception {
         Set<String> examClassProperties = new HashSet<>(Arrays.asList(CoreNamespace.pPeriodClass));
-        BaseObject prop = periodBusinessComponent.getPeriodProperties(periodKey, examClassProperties);
-        if (prop != null) {
-            return (String) prop.getProperty(CoreNamespace.pPeriodClass);
+        PeriodObject periodObject = periodBusinessComponent.getPeriodProperties(periodKey, examClassProperties);
+        if (periodObject != null) {
+            return periodObject.getClassKey();
         }
 
         return null;

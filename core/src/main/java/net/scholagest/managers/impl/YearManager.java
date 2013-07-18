@@ -1,8 +1,6 @@
 package net.scholagest.managers.impl;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import net.scholagest.database.ITransaction;
@@ -14,6 +12,7 @@ import net.scholagest.managers.ontology.RDF;
 import net.scholagest.managers.ontology.types.DBSet;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
+import net.scholagest.objects.ObjectHelper;
 import net.scholagest.utils.ScholagestThreadLocal;
 
 import com.google.inject.Inject;
@@ -26,22 +25,20 @@ public class YearManager extends ObjectManager implements IYearManager {
     }
 
     @Override
-    public BaseObject createNewYear(String yearName) throws Exception {
+    public BaseObject createNewYear(String yearName) {
         ITransaction transaction = ScholagestThreadLocal.getTransaction();
 
         String yearKey = generateYearKey(yearName);
 
-        BaseObject year = createObject(transaction, yearKey, CoreNamespace.tYear);
+        DBSet classes = DBSet.createDBSet(transaction, generateYearClassesKey(yearKey));
 
-        Map<String, Object> properties = new HashMap<>();
-        properties.put(CoreNamespace.pYearName, yearName);
-        setObjectProperties(transaction, yearKey, properties);
+        BaseObject year = new BaseObject(yearKey, CoreNamespace.tYear);
+        year.putProperty(CoreNamespace.pYearName, yearName);
+        year.putProperty(CoreNamespace.pYearClasses, classes);
+
+        persistObject(transaction, year);
 
         transaction.insert(CoreNamespace.yearsBase, yearName, yearKey, null);
-
-        String setKey = generateYearClassesKey(yearKey);
-        DBSet.createDBSet(transaction, setKey);
-        transaction.insert(yearKey, CoreNamespace.pYearClasses, setKey, null);
 
         return year;
     }
@@ -55,7 +52,7 @@ public class YearManager extends ObjectManager implements IYearManager {
     }
 
     @Override
-    public void restoreYear(String yearKey) throws Exception {
+    public void restoreYear(String yearKey) throws ScholagestException {
         ITransaction transaction = ScholagestThreadLocal.getTransaction();
 
         if (getCurrentYearKey() != null) {
@@ -81,7 +78,7 @@ public class YearManager extends ObjectManager implements IYearManager {
     }
 
     @Override
-    public BaseObject getCurrentYearKey() throws Exception {
+    public BaseObject getCurrentYearKey() {
         ITransaction transaction = ScholagestThreadLocal.getTransaction();
 
         String currentYearKey = (String) transaction.get(CoreNamespace.yearsBase, CoreNamespace.pYearCurrent, null);
@@ -93,7 +90,7 @@ public class YearManager extends ObjectManager implements IYearManager {
     }
 
     @Override
-    public Set<BaseObject> getYears() throws Exception {
+    public Set<BaseObject> getYears() {
         ITransaction transaction = ScholagestThreadLocal.getTransaction();
 
         Set<BaseObject> yearSet = new HashSet<>();
@@ -106,17 +103,14 @@ public class YearManager extends ObjectManager implements IYearManager {
     }
 
     @Override
-    public BaseObject getYearProperties(String yearKey, Set<String> propertiesName) throws Exception {
+    public BaseObject getYearProperties(String yearKey, Set<String> propertiesName) {
         ITransaction transaction = ScholagestThreadLocal.getTransaction();
 
-        BaseObject year = new BaseObject(yearKey, CoreNamespace.tYear);
-        year.setProperties(getObjectProperties(transaction, yearKey, propertiesName));
-
-        return year;
+        return new BaseObject(transaction, new ObjectHelper(getOntologyManager()), yearKey);
     }
 
     @Override
-    public void addClassToYear(String yearKey, String classKey) throws Exception {
+    public void addClassToYear(String yearKey, String classKey) {
         ITransaction transaction = ScholagestThreadLocal.getTransaction();
 
         String setKey = generateYearClassesKey(yearKey);

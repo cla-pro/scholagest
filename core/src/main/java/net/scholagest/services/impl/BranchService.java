@@ -42,7 +42,7 @@ public class BranchService implements IBranchService {
             authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(classKey));
 
             BranchObject dbBranch = branchBusinessComponent.createBranch(classKey, branchProperties);
-            branch = new DBToKdomConverter().convertDbToKdom(dbBranch);
+            branch = new DBToKdomConverter().convertDbToKdom(dbBranch, null);
 
             transaction.commit();
         } catch (Exception e) {
@@ -67,7 +67,7 @@ public class BranchService implements IBranchService {
             authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(classKey));
 
             BranchObject dbBranch = branchBusinessComponent.getBranchProperties(branchKey, propertiesName);
-            branchInfo = new DBToKdomConverter().convertDbToKdom(dbBranch);
+            branchInfo = new DBToKdomConverter().convertDbToKdom(dbBranch, propertiesName);
 
             transaction.commit();
         } catch (Exception e) {

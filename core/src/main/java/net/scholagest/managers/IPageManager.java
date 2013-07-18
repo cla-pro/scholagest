@@ -5,7 +5,7 @@ import java.util.Set;
 import net.scholagest.objects.PageObject;
 
 public interface IPageManager {
-    public PageObject createPage(String pageName, String pagePath, Set<String> roles) throws Exception;
+    public PageObject createPage(String pageName, String pagePath, Set<String> roles);
 
-    Set<PageObject> getAllPages() throws Exception;
+    Set<PageObject> getAllPages();
 }

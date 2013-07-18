@@ -1,0 +1,39 @@
+package net.scholagest.objects;
+
+import net.scholagest.database.ITransaction;
+import net.scholagest.managers.ontology.types.DBSet;
+import net.scholagest.namespace.CoreNamespace;
+
+public class ClassObject extends BaseObject {
+    public ClassObject(String key) {
+        super(key, CoreNamespace.tClass);
+    }
+
+    public ClassObject(ITransaction transaction, ObjectHelper objectHelper, String key) {
+        super(transaction, objectHelper, key);
+    }
+
+    public DBSet getBranches() {
+        return (DBSet) getProperty(CoreNamespace.pClassBranches);
+    }
+
+    public void setBranches(DBSet branches) {
+        putProperty(CoreNamespace.pClassBranches, branches);
+    }
+
+    public DBSet getStudents() {
+        return (DBSet) getProperty(CoreNamespace.pClassStudents);
+    }
+
+    public void setStudents(DBSet students) {
+        putProperty(CoreNamespace.pClassStudents, students);
+    }
+
+    public DBSet getTeachers() {
+        return (DBSet) getProperty(CoreNamespace.pClassTeachers);
+    }
+
+    public void setTeachers(DBSet teachers) {
+        putProperty(CoreNamespace.pClassTeachers, teachers);
+    }
+}

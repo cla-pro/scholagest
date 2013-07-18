@@ -11,10 +11,11 @@ import java.util.Map;
 import java.util.Set;
 
 import net.scholagest.business.ITeacherBusinessComponent;
-import net.scholagest.exception.ScholagestException;
+import net.scholagest.exception.ScholagestRuntimeException;
 import net.scholagest.managers.ITeacherManager;
-import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
+import net.scholagest.objects.BaseObjectMock;
+import net.scholagest.objects.TeacherObject;
 import net.scholagest.utils.AbstractTestWithTransaction;
 
 import org.junit.Before;
@@ -31,14 +32,14 @@ public class TeacherBusinessComponentTest extends AbstractTestWithTransaction {
     @Before
     public void setup() throws Exception {
         teacherManager = Mockito.mock(ITeacherManager.class);
-        Mockito.when(teacherManager.createTeacher()).thenReturn(new BaseObject(TEACHER_KEY, CoreNamespace.tTeacher));
+        Mockito.when(teacherManager.createTeacher()).thenReturn(BaseObjectMock.createTeacherObject(TEACHER_KEY, new HashMap<String, Object>()));
 
-        BaseObject teacherObject = new BaseObject(TEACHER_KEY, CoreNamespace.tTeacher);
+        TeacherObject teacherObject = BaseObjectMock.createTeacherObject(TEACHER_KEY, new HashMap<String, Object>());
         teacherObject.setProperties(createTeacherProperties());
 
         Mockito.when(teacherManager.getTeacherProperties(TEACHER_KEY, createTeacherProperties().keySet())).thenReturn(teacherObject);
         Mockito.when(teacherManager.getTeachers()).thenReturn(
-                new HashSet<BaseObject>(Arrays.asList(new BaseObject(TEACHER_KEY, CoreNamespace.tTeacher))));
+                new HashSet<TeacherObject>(Arrays.asList(BaseObjectMock.createTeacherObject(TEACHER_KEY, new HashMap<String, Object>()))));
 
         testee = new TeacherBusinessComponent(teacherManager);
     }
@@ -52,7 +53,7 @@ public class TeacherBusinessComponentTest extends AbstractTestWithTransaction {
         return personalProperties;
     }
 
-    @Test(expected = ScholagestException.class)
+    @Test(expected = ScholagestRuntimeException.class)
     public void testGetTeacherTypes() throws Exception {
         testee.getTeacherTypes();
         fail("Exception expected");
@@ -82,7 +83,7 @@ public class TeacherBusinessComponentTest extends AbstractTestWithTransaction {
 
     @Test
     public void testGetTeachers() throws Exception {
-        Set<BaseObject> teachers = testee.getTeachers();
+        Set<TeacherObject> teachers = testee.getTeachers();
 
         assertEquals(1, teachers.size());
         assertEquals(TEACHER_KEY, teachers.iterator().next().getKey());
@@ -92,17 +93,17 @@ public class TeacherBusinessComponentTest extends AbstractTestWithTransaction {
     @Test
     public void testGetTeachersWithProperties() throws Exception {
         Map<String, Object> teacherProperties = createTeacherProperties();
-        Set<BaseObject> studentsWithProperties = testee.getTeachersWithProperties(teacherProperties.keySet());
+        Set<TeacherObject> studentsWithProperties = testee.getTeachersWithProperties(teacherProperties.keySet());
 
         assertEquals(1, studentsWithProperties.size());
-        BaseObject teacher = studentsWithProperties.iterator().next();
+        TeacherObject teacher = studentsWithProperties.iterator().next();
         assertNotNull(teacher);
         assertNotNull(teacher.getProperties());
         assertMapEquals(teacherProperties, teacher.getProperties());
         assertNoCallToTransaction();
     }
 
-    @Test(expected = ScholagestException.class)
+    @Test(expected = ScholagestRuntimeException.class)
     public void testGetTeacherClasses() throws Exception {
         testee.getTeacherClasses(TEACHER_KEY);
         fail("Exception expected");

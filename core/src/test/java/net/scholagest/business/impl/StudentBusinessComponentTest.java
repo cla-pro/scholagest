@@ -71,12 +71,13 @@ public class StudentBusinessComponentTest extends AbstractTestWithTransaction {
 
     @Before
     public void setup() throws Exception {
-        when(studentManager.createStudent()).thenReturn(new BaseObject(STUDENT_KEY, CoreNamespace.tStudent));
+        when(studentManager.createStudent()).thenReturn(BaseObjectMock.createStudentObject(STUDENT_KEY, new HashMap<String, Object>()));
         when(studentManager.getMedicalProperties(STUDENT_KEY, createStudentMedicalProperties().keySet())).thenReturn(
                 BaseObjectMock.createBaseObject(null, null, createStudentMedicalProperties()));
         when(studentManager.getPersonalProperties(STUDENT_KEY, createStudentPersonalProperties().keySet())).thenReturn(
                 BaseObjectMock.createBaseObject(null, null, createStudentPersonalProperties()));
-        when(studentManager.getStudents()).thenReturn(new HashSet<>(Arrays.asList(new BaseObject(STUDENT_KEY, CoreNamespace.tStudent))));
+        when(studentManager.getStudents()).thenReturn(
+                new HashSet<>(Arrays.asList(BaseObjectMock.createStudentObject(STUDENT_KEY, new HashMap<String, Object>()))));
 
         testee = new StudentBusinessComponent(studentManager, yearManager, classManager, branchManager, periodManager, examManager);
     }

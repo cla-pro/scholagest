@@ -44,7 +44,7 @@ public class StudentService implements IStudentService {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAdminRole());
 
             BaseObject dbStudent = studentBusinessComponent.createStudent(personalProperties);
-            student = new DBToKdomConverter().convertDbToKdom(dbStudent);
+            student = new DBToKdomConverter().convertDbToKdom(dbStudent, null);
 
             transaction.commit();
         } catch (Exception e) {
@@ -74,7 +74,7 @@ public class StudentService implements IStudentService {
     }
 
     @Override
-    public BaseObject getStudentPersonalProperties(String studentKey, Set<String> properties) throws Exception {
+    public BaseObject getStudentPersonalProperties(String studentKey, Set<String> propertyNames) throws Exception {
         BaseObject personalInfo = null;
 
         ITransaction transaction = this.database
@@ -83,10 +83,10 @@ public class StudentService implements IStudentService {
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
 
-            BaseObject fullPersonalInfo = studentBusinessComponent.getStudentPersonalProperties(studentKey, properties);
-            BaseObject dbPersonalInfo = authorizationHelper.filterObjectProperties(fullPersonalInfo, AuthorizationRolesNamespace.getAdminRole(),
+            BaseObject fullPersonalInfo = studentBusinessComponent.getStudentPersonalProperties(studentKey, propertyNames);
+            BaseObject dbPersonalInfo = new DBToKdomConverter().convertDbToKdom(fullPersonalInfo, propertyNames);
+            personalInfo = authorizationHelper.filterObjectProperties(dbPersonalInfo, AuthorizationRolesNamespace.getAdminRole(),
                     Arrays.asList(studentKey));
-            personalInfo = new DBToKdomConverter().convertDbToKdom(dbPersonalInfo);
 
             transaction.commit();
         } catch (Exception e) {
@@ -98,7 +98,7 @@ public class StudentService implements IStudentService {
     }
 
     @Override
-    public BaseObject getStudentMedicalProperties(String studentKey, Set<String> properties) throws Exception {
+    public BaseObject getStudentMedicalProperties(String studentKey, Set<String> propertyNames) throws Exception {
         BaseObject medicalInfo = null;
 
         ITransaction transaction = this.database
@@ -107,10 +107,10 @@ public class StudentService implements IStudentService {
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
 
-            BaseObject fullMedicalInfo = studentBusinessComponent.getStudentMedicalProperties(studentKey, properties);
-            BaseObject dbMedicalInfo = authorizationHelper.filterObjectProperties(fullMedicalInfo, AuthorizationRolesNamespace.getAdminRole(),
+            BaseObject fullMedicalInfo = studentBusinessComponent.getStudentMedicalProperties(studentKey, propertyNames);
+            BaseObject dbMedicalInfo = new DBToKdomConverter().convertDbToKdom(fullMedicalInfo, propertyNames);
+            medicalInfo = authorizationHelper.filterObjectProperties(dbMedicalInfo, AuthorizationRolesNamespace.getAdminRole(),
                     Arrays.asList(studentKey));
-            medicalInfo = new DBToKdomConverter().convertDbToKdom(dbMedicalInfo);
 
             transaction.commit();
         } catch (Exception e) {
@@ -122,7 +122,7 @@ public class StudentService implements IStudentService {
     }
 
     @Override
-    public Set<BaseObject> getStudentsWithProperties(Set<String> properties) throws Exception {
+    public Set<BaseObject> getStudentsWithProperties(Set<String> propertyNames) throws Exception {
         Set<BaseObject> students = new HashSet<>();
 
         ITransaction transaction = this.database
@@ -131,10 +131,10 @@ public class StudentService implements IStudentService {
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
 
-            for (BaseObject dbFullStudent : studentBusinessComponent.getStudentsWithProperties(properties)) {
-                BaseObject dbFilteredStudent = authorizationHelper.filterObjectProperties(dbFullStudent, AuthorizationRolesNamespace.getAdminRole(),
+            for (BaseObject dbFullStudent : studentBusinessComponent.getStudentsWithProperties(propertyNames)) {
+                BaseObject dbFilteredStudent = new DBToKdomConverter().convertDbToKdom(dbFullStudent, propertyNames);
+                BaseObject student = authorizationHelper.filterObjectProperties(dbFilteredStudent, AuthorizationRolesNamespace.getAdminRole(),
                         Arrays.asList(dbFullStudent.getKey()));
-                BaseObject student = new DBToKdomConverter().convertDbToKdom(dbFilteredStudent);
                 students.add(student);
             }
 
@@ -148,7 +148,7 @@ public class StudentService implements IStudentService {
     }
 
     @Override
-    public BaseObject getStudentProperties(String studentKey, Set<String> properties) throws Exception {
+    public BaseObject getStudentProperties(String studentKey, Set<String> propertyNames) throws Exception {
         BaseObject student = null;
 
         ITransaction transaction = this.database
@@ -157,10 +157,10 @@ public class StudentService implements IStudentService {
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
 
-            BaseObject dbFullStudent = studentBusinessComponent.getStudentProperties(studentKey, properties);
-            BaseObject dbFilteredStudent = authorizationHelper.filterObjectProperties(dbFullStudent, AuthorizationRolesNamespace.getAdminRole(),
+            BaseObject dbFullStudent = studentBusinessComponent.getStudentProperties(studentKey, propertyNames);
+            BaseObject dbFilteredStudent = new DBToKdomConverter().convertDbToKdom(dbFullStudent, propertyNames);
+            student = authorizationHelper.filterObjectProperties(dbFilteredStudent, AuthorizationRolesNamespace.getAdminRole(),
                     Arrays.asList(studentKey));
-            student = new DBToKdomConverter().convertDbToKdom(dbFilteredStudent);
 
             transaction.commit();
         } catch (Exception e) {

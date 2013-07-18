@@ -9,7 +9,8 @@ import net.scholagest.database.ITransaction;
 import net.scholagest.managers.IOntologyManager;
 import net.scholagest.managers.ITeacherManager;
 import net.scholagest.namespace.CoreNamespace;
-import net.scholagest.objects.BaseObject;
+import net.scholagest.objects.ObjectHelper;
+import net.scholagest.objects.TeacherObject;
 import net.scholagest.utils.ScholagestThreadLocal;
 
 import com.google.inject.Inject;
@@ -21,56 +22,54 @@ public class TeacherManager extends ObjectManager implements ITeacherManager {
     }
 
     @Override
-    public BaseObject createTeacher() throws Exception {
+    public TeacherObject createTeacher() {
         ITransaction transaction = ScholagestThreadLocal.getTransaction();
 
         String id = UUID.randomUUID().toString();
         String teacherKey = CoreNamespace.teacherNs + "#" + id;
-
-        BaseObject teacherObject = createObject(transaction, teacherKey, CoreNamespace.tTeacher);
-
         String teacherBase = CoreNamespace.teacherNs + "/" + id;
-        transaction.insert(CoreNamespace.teachersBase, teacherKey, teacherKey, null);
+
+        TeacherObject teacherObject = new TeacherObject(teacherKey);
 
         // Classes node
         String classesKey = teacherBase + "#classes";
-        transaction.insert(teacherKey, CoreNamespace.pTeacherClasses, classesKey, null);
+        teacherObject.putProperty(CoreNamespace.pTeacherClasses, classesKey);
 
         // Property nodes
         String propertiesKey = teacherBase + "#properties";
-        transaction.insert(teacherKey, CoreNamespace.pTeacherProperties, propertiesKey, null);
+        teacherObject.putProperty(CoreNamespace.pTeacherProperties, propertiesKey);
+
+        transaction.insert(CoreNamespace.teachersBase, teacherKey, teacherKey, null);
 
         return teacherObject;
     }
 
     @Override
-    public Set<BaseObject> getTeachers() throws Exception {
+    public Set<TeacherObject> getTeachers() {
         ITransaction transaction = ScholagestThreadLocal.getTransaction();
 
-        Set<BaseObject> teachers = new HashSet<>();
+        Set<TeacherObject> teachers = new HashSet<>();
 
         for (String col : transaction.getColumns(CoreNamespace.teachersBase)) {
             String teacherKey = (String) transaction.get(CoreNamespace.teachersBase, col, null);
-            teachers.add(new BaseObject(teacherKey, CoreNamespace.tTeacher));
+            teachers.add(new TeacherObject(transaction, new ObjectHelper(getOntologyManager()), teacherKey));
         }
 
         return teachers;
     }
 
     @Override
-    public void setTeacherProperties(String teacherKey, Map<String, Object> teacherProperties) throws Exception {
+    public void setTeacherProperties(String teacherKey, Map<String, Object> teacherProperties) {
         ITransaction transaction = ScholagestThreadLocal.getTransaction();
 
-        setObjectProperties(transaction, teacherKey, teacherProperties);
+        TeacherObject teacherObject = new TeacherObject(transaction, new ObjectHelper(getOntologyManager()), teacherKey);
+        teacherObject.putAllProperties(teacherProperties);
     }
 
     @Override
-    public BaseObject getTeacherProperties(String teacherKey, Set<String> propertiesName) throws Exception {
+    public TeacherObject getTeacherProperties(String teacherKey, Set<String> propertiesName) {
         ITransaction transaction = ScholagestThreadLocal.getTransaction();
 
-        BaseObject teacherObject = new BaseObject(teacherKey, CoreNamespace.tTeacher);
-        teacherObject.setProperties(getObjectProperties(transaction, teacherKey, propertiesName));
-
-        return teacherObject;
+        return new TeacherObject(transaction, new ObjectHelper(getOntologyManager()), teacherKey);
     }
 }

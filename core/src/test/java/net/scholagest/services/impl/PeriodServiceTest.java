@@ -2,6 +2,12 @@ package net.scholagest.services.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.anyMapOf;
+import static org.mockito.Matchers.anySetOf;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -46,14 +52,14 @@ public class PeriodServiceTest extends AbstractTest {
     public void testSetPeriodProperties() throws Exception {
         String periodKey = "periodKey";
 
-        Mockito.when(periodBusinessComponent.getPeriodProperties(periodKey, new HashSet<String>(Arrays.asList(CoreNamespace.pPeriodClass))))
-                .thenReturn(createClassKeyObject());
+        when(periodBusinessComponent.getPeriodProperties(periodKey, new HashSet<String>(Arrays.asList(CoreNamespace.pPeriodClass)))).thenReturn(
+                createClassKeyObject());
 
         testee.setPeriodProperties(periodKey, new HashMap<String, Object>());
 
-        Mockito.verify(periodBusinessComponent).setPeriodProperties(Mockito.eq(periodKey), Mockito.anyMapOf(String.class, Object.class));
-        Mockito.verify(periodBusinessComponent).getPeriodProperties(Mockito.eq(periodKey), Mockito.anySetOf(String.class));
-        Mockito.verify(database).getTransaction(getKeyspace());
+        verify(periodBusinessComponent).setPeriodProperties(eq(periodKey), anyMapOf(String.class, Object.class));
+        verify(periodBusinessComponent).getPeriodProperties(eq(periodKey), anySetOf(String.class));
+        verify(database).getTransaction(getKeyspace());
     }
 
     @Test
@@ -65,9 +71,9 @@ public class PeriodServiceTest extends AbstractTest {
 
         defineClassTeacherSubject();
         testee.setPeriodProperties(periodKey, new HashMap<String, Object>());
-        Mockito.verify(periodBusinessComponent).setPeriodProperties(Mockito.eq(periodKey), Mockito.anyMapOf(String.class, Object.class));
-        Mockito.verify(periodBusinessComponent).getPeriodProperties(Mockito.eq(periodKey), Mockito.anySetOf(String.class));
-        Mockito.verify(database).getTransaction(getKeyspace());
+        verify(periodBusinessComponent).setPeriodProperties(eq(periodKey), anyMapOf(String.class, Object.class));
+        verify(periodBusinessComponent).getPeriodProperties(eq(periodKey), anySetOf(String.class));
+        verify(database).getTransaction(getKeyspace());
 
         try {
             defineClassHelpTeacherSubject();
@@ -103,13 +109,13 @@ public class PeriodServiceTest extends AbstractTest {
     public void testGetPeriodPropertiesInsufficientPrivilegies() throws Exception {
         String periodKey = "periodKey";
 
-        Mockito.when(periodBusinessComponent.getPeriodProperties(periodKey, new HashSet<String>(Arrays.asList(CoreNamespace.pPeriodClass))))
-                .thenReturn(createClassKeyObject());
+        when(periodBusinessComponent.getPeriodProperties(periodKey, new HashSet<String>(Arrays.asList(CoreNamespace.pPeriodClass)))).thenReturn(
+                createClassKeyObject());
 
         defineClassTeacherSubject();
         testee.getPeriodProperties(periodKey, new HashSet<String>());
-        Mockito.verify(periodBusinessComponent, Mockito.times(2)).getPeriodProperties(Mockito.eq(periodKey), Mockito.anySetOf(String.class));
-        Mockito.verify(database).getTransaction(getKeyspace());
+        verify(periodBusinessComponent, times(2)).getPeriodProperties(eq(periodKey), anySetOf(String.class));
+        verify(database).getTransaction(getKeyspace());
 
         try {
             defineClassHelpTeacherSubject();
@@ -132,6 +138,7 @@ public class PeriodServiceTest extends AbstractTest {
         PeriodObject periodObject = BaseObjectMock.createPeriodObject(null, new HashMap<String, Object>());
 
         periodObject.putProperty(CoreNamespace.pPeriodClass, CLASS_KEY);
+        periodObject.flushAllProperties();
 
         return periodObject;
     }
