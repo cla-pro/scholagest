@@ -6,7 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.scholagest.business.IPeriodBusinessComponent;
+import net.scholagest.managers.IClassManager;
 import net.scholagest.managers.IPeriodManager;
+import net.scholagest.managers.IStudentManager;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.objects.BaseObjectMock;
 import net.scholagest.objects.PeriodObject;
@@ -17,6 +19,8 @@ import org.mockito.Mockito;
 
 public class PeriodBusinessComponentTest {
     private IPeriodManager periodManager;
+    private IStudentManager studentManager;
+    private IClassManager classManager;
 
     private IPeriodBusinessComponent testee;
 
@@ -24,7 +28,7 @@ public class PeriodBusinessComponentTest {
     public void setup() {
         periodManager = Mockito.mock(IPeriodManager.class);
 
-        testee = new PeriodBusinessComponent(periodManager);
+        testee = new PeriodBusinessComponent(periodManager, classManager, studentManager);
     }
 
     @Test

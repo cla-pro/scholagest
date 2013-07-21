@@ -36,4 +36,12 @@ public class ClassObject extends BaseObject {
     public void setTeachers(DBSet teachers) {
         putProperty(CoreNamespace.pClassTeachers, teachers);
     }
+    
+    public String getYearKey() {
+    	return (String) getProperty(CoreNamespace.pClassYear);
+    }
+    
+    public void setYearKey(String yearKey) {
+    	putProperty(CoreNamespace.pClassYear, yearKey);
+    }
 }

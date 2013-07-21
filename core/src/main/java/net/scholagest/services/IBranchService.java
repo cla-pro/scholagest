@@ -11,4 +11,6 @@ public interface IBranchService {
     public BaseObject getBranchProperties(String branchKey, Set<String> propertiesName) throws Exception;
 
     public void setBranchProperties(String branchKey, Map<String, Object> branchProperties) throws Exception;
+
+    public Map<String, Map<String, BaseObject>> getBranchMeans(String branchKey, Set<String> studentKeys) throws Exception;
 }

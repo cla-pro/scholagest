@@ -23,4 +23,9 @@ public interface IStudentBusinessComponent {
 
     public void setStudentGrades(String studentKey, Map<String, BaseObject> studentGrades, String yearKey, String classKey, String branchKey,
             String periodKey) throws Exception;
+
+    public void setStudentPeriodMean(String studentKey, BaseObject studentMean, String yearKey, String classKey, String branchKey, String periodKey)
+            throws Exception;
+
+    public void setStudentBranchMean(String studentKey, BaseObject studentMean, String yearKey, String classKey, String branchKey) throws Exception;
 }

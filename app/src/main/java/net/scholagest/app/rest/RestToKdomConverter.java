@@ -13,6 +13,10 @@ import net.scholagest.services.kdom.KSet;
 
 public class RestToKdomConverter {
     public BaseObject baseObjectFromRest(RestObject restObject) {
+        if (restObject == null) {
+            return null;
+        }
+
         BaseObject baseObject = new BaseObject(restObject.getKey(), restObject.getType());
         baseObject.setProperties(extractProperties(restObject.getProperties()));
 
@@ -43,7 +47,21 @@ public class RestToKdomConverter {
         return restObjects;
     }
 
+    public Map<String, RestObject> mapRestObjectFromMapKdom(Map<String, BaseObject> objects) {
+        RestToKdomConverter converter = new RestToKdomConverter();
+        Map<String, RestObject> converted = new HashMap<String, RestObject>();
+
+        for (String key : objects.keySet()) {
+            converted.put(key, converter.restObjectFromKdom(objects.get(key)));
+        }
+
+        return converted;
+    };
+
     public RestObject restObjectFromKdom(BaseObject baseObject) {
+        if (baseObject == null) {
+            return null;
+        }
         RestObject restObject = new RestObject();
 
         restObject.setKey(baseObject.getKey());

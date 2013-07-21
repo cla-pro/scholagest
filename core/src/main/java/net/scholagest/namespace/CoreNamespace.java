@@ -94,6 +94,7 @@ public class CoreNamespace {
 
     public static final String gradeNs = scholagestNs + "/grade";
     public static final String pGradeValue = "pGradeValue";
+    public static final String pGradeExam = "pGradeExam";
 
     public static final String tString = scholagestNs + "#String";
     public static final String tSet = scholagestNs + "#Set";

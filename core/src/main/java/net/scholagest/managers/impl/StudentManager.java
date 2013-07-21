@@ -12,6 +12,7 @@ import net.scholagest.managers.IOntologyManager;
 import net.scholagest.managers.IStudentManager;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
+import net.scholagest.objects.GradeObject;
 import net.scholagest.objects.ObjectHelper;
 import net.scholagest.objects.StudentObject;
 import net.scholagest.utils.ScholagestThreadLocal;
@@ -146,10 +147,7 @@ public class StudentManager extends ObjectManager implements IStudentManager {
             if (gradeKey == null) {
                 studentGrades.put(examKey, null);
             } else {
-                BaseObject gradeObject = new BaseObject(gradeKey, CoreNamespace.tGrade);
-                Map<String, Object> examProperties = new HashMap<>();
-                examProperties.put(CoreNamespace.pGradeValue, transaction.get(gradeKey, CoreNamespace.pGradeValue, null));
-                gradeObject.setProperties(examProperties);
+                GradeObject gradeObject = new GradeObject(transaction, new ObjectHelper(getOntologyManager()), gradeKey);
                 studentGrades.put(examKey, gradeObject);
             }
         }

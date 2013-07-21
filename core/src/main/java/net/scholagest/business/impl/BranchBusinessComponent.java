@@ -11,10 +11,13 @@ import net.scholagest.managers.IBranchManager;
 import net.scholagest.managers.IClassManager;
 import net.scholagest.managers.IExamManager;
 import net.scholagest.managers.IPeriodManager;
+import net.scholagest.managers.IStudentManager;
 import net.scholagest.managers.IYearManager;
 import net.scholagest.managers.ontology.types.DBSet;
 import net.scholagest.namespace.CoreNamespace;
+import net.scholagest.objects.BaseObject;
 import net.scholagest.objects.BranchObject;
+import net.scholagest.objects.ClassObject;
 import net.scholagest.objects.ExamObject;
 import net.scholagest.objects.PeriodObject;
 
@@ -26,15 +29,17 @@ public class BranchBusinessComponent implements IBranchBusinessComponent {
     private IBranchManager branchManager;
     private IClassManager classManager;
     private IYearManager yearManager;
+    private IStudentManager studentManager;
 
     @Inject
     public BranchBusinessComponent(IExamManager examManager, IPeriodManager periodManager, IBranchManager branchManager, IClassManager classManager,
-            IYearManager yearManager) {
+            IYearManager yearManager, IStudentManager studentManager) {
         this.examManager = examManager;
         this.periodManager = periodManager;
         this.branchManager = branchManager;
         this.classManager = classManager;
         this.yearManager = yearManager;
+        this.studentManager = studentManager;
     }
 
     @Override
@@ -57,7 +62,9 @@ public class BranchBusinessComponent implements IBranchBusinessComponent {
 
     private ExamObject createMeanExam(BranchObject branch, String classKey, String className, String yearName, String branchName, String periodName)
             throws Exception {
-        return examManager.createExam("mean", classKey, periodName, branchName, className, yearName, new HashMap<String, Object>());
+        ExamObject examObject = examManager.createExam("mean", classKey, periodName, branchName, className, yearName, new HashMap<String, Object>());
+        examObject.setCoeff(1);
+        return examObject;
     }
 
     private void createPeriods(BranchObject branch, String classKey, String className, String yearName, String branchName) throws Exception {
@@ -66,7 +73,7 @@ public class BranchBusinessComponent implements IBranchBusinessComponent {
             String periodName = "Trimestre " + i;
             PeriodObject period = periodManager.createPeriod(periodName, classKey, branchName, className, yearName);
 
-            ExamObject branchMean = createMeanExam(branch, classKey, className, yearName, branchName, "");
+            ExamObject branchMean = createMeanExam(branch, classKey, className, yearName, branchName, periodName);
             period.setMeanKey(branchMean.getKey());
 
             Map<String, Object> periodProperties = createPeriodProperties(periodName);
@@ -113,5 +120,25 @@ public class BranchBusinessComponent implements IBranchBusinessComponent {
     @Override
     public void setBranchProperties(String branchKey, Map<String, Object> branchProperties) throws Exception {
         branchManager.setBranchProperties(branchKey, branchProperties);
+    }
+
+    @Override
+    public Map<String, Map<String, BaseObject>> getPeriodMeans(String branchKey, Set<String> studentKeys) {
+        BranchObject branchObject = branchManager.getBranchProperties(branchKey, new HashSet<String>());
+        String meanExamKey = branchObject.getMeanKey();
+
+        ClassObject classObject = classManager.getClassProperties(branchObject.getClassKey(), new HashSet<String>());
+        String yearKey = classObject.getYearKey();
+
+        Map<String, BaseObject> grades = new HashMap<>();
+        for (String studentKey : studentKeys) {
+            BaseObject gradeObject = studentManager.getStudentGrades(studentKey, new HashSet<String>(Arrays.asList(meanExamKey)), yearKey).get(
+                    meanExamKey);
+            grades.put(studentKey, gradeObject);
+        }
+
+        Map<String, Map<String, BaseObject>> means = new HashMap<>();
+        means.put(meanExamKey, grades);
+        return means;
     }
 }
