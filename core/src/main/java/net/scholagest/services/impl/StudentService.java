@@ -210,4 +210,39 @@ public class StudentService implements IStudentService {
             throw e;
         }
     }
+
+    @Override
+    public void setStudentPeriodMean(String studentKey, BaseObject studentMean, String yearKey, String classKey, String branchKey, String periodKey)
+            throws Exception {
+        ITransaction transaction = this.database
+                .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ScholagestThreadLocal.setTransaction(transaction);
+        try {
+            authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(studentKey));
+
+            studentBusinessComponent.setStudentPeriodMean(studentKey, studentMean, yearKey, classKey, branchKey, periodKey);
+
+            transaction.commit();
+        } catch (Exception e) {
+            transaction.rollback();
+            throw e;
+        }
+    }
+
+    @Override
+    public void setStudentBranchMean(String studentKey, BaseObject studentMean, String yearKey, String classKey, String branchKey) throws Exception {
+        ITransaction transaction = this.database
+                .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ScholagestThreadLocal.setTransaction(transaction);
+        try {
+            authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(studentKey));
+
+            studentBusinessComponent.setStudentBranchMean(studentKey, studentMean, yearKey, classKey, branchKey);
+
+            transaction.commit();
+        } catch (Exception e) {
+            transaction.rollback();
+            throw e;
+        }
+    }
 }

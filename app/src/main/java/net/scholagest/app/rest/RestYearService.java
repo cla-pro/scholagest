@@ -47,7 +47,7 @@ public class RestYearService extends AbstractService {
             BaseObject year = yearService.startYear(yearName);
 
             Gson gson = new Gson();
-            String json = gson.toJson(converter.convertObjectToJson(year, null));
+            String json = gson.toJson(year);
             return "{info: " + json + "}";
         } catch (ShiroException e) {
             return generateSessionExpiredMessage(e);

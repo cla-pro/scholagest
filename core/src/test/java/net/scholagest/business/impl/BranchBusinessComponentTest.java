@@ -20,6 +20,7 @@ import net.scholagest.managers.IBranchManager;
 import net.scholagest.managers.IClassManager;
 import net.scholagest.managers.IExamManager;
 import net.scholagest.managers.IPeriodManager;
+import net.scholagest.managers.IStudentManager;
 import net.scholagest.managers.IYearManager;
 import net.scholagest.managers.ontology.types.DBSet;
 import net.scholagest.namespace.CoreNamespace;
@@ -47,6 +48,7 @@ public class BranchBusinessComponentTest extends AbstractTestWithTransaction {
     private IBranchManager branchManager;
     private IClassManager classManager;
     private IYearManager yearManager;
+    private IStudentManager studentManager;
 
     private IBranchBusinessComponent testee;
 
@@ -76,7 +78,9 @@ public class BranchBusinessComponentTest extends AbstractTestWithTransaction {
                         anyMapOf(String.class, Object.class))).thenReturn(
                 BaseObjectMock.createExamObject(UUID.randomUUID().toString(), new HashMap<String, Object>()));
 
-        testee = new BranchBusinessComponent(examManager, periodManager, branchManager, classManager, yearManager);
+        studentManager = mock(IStudentManager.class);
+
+        testee = new BranchBusinessComponent(examManager, periodManager, branchManager, classManager, yearManager, studentManager);
     }
 
     private Map<String, Object> createProperties() {

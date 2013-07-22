@@ -1,6 +1,7 @@
 package net.scholagest.services.impl;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -78,6 +79,41 @@ public class PeriodService implements IPeriodService {
         }
 
         return period;
+    }
+
+    @Override
+    public Map<String, Map<String, BaseObject>> getPeriodMeans(String periodKey, Set<String> studentKeys) throws Exception {
+        Map<String, Map<String, BaseObject>> means = new HashMap<>();
+
+        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ScholagestThreadLocal.setTransaction(transaction);
+        try {
+            String classKey = getClassKey(periodKey);
+            if (classKey == null) {
+                return new HashMap<>();
+            }
+
+            authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(classKey));
+
+            Map<String, Map<String, BaseObject>> dbMeans = periodBusinessComponent.getPeriodMeans(periodKey, studentKeys);
+            for (String examKey : dbMeans.keySet()) {
+                Map<String, BaseObject> studentMeans = new HashMap<>();
+                Map<String, BaseObject> dbStudentMeans = dbMeans.get(examKey);
+                for (String studentKey : dbStudentMeans.keySet()) {
+                    BaseObject converted = new DBToKdomConverter().convertDbToKdom(dbStudentMeans.get(studentKey), null);
+                    studentMeans.put(studentKey, converted);
+                }
+
+                means.put(examKey, studentMeans);
+            }
+
+            transaction.commit();
+        } catch (Exception e) {
+            transaction.rollback();
+            throw e;
+        }
+
+        return means;
     }
 
     private String getClassKey(String periodKey) throws Exception {
