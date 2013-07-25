@@ -23,10 +23,10 @@ public class UserManager extends ObjectManager implements IUserManager {
     }
 
     @Override
-    public UserObject createUser(String username, String password) {
+    public UserObject createUser(String username, String password, String teacherKey) {
         ITransaction transaction = ScholagestThreadLocal.getTransaction();
 
-        UserObject userObject = createUserObject(transaction, username, password);
+        UserObject userObject = createUserObject(transaction, username, password, teacherKey);
 
         persistObject(transaction, userObject);
         transaction.insert(CoreNamespace.userBase, username, userObject.getKey(), null);
@@ -34,13 +34,16 @@ public class UserManager extends ObjectManager implements IUserManager {
         return userObject;
     }
 
-    private UserObject createUserObject(ITransaction transaction, String username, String password) {
+    private UserObject createUserObject(ITransaction transaction, String username, String password, String teacherKey) {
         UserObject userObject = new UserObject(UUID.randomUUID().toString());
 
         userObject.setUsername(username);
         userObject.setPassword(password);
         userObject.setPermissions(new DBSet(transaction, UUID.randomUUID().toString()));
         userObject.setRoles(new DBSet(transaction, UUID.randomUUID().toString()));
+        if (teacherKey != null) {
+            userObject.setTeacherKey(teacherKey);
+        }
 
         return userObject;
     }

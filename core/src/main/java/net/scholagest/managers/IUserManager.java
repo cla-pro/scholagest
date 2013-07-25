@@ -4,7 +4,7 @@ import net.scholagest.objects.TokenObject;
 import net.scholagest.objects.UserObject;
 
 public interface IUserManager {
-    public UserObject createUser(String username, String password);
+    public UserObject createUser(String username, String password, String teacherKey);
 
     public UserObject getUser(String userKey);
 

@@ -21,7 +21,7 @@ public class UserTest {
         ITransaction transaction = database.getTransaction(SecheronNamespace.SECHERON_KEYSPACE);
         ScholagestThreadLocal.setTransaction(transaction);
         try {
-            userManager.createUser("admin", "admin");
+            userManager.createUser("admin", "admin", null);
 
             transaction.commit();
         } catch (Exception e) {

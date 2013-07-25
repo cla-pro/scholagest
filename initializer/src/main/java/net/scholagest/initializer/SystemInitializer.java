@@ -150,7 +150,7 @@ public class SystemInitializer {
 
         for (List<String> user : users) {
             LOG.debug("Insert user: " + user.get(0) + ";" + user.get(1));
-            UserObject userObject = userManager.createUser(user.get(0), user.get(1));
+            UserObject userObject = userManager.createUser(user.get(0), user.get(1), null);
             if (user.size() > 2) {
                 addRoles(userObject, user.get(2).split("::"));
             }

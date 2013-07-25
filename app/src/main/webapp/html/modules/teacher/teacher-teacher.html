@@ -11,6 +11,20 @@
             loadTeachers();
         });
     </script>
+    <div id="changePasswordDialog" data-dojo-type="dijit.Dialog" title="Changer le mot de passe">
+        <table style="width: 100%">
+            <tr>
+                <td>Nouveau mot de passe</td><td><input type="text" id="txtNewPassword" style="width:100%" /></td>
+            </tr><tr>
+                <td>Répéter le mot de passe</td><td><input type="text" id="txtNewPasswordRepeat" style="width:100%" /></td>
+            </tr><tr>
+                <td align="center">
+                    <button onclick="saveNewPassword(dojo.byId('txtNewPassword').value, dojo.byId('txtNewPasswordRepeat').value)">Ok</button>
+                </td>
+                <td align="center"><button>Annuler</button></td>
+            </tr>
+        </table>
+    </div>
 	<table id="teacherTable" style="width: 100%; height: 100%">
 		<tr>
 			<td valign="top" style="width: 20%; height: 100%">

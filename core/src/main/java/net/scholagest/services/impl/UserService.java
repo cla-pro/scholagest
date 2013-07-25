@@ -1,6 +1,7 @@
 package net.scholagest.services.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -109,5 +110,36 @@ public class UserService implements IUserService {
         }
 
         return subject;
+    }
+
+    @Override
+    public String getTeacherKeyForToken(String token) throws Exception {
+        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+
+        String teacherKey = null;
+        try {
+            teacherKey = userBusinessComponent.getTeacherKeyForToken(token);
+            transaction.commit();
+        } catch (Exception e) {
+            transaction.rollback();
+            throw e;
+        }
+
+        return teacherKey;
+    }
+
+    @Override
+    public void setPassword(String teacherKey, String newPassword) throws Exception {
+        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+
+        try {
+            authorizationHelper.checkAuthorization(Arrays.<String> asList(), Arrays.asList(teacherKey));
+
+            userBusinessComponent.setPassword(teacherKey, newPassword);
+            transaction.commit();
+        } catch (Exception e) {
+            transaction.rollback();
+            throw e;
+        }
     }
 }

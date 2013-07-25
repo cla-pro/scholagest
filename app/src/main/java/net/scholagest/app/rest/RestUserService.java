@@ -18,6 +18,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import net.scholagest.app.rest.object.RestRequest;
+import net.scholagest.app.rest.object.RestSetPassword;
 import net.scholagest.app.utils.HtmlPageBuilder;
 import net.scholagest.app.utils.JsonObject;
 import net.scholagest.database.DatabaseException;
@@ -78,19 +79,19 @@ public class RestUserService extends AbstractService {
     @Produces(MediaType.TEXT_HTML)
     public String getPage(@QueryParam("token") String token) {
         List<String> pages = new ArrayList<>();
+        String teacherKey = null;
         try {
             ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
 
             pages = userService.getVisibleModules(token);
+            teacherKey = userService.getTeacherKeyForToken(token);
         } catch (Exception e) {
-            // e.printStackTrace();
             return "<meta http-equiv=\"refresh\" content=\"0; url=" + getBaseUrl() + "html/login.html\" />";
         }
 
         StringBuilder builder = new StringBuilder();
-
         builder.append("<div id=\"tabMenu\" data-dojo-type=\"dijit.layout.TabContainer\" " + "style=\"width: 100%; height: 100%;\">");
-        builder.append("<script type=\"text/javascript\">" + "var BASE_URL = '" + getBaseUrl() + "';"
+        builder.append("<script type=\"text/javascript\">" + "var BASE_URL = '" + getBaseUrl() + "'; var myOwnTeacherKey = '" + teacherKey + "';"
                 + "dojo.ready(function() { dojo.cookie('scholagest_token', '" + token + "'); " + " });</script>");
         for (String page : pages) {
             String module = loadFile("html" + File.separatorChar + page);
@@ -163,6 +164,30 @@ public class RestUserService extends AbstractService {
             e.printStackTrace();
             return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
+    }
+
+    @POST
+    @Path("/setPassword")
+    @Produces("text/json")
+    public String setPassword(String content) {
+        ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
+
+        try {
+            RestSetPassword request = new Gson().fromJson(content, RestSetPassword.class);
+
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(request.getToken()));
+
+            userService.setPassword(request.getTeacherKey(), request.getNewPassword());
+        } catch (ShiroException e) {
+            return generateSessionExpiredMessage(e);
+        } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
+        }
+
+        return "{}";
     }
 
     @GET

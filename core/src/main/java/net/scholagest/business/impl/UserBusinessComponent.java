@@ -10,6 +10,8 @@ import net.scholagest.managers.ITeacherManager;
 import net.scholagest.managers.IUserManager;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
+import net.scholagest.objects.TeacherObject;
+import net.scholagest.objects.TokenObject;
 import net.scholagest.objects.UserObject;
 import net.scholagest.shiro.ScholagestTokenToken;
 import net.scholagest.shiro.ScholagestUsernameToken;
@@ -20,7 +22,7 @@ import org.apache.shiro.subject.Subject;
 import com.google.inject.Inject;
 
 public class UserBusinessComponent implements IUserBusinessComponent {
-    private IUserManager userManager;
+    private final IUserManager userManager;
     private final ITeacherManager teacherManager;
 
     @Inject
@@ -53,10 +55,10 @@ public class UserBusinessComponent implements IUserBusinessComponent {
 
     @Override
     public UserObject createUser(String teacherKey) throws Exception {
-        BaseObject teacherProperties = teacherManager.getTeacherProperties(teacherKey,
+        TeacherObject teacherObject = teacherManager.getTeacherProperties(teacherKey,
                 new HashSet<>(Arrays.asList("pTeacherFirstName", "pTeacherLastName")));
-        String username = generateUsername(teacherProperties);
-        return userManager.createUser(username, "");
+        String username = generateUsername(teacherObject);
+        return userManager.createUser(username, "", teacherKey);
     }
 
     private String generateUsername(BaseObject teacherProperties) {
@@ -83,5 +85,19 @@ public class UserBusinessComponent implements IUserBusinessComponent {
         for (String singleRight : rights) {
             userObject.getPermissions().add(singleRight);
         }
+    }
+
+    @Override
+    public String getTeacherKeyForToken(String token) {
+        TokenObject tokenObject = userManager.getToken(token);
+        UserObject userObject = userManager.getUser(tokenObject.getUserObjectKey());
+        return userObject.getTeacherKey();
+    }
+
+    @Override
+    public void setPassword(String teacherKey, String newPassword) {
+        TeacherObject teacherObject = teacherManager.getTeacherProperties(teacherKey, new HashSet<String>());
+        UserObject userObject = userManager.getUser((String) teacherObject.getProperty(CoreNamespace.pTeacherUser));
+        userObject.setPassword(newPassword);
     }
 }
