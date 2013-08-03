@@ -2,7 +2,7 @@
 	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:owl="http://www.w3.org/2002/07/owl#">
 	<owl:Ontology rdf:about="http://scholagest.ch/2012/09/cholagest-base-types#">
 <!-- 		<owl:imports rdf:resource="http://www.w3.org/TR/2004/REC-rdf-schema-20040210/rdfs-namespace" /> -->
-        <owl:imports rdf:resource="file:///C:/users/cla/workspaces/java-workspace/scholagest/initializer/src/main/resources/initializer/system/ontology/rdfs-namespace.rdfs" />
+        <owl:imports rdf:resource="/initializer/system/ontology/rdfs-namespace.rdfs" />
 	</owl:Ontology>
 	
 	<rdfs:Class rdf:ID="http://scholagest.net#String">

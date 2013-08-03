@@ -39,6 +39,7 @@ public class CoreNamespace {
     private static final String pUserNs = "pUser";
     public static final String pUserUsername = pUserNs + "Username";
     public static final String pUserPassword = pUserNs + "Password";
+    public static final String pUserTeacher = pUserNs + "Teacher";
 
     public static final String tokenBase = scholagestNs + "#tokens";
     private static final String pTokenNs = "pToken";

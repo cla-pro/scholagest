@@ -1,7 +1,6 @@
 package net.scholagest.services.impl;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -10,8 +9,9 @@ import net.scholagest.business.ITeacherBusinessComponent;
 import net.scholagest.business.IUserBusinessComponent;
 import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
+import net.scholagest.exception.ScholagestExceptionErrorCode;
+import net.scholagest.exception.ScholagestRuntimeException;
 import net.scholagest.namespace.AuthorizationRolesNamespace;
-import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.objects.TeacherObject;
 import net.scholagest.objects.UserObject;
@@ -52,12 +52,8 @@ public class TeacherService implements ITeacherService {
             String teacherKey = dbTeacher.getKey();
 
             UserObject userObject = userBusinessComponent.createUser(teacherKey);
-            userObject.getRoles().add(AuthorizationRolesNamespace.ROLE_TEACHER);
+            userObject.getRoles().add(convertTeacherTypeToRole(teacherType));
             userObject.getPermissions().add(teacherKey);
-
-            Map<String, Object> userProperty = new HashMap<String, Object>();
-            userProperty.put(CoreNamespace.pTeacherUser, userObject.getKey());
-            teacherBusinessComponent.setTeacherProperties(teacherKey, userProperty);
 
             teacher = new DBToKdomConverter().convertDbToKdom(dbTeacher, null);
 
@@ -68,6 +64,23 @@ public class TeacherService implements ITeacherService {
         }
 
         return teacher;
+    }
+
+    private String convertTeacherTypeToRole(String teacherType) {
+        if (teacherType == null) {
+            throw new ScholagestRuntimeException(ScholagestExceptionErrorCode.INVALID_TEACHER_TYPE, "The teacher type cannot be null");
+        }
+
+        if (teacherType.equals(AuthorizationRolesNamespace.ROLE_ADMIN)) {
+            return AuthorizationRolesNamespace.ROLE_ADMIN;
+        } else if (teacherType.equals(AuthorizationRolesNamespace.ROLE_TEACHER)) {
+            return AuthorizationRolesNamespace.ROLE_TEACHER;
+        } else if (teacherType.equals(AuthorizationRolesNamespace.ROLE_HELP_TEACHER)) {
+            return AuthorizationRolesNamespace.ROLE_HELP_TEACHER;
+        } else {
+            throw new ScholagestRuntimeException(ScholagestExceptionErrorCode.INVALID_TEACHER_TYPE, "The teacher type \"" + teacherType
+                    + "\" is invalid");
+        }
     }
 
     @Override

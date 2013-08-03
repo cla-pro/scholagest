@@ -30,6 +30,14 @@ public class UserObject extends BaseObject {
         putProperty(CoreNamespace.pUserPassword, password);
     }
 
+    public String getTeacherKey() {
+        return (String) getProperty(CoreNamespace.pUserTeacher);
+    }
+
+    public void setTeacherKey(String teacherKey) {
+        putProperty(CoreNamespace.pUserTeacher, teacherKey);
+    }
+
     public DBSet getRoles() {
         return (DBSet) getProperty(AuthorizationNamespace.pUserRoles);
     }

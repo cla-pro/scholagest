@@ -10,4 +10,8 @@ public interface IUserService {
     public List<String> getVisibleModules(String userKey) throws Exception;
 
     public Subject authenticateWithToken(String token) throws Exception;
+
+    public String getTeacherKeyForToken(String token) throws Exception;
+
+    public void setPassword(String teacherKey, String newPassword) throws Exception;
 }

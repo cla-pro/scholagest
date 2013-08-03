@@ -57,7 +57,7 @@ public class TeacherServiceTest extends AbstractTest {
                 BaseObjectMock.createTeacherObject("", createUserProperties()));
         Mockito.when(userBusinessComponent.createUser("")).thenReturn(createUserObject());
 
-        testee.createTeacher(null, createUserProperties());
+        testee.createTeacher("admin", createUserProperties());
 
         Mockito.verify(teacherBusinessComponent).createTeacher(Mockito.anyString(), Mockito.anyMapOf(String.class, Object.class));
         Mockito.verify(database).getTransaction(getKeyspace());

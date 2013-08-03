@@ -11,4 +11,12 @@ public class TeacherObject extends BaseObject {
     public TeacherObject(ITransaction transaction, ObjectHelper objectHelper, String key) {
         super(transaction, objectHelper, key);
     }
+
+    public String getUserKey() {
+        return (String) getProperty(CoreNamespace.pTeacherUser);
+    }
+
+    public void setUserKey(String userKey) {
+        putProperty(CoreNamespace.pTeacherUser, userKey);
+    }
 }
