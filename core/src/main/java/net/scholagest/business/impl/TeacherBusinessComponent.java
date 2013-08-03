@@ -5,10 +5,10 @@ import java.util.Map;
 import java.util.Set;
 
 import net.scholagest.business.ITeacherBusinessComponent;
-import net.scholagest.exception.ScholagestException;
 import net.scholagest.exception.ScholagestExceptionErrorCode;
+import net.scholagest.exception.ScholagestRuntimeException;
 import net.scholagest.managers.ITeacherManager;
-import net.scholagest.objects.BaseObject;
+import net.scholagest.objects.TeacherObject;
 
 import com.google.inject.Inject;
 
@@ -21,13 +21,13 @@ public class TeacherBusinessComponent implements ITeacherBusinessComponent {
     }
 
     @Override
-    public Set<String> getTeacherTypes() throws Exception {
-        throw new ScholagestException(ScholagestExceptionErrorCode.GENERAL, "Not yet implemented");
+    public Set<String> getTeacherTypes() {
+        throw new ScholagestRuntimeException(ScholagestExceptionErrorCode.GENERAL, "Not yet implemented");
     }
 
     @Override
-    public BaseObject createTeacher(String teacherType, Map<String, Object> teacherProperties) throws Exception {
-        BaseObject teacherObject = teacherManager.createTeacher();
+    public TeacherObject createTeacher(String teacherType, Map<String, Object> teacherProperties) {
+        TeacherObject teacherObject = teacherManager.createTeacher();
 
         if (teacherProperties != null) {
             teacherManager.setTeacherProperties(teacherObject.getKey(), teacherProperties);
@@ -37,16 +37,16 @@ public class TeacherBusinessComponent implements ITeacherBusinessComponent {
     }
 
     @Override
-    public Set<BaseObject> getTeachers() throws Exception {
+    public Set<TeacherObject> getTeachers() {
         return teacherManager.getTeachers();
     }
 
     @Override
-    public Set<BaseObject> getTeachersWithProperties(Set<String> propertiesName) throws Exception {
-        Set<BaseObject> teacherSet = new HashSet<BaseObject>();
+    public Set<TeacherObject> getTeachersWithProperties(Set<String> propertiesName) {
+        Set<TeacherObject> teacherSet = new HashSet<>();
 
-        for (BaseObject teacher : getTeachers()) {
-            BaseObject info = teacherManager.getTeacherProperties(teacher.getKey(), propertiesName);
+        for (TeacherObject teacher : getTeachers()) {
+            TeacherObject info = teacherManager.getTeacherProperties(teacher.getKey(), propertiesName);
             teacherSet.add(info);
         }
 
@@ -54,17 +54,17 @@ public class TeacherBusinessComponent implements ITeacherBusinessComponent {
     }
 
     @Override
-    public Set<BaseObject> getTeacherClasses(String teacherKey) throws Exception {
-        throw new ScholagestException(ScholagestExceptionErrorCode.GENERAL, "Not yet implemented");
+    public Set<TeacherObject> getTeacherClasses(String teacherKey) {
+        throw new ScholagestRuntimeException(ScholagestExceptionErrorCode.GENERAL, "Not yet implemented");
     }
 
     @Override
-    public void setTeacherProperties(String teacherKey, Map<String, Object> properties) throws Exception {
+    public void setTeacherProperties(String teacherKey, Map<String, Object> properties) {
         teacherManager.setTeacherProperties(teacherKey, properties);
     }
 
     @Override
-    public BaseObject getTeacherProperties(String teacherKey, Set<String> propertiesName) throws Exception {
+    public TeacherObject getTeacherProperties(String teacherKey, Set<String> propertiesName) {
         return teacherManager.getTeacherProperties(teacherKey, propertiesName);
     }
 }

@@ -1,5 +1,6 @@
 package net.scholagest.objects;
 
+import net.scholagest.database.ITransaction;
 import net.scholagest.managers.impl.AuthorizationNamespace;
 import net.scholagest.managers.ontology.types.DBSet;
 import net.scholagest.namespace.CoreNamespace;
@@ -7,6 +8,10 @@ import net.scholagest.namespace.CoreNamespace;
 public class UserObject extends BaseObject {
     public UserObject(String key) {
         super(key, CoreNamespace.tUser);
+    }
+
+    public UserObject(ITransaction transaction, ObjectHelper objectHelper, String key) {
+        super(transaction, objectHelper, key);
     }
 
     public String getUsername() {
@@ -23,6 +28,14 @@ public class UserObject extends BaseObject {
 
     public void setPassword(String password) {
         putProperty(CoreNamespace.pUserPassword, password);
+    }
+
+    public String getTeacherKey() {
+        return (String) getProperty(CoreNamespace.pUserTeacher);
+    }
+
+    public void setTeacherKey(String teacherKey) {
+        putProperty(CoreNamespace.pUserTeacher, teacherKey);
     }
 
     public DBSet getRoles() {

@@ -10,17 +10,22 @@ import net.scholagest.managers.ITeacherManager;
 import net.scholagest.managers.IUserManager;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
+import net.scholagest.objects.TeacherObject;
+import net.scholagest.objects.TokenObject;
 import net.scholagest.objects.UserObject;
+import net.scholagest.shiro.RealmAuthenticationAndAuthorization;
 import net.scholagest.shiro.ScholagestTokenToken;
 import net.scholagest.shiro.ScholagestUsernameToken;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.crypto.hash.Sha1Hash;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.ByteSource;
 
 import com.google.inject.Inject;
 
 public class UserBusinessComponent implements IUserBusinessComponent {
-    private IUserManager userManager;
+    private final IUserManager userManager;
     private final ITeacherManager teacherManager;
 
     @Inject
@@ -53,15 +58,22 @@ public class UserBusinessComponent implements IUserBusinessComponent {
 
     @Override
     public UserObject createUser(String teacherKey) throws Exception {
-        BaseObject teacherProperties = teacherManager.getTeacherProperties(teacherKey,
+        TeacherObject teacherObject = teacherManager.getTeacherProperties(teacherKey,
                 new HashSet<>(Arrays.asList("pTeacherFirstName", "pTeacherLastName")));
-        String username = generateUsername(teacherProperties);
-        return userManager.createUser(username, "");
+
+        String username = generateUsername(teacherObject);
+        UserObject userObject = userManager.createUser(username, teacherKey);
+        teacherObject.setUserKey(userObject.getKey());
+
+        setPassword(teacherKey, "");
+
+        return userObject;
     }
 
     private String generateUsername(BaseObject teacherProperties) {
         String firstName = (String) teacherProperties.getProperty("pTeacherFirstName");
         String lastName = (String) teacherProperties.getProperty("pTeacherLastName");
+
         return firstName.substring(0, 1).toLowerCase() + lastName.toLowerCase();
     }
 
@@ -83,5 +95,28 @@ public class UserBusinessComponent implements IUserBusinessComponent {
         for (String singleRight : rights) {
             userObject.getPermissions().add(singleRight);
         }
+    }
+
+    @Override
+    public String getTeacherKeyForToken(String token) {
+        TokenObject tokenObject = userManager.getToken(token);
+        UserObject userObject = userManager.getUser(tokenObject.getUserObjectKey());
+        return userObject.getTeacherKey();
+    }
+
+    @Override
+    public void setPassword(String teacherKey, String newPassword) {
+        TeacherObject teacherObject = teacherManager.getTeacherProperties(teacherKey, new HashSet<String>());
+        UserObject userObject = userManager.getUser(teacherObject.getUserKey());
+
+        String encryptedPassword = encryptPassword(userObject.getKey(), newPassword);
+
+        userObject.setPassword(encryptedPassword);
+    }
+
+    private String encryptPassword(String userKey, String newPassword) {
+        Sha1Hash hash = new Sha1Hash(newPassword, ByteSource.Util.bytes(userKey), RealmAuthenticationAndAuthorization.HASH_ITERATIONS);
+
+        return hash.toHex();
     }
 }

@@ -6,9 +6,9 @@ import java.util.Set;
 import net.scholagest.objects.BranchObject;
 
 public interface IBranchManager {
-    public BranchObject createBranch(String branchName, String className, String yearName, Map<String, Object> properties) throws Exception;
+    public BranchObject createBranch(String branchName, String classKey, String className, String yearName, Map<String, Object> properties);
 
-    public void setBranchProperties(String branchKey, Map<String, Object> branchProperties) throws Exception;
+    public void setBranchProperties(String branchKey, Map<String, Object> branchProperties);
 
-    public BranchObject getBranchProperties(String branchKey, Set<String> properties) throws Exception;
+    public BranchObject getBranchProperties(String branchKey, Set<String> properties);
 }

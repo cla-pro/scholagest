@@ -16,4 +16,8 @@ public interface IUserBusinessComponent {
     public void removeUsersPermissions(String teacherKey, Set<String> rights) throws Exception;
 
     public void addUsersPermissions(String teacherKey, Set<String> rights) throws Exception;
+
+    public String getTeacherKeyForToken(String token);
+
+    public void setPassword(String teacherKey, String newPassword);
 }

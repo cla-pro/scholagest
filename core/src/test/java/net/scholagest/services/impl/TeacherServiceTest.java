@@ -13,9 +13,9 @@ import net.scholagest.business.IUserBusinessComponent;
 import net.scholagest.database.ITransaction;
 import net.scholagest.exception.ScholagestException;
 import net.scholagest.exception.ScholagestExceptionErrorCode;
+import net.scholagest.managers.impl.AuthorizationNamespace;
 import net.scholagest.managers.ontology.types.DBSet;
-import net.scholagest.namespace.CoreNamespace;
-import net.scholagest.objects.BaseObject;
+import net.scholagest.objects.BaseObjectMock;
 import net.scholagest.objects.UserObject;
 import net.scholagest.services.ITeacherService;
 import net.scholagest.utils.AbstractTest;
@@ -34,7 +34,7 @@ public class TeacherServiceTest extends AbstractTest {
     private ITeacherService testee;
 
     @Before
-    public void setUpTest() {
+    public void setUp() throws Exception {
         database = Mockito.spy(new InMemoryDatabase());
         defineAdminSubject();
 
@@ -45,13 +45,19 @@ public class TeacherServiceTest extends AbstractTest {
         testee = new TeacherService(database, teacherBusinessComponent, userBusinessComponent, ontologyBusinessComponent);
     }
 
+    private HashMap<String, Object> createUserProperties() {
+        HashMap<String, Object> properties = new HashMap<String, Object>();
+        properties.put(AuthorizationNamespace.pUserRoles, new DBSet(Mockito.mock(ITransaction.class), ""));
+        return properties;
+    }
+
     @Test
     public void testCreateTeacher() throws Exception {
         Mockito.when(teacherBusinessComponent.createTeacher(Mockito.anyString(), Mockito.<Map<String, Object>> any())).thenReturn(
-                new BaseObject("", CoreNamespace.tTeacher));
+                BaseObjectMock.createTeacherObject("", createUserProperties()));
         Mockito.when(userBusinessComponent.createUser("")).thenReturn(createUserObject());
 
-        testee.createTeacher(null, new HashMap<String, Object>());
+        testee.createTeacher("admin", createUserProperties());
 
         Mockito.verify(teacherBusinessComponent).createTeacher(Mockito.anyString(), Mockito.anyMapOf(String.class, Object.class));
         Mockito.verify(database).getTransaction(getKeyspace());
@@ -70,7 +76,7 @@ public class TeacherServiceTest extends AbstractTest {
     public void testCreateTeacherInsufficientPrivileges() throws Exception {
         try {
             defineClassTeacherSubject();
-            testee.createTeacher(null, new HashMap<String, Object>());
+            testee.createTeacher(null, createUserProperties());
             fail("ScholagestException expected");
         } catch (ScholagestException e) {
             assertEquals(ScholagestExceptionErrorCode.INSUFFICIENT_PRIVILEGES, e.getErrorCode());
@@ -78,7 +84,7 @@ public class TeacherServiceTest extends AbstractTest {
 
         try {
             defineClassHelpTeacherSubject();
-            testee.createTeacher(null, new HashMap<String, Object>());
+            testee.createTeacher(null, createUserProperties());
             fail("ScholagestException expected");
         } catch (ScholagestException e) {
             assertEquals(ScholagestExceptionErrorCode.INSUFFICIENT_PRIVILEGES, e.getErrorCode());
@@ -86,7 +92,7 @@ public class TeacherServiceTest extends AbstractTest {
 
         try {
             defineOtherTeacherSubject();
-            testee.createTeacher(null, new HashMap<String, Object>());
+            testee.createTeacher(null, createUserProperties());
             fail("ScholagestException expected");
         } catch (ScholagestException e) {
             assertEquals(ScholagestExceptionErrorCode.INSUFFICIENT_PRIVILEGES, e.getErrorCode());
@@ -160,7 +166,7 @@ public class TeacherServiceTest extends AbstractTest {
     @Test
     public void testSetTeacherProperties() throws Exception {
         String teacherKey = "teacherKey";
-        testee.setTeacherProperties(teacherKey, new HashMap<String, Object>());
+        testee.setTeacherProperties(teacherKey, createUserProperties());
 
         Mockito.verify(teacherBusinessComponent).setTeacherProperties(Mockito.eq(teacherKey), Mockito.anyMapOf(String.class, Object.class));
         Mockito.verify(database).getTransaction(getKeyspace());
@@ -171,13 +177,13 @@ public class TeacherServiceTest extends AbstractTest {
         String teacherKey = "teacherKey";
 
         defineClassTeacherSubject();
-        testee.setTeacherProperties(teacherKey, new HashMap<String, Object>());
+        testee.setTeacherProperties(teacherKey, createUserProperties());
         Mockito.verify(teacherBusinessComponent).setTeacherProperties(Mockito.eq(teacherKey), Mockito.anyMapOf(String.class, Object.class));
         Mockito.verify(database).getTransaction(getKeyspace());
 
         try {
             defineClassHelpTeacherSubject();
-            testee.setTeacherProperties(teacherKey, new HashMap<String, Object>());
+            testee.setTeacherProperties(teacherKey, createUserProperties());
             fail("ScholagestException expected");
         } catch (ScholagestException e) {
             assertEquals(ScholagestExceptionErrorCode.INSUFFICIENT_PRIVILEGES, e.getErrorCode());
@@ -185,7 +191,7 @@ public class TeacherServiceTest extends AbstractTest {
 
         try {
             defineOtherTeacherSubject();
-            testee.setTeacherProperties(teacherKey, new HashMap<String, Object>());
+            testee.setTeacherProperties(teacherKey, createUserProperties());
             fail("ScholagestException expected");
         } catch (ScholagestException e) {
             assertEquals(ScholagestExceptionErrorCode.INSUFFICIENT_PRIVILEGES, e.getErrorCode());

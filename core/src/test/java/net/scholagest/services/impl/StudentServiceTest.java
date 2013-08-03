@@ -16,6 +16,7 @@ import net.scholagest.exception.ScholagestExceptionErrorCode;
 import net.scholagest.managers.ontology.OntologyElement;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
+import net.scholagest.objects.StudentObject;
 import net.scholagest.services.IStudentService;
 import net.scholagest.utils.AbstractTest;
 import net.scholagest.utils.InMemoryDatabase;
@@ -165,13 +166,15 @@ public class StudentServiceTest extends AbstractTest {
         String notRestrictedValue = "notRestricted";
         String restrictedValue = "restricted";
 
-        BaseObject studentObject = new BaseObject(studentKey, CoreNamespace.tStudent);
+        StudentObject studentObject = new StudentObject(studentKey);
         studentObject.putProperty(NOT_RESTRICTED_PROP, notRestrictedValue);
         studentObject.putProperty(RESTRICTED_PROP, restrictedValue);
+        studentObject.flushAllProperties();
         Mockito.when(studentBusinessComponent.getStudentPersonalProperties(Mockito.eq(studentKey), Mockito.anySetOf(String.class))).thenReturn(
                 studentObject);
         defineClassTeacherSubject();
-        BaseObject classTeacherStudentObject = testee.getStudentPersonalProperties(studentKey, new HashSet<String>());
+        BaseObject classTeacherStudentObject = testee.getStudentPersonalProperties(studentKey,
+                new HashSet<String>(Arrays.asList(NOT_RESTRICTED_PROP, RESTRICTED_PROP)));
         assertEquals(notRestrictedValue, classTeacherStudentObject.getProperty(NOT_RESTRICTED_PROP));
         assertEquals(restrictedValue, classTeacherStudentObject.getProperty(RESTRICTED_PROP));
 
@@ -180,7 +183,8 @@ public class StudentServiceTest extends AbstractTest {
         Mockito.when(studentBusinessComponent.getStudentPersonalProperties(Mockito.eq(studentKey), Mockito.anySetOf(String.class))).thenReturn(
                 studentObject);
         defineClassHelpTeacherSubject();
-        BaseObject classHelpTeacherStudentObject = testee.getStudentPersonalProperties(studentKey, new HashSet<String>());
+        BaseObject classHelpTeacherStudentObject = testee.getStudentPersonalProperties(studentKey,
+                new HashSet<String>(Arrays.asList(NOT_RESTRICTED_PROP, RESTRICTED_PROP)));
         assertEquals(notRestrictedValue, classHelpTeacherStudentObject.getProperty(NOT_RESTRICTED_PROP));
         assertNull(classHelpTeacherStudentObject.getProperty(RESTRICTED_PROP));
 
@@ -189,7 +193,8 @@ public class StudentServiceTest extends AbstractTest {
         Mockito.when(studentBusinessComponent.getStudentPersonalProperties(Mockito.eq(studentKey), Mockito.anySetOf(String.class))).thenReturn(
                 studentObject);
         defineOtherTeacherSubject();
-        BaseObject otherTeacherStudentObject = testee.getStudentPersonalProperties(studentKey, new HashSet<String>());
+        BaseObject otherTeacherStudentObject = testee.getStudentPersonalProperties(studentKey,
+                new HashSet<String>(Arrays.asList(NOT_RESTRICTED_PROP, RESTRICTED_PROP)));
         assertEquals(notRestrictedValue, otherTeacherStudentObject.getProperty(NOT_RESTRICTED_PROP));
         assertNull(classHelpTeacherStudentObject.getProperty(RESTRICTED_PROP));
     }
@@ -242,7 +247,8 @@ public class StudentServiceTest extends AbstractTest {
         Mockito.when(studentBusinessComponent.getStudentMedicalProperties(Mockito.eq(studentKey), Mockito.anySetOf(String.class))).thenReturn(
                 studentObject);
         defineClassTeacherSubject();
-        BaseObject classTeacherStudentObject = testee.getStudentMedicalProperties(studentKey, new HashSet<String>());
+        BaseObject classTeacherStudentObject = testee.getStudentMedicalProperties(studentKey,
+                new HashSet<String>(Arrays.asList(NOT_RESTRICTED_PROP, RESTRICTED_PROP)));
         assertEquals(notRestrictedValue, classTeacherStudentObject.getProperty(NOT_RESTRICTED_PROP));
         assertEquals(restrictedValue, classTeacherStudentObject.getProperty(RESTRICTED_PROP));
 
@@ -251,7 +257,8 @@ public class StudentServiceTest extends AbstractTest {
         Mockito.when(studentBusinessComponent.getStudentMedicalProperties(Mockito.eq(studentKey), Mockito.anySetOf(String.class))).thenReturn(
                 studentObject);
         defineClassHelpTeacherSubject();
-        BaseObject classHelpTeacherStudentObject = testee.getStudentMedicalProperties(studentKey, new HashSet<String>());
+        BaseObject classHelpTeacherStudentObject = testee.getStudentMedicalProperties(studentKey,
+                new HashSet<String>(Arrays.asList(NOT_RESTRICTED_PROP, RESTRICTED_PROP)));
         assertEquals(notRestrictedValue, classHelpTeacherStudentObject.getProperty(NOT_RESTRICTED_PROP));
         assertNull(classHelpTeacherStudentObject.getProperty(RESTRICTED_PROP));
 
@@ -260,7 +267,8 @@ public class StudentServiceTest extends AbstractTest {
         Mockito.when(studentBusinessComponent.getStudentMedicalProperties(Mockito.eq(studentKey), Mockito.anySetOf(String.class))).thenReturn(
                 studentObject);
         defineOtherTeacherSubject();
-        BaseObject otherTeacherStudentObject = testee.getStudentMedicalProperties(studentKey, new HashSet<String>());
+        BaseObject otherTeacherStudentObject = testee.getStudentMedicalProperties(studentKey,
+                new HashSet<String>(Arrays.asList(NOT_RESTRICTED_PROP, RESTRICTED_PROP)));
         assertEquals(notRestrictedValue, otherTeacherStudentObject.getProperty(NOT_RESTRICTED_PROP));
         assertNull(classHelpTeacherStudentObject.getProperty(RESTRICTED_PROP));
     }
@@ -308,7 +316,8 @@ public class StudentServiceTest extends AbstractTest {
         Mockito.when(studentBusinessComponent.getStudentsWithProperties(Mockito.anySetOf(String.class))).thenReturn(
                 new HashSet<>(Arrays.asList(studentObject)));
         defineClassTeacherSubject();
-        Set<BaseObject> classTeacherStudentObjects = testee.getStudentsWithProperties(new HashSet<String>());
+        Set<BaseObject> classTeacherStudentObjects = testee.getStudentsWithProperties(new HashSet<String>(Arrays.asList(NOT_RESTRICTED_PROP,
+                RESTRICTED_PROP)));
         assertEquals(notRestrictedValue, classTeacherStudentObjects.iterator().next().getProperty(NOT_RESTRICTED_PROP));
         assertEquals(restrictedValue, classTeacherStudentObjects.iterator().next().getProperty(RESTRICTED_PROP));
 
@@ -317,7 +326,8 @@ public class StudentServiceTest extends AbstractTest {
         Mockito.when(studentBusinessComponent.getStudentsWithProperties(Mockito.anySetOf(String.class))).thenReturn(
                 new HashSet<>(Arrays.asList(studentObject)));
         defineClassHelpTeacherSubject();
-        Set<BaseObject> classHelpTeacherStudentObject = testee.getStudentsWithProperties(new HashSet<String>());
+        Set<BaseObject> classHelpTeacherStudentObject = testee.getStudentsWithProperties(new HashSet<String>(Arrays.asList(NOT_RESTRICTED_PROP,
+                RESTRICTED_PROP)));
         assertEquals(notRestrictedValue, classHelpTeacherStudentObject.iterator().next().getProperty(NOT_RESTRICTED_PROP));
         assertNull(classHelpTeacherStudentObject.iterator().next().getProperty(RESTRICTED_PROP));
 
@@ -326,7 +336,8 @@ public class StudentServiceTest extends AbstractTest {
         Mockito.when(studentBusinessComponent.getStudentsWithProperties(Mockito.anySetOf(String.class))).thenReturn(
                 new HashSet<>(Arrays.asList(studentObject)));
         defineOtherTeacherSubject();
-        Set<BaseObject> otherTeacherStudentObject = testee.getStudentsWithProperties(new HashSet<String>());
+        Set<BaseObject> otherTeacherStudentObject = testee.getStudentsWithProperties(new HashSet<String>(Arrays.asList(NOT_RESTRICTED_PROP,
+                RESTRICTED_PROP)));
         assertEquals(notRestrictedValue, otherTeacherStudentObject.iterator().next().getProperty(NOT_RESTRICTED_PROP));
         assertNull(classHelpTeacherStudentObject.iterator().next().getProperty(RESTRICTED_PROP));
     }

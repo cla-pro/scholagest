@@ -11,6 +11,7 @@ import net.scholagest.managers.ontology.OntologyManager;
 import net.scholagest.managers.ontology.RDF;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
+import net.scholagest.objects.ExamObject;
 import net.scholagest.utils.AbstractTestWithTransaction;
 import net.scholagest.utils.DatabaseReaderWriter;
 import net.scholagest.utils.InMemoryDatabase;
@@ -34,7 +35,8 @@ public class ExamManagerTest extends AbstractTestWithTransaction {
 
     @Test
     public void testCreateNewExam() throws Exception {
-        BaseObject exam = examManager.createExam(EXAM_NAME, CLASS_KEY, PERIOD_NAME, BRANCH_NAME, CLASS_NAME, YEAR_NAME);
+        BaseObject exam = examManager
+                .createExam(EXAM_NAME, CLASS_KEY, PERIOD_NAME, BRANCH_NAME, CLASS_NAME, YEAR_NAME, new HashMap<String, Object>());
 
         assertEquals(EXAM_KEY, exam.getKey());
         Mockito.verify(transaction).insert(EXAM_KEY, RDF.type, CoreNamespace.tExam, null);
@@ -46,19 +48,16 @@ public class ExamManagerTest extends AbstractTestWithTransaction {
 
         Map<String, Object> properties = createExamProperties();
         examManager.setExamProperties(EXAM_KEY, properties);
-        BaseObject exam = examManager.getExamProperties(EXAM_KEY, properties.keySet());
+        ExamObject exam = examManager.getExamProperties(EXAM_KEY, properties.keySet());
 
-        Map<String, Object> readProperties = exam.getProperties();
-        assertEquals(properties.size(), readProperties.size());
-        for (String key : properties.keySet()) {
-            assertEquals(properties.get(key), readProperties.get(key));
-        }
+        assertEquals(CLASS_KEY, exam.getClassKey());
     }
 
     private Map<String, Object> createExamProperties() {
         Map<String, Object> personalProperties = new HashMap<String, Object>();
 
         personalProperties.put(CoreNamespace.pExamName, EXAM_NAME);
+        personalProperties.put(CoreNamespace.pExamClass, CLASS_KEY);
 
         return personalProperties;
     }
@@ -71,7 +70,8 @@ public class ExamManagerTest extends AbstractTestWithTransaction {
 
         Map<String, Object> examProperties = new ExamManagerTest().createExamProperties();
 
-        BaseObject exam = examManager.createExam(EXAM_NAME, CLASS_KEY, PERIOD_NAME, BRANCH_NAME, CLASS_NAME, YEAR_NAME);
+        BaseObject exam = examManager
+                .createExam(EXAM_NAME, CLASS_KEY, PERIOD_NAME, BRANCH_NAME, CLASS_NAME, YEAR_NAME, new HashMap<String, Object>());
         examManager.setExamProperties(exam.getKey(), examProperties);
 
         Map<String, Map<String, Map<String, Object>>> databaseContent = new HashMap<>();

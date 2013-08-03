@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="WARN">
+    <appenders>
+<!--         <File name="A1" fileName="A1.log" append="false"> -->
+<!--             <PatternLayout pattern="%t %-5p %c{2} - %m%n" /> -->
+<!--         </File> -->
+        <Console name="STDOUT" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d %-5p [%t] %F:%L - %m%n" />
+        </Console>
+        <Console name="STDOUT_RESULT" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d %-5p [%t] %F:%L - %m%n" />
+        </Console>
+    </appenders>
+    <loggers>
+        <logger name="net.scholagest" level="info" additivity="false">
+            <appender-ref ref="STDOUT"/>
+        </logger>
+        <root level="error">
+            <appender-ref ref="STDOUT" />
+        </root>
+    </loggers>
+</configuration>

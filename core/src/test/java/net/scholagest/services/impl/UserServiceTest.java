@@ -85,6 +85,8 @@ public class UserServiceTest extends AbstractTest {
         pageObject.setRoles(roles);
         pageObject.setPath("path");
 
+        pageObject.flushAllProperties();
+
         return pageObject;
     }
 

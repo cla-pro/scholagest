@@ -30,7 +30,7 @@ public class ClassManagerTest extends AbstractTestWithTransaction {
 
     @Test
     public void testCreateNewClass() throws Exception {
-        BaseObject clazz = classManager.createClass(CLASS_NAME, YEAR_NAME);
+        BaseObject clazz = classManager.createClass(CLASS_NAME, YEAR_NAME, new HashMap<String, Object>());
 
         assertEquals(CLASS_KEY, clazz.getKey());
         Mockito.verify(transaction).insert(Mockito.eq(CoreNamespace.classesBase), Mockito.eq(YEAR_NAME + "/" + CLASS_NAME),
@@ -84,7 +84,7 @@ public class ClassManagerTest extends AbstractTestWithTransaction {
 
     private static void createClass(ITransaction transaction, IClassManager classManager, String className, String yearName, String yearKey)
             throws Exception {
-        BaseObject clazz = classManager.createClass(className, yearName);
+        BaseObject clazz = classManager.createClass(className, yearName, new HashMap<String, Object>());
 
         Map<String, Object> properties = new HashMap<>();
         properties.put(CoreNamespace.pClassName, className);

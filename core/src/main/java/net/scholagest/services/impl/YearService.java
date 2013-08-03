@@ -40,7 +40,7 @@ public class YearService implements IYearService {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAdminRole());
 
             BaseObject dbYear = yearBusinessComponent.startYear(yearName);
-            year = new DBToKdomConverter().convertDbToKdom(dbYear);
+            year = new DBToKdomConverter().convertDbToKdom(dbYear, null);
 
             transaction.commit();
         } catch (Exception e) {
@@ -79,7 +79,7 @@ public class YearService implements IYearService {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
 
             BaseObject dbCurrentYear = yearBusinessComponent.getCurrentYearKey();
-            currentYear = new DBToKdomConverter().convertDbToKdom(dbCurrentYear);
+            currentYear = new DBToKdomConverter().convertDbToKdom(dbCurrentYear, null);
 
             transaction.commit();
         } catch (Exception e) {
@@ -91,7 +91,7 @@ public class YearService implements IYearService {
     }
 
     @Override
-    public Set<BaseObject> getYearsWithProperties(Set<String> properties) throws Exception {
+    public Set<BaseObject> getYearsWithProperties(Set<String> propertyNames) throws Exception {
         Set<BaseObject> years = null;
 
         ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
@@ -99,8 +99,8 @@ public class YearService implements IYearService {
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
 
-            Set<BaseObject> dbYears = yearBusinessComponent.getYearsWithProperties(properties);
-            years = new DBToKdomConverter().convertDbSetToKdom(dbYears);
+            Set<BaseObject> dbYears = yearBusinessComponent.getYearsWithProperties(propertyNames);
+            years = new DBToKdomConverter().convertDbSetToKdom(dbYears, propertyNames);
 
             transaction.commit();
         } catch (Exception e) {

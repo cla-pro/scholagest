@@ -46,11 +46,7 @@ public class PeriodManagerTest extends AbstractTestWithTransaction {
         periodManager.setPeriodProperties(PERIOD_KEY, properties);
         BaseObject period = periodManager.getPeriodProperties(PERIOD_KEY, properties.keySet());
 
-        Map<String, Object> readProperties = period.getProperties();
-        assertEquals(properties.size(), readProperties.size());
-        for (String key : properties.keySet()) {
-            assertEquals(properties.get(key), readProperties.get(key));
-        }
+        assertEquals(PERIOD_NAME, period.getProperty(CoreNamespace.pPeriodName));
     }
 
     private Map<String, Object> createPeriodProperties() {

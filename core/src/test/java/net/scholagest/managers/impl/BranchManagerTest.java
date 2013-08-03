@@ -30,13 +30,13 @@ public class BranchManagerTest extends AbstractTestWithTransaction {
     private static final String YEAR_NAME = "2012-2013";
     private static final String CLASS_NAME = "1P A";
     private static final String BRANCH_KEY = CoreNamespace.branchNs + "/" + YEAR_NAME + "/" + CLASS_NAME + "#" + BRANCH_NAME;
-    private static final Object CLASS_KEY = UUID.randomUUID().toString();
+    private static final String CLASS_KEY = UUID.randomUUID().toString();
 
     private IBranchManager branchManager = new BranchManager(new OntologyManager());
 
     @Test
     public void testCreateNewBranch() throws Exception {
-        BranchObject branch = branchManager.createBranch(BRANCH_NAME, CLASS_NAME, YEAR_NAME, createBranchProperties());
+        BranchObject branch = branchManager.createBranch(BRANCH_NAME, CLASS_KEY, CLASS_NAME, YEAR_NAME, createBranchProperties());
 
         assertEquals(BRANCH_KEY, branch.getKey());
         assertEquals(CoreNamespace.tBranch, branch.getType());
@@ -63,7 +63,7 @@ public class BranchManagerTest extends AbstractTestWithTransaction {
 
         assertEquals(BRANCH_KEY, branch.getKey());
         assertEquals(CoreNamespace.tBranch, branch.getType());
-        assertMapEquals(properties, branch.getProperties());
+        assertEquals(CLASS_KEY, branch.getProperty(CoreNamespace.pBranchClass));
     }
 
     private Map<String, Object> createClassProperties() {
@@ -80,8 +80,8 @@ public class BranchManagerTest extends AbstractTestWithTransaction {
 
         IBranchManager classManager = new BranchManager(new OntologyManager());
 
-        createBranch(transaction, classManager, "Math", CLASS_NAME, YEAR_NAME);
-        createBranch(transaction, classManager, "Geographie", CLASS_NAME, YEAR_NAME);
+        createBranch(transaction, classManager, "Math", CLASS_KEY, CLASS_NAME, YEAR_NAME);
+        createBranch(transaction, classManager, "Geographie", CLASS_KEY, CLASS_NAME, YEAR_NAME);
 
         Map<String, Map<String, Map<String, Object>>> databaseContent = new HashMap<>();
         databaseContent.put(transaction.getKeyspace(), transaction.getValues());
@@ -90,9 +90,9 @@ public class BranchManagerTest extends AbstractTestWithTransaction {
                 databaseContent);
     }
 
-    private static void createBranch(ITransaction transaction, IBranchManager branchManager, String branchName, String className, String yearName)
-            throws Exception {
-        BaseObject clazz = branchManager.createBranch(branchName, className, yearName, new HashMap<String, Object>());
+    private static void createBranch(ITransaction transaction, IBranchManager branchManager, String branchName, String classKey, String className,
+            String yearName) throws Exception {
+        BaseObject clazz = branchManager.createBranch(branchName, classKey, className, yearName, new HashMap<String, Object>());
 
         Map<String, Object> properties = new HashMap<>();
         properties.put(CoreNamespace.pBranchName, branchName);

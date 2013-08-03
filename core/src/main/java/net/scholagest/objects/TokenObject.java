@@ -1,5 +1,6 @@
 package net.scholagest.objects;
 
+import net.scholagest.database.ITransaction;
 import net.scholagest.namespace.CoreNamespace;
 
 import org.joda.time.DateTime;
@@ -7,6 +8,10 @@ import org.joda.time.DateTime;
 public class TokenObject extends BaseObject {
     public TokenObject(String key) {
         super(key, CoreNamespace.tToken);
+    }
+
+    public TokenObject(ITransaction transaction, ObjectHelper objectHelper, String key) {
+        super(transaction, objectHelper, key);
     }
 
     public DateTime getEndValidityTime() {

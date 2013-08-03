@@ -4,6 +4,8 @@ import java.util.Map;
 
 public class RestStudentGradeList {
     private Map<String, Map<String, RestObject>> grades;
+    private Map<String, RestObject> periodMeans;
+    private Map<String, RestObject> branchMeans;
     private String yearKey;
     private String classKey;
     private String branchKey;
@@ -15,6 +17,22 @@ public class RestStudentGradeList {
 
     public void setGrades(Map<String, Map<String, RestObject>> grades) {
         this.grades = grades;
+    }
+
+    public Map<String, RestObject> getPeriodMeans() {
+        return periodMeans;
+    }
+
+    public void setPeriodMeans(Map<String, RestObject> periodMeans) {
+        this.periodMeans = periodMeans;
+    }
+
+    public Map<String, RestObject> getBranchMeans() {
+        return branchMeans;
+    }
+
+    public void setBranchMeans(Map<String, RestObject> branchMeans) {
+        this.branchMeans = branchMeans;
     }
 
     public String getYearKey() {

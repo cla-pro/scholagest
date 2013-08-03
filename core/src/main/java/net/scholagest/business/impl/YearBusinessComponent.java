@@ -20,6 +20,7 @@ public class YearBusinessComponent implements IYearBusinessComponent {
     @Override
     public BaseObject startYear(String yearName) throws Exception {
         BaseObject year = yearManager.createNewYear(yearName);
+
         yearManager.restoreYear(year.getKey());
 
         return year;

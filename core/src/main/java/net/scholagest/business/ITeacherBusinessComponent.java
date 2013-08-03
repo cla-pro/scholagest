@@ -3,20 +3,20 @@ package net.scholagest.business;
 import java.util.Map;
 import java.util.Set;
 
-import net.scholagest.objects.BaseObject;
+import net.scholagest.objects.TeacherObject;
 
 public interface ITeacherBusinessComponent {
-    public Set<String> getTeacherTypes() throws Exception;
+    public Set<String> getTeacherTypes();
 
-    public BaseObject createTeacher(String teacherType, Map<String, Object> teacherProperties) throws Exception;
+    public TeacherObject createTeacher(String teacherType, Map<String, Object> teacherProperties);
 
-    public Set<BaseObject> getTeachers() throws Exception;
+    public Set<TeacherObject> getTeachers();
 
-    public Set<BaseObject> getTeachersWithProperties(Set<String> propertiesName) throws Exception;
+    public Set<TeacherObject> getTeachersWithProperties(Set<String> propertiesName);
 
-    public Set<BaseObject> getTeacherClasses(String teacherKey) throws Exception;
+    public Set<TeacherObject> getTeacherClasses(String teacherKey);
 
-    public void setTeacherProperties(String teacherKey, Map<String, Object> properties) throws Exception;
+    public void setTeacherProperties(String teacherKey, Map<String, Object> properties);
 
-    public BaseObject getTeacherProperties(String teacherKey, Set<String> propertiesName) throws Exception;
+    public TeacherObject getTeacherProperties(String teacherKey, Set<String> propertiesName);
 }

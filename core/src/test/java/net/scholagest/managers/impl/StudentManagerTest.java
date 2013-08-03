@@ -1,6 +1,7 @@
 package net.scholagest.managers.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.spy;
 
 import java.util.Arrays;
@@ -14,6 +15,7 @@ import net.scholagest.managers.ontology.OntologyManager;
 import net.scholagest.managers.ontology.RDF;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
+import net.scholagest.objects.StudentObject;
 import net.scholagest.utils.AbstractTestWithTransaction;
 import net.scholagest.utils.DatabaseReaderWriter;
 import net.scholagest.utils.InMemoryDatabase;
@@ -39,7 +41,7 @@ public class StudentManagerTest extends AbstractTestWithTransaction {
 
     @Test
     public void testGetMedicalProperties() throws Exception {
-        super.fillTransactionWithDataSets(new String[] { "Student" });
+        fillTransactionWithDataSets(new String[] { "Student" });
 
         Map<String, Object> mockProperties = createStudentMedical();
         BaseObject medicalProperties = studentManager.getMedicalProperties(STUDENT_KEY, mockProperties.keySet());
@@ -49,7 +51,7 @@ public class StudentManagerTest extends AbstractTestWithTransaction {
 
     @Test
     public void testGetPersonalProperties() throws Exception {
-        super.fillTransactionWithDataSets(new String[] { "Student" });
+        fillTransactionWithDataSets(new String[] { "Student" });
 
         Map<String, Object> mockProperties = createStudentPersonal();
         BaseObject personalProperties = studentManager.getPersonalProperties(STUDENT_KEY, mockProperties.keySet());
@@ -59,9 +61,9 @@ public class StudentManagerTest extends AbstractTestWithTransaction {
 
     @Test
     public void testGetStudents() throws Exception {
-        super.fillTransactionWithDataSets(new String[] { "Student" });
+        fillTransactionWithDataSets(new String[] { "Student" });
 
-        Set<BaseObject> students = studentManager.getStudents();
+        Set<StudentObject> students = studentManager.getStudents();
 
         assertEquals(1, students.size());
         assertEquals(STUDENT_KEY, students.iterator().next().getKey());
@@ -69,22 +71,21 @@ public class StudentManagerTest extends AbstractTestWithTransaction {
 
     @Test
     public void testGetStudentProperties() throws Exception {
-        super.fillTransactionWithDataSets(new String[] { "Student" });
+        fillTransactionWithDataSets(new String[] { "Student" });
 
-        BaseObject studentProperties = studentManager.getStudentProperties(STUDENT_KEY, new HashSet<>(Arrays.asList(RDF.type)));
+        StudentObject studentProperties = studentManager.getStudentProperties(STUDENT_KEY, new HashSet<>(Arrays.asList(RDF.type)));
 
         assertEquals(STUDENT_KEY, studentProperties.getKey());
         assertEquals(CoreNamespace.tStudent, studentProperties.getType());
 
-        Map<String, Object> expectedProperties = new HashMap<>();
-        expectedProperties.put(RDF.type, CoreNamespace.tStudent);
-        assertMapEquals(expectedProperties, studentProperties.getProperties());
+        assertNotNull(studentProperties.getMedicalInfoKey());
+        assertNotNull(studentProperties.getPersonalInfoKey());
     }
 
     @Test
     @Ignore
     public void testGetStudentGrades() {
-        super.fillTransactionWithDataSets(new String[] { "Student" });
+        fillTransactionWithDataSets(new String[] { "Student" });
 
         // studentManager.getStudentGrades(, STUDENT_KEY,
         // examKeys, yearKey);

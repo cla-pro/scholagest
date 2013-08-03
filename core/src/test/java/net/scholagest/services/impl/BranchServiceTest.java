@@ -104,13 +104,12 @@ public class BranchServiceTest extends AbstractTest {
     @Test
     public void testGetBranchProperties() throws Exception {
         String branchKey = "branchKey";
-        BaseObject branch = testee.getBranchProperties(branchKey, new HashSet<String>());
+        BaseObject branch = testee.getBranchProperties(branchKey, new HashSet<String>(Arrays.asList(DBSET_PROP)));
 
         // Ensure the conversion from DB to Kdom
         assertTrue(branch.getProperty(DBSET_PROP) instanceof KSet);
 
         Mockito.verify(branchBusinessComponent).getBranchProperties(branchKey, new HashSet<String>(Arrays.asList(CoreNamespace.pBranchClass)));
-        Mockito.verify(branchBusinessComponent).getBranchProperties(branchKey, new HashSet<String>());
         Mockito.verify(database).getTransaction(getKeyspace());
     }
 

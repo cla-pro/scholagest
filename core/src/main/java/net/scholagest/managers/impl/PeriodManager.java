@@ -8,6 +8,7 @@ import net.scholagest.managers.IOntologyManager;
 import net.scholagest.managers.IPeriodManager;
 import net.scholagest.managers.ontology.types.DBSet;
 import net.scholagest.namespace.CoreNamespace;
+import net.scholagest.objects.ObjectHelper;
 import net.scholagest.objects.PeriodObject;
 import net.scholagest.utils.ScholagestThreadLocal;
 
@@ -20,7 +21,7 @@ public class PeriodManager extends ObjectManager implements IPeriodManager {
     }
 
     @Override
-    public PeriodObject createPeriod(String periodName, String classKey, String branchName, String className, String yearName) throws Exception {
+    public PeriodObject createPeriod(String periodName, String classKey, String branchName, String className, String yearName) {
         ITransaction transaction = ScholagestThreadLocal.getTransaction();
 
         String periodKey = CoreNamespace.periodNs + "/" + yearName + "/" + className + "/" + branchName + "#" + periodName;
@@ -43,19 +44,17 @@ public class PeriodManager extends ObjectManager implements IPeriodManager {
     }
 
     @Override
-    public void setPeriodProperties(String periodKey, Map<String, Object> periodProperties) throws Exception {
+    public void setPeriodProperties(String periodKey, Map<String, Object> periodProperties) {
         ITransaction transaction = ScholagestThreadLocal.getTransaction();
 
-        setObjectProperties(transaction, periodKey, periodProperties);
+        PeriodObject period = new PeriodObject(transaction, new ObjectHelper(getOntologyManager()), periodKey);
+        period.putAllProperties(periodProperties);
     }
 
     @Override
-    public PeriodObject getPeriodProperties(String periodKey, Set<String> properties) throws Exception {
+    public PeriodObject getPeriodProperties(String periodKey, Set<String> properties) {
         ITransaction transaction = ScholagestThreadLocal.getTransaction();
 
-        PeriodObject branch = new PeriodObject(periodKey);
-        branch.setProperties(getObjectProperties(transaction, periodKey, properties));
-
-        return branch;
+        return new PeriodObject(transaction, new ObjectHelper(getOntologyManager()), periodKey);
     }
 }

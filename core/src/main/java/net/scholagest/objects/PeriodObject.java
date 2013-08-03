@@ -1,11 +1,16 @@
 package net.scholagest.objects;
 
+import net.scholagest.database.ITransaction;
 import net.scholagest.managers.ontology.types.DBSet;
 import net.scholagest.namespace.CoreNamespace;
 
 public class PeriodObject extends BaseObject {
     public PeriodObject(String key) {
         super(key, CoreNamespace.tPeriod);
+    }
+
+    public PeriodObject(ITransaction transaction, ObjectHelper objectHelper, String key) {
+        super(transaction, objectHelper, key);
     }
 
     public String getClassKey() {

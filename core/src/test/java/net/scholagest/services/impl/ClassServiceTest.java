@@ -7,24 +7,25 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import net.scholagest.business.IClassBusinessComponent;
 import net.scholagest.business.IOntologyBusinessComponent;
 import net.scholagest.business.IUserBusinessComponent;
 import net.scholagest.exception.ScholagestException;
 import net.scholagest.exception.ScholagestExceptionErrorCode;
+import net.scholagest.managers.ontology.types.DBSet;
 import net.scholagest.namespace.CoreNamespace;
-import net.scholagest.objects.BaseObject;
+import net.scholagest.objects.ClassObject;
 import net.scholagest.services.IClassService;
-import net.scholagest.services.kdom.KSet;
-import net.scholagest.utils.AbstractTest;
+import net.scholagest.utils.AbstractTestWithTransaction;
 import net.scholagest.utils.InMemoryDatabase;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-public class ClassServiceTest extends AbstractTest {
+public class ClassServiceTest extends AbstractTestWithTransaction {
     private InMemoryDatabase database;
     private IClassBusinessComponent classBusinessComponent;
     private IUserBusinessComponent userBusinessComponent;
@@ -32,8 +33,10 @@ public class ClassServiceTest extends AbstractTest {
 
     private IClassService testee;
 
+    @Override
     @Before
     public void setUpTest() {
+        super.setUpTest();
         database = Mockito.spy(new InMemoryDatabase());
         defineAdminSubject();
 
@@ -153,7 +156,7 @@ public class ClassServiceTest extends AbstractTest {
 
     @Test
     public void testSetClassProperties() throws Exception {
-        BaseObject classObject = createClassObject();
+        ClassObject classObject = createClassObject();
         Mockito.when(classBusinessComponent.getClassProperties(Mockito.anyString(), Mockito.<Set<String>> any())).thenReturn(classObject);
 
         String classKey = "classKey";
@@ -192,12 +195,12 @@ public class ClassServiceTest extends AbstractTest {
         }
     }
 
-    private BaseObject createClassObject() {
-        BaseObject classObject = Mockito.mock(BaseObject.class);
+    private ClassObject createClassObject() {
+        ClassObject classObject = Mockito.mock(ClassObject.class);
 
         Map<String, Object> properties = new HashMap<>();
-        properties.put(CoreNamespace.pClassStudents, new KSet("", new HashSet<>()));
-        properties.put(CoreNamespace.pClassTeachers, new KSet("", new HashSet<>()));
+        properties.put(CoreNamespace.pClassStudents, new DBSet(transaction, UUID.randomUUID().toString()));
+        properties.put(CoreNamespace.pClassTeachers, new DBSet(transaction, UUID.randomUUID().toString()));
 
         Mockito.when(classObject.getProperties()).thenReturn(properties);
 

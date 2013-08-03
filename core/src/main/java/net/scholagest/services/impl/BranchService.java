@@ -1,6 +1,7 @@
 package net.scholagest.services.impl;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -42,7 +43,7 @@ public class BranchService implements IBranchService {
             authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(classKey));
 
             BranchObject dbBranch = branchBusinessComponent.createBranch(classKey, branchProperties);
-            branch = new DBToKdomConverter().convertDbToKdom(dbBranch);
+            branch = new DBToKdomConverter().convertDbToKdom(dbBranch, null);
 
             transaction.commit();
         } catch (Exception e) {
@@ -67,7 +68,7 @@ public class BranchService implements IBranchService {
             authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(classKey));
 
             BranchObject dbBranch = branchBusinessComponent.getBranchProperties(branchKey, propertiesName);
-            branchInfo = new DBToKdomConverter().convertDbToKdom(dbBranch);
+            branchInfo = new DBToKdomConverter().convertDbToKdom(dbBranch, propertiesName);
 
             transaction.commit();
         } catch (Exception e) {
@@ -96,6 +97,40 @@ public class BranchService implements IBranchService {
             transaction.rollback();
             throw e;
         }
+    }
+
+    @Override
+    public Map<String, Map<String, BaseObject>> getBranchMeans(String branchKey, Set<String> studentKeys) throws Exception {
+        Map<String, Map<String, BaseObject>> means = new HashMap<>();
+
+        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        try {
+            String classKey = getClassKey(branchKey);
+            if (classKey == null) {
+                return new HashMap<>();
+            }
+
+            authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(classKey));
+
+            Map<String, Map<String, BaseObject>> dbMeans = branchBusinessComponent.getPeriodMeans(branchKey, studentKeys);
+            for (String examKey : dbMeans.keySet()) {
+                Map<String, BaseObject> studentMeans = new HashMap<>();
+                Map<String, BaseObject> dbStudentMeans = dbMeans.get(examKey);
+                for (String studentKey : dbStudentMeans.keySet()) {
+                    BaseObject converted = new DBToKdomConverter().convertDbToKdom(dbStudentMeans.get(studentKey), null);
+                    studentMeans.put(studentKey, converted);
+                }
+
+                means.put(examKey, studentMeans);
+            }
+
+            transaction.commit();
+        } catch (Exception e) {
+            transaction.rollback();
+            throw e;
+        }
+
+        return means;
     }
 
     private String getClassKey(String branchKey) throws Exception {
