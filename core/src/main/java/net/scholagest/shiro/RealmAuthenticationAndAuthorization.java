@@ -3,6 +3,8 @@ package net.scholagest.shiro;
 import java.util.UUID;
 
 import net.scholagest.database.DatabaseException;
+import net.scholagest.exception.ScholagestExceptionErrorCode;
+import net.scholagest.exception.ScholagestRuntimeException;
 import net.scholagest.managers.IUserManager;
 import net.scholagest.managers.ontology.types.DBSet;
 import net.scholagest.objects.TokenObject;
@@ -79,6 +81,8 @@ public class RealmAuthenticationAndAuthorization extends AuthorizingRealm {
     private AuthenticationInfo checkUsernameToken(ScholagestUsernameToken token) {
         try {
             return getAndCheckUserFromDb(token);
+        } catch (ScholagestRuntimeException e) {
+            throw e;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -89,12 +93,16 @@ public class RealmAuthenticationAndAuthorization extends AuthorizingRealm {
     private AuthenticationInfo getAndCheckUserFromDb(ScholagestUsernameToken token) throws Exception {
         UserObject userObject = userManager.getUserWithUsername(token.getUsername());
 
-        if (isValidUsernamePassword(userObject, new String(token.getPassword()))) {
-            TokenObject tokenObject = storeTokenForUser(UUID.randomUUID().toString(), userObject);
-            return createAuthenticationInfo(userObject, tokenObject.getKey(), userObject.getPassword().toCharArray());
+        if (userObject != null) {
+            if (isValidUsernamePassword(userObject, new String(token.getPassword()))) {
+                TokenObject tokenObject = storeTokenForUser(UUID.randomUUID().toString(), userObject);
+                return createAuthenticationInfo(userObject, tokenObject.getKey(), userObject.getPassword().toCharArray());
+            } else {
+                throw new ScholagestRuntimeException(ScholagestExceptionErrorCode.WRONG_PASSWORD, "Wrong password for user: " + token.getUsername());
+            }
+        } else {
+            throw new ScholagestRuntimeException(ScholagestExceptionErrorCode.USER_NOT_FOUND, "User with name " + token.getUsername() + " not found");
         }
-
-        return null;
     }
 
     private boolean isValidUsernamePassword(UserObject userObject, String password) {
@@ -111,6 +119,8 @@ public class RealmAuthenticationAndAuthorization extends AuthorizingRealm {
     private AuthenticationInfo checkToken(ScholagestTokenToken token) {
         try {
             return getAndCheckTokenFromDb(token);
+        } catch (ScholagestRuntimeException e) {
+            throw e;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -124,9 +134,9 @@ public class RealmAuthenticationAndAuthorization extends AuthorizingRealm {
         if (isTokenValid(tokenObject)) {
             UserObject userObject = userManager.getUser(tokenObject.getUserObjectKey());
             return createAuthenticationInfo(userObject, token.getToken(), encryptToken(userObject.getKey(), token));
+        } else {
+            throw new ScholagestRuntimeException(ScholagestExceptionErrorCode.SESSION_EXPIRED, "Session expired");
         }
-
-        return null;
     }
 
     private String encryptToken(String userKey, ScholagestTokenToken token) {
@@ -135,7 +145,11 @@ public class RealmAuthenticationAndAuthorization extends AuthorizingRealm {
     }
 
     private boolean isTokenValid(TokenObject tokenObject) {
-        return tokenObject != null && tokenObject.getEndValidityTime().isAfterNow();
+        return tokenObject != null && !isSessionExpired(tokenObject);
+    }
+
+    private boolean isSessionExpired(TokenObject tokenObject) {
+        return tokenObject.getEndValidityTime().isBeforeNow();
     }
 
     private AuthenticationInfo createAuthenticationInfo(UserObject userObject, String token, Object credentials) throws Exception {

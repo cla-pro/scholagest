@@ -119,4 +119,9 @@ public class UserBusinessComponent implements IUserBusinessComponent {
 
         return hash.toHex();
     }
+
+    @Override
+    public void logout(String token) {
+        userManager.deleteToken(token);
+    }
 }

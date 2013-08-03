@@ -142,4 +142,17 @@ public class UserService implements IUserService {
             throw e;
         }
     }
+
+    @Override
+    public void logout(String token) throws Exception {
+        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+
+        try {
+            userBusinessComponent.logout(token);
+            transaction.commit();
+        } catch (Exception e) {
+            transaction.rollback();
+            throw e;
+        }
+    }
 }

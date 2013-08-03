@@ -20,4 +20,6 @@ public interface IUserBusinessComponent {
     public String getTeacherKeyForToken(String token);
 
     public void setPassword(String teacherKey, String newPassword);
+
+    public void logout(String token);
 }

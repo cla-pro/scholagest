@@ -114,10 +114,10 @@ public class UserManager extends ObjectManager implements IUserManager {
     public void deleteToken(String tokenId) {
         ITransaction transaction = ScholagestThreadLocal.getTransaction();
 
-        String tokenKey = (String) transaction.get(CoreNamespace.tokenBase, tokenId, null);
-        if (tokenKey != null) {
+        String userKey = (String) transaction.get(CoreNamespace.tokenBase, tokenId, null);
+        if (userKey != null) {
             transaction.delete(CoreNamespace.tokenBase, tokenId, null);
-            deleteObject(transaction, tokenKey);
+            deleteObject(transaction, tokenId);
         }
     }
 }

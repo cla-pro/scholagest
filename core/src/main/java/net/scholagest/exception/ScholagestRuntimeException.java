@@ -14,7 +14,7 @@ public class ScholagestRuntimeException extends RuntimeException {
         this.errorCode = errorCode;
     }
 
-    public ScholagestExceptionErrorCode getExceptionCode() {
+    public ScholagestExceptionErrorCode getErrorCode() {
         return errorCode;
     }
 }
