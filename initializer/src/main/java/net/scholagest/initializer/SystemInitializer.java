@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -14,20 +15,26 @@ import java.util.UUID;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import net.scholagest.business.ITeacherBusinessComponent;
+import net.scholagest.business.IUserBusinessComponent;
+import net.scholagest.business.impl.TeacherBusinessComponent;
+import net.scholagest.business.impl.UserBusinessComponent;
 import net.scholagest.database.Database;
 import net.scholagest.database.DatabaseException;
 import net.scholagest.database.DefaultDatabaseConfiguration;
 import net.scholagest.database.ITransaction;
 import net.scholagest.managers.IOntologyManager;
 import net.scholagest.managers.IPageManager;
-import net.scholagest.managers.IUserManager;
 import net.scholagest.managers.impl.PageManager;
+import net.scholagest.managers.impl.TeacherManager;
 import net.scholagest.managers.impl.UserManager;
 import net.scholagest.managers.ontology.Ontology;
 import net.scholagest.managers.ontology.OntologyElement;
 import net.scholagest.managers.ontology.OntologyHandler;
 import net.scholagest.managers.ontology.OntologyManager;
 import net.scholagest.managers.ontology.types.DBSet;
+import net.scholagest.namespace.AuthorizationRolesNamespace;
+import net.scholagest.objects.TeacherObject;
 import net.scholagest.objects.UserObject;
 import net.scholagest.utils.ScholagestThreadLocal;
 
@@ -123,7 +130,7 @@ public class SystemInitializer {
 
     private void importInitialData(IOntologyManager ontologyManager) throws Exception {
         importPages(ontologyManager);
-        importUsers(ontologyManager);
+        importAdmins(ontologyManager);
     }
 
     private void importPages(IOntologyManager ontologyManager) throws Exception {
@@ -141,22 +148,44 @@ public class SystemInitializer {
         LOG.info("End importing pages");
     }
 
-    private void importUsers(IOntologyManager ontologyManager) throws Exception {
-        LOG.info("Start importing users");
+    private void importAdmins(IOntologyManager ontologyManager) throws Exception {
+        LOG.info("Start importing administrators");
 
-        IUserManager userManager = new UserManager(ontologyManager);
+        TeacherManager teacherManager = new TeacherManager(ontologyManager);
+        ITeacherBusinessComponent teacherBusinessComponent = new TeacherBusinessComponent(teacherManager);
+        IUserBusinessComponent userBusinessComponent = new UserBusinessComponent(new UserManager(ontologyManager), teacherManager);
 
-        List<List<String>> users = readFile(baseFolder + "users.sga");
+        List<List<String>> users = readFile(baseFolder + "admins.sga");
 
         for (List<String> user : users) {
-            LOG.debug("Insert user: " + user.get(0) + ";" + user.get(1));
-            UserObject userObject = userManager.createUser(user.get(0), user.get(1), null);
-            if (user.size() > 2) {
-                addRoles(userObject, user.get(2).split("::"));
-            }
+            String firstName = user.get(0);
+            String lastName = user.get(1);
+            String password = user.get(2);
+            String role = user.get(3);
+
+            LOG.debug("Insert admin: \"" + firstName + "\" \"" + lastName + "\";" + password);
+            Map<String, Object> teacherProperties = createTeacherProperties(firstName, lastName);
+            TeacherObject teacher = teacherBusinessComponent.createTeacher(role, teacherProperties);
+
+            UserObject userObject = userBusinessComponent.createUser(teacher.getKey());
+            userObject.getRoles().add(AuthorizationRolesNamespace.ROLE_ADMIN);
+            userObject.getPermissions().add(teacher.getKey());
+
+            userBusinessComponent.setPassword(teacher.getKey(), password);
+
+            addRoles(userObject, user.get(3).split("::"));
         }
 
-        LOG.info("End importing users");
+        LOG.info("End importing administrators");
+    }
+
+    private Map<String, Object> createTeacherProperties(String firstName, String lastName) {
+        Map<String, Object> teacherProperties = new HashMap<>();
+
+        teacherProperties.put("pTeacherFirstName", firstName);
+        teacherProperties.put("pTeacherLastName", lastName);
+
+        return teacherProperties;
     }
 
     private void addRoles(UserObject userObject, String[] roleList) throws DatabaseException {

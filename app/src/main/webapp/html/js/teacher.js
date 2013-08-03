@@ -68,7 +68,7 @@ function getTeachersInfo(teacherList, properties, callback) {
 	sendGetRequest("../teacher/getTeachersInfo", { teachers: teacherList, properties: properties }, callback);
 };
 
-function createTeacher(closeId, txtIds) {
+function createTeacher(closeId, teacherTypeSelectId, txtIds) {
 	var keys = [];
 	var values = [];
 	for (var id in txtIds) {
@@ -82,8 +82,11 @@ function createTeacher(closeId, txtIds) {
 			values.push(value);
 		}
 	}
+	
+	var teacherTypeSelect = dojo.byId(teacherTypeSelectId);
+	var teacherType = teacherTypeSelect.options[teacherTypeSelect.selectedIndex].value;
 
-	sendGetRequest("../teacher/create", { keys: keys, values: values }, function(info) { loadTeachers(); })
+	sendGetRequest("../teacher/create", { keys: keys, values: values, teacherType: teacherType }, function(info) { loadTeachers(); })
 
 	if (closeId != null) {
 		dijit.byId(closeId).hide();

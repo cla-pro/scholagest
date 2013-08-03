@@ -6,10 +6,10 @@
 	<owl:Ontology rdf:about="http://scholagest.net/2012/06/rdf-schema#">
 		<rdfs:comment>The scholagest ontology</rdfs:comment>
 <!--         <owl:imports rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns"/> -->
-        <owl:imports rdf:resource="file:///D:/Programming/eclipse-workspace/scholagest/initializer/src/main/resources/initializer/system/ontology/22-rdf-syntax-ns.rdfs" />
+        <owl:imports rdf:resource="/initializer/system/ontology/22-rdf-syntax-ns.rdfs" />
 <!--         <owl:imports rdf:resource="http://www.w3.org/2000/01/rdf-schema"/> -->
-        <owl:imports rdf:resource="file:///D:/Programming/eclipse-workspace/scholagest/initializer/src/main/resources/initializer/system/ontology/rdf-schema.rdfs" />
-        <owl:imports rdf:resource="file:///D:/Programming/eclipse-workspace/scholagest/initializer/src/main/resources/initializer/system/ontology/scholagest-types.rdfs" />
+        <owl:imports rdf:resource="/initializer/system/ontology/rdf-schema.rdfs" />
+        <owl:imports rdf:resource="/initializer/system/ontology/scholagest-types.rdfs" />
 	</owl:Ontology>
     
     <rdfs:Property rdf:ID="pUserUsername" rdfs:comment="User's username">
@@ -76,14 +76,14 @@
         <rdfs:range rdf:resource="sg:String"/>
         <sg:displayText rdf:resource="Adresse" />
     </rdfs:Property>
-    <rdfs:Property rdf:ID="pTeacherAddress" rdfs:comment="Teacher's address">
-        <rdfs:domain rdf:resource="sg:tTeacher"/>
-        <rdfs:range rdf:resource="sg:String"/>
-        <sg:displayText rdf:resource="Adresse" />
-    </rdfs:Property>
     <rdfs:Property rdf:ID="pTeacherUser" rdfs:comment="Teacher's user">
         <rdfs:domain rdf:resource="sg:tTeacher"/>
         <rdfs:range rdf:resource="sg:tUser"/>
+    </rdfs:Property>
+    <rdfs:Property rdf:ID="pTeacherType" rdfs:comment="Teacher's type">
+        <rdfs:domain rdf:resource="sg:tTeacher"/>
+        <rdfs:range rdf:resource="sg:String"/>
+        <!--<sg:displayText rdf:resource="Adresse" />-->
     </rdfs:Property>
 	
     <rdfs:Property rdf:ID="pStudentPersonalInfo" rdfs:comment="Student's personal info">

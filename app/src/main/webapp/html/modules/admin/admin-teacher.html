@@ -14,9 +14,9 @@
     <div id="changePasswordDialog" data-dojo-type="dijit.Dialog" title="Changer le mot de passe">
         <table style="width: 100%">
             <tr>
-                <td>Nouveau mot de passe</td><td><input type="text" style="width:100%" id="txtNewPassword" /></td>
+                <td>Nouveau mot de passe</td><td><input type="password" style="width:100%" id="txtNewPassword" /></td>
             </tr><tr>
-                <td>Répéter le mot de passe</td><td><input type="text" style="width:100%" id="txtNewPasswordRepeat" /></td>
+                <td>RÃ©pÃ©ter le mot de passe</td><td><input type="password" style="width:100%" id="txtNewPasswordRepeat" /></td>
             </tr><tr>
                 <td align="center">
                     <button onclick="saveNewPassword(dojo.byId('txtNewPassword').value, dojo.byId('txtNewPasswordRepeat').value)">Ok</button>
@@ -35,9 +35,10 @@
 							<tr>
 								<td>Type</td>
 								<td>
-									<select style="width: 100%">
-										<option>Normal</option>
-										<option>Principal</option>
+									<select style="width: 100%" propertyName="pTeacherType" id="selectNewTeacherType">
+										<option value="teacher" selected="selected">Normal</option>
+										<option value="admin">Administrateur</option>
+										<option value="helpteacher">Appui</option>
 									</select>
 								</td>
 							</tr>
@@ -46,7 +47,7 @@
 								<td><input id="txtNewTeacherLastName" propertyName="pTeacherLastName" type="text" style="width: 100%" /></td>
 							</tr>
 							<tr>
-								<td>Prénom</td>
+								<td>PrÃ©nom</td>
 								<td><input id="txtNewTeacherFirstName" propertyName="pTeacherFirstName" type="text" style="width: 100%" /></td>
 							</tr>
 							<tr>
@@ -54,7 +55,7 @@
 								<td><input id="txtNewTeacherMail" propertyName="pTeacherMail" type="text" style="width: 100%" /></td>
 							</tr>
 							<tr>
-								<td>N° de tél</td>
+								<td>NÂ° de tÃ¨l</td>
 								<td><input id="txtNewTeacherPhone" propertyName="pTeacherPhone" style="width: 100%" type="text" /></td>
 							</tr>
 							<tr>
@@ -63,7 +64,7 @@
 							</tr>
 							<tr>
 								<td align="center"><button
-									onclick="createTeacher('newTeacherDialog', ['txtNewTeacherLastName', 'txtNewTeacherFirstName', 'txtNewTeacherMail', 'txtNewTeacherPhone', 'txtNewTeacherAddress'])">Ok</button></td>
+									onclick="createTeacher('newTeacherDialog', 'selectNewTeacherType', ['txtNewTeacherLastName', 'txtNewTeacherFirstName', 'txtNewTeacherMail', 'txtNewTeacherPhone', 'txtNewTeacherAddress'])">Ok</button></td>
 								<td align="center"><button onclick="dijit.byId('newTeacherDialog').hide()">Annuler</button></td>
 							</tr>
 						</table>
@@ -72,8 +73,8 @@
 						title="Supprimer un professeur">
 						<table style="width: 100%">
 							<tr>
-								<td colspan="2">Choisissez le professeur à supprimer<br />(Le
-									compte utilisateur uniquement est supprimé)
+								<td colspan="2">Choisissez le professeur Ã  supprimer<br />(Le
+									compte utilisateur uniquement est supprimÃ©)
 								</td>
 							</tr>
 							<tr>

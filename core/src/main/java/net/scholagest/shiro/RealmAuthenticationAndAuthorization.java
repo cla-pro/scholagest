@@ -12,11 +12,14 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.crypto.hash.Sha1Hash;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
+import org.apache.shiro.util.ByteSource;
 
 import com.google.inject.Inject;
 
@@ -24,14 +27,22 @@ public class RealmAuthenticationAndAuthorization extends AuthorizingRealm {
     private static final String ROLES_KEY = "roles";
     private static final String PERMISSIONS_KEY = "permissions";
     public static final String TOKEN_KEY = "token";
+    public static final int HASH_ITERATIONS = 1000;
 
     private final IUserManager userManager;
 
     @Inject
     public RealmAuthenticationAndAuthorization(IUserManager userManager) {
         this.userManager = userManager;
-        super.setAuthenticationCachingEnabled(false);
-        super.setAuthorizationCachingEnabled(false);
+
+        setAuthenticationCachingEnabled(false);
+        setAuthorizationCachingEnabled(false);
+
+        HashedCredentialsMatcher credentialsMatcher = new HashedCredentialsMatcher("SHA-1");
+        credentialsMatcher.setStoredCredentialsHexEncoded(true);
+        credentialsMatcher.setHashIterations(HASH_ITERATIONS);
+
+        setCredentialsMatcher(credentialsMatcher);
     }
 
     @Override
@@ -87,7 +98,10 @@ public class RealmAuthenticationAndAuthorization extends AuthorizingRealm {
     }
 
     private boolean isValidUsernamePassword(UserObject userObject, String password) {
-        return userObject != null && userObject.getPassword().equals(password);
+        Sha1Hash hash = new Sha1Hash(password, userObject.getKey(), HASH_ITERATIONS);
+        String encrypted = hash.toHex();
+
+        return userObject != null && userObject.getPassword().equals(encrypted);
     }
 
     private TokenObject storeTokenForUser(String token, UserObject userObject) throws Exception {
@@ -109,10 +123,15 @@ public class RealmAuthenticationAndAuthorization extends AuthorizingRealm {
 
         if (isTokenValid(tokenObject)) {
             UserObject userObject = userManager.getUser(tokenObject.getUserObjectKey());
-            return createAuthenticationInfo(userObject, token.getToken(), token.getToken());
+            return createAuthenticationInfo(userObject, token.getToken(), encryptToken(userObject.getKey(), token));
         }
 
         return null;
+    }
+
+    private String encryptToken(String userKey, ScholagestTokenToken token) {
+        Sha1Hash hash = new Sha1Hash(token.getToken(), ByteSource.Util.bytes(userKey), HASH_ITERATIONS);
+        return hash.toHex();
     }
 
     private boolean isTokenValid(TokenObject tokenObject) {
@@ -126,6 +145,7 @@ public class RealmAuthenticationAndAuthorization extends AuthorizingRealm {
         principals.add(token, TOKEN_KEY);
 
         authenticationInfo.setPrincipals(principals);
+        authenticationInfo.setCredentialsSalt(ByteSource.Util.bytes(userObject.getKey()));
 
         return authenticationInfo;
     }
