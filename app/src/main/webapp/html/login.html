@@ -44,8 +44,6 @@
 			    	    if (data.errorCode == 1) {
 			    	        dojo.byId('lblLoginError').innerHTML = 'Nom d\'utilisateur ou mot de passe incorrect';
 			    	    }
-			    		//alert("Error during authentication: ("
-			    		//		+ data.errorCode + ") " + data.message);
 			    	}
 			    },
 			    error: function(error) {
@@ -60,14 +58,16 @@
 		<table style="border: solid 1px black">
 			<tr>
 				<td>Nom d'utilisateur</td>
-				<td colspan="2"><input id="txtUsername" type="text" onKeyPress="if (event.keyCode == 13) authenticate();" /></td>
+				<td><input id="txtUsername" type="text" onKeyPress="if (event.keyCode == 13) authenticate();" /></td>
 			</tr><tr>
 				<td>Mot de passe</td>
-				<td colspan="2"><input id="txtPassword" type="password" onKeyPress="if (event.keyCode == 13) authenticate();" /></td>
+				<td><input id="txtPassword" type="password" onKeyPress="if (event.keyCode == 13) authenticate();" /></td>
 			</tr><tr>
-				<td colspan="2"><label style="color: red; height: 100%" id="lblLoginError"></label></td>
-				<td><align="right"><button onclick="authenticate()">Login</button></align></td>
+				<td colspan="2"><align="right"><button onclick="authenticate()">Login</button></align></td>
 			</tr>
 		</table>
+	</div>
+	<div align="center">
+		<label style="color: red; height: 100%" id="lblLoginError"></label>
 	</div>
 </body>
