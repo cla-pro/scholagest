@@ -1,6 +1,13 @@
 package net.scholagest.business.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.anyMapOf;
+import static org.mockito.Matchers.anySetOf;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,23 +39,23 @@ public class ClassBusinessComponentTest extends AbstractTestWithTransaction {
 
     private IClassBusinessComponent testee;
 
-    @SuppressWarnings("unchecked")
     @Before
     public void setup() throws Exception {
         yearManager = Mockito.mock(IYearManager.class);
-        Mockito.when(yearManager.getYearProperties(Mockito.anyString(), Mockito.anySet())).thenReturn(new BaseObject(null, null));
+        when(yearManager.getYearProperties(anyString(), anySetOf(String.class))).thenReturn(new BaseObject(null, null));
 
         classManager = Mockito.mock(IClassManager.class);
-        Mockito.when(classManager.createClass(Mockito.anyString(), Mockito.anyString())).thenReturn(new BaseObject(CLASS_KEY, CoreNamespace.tClass));
-        Mockito.when(classManager.getClasses(Mockito.anyString())).thenReturn(new HashSet<BaseObject>());
+        when(classManager.createClass(anyString(), anyString(), anyMapOf(String.class, Object.class))).thenReturn(
+                BaseObjectMock.createClassObject(CLASS_KEY, new HashMap<String, Object>()));
+        when(classManager.getClasses(anyString())).thenReturn(new HashSet<BaseObject>());
 
         Set<BaseObject> classKeys = new HashSet<>();
         classKeys.add(new BaseObject(CLASS_KEY, CoreNamespace.tClass));
-        Mockito.when(classManager.getClasses(Mockito.eq(YEAR_KEY))).thenReturn(classKeys);
+        when(classManager.getClasses(Mockito.eq(YEAR_KEY))).thenReturn(classKeys);
 
-        Mockito.when(classManager.getClassProperties(Mockito.anyString(), Mockito.anySet())).thenReturn(null);
-        Mockito.when(classManager.getClassProperties(Mockito.eq(CLASS_KEY), Mockito.eq(createProperties().keySet()))).thenReturn(
-                BaseObjectMock.createBaseObject(CLASS_KEY, CoreNamespace.tClass, createProperties()));
+        when(classManager.getClassProperties(anyString(), anySetOf(String.class))).thenReturn(null);
+        when(classManager.getClassProperties(eq(CLASS_KEY), eq(createProperties().keySet()))).thenReturn(
+                BaseObjectMock.createClassObject(CLASS_KEY, createProperties()));
 
         testee = new ClassBusinessComponent(classManager, yearManager);
     }
@@ -67,8 +74,8 @@ public class ClassBusinessComponentTest extends AbstractTestWithTransaction {
         BaseObject classKey = testee.createClass(classProperties, CLASS_NAME, YEAR_KEY);
 
         assertEquals(CLASS_KEY, classKey.getKey());
-        Mockito.verify(classManager).createClass(CLASS_NAME, null);
-        Mockito.verify(classManager).setClassProperties(Mockito.eq(CLASS_KEY), Mockito.argThat(new BaseMatcher<Map<String, Object>>() {
+        verify(classManager).createClass(eq(CLASS_NAME), anyString(), anyMapOf(String.class, Object.class));
+        verify(classManager).setClassProperties(eq(CLASS_KEY), argThat(new BaseMatcher<Map<String, Object>>() {
             @SuppressWarnings("unchecked")
             @Override
             public boolean matches(Object item) {
@@ -81,7 +88,7 @@ public class ClassBusinessComponentTest extends AbstractTestWithTransaction {
             @Override
             public void describeTo(Description description) {}
         }));
-        Mockito.verify(yearManager).addClassToYear(YEAR_KEY, CLASS_KEY);
+        verify(yearManager).addClassToYear(YEAR_KEY, CLASS_KEY);
     }
 
     @Test
@@ -91,8 +98,8 @@ public class ClassBusinessComponentTest extends AbstractTestWithTransaction {
         yearKeySet.add("testKey");
         Map<String, Set<BaseObject>> classesForYear = testee.getClassesForYears(yearKeySet);
 
-        Mockito.verify(classManager).getClasses(Mockito.eq(YEAR_KEY));
-        Mockito.verify(classManager).getClasses(Mockito.eq("testKey"));
+        verify(classManager).getClasses(eq(YEAR_KEY));
+        verify(classManager).getClasses(eq("testKey"));
 
         assertEquals(2, classesForYear.size());
         assertEquals(1, classesForYear.get(YEAR_KEY).size());
@@ -104,7 +111,7 @@ public class ClassBusinessComponentTest extends AbstractTestWithTransaction {
         Map<String, Object> mockProperties = createProperties();
         BaseObject classProperties = testee.getClassProperties(CLASS_KEY, mockProperties.keySet());
 
-        Mockito.verify(classManager).getClassProperties(Mockito.eq(CLASS_KEY), Mockito.eq(mockProperties.keySet()));
+        verify(classManager).getClassProperties(eq(CLASS_KEY), eq(mockProperties.keySet()));
 
         assertMapEquals(mockProperties, classProperties.getProperties());
     }
@@ -114,6 +121,6 @@ public class ClassBusinessComponentTest extends AbstractTestWithTransaction {
         Map<String, Object> mockProperties = createProperties();
         testee.setClassProperties(CLASS_KEY, mockProperties);
 
-        Mockito.verify(classManager).setClassProperties(Mockito.eq(CLASS_KEY), Mockito.eq(mockProperties));
+        verify(classManager).setClassProperties(eq(CLASS_KEY), eq(mockProperties));
     }
 }

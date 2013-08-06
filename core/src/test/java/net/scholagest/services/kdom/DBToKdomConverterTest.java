@@ -22,7 +22,7 @@ public class DBToKdomConverterTest extends AbstractTest {
 
         BaseObject toConvert = new BaseObject("key", "type");
         toConvert.setProperties(values);
-        BaseObject converted = new DBToKdomConverter().convertDbToKdom(toConvert);
+        BaseObject converted = new DBToKdomConverter().convertDbToKdom(toConvert, null);
 
         assertEquals(toConvert.getKey(), converted.getKey());
         assertEquals(toConvert.getType(), converted.getType());
@@ -31,6 +31,6 @@ public class DBToKdomConverterTest extends AbstractTest {
 
     @Test
     public void testConvertDBToKdomNull() throws DatabaseException {
-        assertNull(new DBToKdomConverter().convertDbToKdom(null));
+        assertNull(new DBToKdomConverter().convertDbToKdom(null, null));
     }
 }

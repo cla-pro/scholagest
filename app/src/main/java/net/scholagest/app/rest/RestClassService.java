@@ -65,7 +65,7 @@ public class RestClassService extends AbstractService {
             String json = new Gson().toJson(restClass);
             return "{info: " + json + "}";
         } catch (ShiroException e) {
-            return generateSessionExpiredMessage(e);
+            return handleShiroException(e);
         } catch (ScholagestException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
@@ -92,7 +92,7 @@ public class RestClassService extends AbstractService {
             String json = new Gson().toJson(classesInfo);
             return "{info: " + json + "}";
         } catch (ShiroException e) {
-            return generateSessionExpiredMessage(e);
+            return handleShiroException(e);
         } catch (ScholagestException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
@@ -140,7 +140,7 @@ public class RestClassService extends AbstractService {
             String json = new Gson().toJson(restClassInfo);
             return "{info: " + json + "}";
         } catch (ShiroException e) {
-            return generateSessionExpiredMessage(e);
+            return handleShiroException(e);
         } catch (ScholagestException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
@@ -165,7 +165,7 @@ public class RestClassService extends AbstractService {
 
             classService.setClassProperties(requestObject.getKey(), baseObject.getProperties());
         } catch (ShiroException e) {
-            return generateSessionExpiredMessage(e);
+            return handleShiroException(e);
         } catch (ScholagestException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {

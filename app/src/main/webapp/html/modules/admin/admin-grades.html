@@ -17,15 +17,6 @@
 <!-- 					<button type="text" class="remove-class" onclick="deleteBranch();">Supprimer une branche</button> -->
 					<hr />
 					<div id="branch-search-list" class="search-list">
-<!-- 						<ul class="search-list"> -->
-<!-- 							<li class="search-list-item">Commentaires</li> -->
-<!-- 							<li><hr /></li> -->
-<!-- 							<li class="search-list-item">Français</li> -->
-<!-- 							<li class="search-list-item">Mathématiques</li> -->
-<!-- 							<li class="search-list-item-selected">Histoire</li> -->
-<!-- 							<li class="search-list-item">Géographie</li> -->
-<!-- 							<li class="search-list-item">Allemand</li> -->
-<!-- 						</ul> -->
 					</div>
 				</div>
 			</td>
@@ -48,13 +39,13 @@
 <!-- 					<div id="removeExamDialog" data-dojo-type="dijit.Dialog" title="Supprimer un examen"> -->
 <!-- 						<table style="width: 100%"> -->
 <!-- 							<tr> -->
-<!-- 								<td colspan="2">Choisissez l'examen à supprimer</td> -->
+<!-- 								<td colspan="2">Choisissez l'examen Ã  supprimer</td> -->
 <!-- 							</tr><tr> -->
 <!-- 								<td colspan="2"> -->
 <!-- 									<select name="thelist" style="width: 100%"> -->
 <!-- 									  <option>Examen 1</option> -->
 <!-- 									  <option>Examen 2</option> -->
-<!-- 									  <option>Récitation 1</option> -->
+<!-- 									  <option>RÃ©citation 1</option> -->
 <!-- 									</select> </td> -->
 <!-- 							</tr><tr> -->
 <!-- 								<td align="center"><button>Ok</button></td><td align="center"><button>Annuler</button></td> -->
@@ -91,14 +82,14 @@
 <!-- 					<div id="removeBranchDialog" data-dojo-type="dijit.Dialog" title="Supprimer une branche"> -->
 <!-- 						<table style="width: 100%"> -->
 <!-- 							<tr> -->
-<!-- 								<td colspan="2">Choisissez la branche à supprimer</td> -->
+<!-- 								<td colspan="2">Choisissez la branche Ã  supprimer</td> -->
 <!-- 							</tr><tr> -->
 <!-- 								<td colspan="2"> -->
 <!-- 									<select name="thelist" style="width: 100%"> -->
-<!-- 									  <option>Français</option> -->
-<!-- 									  <option>Mathématiques</option> -->
+<!-- 									  <option>FranÃ§ais</option> -->
+<!-- 									  <option>MathÃ©matiques</option> -->
 <!-- 									  <option>Histoire</option> -->
-<!-- 									  <option>Géographie</option> -->
+<!-- 									  <option>GÃ©ographie</option> -->
 <!-- 									  <option>Allemand</option> -->
 <!-- 									</select> </td> -->
 <!-- 							</tr><tr> -->
@@ -120,120 +111,8 @@
 							dijit.byId("removeBranchDialog").show();
 						};
 					</script>
-	<!-- 					<h1>Histoire</h1> -->
 					<div id="periods" style="height: 85%">
 					</div>
-				<!--<script type="text/javascript">
-					function createTextBox(text) {
-						var txt = document.createElement('input');
-						txt.type = "text";
-					};
-					function createCell(content) {
-						var cell = document.createElement('td');
-						cell.align = 'center';
-						cell.appendChild(content);
-						return cell;
-					};
-					function createRow(cells) {
-						var row = document.createElement('tr');
-						for (var i = 0; i < cells.length; i++) {
-							row.appendChild(cells[i]);
-						}
-						return row;
-					};
-					function createTable(rows) {
-						var tbl = document.createElement('table');
-						for (var i = 0; i < rows.length; i++) {
-							tbl.appendChild(rows[i]);
-						}
-						return tbl;
-					};
-					function createStudentResult(titles, grades) {
-						var titleCells = [];
-						var gradeCells = [];
-						for (var i = 0; i < titles.length; i++) {
-							titleCells.push(createCell(titles[i]));
-							titleCells.push(createCell(createTextBox(grades[i])));
-						};
-					};
-					function onLoad() {
-						dojo.require("dojo.data.ItemFileReadStore");
-						dojo.require("dijit.Tree");
-						
-						
-						dojo.addOnLoad(function() {
-							var rawdata = [{
-								label: 'Elève 1',
-								id: '1',
-								children:  [ { label: '<table><tr>'
-									+ '<td>Trimestre 1</td><td>Trimestre 2</td><td>Trimestre 3</td>'
-									+ '</tr><tr>'
-									+ '<td align="center"><input type="text" value="4" style="width: 40px" /></td>'
-									+ '<td align="center"><input type="text" value="3" style="width: 40px" /></td>'
-									+ '<td align="center"><input type="text" value="6" style="width: 40px" /></td>'
-									+ '</tr></table>', id: '1.1' } ]
-							}, {
-								label: 'Elève 2',
-								id: '2',
-								children:  [ { label: '<table><tr>'
-									+ '<td>Trimestre 1</td><td>Trimestre 2</td><td>Trimestre 3</td>'
-									+ '</tr><tr>'
-									+ '<td align="center"><input type="text" value="2" style="width: 40px" /></td>'
-									+ '<td align="center"><input type="text" value="3" style="width: 40px" /></td>'
-									+ '<td align="center"><input type="text" value="1" style="width: 40px" /></td>'
-									+ '</tr></table>', id: '2.1' } ]
-							}, {
-								label: 'Elève 3',
-								id: '3',
-								children:  [ { label: '<table><tr>'
-									+ '<td>Trimestre 1</td><td>Trimestre 2</td><td>Trimestre 3</td>'
-									+ '</tr><tr>'
-									+ '<td align="center"><input type="text" value="6" style="width: 40px" /></td>'
-									+ '<td align="center"><input type="text" value="6" style="width: 40px" /></td>'
-									+ '<td align="center"><input type="text" value="6" style="width: 40px" /></td>'
-									+ '</tr></table>', id: '3.1' } ]
-							}, {
-								label: 'Elève 4',
-								id: '4',
-								children:  [ { label: '<table><tr>'
-									+ '<td>Trimestre 1</td><td>Trimestre 2</td><td>Trimestre 3</td>'
-									+ '</tr><tr>'
-									+ '<td align="center"><input type="text" value="5" style="width: 40px" /></td>'
-									+ '<td align="center"><input type="text" value="4" style="width: 40px" /></td>'
-									+ '<td align="center"><input type="text" value="4" style="width: 40px" /></td>'
-									+ '</tr></table>', id: '4.1' } ]
-							}, {
-								label: 'Elève 5',
-								id: '5',
-								children:  [ { label: '<table><tr>'
-									+ '<td>Trimestre 1</td><td>Trimestre 2</td><td>Trimestre 3</td>'
-									+ '</tr><tr>'
-									+ '<td align="center"><input type="text" value="2" style="width: 40px" /></td>'
-									+ '<td align="center"><input type="text" value="2" style="width: 40px" /></td>'
-									+ '<td align="center"><input type="text" value="2" style="width: 40px" /></td>'
-									+ '</tr></table>', id: '5.1' } ]
-							} ];
-							
-							function prepare(){
-								var store = new dojo.data.ItemFileReadStore({
-									data: { identifier: 'id', label : 'label', items: rawdata }
-								});
-								var treeModel = new dijit.tree.ForestStoreModel({ store: store });
-								var treeControl = new dijit.Tree({
-									model: treeModel,
-									showRoot: false,
-									_createTreeNode: function(args){
-										var tnode = new dijit._TreeNode(args);
-										tnode.labelNode.innerHTML = args.label;
-										return tnode;
-									}
-								}, "student-grade-tree" );
-							}
-							
-							dojo.ready(prepare);
-						});
-					}
-				</script>-->
 			</td>
 		</tr>
 	</table>

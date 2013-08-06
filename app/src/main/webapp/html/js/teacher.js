@@ -6,11 +6,31 @@ function getTeacherInfo(teacherKey) {
 		var base = dojo.byId(domId);
 		createInfoHtmlTable(base, info.properties);
 
-		var save = dojo.create("button",
-				{type: "button", onclick:"setTeacherInfo(\"" + teacherKey + "\")", innerHTML: "Enregistrer"}, base);
+		if (info.writable) {
+			if (teacherKey == myOwnTeacherKey) {
+				dojo.create("button", {type: "button", onclick:"openChangePasswordDialog(\"" + teacherKey + "\")", innerHTML: "Changer le mot de passe"}, base);
+			}
+			dojo.create("button",
+					{type: "button", onclick:"setTeacherInfo(\"" + teacherKey + "\")", innerHTML: "Enregistrer"}, base);
+		}
 	});
 };
+function openChangePasswordDialog(teacherKey) {
+	var changePasswordDialog = dijit.byId("changePasswordDialog");
+	changePasswordDialog.teacherKey = teacherKey;
+	changePasswordDialog.show();
+};
+function saveNewPassword(newPassword, repeatedNewPassword) {
+	var changePasswordDialog = dijit.byId("changePasswordDialog");
+	var teacherKey = changePasswordDialog.teacherKey;
 
+	if (newPassword != repeatedNewPassword) {
+		alert("Le mot de passe n'a pas été répété correctement");
+	} else {
+		changePasswordDialog.hide();
+		sendPostRequest("../user/setPassword", { teacherKey : teacherKey, password: newPassword }, function(info) {});
+	}
+};
 function setTeacherInfo(teacherKey) {
 	var keyValues = getKeyValues('teacher-data');
 	sendPostRequest("../teacher/setProperties", { key: teacherKey, properties: keyValues }, function(info) {});
@@ -48,7 +68,7 @@ function getTeachersInfo(teacherList, properties, callback) {
 	sendGetRequest("../teacher/getTeachersInfo", { teachers: teacherList, properties: properties }, callback);
 };
 
-function createTeacher(closeId, txtIds) {
+function createTeacher(closeId, teacherTypeSelectId, txtIds) {
 	var keys = [];
 	var values = [];
 	for (var id in txtIds) {
@@ -62,8 +82,11 @@ function createTeacher(closeId, txtIds) {
 			values.push(value);
 		}
 	}
+	
+	var teacherTypeSelect = dojo.byId(teacherTypeSelectId);
+	var teacherType = teacherTypeSelect.options[teacherTypeSelect.selectedIndex].value;
 
-	sendGetRequest("../teacher/create", { keys: keys, values: values }, function(info) { loadTeachers(); })
+	sendGetRequest("../teacher/create", { keys: keys, values: values, teacherType: teacherType }, function(info) { loadTeachers(); })
 
 	if (closeId != null) {
 		dijit.byId(closeId).hide();

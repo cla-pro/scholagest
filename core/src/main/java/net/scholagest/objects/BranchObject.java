@@ -1,11 +1,16 @@
 package net.scholagest.objects;
 
+import net.scholagest.database.ITransaction;
 import net.scholagest.managers.ontology.types.DBSet;
 import net.scholagest.namespace.CoreNamespace;
 
 public class BranchObject extends BaseObject {
     public BranchObject(String key) {
         super(key, CoreNamespace.tBranch);
+    }
+
+    public BranchObject(ITransaction transaction, ObjectHelper objectHelper, String key) {
+        super(transaction, objectHelper, key);
     }
 
     public String getClassKey() {

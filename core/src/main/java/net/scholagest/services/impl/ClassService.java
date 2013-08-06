@@ -12,12 +12,12 @@ import net.scholagest.business.IUserBusinessComponent;
 import net.scholagest.database.DatabaseException;
 import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
+import net.scholagest.managers.ontology.types.DBSet;
 import net.scholagest.namespace.AuthorizationRolesNamespace;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IClassService;
 import net.scholagest.services.kdom.DBToKdomConverter;
-import net.scholagest.services.kdom.KSet;
 import net.scholagest.shiro.AuthorizationHelper;
 import net.scholagest.utils.ConfigurationServiceImpl;
 import net.scholagest.utils.ScholagestProperty;
@@ -50,7 +50,7 @@ public class ClassService implements IClassService {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAdminRole());
 
             BaseObject dbClazz = classBusinessComponent.createClass(classProperties, className, yearKey);
-            clazz = new DBToKdomConverter().convertDbToKdom(dbClazz);
+            clazz = new DBToKdomConverter().convertDbToKdom(dbClazz, null);
 
             transaction.commit();
         } catch (Exception e) {
@@ -87,7 +87,7 @@ public class ClassService implements IClassService {
 
         DBToKdomConverter dbConvertor = new DBToKdomConverter();
         for (String classKey : dbClasses.keySet()) {
-            converted.put(classKey, dbConvertor.convertDbSetToKdom(dbClasses.get(classKey)));
+            converted.put(classKey, dbConvertor.convertDbSetToKdom(dbClasses.get(classKey), null));
         }
 
         return converted;
@@ -103,7 +103,7 @@ public class ClassService implements IClassService {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
 
             BaseObject dbClazz = classBusinessComponent.getClassProperties(classKey, propertiesName);
-            clazz = new DBToKdomConverter().convertDbToKdom(dbClazz);
+            clazz = new DBToKdomConverter().convertDbToKdom(dbClazz, propertiesName);
 
             transaction.commit();
         } catch (Exception e) {
@@ -143,8 +143,8 @@ public class ClassService implements IClassService {
     }
 
     private void removeUserAuthorizations(Map<String, Object> oldProperties) throws Exception {
-        KSet teachers = (KSet) oldProperties.get(CoreNamespace.pClassTeachers);
-        KSet students = (KSet) oldProperties.get(CoreNamespace.pClassStudents);
+        DBSet teachers = (DBSet) oldProperties.get(CoreNamespace.pClassTeachers);
+        DBSet students = (DBSet) oldProperties.get(CoreNamespace.pClassStudents);
 
         for (Object teacherKey : convertToSetString(teachers)) {
             userBusinessComponent.removeUsersPermissions((String) teacherKey, convertToSetString(students));
@@ -152,8 +152,8 @@ public class ClassService implements IClassService {
     }
 
     private void addUserAuthorizations(Map<String, Object> newProperties, String classKey) throws Exception {
-        KSet teachers = (KSet) newProperties.get(CoreNamespace.pClassTeachers);
-        KSet students = (KSet) newProperties.get(CoreNamespace.pClassStudents);
+        DBSet teachers = (DBSet) newProperties.get(CoreNamespace.pClassTeachers);
+        DBSet students = (DBSet) newProperties.get(CoreNamespace.pClassStudents);
 
         for (Object teacherKey : convertToSetString(teachers)) {
             userBusinessComponent.addUsersPermissions((String) teacherKey, new HashSet<String>(Arrays.asList(classKey)));
@@ -161,10 +161,10 @@ public class ClassService implements IClassService {
         }
     }
 
-    private Set<String> convertToSetString(KSet students) {
+    private Set<String> convertToSetString(DBSet students) {
         Set<String> converted = new HashSet<>();
 
-        for (Object student : students.getValues()) {
+        for (Object student : students.values()) {
             converted.add((String) student);
         }
 

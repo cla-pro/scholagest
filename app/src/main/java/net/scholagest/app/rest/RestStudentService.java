@@ -39,7 +39,6 @@ public class RestStudentService extends AbstractService {
     private final IStudentService studentService;
     private final IOntologyService ontologyService;
     private final IUserService userService;
-    private JsonConverter converter;
 
     @Inject
     public RestStudentService(IStudentService studentService, IOntologyService ontologyService, IUserService userService) {
@@ -47,7 +46,6 @@ public class RestStudentService extends AbstractService {
         this.studentService = studentService;
         this.ontologyService = ontologyService;
         this.userService = userService;
-        this.converter = new JsonConverter(this.ontologyService);
     }
 
     @GET
@@ -65,10 +63,10 @@ public class RestStudentService extends AbstractService {
             BaseObject student = studentService.createStudent(personalInfo);
 
             Gson gson = new Gson();
-            String json = gson.toJson(converter.convertObjectToJson(student, null));
+            String json = gson.toJson(student);
             return "{info: " + json + "}";
         } catch (ShiroException e) {
-            return generateSessionExpiredMessage(e);
+            return handleShiroException(e);
         } catch (ScholagestException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
@@ -92,7 +90,7 @@ public class RestStudentService extends AbstractService {
             String json = new Gson().toJson(restStudents);
             return "{info: " + json + "}";
         } catch (ShiroException e) {
-            return generateSessionExpiredMessage(e);
+            return handleShiroException(e);
         } catch (ScholagestException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
@@ -125,7 +123,7 @@ public class RestStudentService extends AbstractService {
             String json = new Gson().toJson(restStudents);
             return "{info: " + json + "}";
         } catch (ShiroException e) {
-            return generateSessionExpiredMessage(e);
+            return handleShiroException(e);
         } catch (ScholagestException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
@@ -156,7 +154,7 @@ public class RestStudentService extends AbstractService {
             String json = new Gson().toJson(restStudentInfo);
             return "{info: " + json + "}";
         } catch (ShiroException e) {
-            return generateSessionExpiredMessage(e);
+            return handleShiroException(e);
         } catch (ScholagestException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
@@ -191,7 +189,7 @@ public class RestStudentService extends AbstractService {
             String json = new Gson().toJson(restPersonalInfo);
             return "{info: " + json + "}";
         } catch (ShiroException e) {
-            return generateSessionExpiredMessage(e);
+            return handleShiroException(e);
         } catch (ScholagestException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
@@ -216,7 +214,7 @@ public class RestStudentService extends AbstractService {
 
             studentService.updateStudentProperties(baseObject.getKey(), baseObject.getProperties(), new HashMap<String, Object>());
         } catch (ShiroException e) {
-            return generateSessionExpiredMessage(e);
+            return handleShiroException(e);
         } catch (ScholagestException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
@@ -252,7 +250,7 @@ public class RestStudentService extends AbstractService {
             String json = new Gson().toJson(restMedicalInfo);
             return "{info: " + json + "}";
         } catch (ShiroException e) {
-            return generateSessionExpiredMessage(e);
+            return handleShiroException(e);
         } catch (ScholagestException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
@@ -277,7 +275,7 @@ public class RestStudentService extends AbstractService {
 
             studentService.updateStudentProperties(baseObject.getKey(), new HashMap<String, Object>(), baseObject.getProperties());
         } catch (ShiroException e) {
-            return generateSessionExpiredMessage(e);
+            return handleShiroException(e);
         } catch (ScholagestException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
@@ -303,7 +301,7 @@ public class RestStudentService extends AbstractService {
             String json = gradeMapToJson(grades);
             return "{info: " + json + "}";
         } catch (ShiroException e) {
-            return generateSessionExpiredMessage(e);
+            return handleShiroException(e);
         } catch (ScholagestException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
@@ -347,6 +345,8 @@ public class RestStudentService extends AbstractService {
             ScholagestThreadLocal.setSubject(userService.authenticateWithToken(request.getToken()));
 
             Map<String, Map<String, RestObject>> restStudentGrades = gradeList.getGrades();
+            Map<String, RestObject> restPeriodStudentMeans = gradeList.getPeriodMeans();
+            Map<String, RestObject> restStudentBranchMeans = gradeList.getBranchMeans();
 
             for (String studentKey : restStudentGrades.keySet()) {
                 Map<String, RestObject> restSingleStudentGrades = restStudentGrades.get(studentKey);
@@ -354,14 +354,26 @@ public class RestStudentService extends AbstractService {
 
                 studentService.setGrades(studentKey, studentGrades, gradeList.getYearKey(), gradeList.getClassKey(), gradeList.getBranchKey(),
                         gradeList.getPeriodKey());
+
+                RestObject restSingleStudentPeriodMean = restPeriodStudentMeans.get(studentKey);
+                BaseObject studentPeriodMean = new RestToKdomConverter().baseObjectFromRest(restSingleStudentPeriodMean);
+
+                studentService.setStudentPeriodMean(studentKey, studentPeriodMean, gradeList.getYearKey(), gradeList.getClassKey(),
+                        gradeList.getBranchKey(), gradeList.getPeriodKey());
+
+                RestObject restSingleStudentBranchMean = restStudentBranchMeans.get(studentKey);
+                BaseObject studentBranchMean = new RestToKdomConverter().baseObjectFromRest(restSingleStudentBranchMean);
+
+                studentService.setStudentBranchMean(studentKey, studentBranchMean, gradeList.getYearKey(), gradeList.getClassKey(),
+                        gradeList.getBranchKey());
             }
         } catch (ShiroException e) {
-            return generateSessionExpiredMessage(e);
+            return handleShiroException(e);
         } catch (ScholagestException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            return "{errorCode:0, message:'" + e.getMessage() + "'}";
+            return "{errorCode:1000, message:'" + e.getMessage() + "'}";
         }
 
         return "{}";

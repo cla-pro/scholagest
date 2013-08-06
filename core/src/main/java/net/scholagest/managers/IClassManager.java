@@ -4,13 +4,14 @@ import java.util.Map;
 import java.util.Set;
 
 import net.scholagest.objects.BaseObject;
+import net.scholagest.objects.ClassObject;
 
 public interface IClassManager {
-    public BaseObject createClass(String className, String yearName) throws Exception;
+    public ClassObject createClass(String className, String yearName, Map<String, Object> properties);
 
-    public Set<BaseObject> getClasses(String yearKey) throws Exception;
+    public Set<BaseObject> getClasses(String yearKey);
 
-    public void setClassProperties(String classKey, Map<String, Object> classProperties) throws Exception;
+    public void setClassProperties(String classKey, Map<String, Object> classProperties);
 
-    public BaseObject getClassProperties(String classKey, Set<String> properties) throws Exception;
+    public ClassObject getClassProperties(String classKey, Set<String> properties);
 }

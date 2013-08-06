@@ -13,18 +13,22 @@
 	dojo.require("dojo.cookie");
 </script>
 <title>Scholagest</title>
+<link href="template.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 	<div class="header">
-		<img src="images/" class="app-logo" />
-		<img src="images/" class="school-logo" />
-		<span class="app-name">Application Name</span>
+        <img src="images/scholagest-logo1-2.png" class="app-logo" />
 	</div>
 	
 	<script type="text/javascript">
 		function authenticate() {
 			var username = document.getElementById('txtUsername').value;
 			var password = document.getElementById('txtPassword').value;
+			
+			if (username == '') {
+                dojo.byId('lblLoginError').innerHTML = 'Vous devez insérer un nom d\'utilisateur';
+			    return;
+			}
 			
 			var xhrArgs = {
 			    url: "../services/user/authenticate",
@@ -36,9 +40,11 @@
 			    		//dojo.cookie("scholagest_token", data.token);
 			    		window.location = unescape(data.nextpage.replace(/\+/g, " "));
 			    	}
-			    	else
-			    		alert("Error during authentication: ("
-			    				+ data.errorCode + ") " + data.message);
+			    	else {
+			    	    if (data.errorCode == 1) {
+			    	        dojo.byId('lblLoginError').innerHTML = 'Nom d\'utilisateur ou mot de passe incorrect';
+			    	    }
+			    	}
 			    },
 			    error: function(error) {
 			    	alert("error = " + error);
@@ -51,12 +57,17 @@
 	<div align="center">
 		<table style="border: solid 1px black">
 			<tr>
-				<td>Nom d'utilisateur</td><td><input id="txtUsername" type="text" /></td>
+				<td>Nom d'utilisateur</td>
+				<td><input id="txtUsername" type="text" onKeyPress="if (event.keyCode == 13) authenticate();" /></td>
 			</tr><tr>
-				<td>Mot de passe</td><td><input id="txtPassword" type="password" /></td>
+				<td>Mot de passe</td>
+				<td><input id="txtPassword" type="password" onKeyPress="if (event.keyCode == 13) authenticate();" /></td>
 			</tr><tr>
-				<td colspan="2" align="right"><button onclick="authenticate()">Login</button></td>
+				<td colspan="2"><align="right"><button onclick="authenticate()">Login</button></align></td>
 			</tr>
 		</table>
+	</div>
+	<div align="center">
+		<label style="color: red; height: 100%" id="lblLoginError"></label>
 	</div>
 </body>

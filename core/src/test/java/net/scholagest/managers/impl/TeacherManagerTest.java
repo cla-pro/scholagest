@@ -11,6 +11,7 @@ import net.scholagest.managers.ITeacherManager;
 import net.scholagest.managers.ontology.OntologyManager;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
+import net.scholagest.objects.TeacherObject;
 import net.scholagest.utils.AbstractTestWithTransaction;
 import net.scholagest.utils.DatabaseReaderWriter;
 import net.scholagest.utils.InMemoryDatabase;
@@ -39,20 +40,16 @@ public class TeacherManagerTest extends AbstractTestWithTransaction {
 
         Map<String, Object> properties = createTeacherProperties();
         teacherManager.setTeacherProperties(TEACHER_KEY, properties);
-        BaseObject teacher = teacherManager.getTeacherProperties(TEACHER_KEY, properties.keySet());
+        TeacherObject teacher = teacherManager.getTeacherProperties(TEACHER_KEY, properties.keySet());
 
-        Map<String, Object> readProperties = teacher.getProperties();
-        assertEquals(properties.size(), readProperties.size());
-        for (String key : properties.keySet()) {
-            assertEquals(properties.get(key), readProperties.get(key));
-        }
+        assertEquals("Dupont", teacher.getProperty("pTeacherLastName"));
     }
 
     @Test
     public void testGetTeachers() throws Exception {
         super.fillTransactionWithDataSets(new String[] { "Teacher" });
 
-        Set<BaseObject> teachers = teacherManager.getTeachers();
+        Set<TeacherObject> teachers = teacherManager.getTeachers();
 
         assertEquals(1, teachers.size());
         assertEquals(TEACHER_KEY, teachers.iterator().next().getKey());

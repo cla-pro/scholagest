@@ -47,10 +47,10 @@ public class RestYearService extends AbstractService {
             BaseObject year = yearService.startYear(yearName);
 
             Gson gson = new Gson();
-            String json = gson.toJson(converter.convertObjectToJson(year, null));
+            String json = gson.toJson(year);
             return "{info: " + json + "}";
         } catch (ShiroException e) {
-            return generateSessionExpiredMessage(e);
+            return handleShiroException(e);
         } catch (ScholagestException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
@@ -70,7 +70,7 @@ public class RestYearService extends AbstractService {
 
             yearService.stopYear();
         } catch (ShiroException e) {
-            return generateSessionExpiredMessage(e);
+            return handleShiroException(e);
         } catch (ScholagestException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
@@ -97,7 +97,7 @@ public class RestYearService extends AbstractService {
             String json = gson.toJson(converter.convertObjectToJson(currentYear, null));
             return "{info: " + json + "}";
         } catch (ShiroException e) {
-            return generateSessionExpiredMessage(e);
+            return handleShiroException(e);
         } catch (ScholagestException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
@@ -126,7 +126,7 @@ public class RestYearService extends AbstractService {
             }
             return "{info: {years: " + years + currentYearJson + "}}";
         } catch (ShiroException e) {
-            return generateSessionExpiredMessage(e);
+            return handleShiroException(e);
         } catch (ScholagestException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {

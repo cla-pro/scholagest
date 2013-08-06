@@ -10,7 +10,7 @@ import net.scholagest.managers.IClassManager;
 import net.scholagest.managers.IYearManager;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
-import net.scholagest.services.kdom.DBToKdomConverter;
+import net.scholagest.objects.ClassObject;
 
 import com.google.inject.Inject;
 
@@ -25,12 +25,12 @@ public class ClassBusinessComponent implements IClassBusinessComponent {
     }
 
     @Override
-    public BaseObject createClass(Map<String, Object> classProperties, String className, String yearKey) throws Exception {
+    public ClassObject createClass(Map<String, Object> classProperties, String className, String yearKey) {
         Set<String> properties = new HashSet<>();
         properties.add(CoreNamespace.pYearName);
         String yearName = (String) yearManager.getYearProperties(yearKey, properties).getProperty(CoreNamespace.pYearName);
 
-        BaseObject clazz = classManager.createClass(className, yearName);
+        ClassObject clazz = classManager.createClass(className, yearName, classProperties);
 
         classProperties.put(CoreNamespace.pClassName, className);
         classProperties.put(CoreNamespace.pClassYear, yearKey);
@@ -42,7 +42,7 @@ public class ClassBusinessComponent implements IClassBusinessComponent {
     }
 
     @Override
-    public Map<String, Set<BaseObject>> getClassesForYears(Set<String> yearKeySet) throws Exception {
+    public Map<String, Set<BaseObject>> getClassesForYears(Set<String> yearKeySet) {
         Map<String, Set<BaseObject>> classes = new HashMap<>();
 
         for (String yearKey : yearKeySet) {
@@ -53,12 +53,12 @@ public class ClassBusinessComponent implements IClassBusinessComponent {
     }
 
     @Override
-    public BaseObject getClassProperties(String classKey, Set<String> propertiesName) throws Exception {
-        return new DBToKdomConverter().convertDbToKdom(classManager.getClassProperties(classKey, propertiesName));
+    public ClassObject getClassProperties(String classKey, Set<String> propertiesName) {
+        return classManager.getClassProperties(classKey, propertiesName);
     }
 
     @Override
-    public void setClassProperties(String classKey, Map<String, Object> classProperties) throws Exception {
+    public void setClassProperties(String classKey, Map<String, Object> classProperties) {
         classManager.setClassProperties(classKey, classProperties);
     }
 }

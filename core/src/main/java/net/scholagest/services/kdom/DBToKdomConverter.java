@@ -10,17 +10,17 @@ import net.scholagest.managers.ontology.types.DBSet;
 import net.scholagest.objects.BaseObject;
 
 public class DBToKdomConverter {
-    public Set<BaseObject> convertDbSetToKdom(Set<? extends BaseObject> toConvert) throws DatabaseException {
+    public Set<BaseObject> convertDbSetToKdom(Set<? extends BaseObject> toConvert, Set<String> filteringProperties) throws DatabaseException {
         Set<BaseObject> converted = new HashSet<>();
 
         for (BaseObject baseObject : toConvert) {
-            converted.add(convertDbToKdom(baseObject));
+            converted.add(convertDbToKdom(baseObject, filteringProperties));
         }
 
         return converted;
     }
 
-    public BaseObject convertDbToKdom(BaseObject toConvert) throws DatabaseException {
+    public BaseObject convertDbToKdom(BaseObject toConvert, Set<String> filteringProperties) throws DatabaseException {
         if (toConvert == null) {
             return null;
         }
@@ -29,20 +29,28 @@ public class DBToKdomConverter {
 
         Map<String, Object> convertedProperties = new HashMap<>();
         for (String propertyName : toConvert.getProperties().keySet()) {
-            Object convertedValue = null;
-            Object dbValue = toConvert.getProperty(propertyName);
-            if (dbValue instanceof DBSet) {
-                DBSet dbSet = (DBSet) dbValue;
-                convertedValue = new KSet(dbSet.getKey(), new HashSet<Object>(dbSet.values()));
-            } else if (dbValue instanceof BaseObject) {
-                convertedValue = convertDbToKdom((BaseObject) dbValue);
-            } else {
-                convertedValue = dbValue;
+            if (filteringProperties == null || filteringProperties.contains(propertyName)) {
+                Object convertedValue = convertValue(toConvert, propertyName);
+                convertedProperties.put(propertyName, convertedValue);
             }
-            convertedProperties.put(propertyName, convertedValue);
         }
         clone.setProperties(convertedProperties);
+        clone.flushAllProperties();
 
         return clone;
+    }
+
+    private Object convertValue(BaseObject toConvert, String propertyName) {
+        Object convertedValue = null;
+        Object dbValue = toConvert.getProperty(propertyName);
+        if (dbValue instanceof DBSet) {
+            DBSet dbSet = (DBSet) dbValue;
+            convertedValue = new KSet(dbSet.getKey(), new HashSet<Object>(dbSet.values()));
+        } else if (dbValue instanceof BaseObject) {
+            convertedValue = convertDbToKdom((BaseObject) dbValue, null);
+        } else {
+            convertedValue = dbValue;
+        }
+        return convertedValue;
     }
 }

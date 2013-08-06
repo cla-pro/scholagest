@@ -98,15 +98,14 @@ public class OntologyHandler {
         docBuilderFactory.setIgnoringComments(true);
         docBuilderFactory.setNamespaceAware(true);
 
-        URL url = null;
-        InputStream urlStream = null;
+        InputStream stream = null;
         try {
-            LOG.debug("Downloading ontology from " + urlString);
-            url = new URL(urlString);
-            urlStream = url.openStream();
+            LOG.info("Downloading ontology from " + urlString);
+
+            stream = getDocStream(urlString);
 
             DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-            return docBuilder.parse(urlStream);
+            return docBuilder.parse(stream);
         } catch (MalformedURLException e) {
             LOG.error("Error while loading imported ontology - wrong URL", e);
         } catch (ParserConfigurationException e) {
@@ -117,12 +116,26 @@ public class OntologyHandler {
             LOG.error("Error while parsing the imported XML ontology", e);
         } finally {
             try {
-                urlStream.close();
+                stream.close();
             } catch (IOException e) {
                 LOG.warn("Error while closing stream", e);
             }
         }
 
         return null;
+    }
+
+    private InputStream getDocStream(String urlString) throws IOException {
+        InputStream stream = getClass().getResourceAsStream(urlString);
+
+        if (stream == null) {
+            LOG.debug("Classpath resource with path \"" + urlString + "\" not found, searching outside the classpath");
+            URL url = new URL(urlString);
+            stream = url.openStream();
+        } else {
+            LOG.debug("Loading the file  with path \"" + urlString + "\" from the classpath");
+        }
+
+        return stream;
     }
 }

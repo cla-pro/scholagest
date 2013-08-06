@@ -1,6 +1,7 @@
 package net.scholagest.app.rest;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +65,7 @@ public class RestBranchService extends AbstractService {
             String json = new Gson().toJson(restBranch);
             return "{info: " + json + "}";
         } catch (ShiroException e) {
-            return generateSessionExpiredMessage(e);
+            return handleShiroException(e);
         } catch (ScholagestException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
@@ -97,7 +98,7 @@ public class RestBranchService extends AbstractService {
             String json = new Gson().toJson(convertObjectToJson);
             return "{info: " + json + "}";
         } catch (ShiroException e) {
-            return generateSessionExpiredMessage(e);
+            return handleShiroException(e);
         } catch (ScholagestException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
@@ -126,7 +127,7 @@ public class RestBranchService extends AbstractService {
             String json = new Gson().toJson(convertObjectToJson);
             return "{info: " + json + "}";
         } catch (ShiroException e) {
-            return generateSessionExpiredMessage(e);
+            return handleShiroException(e);
         } catch (ScholagestException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
@@ -149,7 +150,7 @@ public class RestBranchService extends AbstractService {
 
             branchService.setBranchProperties(requestObject.getKey(), baseObject.getProperties());
         } catch (ShiroException e) {
-            return generateSessionExpiredMessage(e);
+            return handleShiroException(e);
         } catch (ScholagestException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
@@ -158,5 +159,33 @@ public class RestBranchService extends AbstractService {
         }
 
         return "{}";
+    }
+
+    @GET
+    @Path("/getMeans")
+    @Produces("text/json")
+    public String getMeans(@QueryParam("token") String token, @QueryParam("branchKey") String branchKey,
+            @QueryParam("studentKeys") Set<String> studentKeys, @QueryParam("yearKey") String yearKey) {
+        ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
+        try {
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
+
+            Map<String, Map<String, BaseObject>> means = branchService.getBranchMeans(branchKey, studentKeys);
+
+            Map<String, Object> jsonMeans = new HashMap<>();
+            String meanKey = means.keySet().iterator().next();
+            jsonMeans.put("key", meanKey);
+            jsonMeans.put("grades", new RestToKdomConverter().mapRestObjectFromMapKdom(means.get(meanKey)));
+
+            String json = new Gson().toJson(jsonMeans);
+            return "{info: " + json + "}";
+        } catch (ShiroException e) {
+            return handleShiroException(e);
+        } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
+        }
     }
 }

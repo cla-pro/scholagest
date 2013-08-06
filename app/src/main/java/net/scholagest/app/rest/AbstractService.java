@@ -4,7 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import net.scholagest.exception.ScholagestException;
 import net.scholagest.exception.ScholagestExceptionErrorCode;
+import net.scholagest.exception.ScholagestRuntimeException;
 import net.scholagest.managers.ontology.OntologyElement;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IOntologyService;
@@ -29,12 +31,25 @@ public abstract class AbstractService {
         return ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.BASE_URL);
     }
 
+    protected String handleShiroException(ShiroException e) {
+        Throwable cause = e.getCause();
+        if (cause instanceof ScholagestException) {
+            ScholagestException scholagestException = (ScholagestException) cause;
+            return generateScholagestExceptionMessage(scholagestException.getErrorCode(), scholagestException.getMessage());
+        } else if (cause instanceof ScholagestRuntimeException) {
+            ScholagestRuntimeException scholagestException = (ScholagestRuntimeException) cause;
+            return generateScholagestExceptionMessage(scholagestException.getErrorCode(), scholagestException.getMessage());
+        } else {
+            return generateSessionExpiredMessage(e);
+        }
+    }
+
     protected String generateSessionExpiredMessage(ShiroException e) {
         return "{errorCode:0, msg:''}";
     }
 
     protected String generateScholagestExceptionMessage(ScholagestExceptionErrorCode errorCode, String message) {
-        return String.format("{errorCode:%d, msg:'%s'}", errorCode.getCode(), message);
+        return String.format("{errorCode:%d, msg:'%s'}", errorCode.getPublicCode(), message);
     }
 
     protected Map<String, OntologyElement> extractOntology(Set<String> properties) throws Exception {

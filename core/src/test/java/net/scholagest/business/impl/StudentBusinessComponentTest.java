@@ -3,6 +3,7 @@ package net.scholagest.business.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anySetOf;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -24,6 +25,7 @@ import net.scholagest.managers.IExamManager;
 import net.scholagest.managers.IPeriodManager;
 import net.scholagest.managers.IStudentManager;
 import net.scholagest.managers.IYearManager;
+import net.scholagest.managers.ontology.types.DBSet;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.objects.BaseObjectMock;
@@ -71,12 +73,32 @@ public class StudentBusinessComponentTest extends AbstractTestWithTransaction {
 
     @Before
     public void setup() throws Exception {
-        when(studentManager.createStudent()).thenReturn(new BaseObject(STUDENT_KEY, CoreNamespace.tStudent));
+        when(studentManager.createStudent()).thenReturn(BaseObjectMock.createStudentObject(STUDENT_KEY, new HashMap<String, Object>()));
         when(studentManager.getMedicalProperties(STUDENT_KEY, createStudentMedicalProperties().keySet())).thenReturn(
                 BaseObjectMock.createBaseObject(null, null, createStudentMedicalProperties()));
         when(studentManager.getPersonalProperties(STUDENT_KEY, createStudentPersonalProperties().keySet())).thenReturn(
                 BaseObjectMock.createBaseObject(null, null, createStudentPersonalProperties()));
-        when(studentManager.getStudents()).thenReturn(new HashSet<>(Arrays.asList(new BaseObject(STUDENT_KEY, CoreNamespace.tStudent))));
+        when(studentManager.getStudents()).thenReturn(
+                new HashSet<>(Arrays.asList(BaseObjectMock.createStudentObject(STUDENT_KEY, new HashMap<String, Object>()))));
+
+        when(yearManager.getYearProperties(anyString(), anySetOf(String.class))).thenReturn(
+                BaseObjectMock.createBaseObject(UUID.randomUUID().toString(), CoreNamespace.tYear, new HashMap<String, Object>()));
+
+        HashMap<String, Object> periodProperties = new HashMap<String, Object>();
+        periodProperties.put(CoreNamespace.pPeriodExams, new DBSet(transaction, UUID.randomUUID().toString()));
+        when(periodManager.getPeriodProperties(anyString(), anySetOf(String.class))).thenReturn(
+                BaseObjectMock.createPeriodObject(UUID.randomUUID().toString(), periodProperties));
+
+        when(classManager.getClassProperties(anyString(), anySetOf(String.class))).thenReturn(
+                BaseObjectMock.createClassObject(UUID.randomUUID().toString(), new HashMap<String, Object>()));
+
+        HashMap<String, Object> branchProperties = new HashMap<String, Object>();
+        branchProperties.put(CoreNamespace.pBranchPeriods, new DBSet(transaction, UUID.randomUUID().toString()));
+        when(branchManager.getBranchProperties(anyString(), anySetOf(String.class))).thenReturn(
+                BaseObjectMock.createBranchObject(UUID.randomUUID().toString(), branchProperties));
+
+        when(examManager.getExamProperties(anyString(), anySetOf(String.class))).thenReturn(
+                BaseObjectMock.createExamObject(UUID.randomUUID().toString(), new HashMap<String, Object>()));
 
         testee = new StudentBusinessComponent(studentManager, yearManager, classManager, branchManager, periodManager, examManager);
     }
@@ -151,7 +173,6 @@ public class StudentBusinessComponentTest extends AbstractTestWithTransaction {
     public void testSetStudentGradesInNumericalBranch() throws Exception {
         BranchObject branchObject = mock(BranchObject.class);
         when(branchObject.getBranchType()).thenReturn(BranchType.NUMERICAL);
-        Mockito.when(branchManager.getBranchProperties(eq(BRANCH_KEY), anySetOf(String.class))).thenReturn(branchObject);
 
         Map<String, BaseObject> studentGrades = createNumericalGrades();
         testee.setStudentGrades(STUDENT_KEY, studentGrades, YEAR_KEY, CLASS_KEY, BRANCH_KEY, PERIOD_KEY);
@@ -172,7 +193,6 @@ public class StudentBusinessComponentTest extends AbstractTestWithTransaction {
     public void testSetStudentGradesNullInNumericalBranch() throws Exception {
         BranchObject branchObject = mock(BranchObject.class);
         when(branchObject.getBranchType()).thenReturn(BranchType.NUMERICAL);
-        Mockito.when(branchManager.getBranchProperties(eq(BRANCH_KEY), anySetOf(String.class))).thenReturn(branchObject);
 
         Map<String, BaseObject> studentGrades = createNullGrades();
         testee.setStudentGrades(STUDENT_KEY, studentGrades, YEAR_KEY, CLASS_KEY, BRANCH_KEY, PERIOD_KEY);

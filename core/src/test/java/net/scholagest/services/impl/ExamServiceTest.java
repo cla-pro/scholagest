@@ -133,6 +133,7 @@ public class ExamServiceTest extends AbstractTest {
         ExamObject classKeyObject = BaseObjectMock.createExamObject(null, new HashMap<String, Object>());
 
         classKeyObject.putProperty(CoreNamespace.pExamClass, CLASS_KEY);
+        classKeyObject.flushAllProperties();
 
         return classKeyObject;
     }

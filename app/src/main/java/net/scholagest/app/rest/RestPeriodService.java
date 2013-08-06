@@ -69,7 +69,35 @@ public class RestPeriodService extends AbstractService {
             String json = new Gson().toJson(jsonObjects);
             return "{info: " + json + "}";
         } catch (ShiroException e) {
-            return generateSessionExpiredMessage(e);
+            return handleShiroException(e);
+        } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
+        }
+    }
+
+    @GET
+    @Path("/getMeans")
+    @Produces("text/json")
+    public String getMeans(@QueryParam("token") String token, @QueryParam("periodKey") String periodKey,
+            @QueryParam("studentKeys") Set<String> studentKeys, @QueryParam("yearKey") String yearKey) {
+        ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
+        try {
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
+
+            Map<String, Map<String, BaseObject>> means = periodService.getPeriodMeans(periodKey, studentKeys);
+
+            Map<String, Object> jsonMeans = new HashMap<>();
+            String meanKey = means.keySet().iterator().next();
+            jsonMeans.put("key", meanKey);
+            jsonMeans.put("grades", new RestToKdomConverter().mapRestObjectFromMapKdom(means.get(meanKey)));
+
+            String json = new Gson().toJson(jsonMeans);
+            return "{info: " + json + "}";
+        } catch (ShiroException e) {
+            return handleShiroException(e);
         } catch (ScholagestException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {

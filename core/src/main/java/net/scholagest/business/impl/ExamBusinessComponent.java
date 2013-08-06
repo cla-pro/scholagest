@@ -35,51 +35,47 @@ public class ExamBusinessComponent implements IExamBusinessComponent {
     }
 
     @Override
-    public ExamObject createExam(String yearKey, String classKey, String branchKey, String periodKey, Map<String, Object> examProperties)
-            throws Exception {
+    public ExamObject createExam(String yearKey, String classKey, String branchKey, String periodKey, Map<String, Object> examProperties) {
         String yearName = getYearName(yearKey);
         String className = getClassName(classKey);
         String branchName = getBranchName(branchKey);
         String periodName = getPeriodName(periodKey);
 
         ExamObject exam = examManager.createExam((String) examProperties.get(CoreNamespace.pExamName), classKey, periodName, branchName, className,
-                yearName);
+                yearName, examProperties);
 
-        examManager.setExamProperties(exam.getKey(), examProperties);
-
-        DBSet periodExams = (DBSet) periodManager.getPeriodProperties(periodKey, new HashSet<>(Arrays.asList(CoreNamespace.pPeriodExams)))
-                .getProperty(CoreNamespace.pPeriodExams);
+        DBSet periodExams = periodManager.getPeriodProperties(periodKey, new HashSet<>(Arrays.asList(CoreNamespace.pPeriodExams))).getExams();
         periodExams.add(exam.getKey());
 
         return exam;
     }
 
-    private String getYearName(String yearKey) throws Exception {
+    private String getYearName(String yearKey) {
         Set<String> properties = new HashSet<>();
         properties.add(CoreNamespace.pYearName);
         return (String) yearManager.getYearProperties(yearKey, properties).getProperty(CoreNamespace.pYearName);
     }
 
-    private String getClassName(String yearKey) throws Exception {
+    private String getClassName(String yearKey) {
         Set<String> properties = new HashSet<>();
         properties.add(CoreNamespace.pClassName);
         return (String) classManager.getClassProperties(yearKey, properties).getProperty(CoreNamespace.pClassName);
     }
 
-    private String getBranchName(String yearKey) throws Exception {
+    private String getBranchName(String yearKey) {
         Set<String> properties = new HashSet<>();
         properties.add(CoreNamespace.pBranchName);
         return (String) branchManager.getBranchProperties(yearKey, properties).getProperty(CoreNamespace.pBranchName);
     }
 
-    private String getPeriodName(String yearKey) throws Exception {
+    private String getPeriodName(String yearKey) {
         Set<String> properties = new HashSet<>();
         properties.add(CoreNamespace.pPeriodName);
         return (String) periodManager.getPeriodProperties(yearKey, properties).getProperty(CoreNamespace.pPeriodName);
     }
 
     @Override
-    public ExamObject getExamProperties(String examKey, Set<String> propertiesName) throws Exception {
+    public ExamObject getExamProperties(String examKey, Set<String> propertiesName) {
         return examManager.getExamProperties(examKey, propertiesName);
     }
 }

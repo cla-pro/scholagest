@@ -18,12 +18,11 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import net.scholagest.app.rest.object.RestRequest;
+import net.scholagest.app.rest.object.RestSetPassword;
 import net.scholagest.app.utils.HtmlPageBuilder;
 import net.scholagest.app.utils.JsonObject;
-import net.scholagest.database.DatabaseException;
-import net.scholagest.database.IDatabase;
-import net.scholagest.database.ITransaction;
 import net.scholagest.exception.ScholagestException;
+import net.scholagest.exception.ScholagestRuntimeException;
 import net.scholagest.services.IOntologyService;
 import net.scholagest.services.IUserService;
 import net.scholagest.shiro.RealmAuthenticationAndAuthorization;
@@ -39,16 +38,14 @@ import com.google.inject.Inject;
 public class RestUserService extends AbstractService {
     private final static String REQUEST_ID_PREFIX = "user-";
 
-    private final IDatabase database;
     private final IUserService userService;
 
     @Context
     ServletContext context;
 
     @Inject
-    public RestUserService(final IDatabase database, final IUserService userService, IOntologyService ontologyService) {
+    public RestUserService(final IUserService userService, IOntologyService ontologyService) {
         super(ontologyService);
-        this.database = database;
         this.userService = userService;
     }
 
@@ -61,11 +58,12 @@ public class RestUserService extends AbstractService {
 
             String token = (String) subject.getPrincipals().fromRealm(RealmAuthenticationAndAuthorization.TOKEN_KEY).iterator().next();
 
-            // http://localhost:8080/scholagest-app/
             return new JsonObject("token", token, "nextpage", getBaseUrl() + "services/user/getPage?token=" + token).toString();
         } catch (ShiroException e) {
-            return generateSessionExpiredMessage(e);
+            return handleShiroException(e);
         } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
+        } catch (ScholagestRuntimeException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
@@ -78,19 +76,19 @@ public class RestUserService extends AbstractService {
     @Produces(MediaType.TEXT_HTML)
     public String getPage(@QueryParam("token") String token) {
         List<String> pages = new ArrayList<>();
+        String teacherKey = null;
         try {
             ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
 
             pages = userService.getVisibleModules(token);
+            teacherKey = userService.getTeacherKeyForToken(token);
         } catch (Exception e) {
-            // e.printStackTrace();
-            return "<meta http-equiv=\"refresh\" content=\"0; url=" + getBaseUrl() + "html/login.html\" />";
+            return "<meta http-equiv=\"refresh\" content=\"0; url=" + getBaseUrl() + "html/session_expired.html\" />";
         }
 
         StringBuilder builder = new StringBuilder();
-
         builder.append("<div id=\"tabMenu\" data-dojo-type=\"dijit.layout.TabContainer\" " + "style=\"width: 100%; height: 100%;\">");
-        builder.append("<script type=\"text/javascript\">" + "var BASE_URL = '" + getBaseUrl() + "';"
+        builder.append("<script type=\"text/javascript\">" + "var BASE_URL = '" + getBaseUrl() + "'; var myOwnTeacherKey = '" + teacherKey + "';"
                 + "dojo.ready(function() { dojo.cookie('scholagest_token', '" + token + "'); " + " });</script>");
         for (String page : pages) {
             String module = loadFile("html" + File.separatorChar + page);
@@ -156,7 +154,7 @@ public class RestUserService extends AbstractService {
 
             return "{info: {}}";
         } catch (ShiroException e) {
-            return generateSessionExpiredMessage(e);
+            return handleShiroException(e);
         } catch (ScholagestException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
@@ -165,20 +163,49 @@ public class RestUserService extends AbstractService {
         }
     }
 
+    @POST
+    @Path("/setPassword")
+    @Produces("text/json")
+    public String setPassword(String content) {
+        ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
+
+        try {
+            RestSetPassword request = new Gson().fromJson(content, RestSetPassword.class);
+
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(request.getToken()));
+
+            userService.setPassword(request.getTeacherKey(), request.getNewPassword());
+        } catch (ShiroException e) {
+            return handleShiroException(e);
+        } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
+        }
+
+        return "{}";
+    }
+
     @GET
     @Path("/logout")
     @Produces("text/json")
     public String logout(@QueryParam("token") String token) {
-        ITransaction transaction = this.database.getTransaction(ScholagestNamespace.scholagestKeyspace);
-        try {
-            for (String column : transaction.getColumns(token)) {
-                transaction.delete(token, column, null);
-            }
+        ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
-        } catch (DatabaseException e) {
+        try {
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
+
+            userService.logout(token);
+        } catch (ShiroException e) {
+            return handleShiroException(e);
+        } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
+        } catch (Exception e) {
             e.printStackTrace();
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
 
-        return new JsonObject("newURL", "login.html").toString();
+        return "{}";
     }
 }

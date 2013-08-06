@@ -164,10 +164,11 @@ function handleWebServiceError(error) {
 };
 
 function handleServiceError(errorJson) {
-	if (errorJson.errorCode >= 0 && errorJson.errorCode < 100) {
-		//http://localhost:8080/scholagest-app/
-		window.location = BASE_URL + "html/login.html";
-	} else {
+    if (errorJson.errorCode == 3) {
+        alert("Droits insuffisants pour effectuer cette action");
+    } else if (errorJson.errorCode == 10) {
+        clearScholagestCookieAndSwitchPage("html/session_expired.html");
+    } else {
 		alert("Error with code: " + errorJson.errorCode + " and message: " + errorJson.msg);
 	}
 };
@@ -175,6 +176,11 @@ function handleServiceError(errorJson) {
 
 function logout() {
 	sendGetRequest(BASE_URL + 'services/user/logout', { token: dojo.cookie("scholagest_token") }, function(data) {
-		window.location = BASE_URL + "html/login.html";
+	    clearScholagestCookieAndSwitchPage("html/logout.html");
 	});
+};
+
+function clearScholagestCookieAndSwitchPage(url) {
+    dojo.cookie('scholagest_token', null, {expires: -1});
+    window.location = BASE_URL + url;
 }

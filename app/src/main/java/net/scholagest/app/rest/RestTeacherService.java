@@ -18,6 +18,7 @@ import net.scholagest.app.rest.object.RestRequest;
 import net.scholagest.app.utils.JerseyHelper;
 import net.scholagest.exception.ScholagestException;
 import net.scholagest.managers.ontology.OntologyElement;
+import net.scholagest.namespace.AuthorizationRolesNamespace;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IOntologyService;
@@ -26,6 +27,7 @@ import net.scholagest.services.IUserService;
 import net.scholagest.utils.ScholagestThreadLocal;
 
 import org.apache.shiro.ShiroException;
+import org.apache.shiro.subject.Subject;
 
 import com.google.gson.Gson;
 import com.google.inject.Inject;
@@ -63,7 +65,7 @@ public class RestTeacherService extends AbstractService {
             String json = new Gson().toJson(restTeacher);
             return "{info: " + json + "}";
         } catch (ShiroException e) {
-            return generateSessionExpiredMessage(e);
+            return handleShiroException(e);
         } catch (ScholagestException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
@@ -87,7 +89,7 @@ public class RestTeacherService extends AbstractService {
             String json = new Gson().toJson(restTeachers);
             return "{info: " + json + "}";
         } catch (ShiroException e) {
-            return generateSessionExpiredMessage(e);
+            return handleShiroException(e);
         } catch (ScholagestException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
@@ -118,7 +120,7 @@ public class RestTeacherService extends AbstractService {
             String json = new Gson().toJson(restTeachers);
             return "{info: " + json + "}";
         } catch (ShiroException e) {
-            return generateSessionExpiredMessage(e);
+            return handleShiroException(e);
         } catch (ScholagestException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
@@ -146,10 +148,15 @@ public class RestTeacherService extends AbstractService {
             RestObject restTeacherInfo = new RestToKdomConverter().restObjectFromKdom(teacherInfo);
             new OntologyMerger(ontologyService).mergeOntologyWithRestObject(restTeacherInfo, ontology);
 
+            Subject subject = ScholagestThreadLocal.getSubject();
+            if (subject.hasRole(AuthorizationRolesNamespace.ROLE_ADMIN) || subject.isPermitted(restTeacherInfo.getKey())) {
+                restTeacherInfo.setWritable(true);
+            }
+
             String json = new Gson().toJson(restTeacherInfo);
             return "{info: " + json + "}";
         } catch (ShiroException e) {
-            return generateSessionExpiredMessage(e);
+            return handleShiroException(e);
         } catch (ScholagestException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
@@ -174,7 +181,7 @@ public class RestTeacherService extends AbstractService {
 
             teacherService.setTeacherProperties(baseObject.getKey(), baseObject.getProperties());
         } catch (ShiroException e) {
-            return generateSessionExpiredMessage(e);
+            return handleShiroException(e);
         } catch (ScholagestException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {

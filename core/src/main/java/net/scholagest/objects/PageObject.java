@@ -1,12 +1,17 @@
 package net.scholagest.objects;
 
 import net.scholagest.database.DatabaseException;
+import net.scholagest.database.ITransaction;
 import net.scholagest.managers.ontology.types.DBSet;
 import net.scholagest.namespace.CoreNamespace;
 
 public class PageObject extends BaseObject {
     public PageObject(String key) {
         super(key, CoreNamespace.tPage);
+    }
+
+    public PageObject(ITransaction transaction, ObjectHelper objectHelper, String key) {
+        super(transaction, objectHelper, key);
     }
 
     public void setPath(String path) {

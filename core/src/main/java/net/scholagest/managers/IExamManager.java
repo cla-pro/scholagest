@@ -6,10 +6,10 @@ import java.util.Set;
 import net.scholagest.objects.ExamObject;
 
 public interface IExamManager {
-    public ExamObject createExam(String examName, String classKey, String periodName, String branchName, String className, String yearName)
-            throws Exception;
+    public ExamObject createExam(String examName, String classKey, String periodName, String branchName, String className, String yearName,
+            Map<String, Object> properties);
 
-    public void setExamProperties(String key, Map<String, Object> examProperties) throws Exception;
+    public void setExamProperties(String key, Map<String, Object> examProperties);
 
-    public ExamObject getExamProperties(String examKey, Set<String> properties) throws Exception;
+    public ExamObject getExamProperties(String examKey, Set<String> properties);
 }

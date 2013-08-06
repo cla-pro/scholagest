@@ -43,7 +43,7 @@ public class ExamService implements IExamService {
             authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(classKey));
 
             BaseObject dbExam = examBusinessComponent.createExam(yearKey, classKey, branchKey, periodKey, examInfo);
-            exam = new DBToKdomConverter().convertDbToKdom(dbExam);
+            exam = new DBToKdomConverter().convertDbToKdom(dbExam, null);
 
             transaction.commit();
         } catch (Exception e) {
@@ -69,7 +69,7 @@ public class ExamService implements IExamService {
             authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(classKey));
 
             BaseObject dbExam = examBusinessComponent.getExamProperties(examKey, propertiesName);
-            exam = new DBToKdomConverter().convertDbToKdom(dbExam);
+            exam = new DBToKdomConverter().convertDbToKdom(dbExam, propertiesName);
 
             transaction.commit();
         } catch (Exception e) {
