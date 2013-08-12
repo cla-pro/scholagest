@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Set;
 
 import net.scholagest.business.IYearBusinessComponent;
+import net.scholagest.exception.ScholagestException;
+import net.scholagest.exception.ScholagestExceptionErrorCode;
 import net.scholagest.managers.IYearManager;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
@@ -53,6 +55,20 @@ public class YearBusinessComponentTest extends AbstractTestWithTransaction {
         assertEquals(YEAR_KEY, year.getKey());
         Mockito.verify(yearManager).restoreYear(year.getKey());
         assertNoCallToTransaction();
+    }
+
+    @Test
+    public void testStartYearNameAlreadyUsed() throws Exception {
+        Mockito.when(yearManager.checkWhetherYearExists(YEAR_NAME)).thenReturn(true);
+        try {
+            BaseObject year = testee.startYear(YEAR_NAME);
+
+            assertEquals(YEAR_KEY, year.getKey());
+            Mockito.verify(yearManager).restoreYear(year.getKey());
+            assertNoCallToTransaction();
+        } catch (ScholagestException e) {
+            assertEquals(ScholagestExceptionErrorCode.OBJECT_ALREADY_EXISTS, e.getErrorCode());
+        }
     }
 
     @Test

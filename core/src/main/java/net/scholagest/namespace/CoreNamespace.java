@@ -28,32 +28,27 @@ public class CoreNamespace {
 
     // Teachers
     public static final String teacherNs = scholagestNs + "/teacher";
-    public static final String teachersBase = teacherNs + "#teachers";
 
     private static final String pTeacherNs = "pTeacher";
     public static final String pTeacherClasses = pTeacherNs + "Classes";
     public static final String pTeacherProperties = pTeacherNs + "Properties";
     public static final String pTeacherUser = pTeacherNs + "User";
 
-    public static final String userBase = scholagestNs + "#users";
     private static final String pUserNs = "pUser";
     public static final String pUserUsername = pUserNs + "Username";
     public static final String pUserPassword = pUserNs + "Password";
     public static final String pUserTeacher = pUserNs + "Teacher";
 
-    public static final String tokenBase = scholagestNs + "#tokens";
     private static final String pTokenNs = "pToken";
     public static final String pTokenEndValidityTime = pTokenNs + "EndValidityTime";
     public static final String pTokenUser = pTokenNs + "User";
 
-    public static final String pageBase = scholagestNs + "#pages";
     private static final String pPageNs = "pPage";
     public static final String pPageRoles = pPageNs + "Roles";
     public static final String pPagePath = pPageNs + "Path";
 
     // Students
     public static final String studentNs = scholagestNs + "/student";
-    public static final String studentsBase = teacherNs + "#students";
 
     private static final String pStudentNs = "pStudent";
     public static final String pStudentPersonalInfo = pStudentNs + "PersonalInfo";
@@ -61,13 +56,11 @@ public class CoreNamespace {
     public static final String pStudentYears = pStudentNs + "Years";
 
     public static final String yearNs = scholagestNs + "/year";
-    public static final String yearsBase = yearNs + "#years";
     public static final String pYearCurrent = "pYearCurrent";
     public static final String pYearName = "pYearName";
     public static final String pYearClasses = "pYearClasses";
 
     public static final String classNs = scholagestNs + "/class";
-    public static final String classesBase = classNs + "#classes";
     public static final String pClassName = "pClassName";
     public static final String pClassYear = "pClassYear";
     public static final String pClassStudents = "pClassStudents";
@@ -100,4 +93,14 @@ public class CoreNamespace {
     public static final String tString = scholagestNs + "#String";
     public static final String tSet = scholagestNs + "#Set";
     public static final String tCalendar = scholagestNs + "#Calendar";
+
+    public static final String branchesBase = scholagestNs + "#branches";
+    public static final String classesBase = scholagestNs + "#classes";
+    public static final String examsBase = scholagestNs + "#exams";
+    public static final String pageBase = scholagestNs + "#pages";
+    public static final String studentsBase = scholagestNs + "#students";
+    public static final String teachersBase = scholagestNs + "#teachers";
+    public static final String tokenBase = scholagestNs + "#tokens";
+    public static final String userBase = scholagestNs + "#users";
+    public static final String yearsBase = yearNs + "#years";
 }

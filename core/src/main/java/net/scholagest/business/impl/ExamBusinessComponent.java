@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Set;
 
 import net.scholagest.business.IExamBusinessComponent;
+import net.scholagest.exception.ScholagestException;
+import net.scholagest.exception.ScholagestExceptionErrorCode;
 import net.scholagest.managers.IBranchManager;
 import net.scholagest.managers.IClassManager;
 import net.scholagest.managers.IExamManager;
@@ -35,14 +37,20 @@ public class ExamBusinessComponent implements IExamBusinessComponent {
     }
 
     @Override
-    public ExamObject createExam(String yearKey, String classKey, String branchKey, String periodKey, Map<String, Object> examProperties) {
+    public ExamObject createExam(String yearKey, String classKey, String branchKey, String periodKey, Map<String, Object> examProperties)
+            throws ScholagestException {
         String yearName = getYearName(yearKey);
         String className = getClassName(classKey);
         String branchName = getBranchName(branchKey);
         String periodName = getPeriodName(periodKey);
+        String examName = (String) examProperties.get(CoreNamespace.pExamName);
 
-        ExamObject exam = examManager.createExam((String) examProperties.get(CoreNamespace.pExamName), classKey, periodName, branchName, className,
-                yearName, examProperties);
+        if (examManager.checkWhetherExamExistsInPeriod(examName, yearName, className, branchName, periodName)) {
+            throw new ScholagestException(ScholagestExceptionErrorCode.OBJECT_ALREADY_EXISTS, "An exam with the same name " + branchName
+                    + " already exists for period=" + periodKey + " and branch=" + branchKey);
+        }
+
+        ExamObject exam = examManager.createExam(examName, classKey, periodName, branchName, className, yearName, examProperties);
 
         DBSet periodExams = periodManager.getPeriodProperties(periodKey, new HashSet<>(Arrays.asList(CoreNamespace.pPeriodExams))).getExams();
         periodExams.add(exam.getKey());

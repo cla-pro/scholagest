@@ -6,4 +6,4 @@ http://scholagest.net/student/329c1a51-5469-4eac-a182-29afb1e5ecdb#medicalInfo::
 http://scholagest.net/student#329c1a51-5469-4eac-a182-29afb1e5ecdb:::http://www.w3.org/1999/02/22-rdf-syntax-ns#type:::http://scholagest.net#tStudent
 http://scholagest.net/student#329c1a51-5469-4eac-a182-29afb1e5ecdb:::pStudentPersonalInfo:::http://scholagest.net/student/329c1a51-5469-4eac-a182-29afb1e5ecdb#personalInfo
 http://scholagest.net/student#329c1a51-5469-4eac-a182-29afb1e5ecdb:::pStudentMedicalInfo:::http://scholagest.net/student/329c1a51-5469-4eac-a182-29afb1e5ecdb#medicalInfo
-http://scholagest.net/teacher#students:::http://scholagest.net/student#329c1a51-5469-4eac-a182-29afb1e5ecdb:::http://scholagest.net/student#329c1a51-5469-4eac-a182-29afb1e5ecdb
+http://scholagest.net#students:::http://scholagest.net/student#329c1a51-5469-4eac-a182-29afb1e5ecdb:::http://scholagest.net/student#329c1a51-5469-4eac-a182-29afb1e5ecdb

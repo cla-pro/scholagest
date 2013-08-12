@@ -85,6 +85,10 @@
         <rdfs:range rdf:resource="sg:String"/>
         <!--<sg:displayText rdf:resource="Adresse" />-->
     </rdfs:Property>
+    <rdfs:Property rdf:ID="pTeacherClasses" rdfs:comment="Teacher's classes">
+        <rdfs:domain rdf:resource="sg:tTeacher"/>
+        <rdfs:range rdf:resource="sg:Set"/>
+    </rdfs:Property>
 	
     <rdfs:Property rdf:ID="pStudentPersonalInfo" rdfs:comment="Student's personal info">
         <rdfs:domain rdf:resource="sg:tStudent"/>

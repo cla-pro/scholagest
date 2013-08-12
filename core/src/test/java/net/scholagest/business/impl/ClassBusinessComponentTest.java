@@ -6,6 +6,7 @@ import static org.mockito.Matchers.anySetOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -13,10 +14,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import net.scholagest.business.IClassBusinessComponent;
 import net.scholagest.managers.IClassManager;
+import net.scholagest.managers.ITeacherManager;
 import net.scholagest.managers.IYearManager;
+import net.scholagest.managers.ontology.types.DBSet;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.objects.BaseObjectMock;
@@ -34,17 +38,20 @@ public class ClassBusinessComponentTest extends AbstractTestWithTransaction {
     private static final String CLASS_KEY = CoreNamespace.classNs + "/" + YEAR_NAME + "#" + CLASS_NAME;
     private static final String YEAR_KEY = CoreNamespace.yearNs + "#" + YEAR_NAME;
 
+    private static final String TEACHER_CLASSES = UUID.randomUUID().toString();
+
     private IClassManager classManager;
     private IYearManager yearManager;
+    private ITeacherManager teacherManager;
 
     private IClassBusinessComponent testee;
 
     @Before
     public void setup() throws Exception {
-        yearManager = Mockito.mock(IYearManager.class);
+        yearManager = mock(IYearManager.class);
         when(yearManager.getYearProperties(anyString(), anySetOf(String.class))).thenReturn(new BaseObject(null, null));
 
-        classManager = Mockito.mock(IClassManager.class);
+        classManager = mock(IClassManager.class);
         when(classManager.createClass(anyString(), anyString(), anyMapOf(String.class, Object.class))).thenReturn(
                 BaseObjectMock.createClassObject(CLASS_KEY, new HashMap<String, Object>()));
         when(classManager.getClasses(anyString())).thenReturn(new HashSet<BaseObject>());
@@ -54,16 +61,30 @@ public class ClassBusinessComponentTest extends AbstractTestWithTransaction {
         when(classManager.getClasses(Mockito.eq(YEAR_KEY))).thenReturn(classKeys);
 
         when(classManager.getClassProperties(anyString(), anySetOf(String.class))).thenReturn(null);
-        when(classManager.getClassProperties(eq(CLASS_KEY), eq(createProperties().keySet()))).thenReturn(
+        when(classManager.getClassProperties(eq(CLASS_KEY), anySetOf(String.class))).thenReturn(
                 BaseObjectMock.createClassObject(CLASS_KEY, createProperties()));
 
-        testee = new ClassBusinessComponent(classManager, yearManager);
+        teacherManager = mock(ITeacherManager.class);
+        when(teacherManager.getTeacherProperties(anyString(), anySetOf(String.class))).thenReturn(
+                BaseObjectMock.createTeacherObject(UUID.randomUUID().toString(), createTeacherProperties()));
+
+        testee = new ClassBusinessComponent(classManager, yearManager, teacherManager);
+    }
+
+    private Map<String, Object> createTeacherProperties() {
+        Map<String, Object> properties = new HashMap<>();
+
+        properties.put(CoreNamespace.pTeacherClasses, new DBSet(transaction, TEACHER_CLASSES));
+
+        return properties;
     }
 
     private Map<String, Object> createProperties() {
         Map<String, Object> properties = new HashMap<>();
 
         properties.put(CoreNamespace.pClassName, "1P A");
+        DBSet teachers = new DBSet(transaction, UUID.randomUUID().toString());
+        properties.put(CoreNamespace.pClassTeachers, teachers);
 
         return properties;
     }

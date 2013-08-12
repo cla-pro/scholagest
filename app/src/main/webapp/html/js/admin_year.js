@@ -9,14 +9,16 @@ function startYear(closeId, txtYearNameId) {
 	var yearName = dojo.byId(txtYearNameId).value;
 	
 	sendGetRequest("../year/start", { name: yearName }, function(info) {
+		dijit.byId(closeId).hide();
+		
 		changeYearsButtonChange(true);
 		dijit.byId('newClassDialog').currentYearKey = info.key;
 		loadYears();
+	}, function(errorJson) {
+		if (errorJson.errorCode == errorCodesMap.OBJECT_ALREADY_EXISTS) {
+			alert('Une année avec le même nom existe déjà')
+		}
 	});
-	
-	if (closeId != null) {
-		dijit.byId(closeId).hide();
-	}
 }
 function stopYear() {
 	sendGetRequest("../year/stop", {}, function(info) { changeYearsButtonChange(false); });

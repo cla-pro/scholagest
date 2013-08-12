@@ -16,6 +16,8 @@ import java.util.Map;
 import java.util.UUID;
 
 import net.scholagest.business.IBranchBusinessComponent;
+import net.scholagest.exception.ScholagestException;
+import net.scholagest.exception.ScholagestExceptionErrorCode;
 import net.scholagest.managers.IBranchManager;
 import net.scholagest.managers.IClassManager;
 import net.scholagest.managers.IExamManager;
@@ -127,6 +129,17 @@ public class BranchBusinessComponentTest extends AbstractTestWithTransaction {
         properties.put(CoreNamespace.pYearName, YEAR_NAME);
 
         return properties;
+    }
+
+    @Test
+    public void testCreateBranchNameAlreadyUsed() throws Exception {
+        when(branchManager.checkWhetherBranchExistsInClass(anyString(), anyString(), anyString())).thenReturn(true);
+        try {
+            Map<String, Object> mockProperties = createProperties();
+            testee.createBranch(CLASS_KEY, mockProperties);
+        } catch (ScholagestException e) {
+            assertEquals(ScholagestExceptionErrorCode.OBJECT_ALREADY_EXISTS, e.getErrorCode());
+        }
     }
 
     @Test

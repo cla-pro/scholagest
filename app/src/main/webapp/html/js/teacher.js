@@ -27,6 +27,7 @@ function saveNewPassword(newPassword, repeatedNewPassword) {
 	if (newPassword != repeatedNewPassword) {
 		alert("Le mot de passe n'a pas été répété correctement");
 	} else {
+		resetDiv(changePasswordDialog.containerNode);
 		changePasswordDialog.hide();
 		sendPostRequest("../user/setPassword", { teacherKey : teacherKey, password: newPassword }, function(info) {});
 	}
@@ -89,6 +90,8 @@ function createTeacher(closeId, teacherTypeSelectId, txtIds) {
 	sendGetRequest("../teacher/create", { keys: keys, values: values, teacherType: teacherType }, function(info) { loadTeachers(); })
 
 	if (closeId != null) {
-		dijit.byId(closeId).hide();
+		var dialog = dijit.byId(closeId);
+		resetDiv(dialog.containerNode);
+		dialog.hide();
 	}
 };

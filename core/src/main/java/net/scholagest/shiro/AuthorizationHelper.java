@@ -41,6 +41,10 @@ public class AuthorizationHelper {
     }
 
     private boolean checkRoles(Subject subject, List<String> validRoles) {
+        if (validRoles.isEmpty()) {
+            return true;
+        }
+
         for (String role : validRoles) {
             if (subject.hasRole(role)) {
                 return true;
@@ -51,6 +55,10 @@ public class AuthorizationHelper {
     }
 
     private boolean checkPermissions(Subject subject, List<String> validPermissions) {
+        if (validPermissions.isEmpty()) {
+            return true;
+        }
+
         for (String permission : validPermissions) {
             if (subject.isPermitted(permission)) {
                 return true;

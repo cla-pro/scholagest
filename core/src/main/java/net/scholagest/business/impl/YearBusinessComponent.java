@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.scholagest.business.IYearBusinessComponent;
+import net.scholagest.exception.ScholagestException;
+import net.scholagest.exception.ScholagestExceptionErrorCode;
 import net.scholagest.managers.IYearManager;
 import net.scholagest.objects.BaseObject;
 
@@ -19,6 +21,11 @@ public class YearBusinessComponent implements IYearBusinessComponent {
 
     @Override
     public BaseObject startYear(String yearName) throws Exception {
+        if (yearManager.checkWhetherYearExists(yearName)) {
+            throw new ScholagestException(ScholagestExceptionErrorCode.OBJECT_ALREADY_EXISTS, "A year with the same name " + yearName
+                    + " already exists");
+        }
+
         BaseObject year = yearManager.createNewYear(yearName);
 
         yearManager.restoreYear(year.getKey());

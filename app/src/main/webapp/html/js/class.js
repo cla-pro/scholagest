@@ -1,3 +1,9 @@
+function createClassAndCloseDialog(closeId, txtNewClassNameId) {
+    var yearKey = dijit.byId(closeId).currentYearKey;
+    var className = dojo.byId(txtNewClassNameId).value;
+    
+    createClass(yearKey, className, closeId);
+};
 function selectClass(classKey) {
 	return function(e) {
 		var list = dojo.byId('year-search-list');
@@ -49,7 +55,9 @@ function updateClassInfo(freeTree, classTree, dialogId, trId) {
 		//Update the displayed class' info.
 		dojo.byId(trId).info.infoSetter(elementsList);
 
-		dijit.byId(dialogId).hide();
+		var dialog = dijit.byId(dialogId);
+		resetDiv(dialog.containerNode);
+		dialog.hide();
 	};
 };
 function removeElements(list, toRemove) {
@@ -175,7 +183,14 @@ function loadClasses(yearList) {
 		mergeAndDisplayYearAndClassLists(yearList, info);
 	});
 }
-function createClass(yearKey, className) {
+function createClass(yearKey, className, dialogId) {
 	sendGetRequest("../class/create", { yearKey: yearKey, keys: ["pClassName"], values: [className] },
-			function(info) { loadClasses(dojo.byId('year-search-list-div').yearsList); });
+			function(info) { 
+				loadClasses(dojo.byId('year-search-list-div').yearsList);
+				dijit.byId(dialogId).hide();
+			}, function(errorJson) {
+				if (errorJson.errorCode == errorCodesMap.OBJECT_ALREADY_EXISTS) {
+					alert('Une classe avec le même nom existe déjà dans cette année');
+				}
+			});
 }

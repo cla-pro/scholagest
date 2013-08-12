@@ -9,6 +9,16 @@
             });
             tabs.startup();
             loadTeachers();
+            
+            dijit.byId("newTeacherDialog").on("hide", function() {
+            	resetDialogDiv(dijit.byId("newTeacherDialog"));
+            });
+            dijit.byId("removeTeacherDialog").on("hide", function() {
+            	resetDialogDiv(dijit.byId("removeTeacherDialog"));
+            });
+            dijit.byId("changePasswordDialog").on("hide", function() {
+            	resetDialogDiv(dijit.byId("changePasswordDialog"));
+            });
         });
     </script>
     <div id="changePasswordDialog" data-dojo-type="dijit.Dialog" title="Changer le mot de passe">
@@ -16,7 +26,7 @@
             <tr>
                 <td>Nouveau mot de passe</td><td><input type="password" style="width:100%" id="txtNewPassword" /></td>
             </tr><tr>
-                <td>Répéter le mot de passe</td><td><input type="password" style="width:100%" id="txtNewPasswordRepeat" /></td>
+                <td>R&eacute;p&eacute;ter le mot de passe</td><td><input type="password" style="width:100%" id="txtNewPasswordRepeat" /></td>
             </tr><tr>
                 <td align="center">
                     <button onclick="saveNewPassword(dojo.byId('txtNewPassword').value, dojo.byId('txtNewPasswordRepeat').value)">Ok</button>
@@ -29,8 +39,7 @@
 		<tr>
 			<td valign="top" style="width: 20%; height: 100%">
 				<div id="teacher-search" class="vertical-search">
-					<div id="newTeacherDialog" data-dojo-type="dijit.Dialog"
-						title="Nouveau professeur">
+					<div id="newTeacherDialog" data-dojo-type="dijit.Dialog" title="Nouveau professeur">
 						<table style="width: 100%">
 							<tr>
 								<td>Type</td>
@@ -47,7 +56,7 @@
 								<td><input id="txtNewTeacherLastName" propertyName="pTeacherLastName" type="text" style="width: 100%" /></td>
 							</tr>
 							<tr>
-								<td>Prénom</td>
+								<td>Pr&eacute;nom</td>
 								<td><input id="txtNewTeacherFirstName" propertyName="pTeacherFirstName" type="text" style="width: 100%" /></td>
 							</tr>
 							<tr>
@@ -55,7 +64,7 @@
 								<td><input id="txtNewTeacherMail" propertyName="pTeacherMail" type="text" style="width: 100%" /></td>
 							</tr>
 							<tr>
-								<td>N° de tèl</td>
+								<td>N&deg; de t&eacute;l</td>
 								<td><input id="txtNewTeacherPhone" propertyName="pTeacherPhone" style="width: 100%" type="text" /></td>
 							</tr>
 							<tr>

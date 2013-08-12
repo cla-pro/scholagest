@@ -18,4 +18,6 @@ public interface IYearManager {
     public BaseObject getYearProperties(String yearKey, Set<String> propertiesName);
 
     public void addClassToYear(String yearKey, String classKey);
+
+    boolean checkWhetherYearExists(String yearName);
 }

@@ -273,3 +273,26 @@ function getKeysAndValues(txtIds) {
 
 	return {keys: keys, values: values};
 };
+function resetDialogDiv(dialogDiv) {
+	resetDiv(dialogDiv.containerNode);
+}
+function resetDiv(div) {
+	for (var i = 0; i < div.childNodes.length; i++) {
+		var node = div.childNodes[i];
+		if (isContainerNode(node)) {
+			resetDiv(node);
+		} else if (isTextNode(node)) {
+			node.value = '';
+		}
+	}
+};
+function isContainerNode(node) {
+	var nodeName = node.nodeName.toUpperCase();
+	if (nodeName == 'DIV' || nodeName == 'SPAN' || nodeName == 'TABLE' || nodeName == 'TD' || nodeName == 'TR' || nodeName == 'TBODY') {
+		return true;
+	}
+	return false;
+};
+function isTextNode(node) {
+	return node.nodeName.toUpperCase() == 'INPUT' && node.type == 'text';
+}
