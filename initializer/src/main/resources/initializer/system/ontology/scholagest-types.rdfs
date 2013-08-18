@@ -71,7 +71,4 @@
     <rdfs:Class rdf:ID="http://scholagest.net#tGrade">
         <rdfs:comment>Grade</rdfs:comment>
     </rdfs:Class>
-    <rdfs:Class rdf:ID="http://scholagest.net#tStudentYears">
-        <rdfs:comment>Student's year info</rdfs:comment>
-    </rdfs:Class>
 </rdf:RDF>

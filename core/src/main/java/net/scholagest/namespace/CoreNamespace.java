@@ -21,7 +21,7 @@ public class CoreNamespace {
     public static final String tStudent = scholagestNs + "#tStudent";
     public static final String tStudentPersonalInfo = scholagestNs + "#tStudentPersonalInfo";
     public static final String tStudentMedicalInfo = scholagestNs + "#tStudentMedicalInfo";
-    public static final String tStudentYears = scholagestNs + "#tStudentYears";
+    public static final String tStudentScholarInfo = scholagestNs + "#tStudentScholarInfo";
     public static final String tYear = scholagestNs + "#tYear";
     public static final String tToken = scholagestNs + "#tToken";
     public static final String tPage = scholagestNs + "#tPage";
@@ -31,7 +31,6 @@ public class CoreNamespace {
 
     private static final String pTeacherNs = "pTeacher";
     public static final String pTeacherClasses = pTeacherNs + "Classes";
-    public static final String pTeacherProperties = pTeacherNs + "Properties";
     public static final String pTeacherUser = pTeacherNs + "User";
 
     private static final String pUserNs = "pUser";
@@ -53,7 +52,7 @@ public class CoreNamespace {
     private static final String pStudentNs = "pStudent";
     public static final String pStudentPersonalInfo = pStudentNs + "PersonalInfo";
     public static final String pStudentMedicalInfo = pStudentNs + "MedicalInfo";
-    public static final String pStudentYears = pStudentNs + "Years";
+    public static final String pStudentScholarInfo = pStudentNs + "ScholarInfo";
 
     public static final String yearNs = scholagestNs + "/year";
     public static final String pYearCurrent = "pYearCurrent";
@@ -84,7 +83,7 @@ public class CoreNamespace {
     public static final String pExamName = "pExamName";
     public static final String pExamCoeff = "pExamCoeff";
     public static final String pExamClass = "pExamClass";
-    public static final String pExamGrades = "pExamGrades";;
+    public static final String pExamGrades = "pExamGrades";
 
     public static final String gradeNs = scholagestNs + "/grade";
     public static final String pGradeValue = "pGradeValue";
@@ -92,6 +91,7 @@ public class CoreNamespace {
 
     public static final String tString = scholagestNs + "#String";
     public static final String tSet = scholagestNs + "#Set";
+    public static final String tMap = scholagestNs + "#Map";
     public static final String tCalendar = scholagestNs + "#Calendar";
 
     public static final String branchesBase = scholagestNs + "#branches";

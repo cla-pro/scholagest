@@ -282,8 +282,15 @@ function resetDiv(div) {
 		if (isContainerNode(node)) {
 			resetDiv(node);
 		} else if (isTextNode(node)) {
-			node.value = '';
+			resetTextBox(node);
 		}
+	}
+};
+function resetTextBox(node) {
+	if (node.defaultValue == undefined) {
+		node.value = '';
+	} else {
+		node.value = node.defaultValue;
 	}
 };
 function isContainerNode(node) {

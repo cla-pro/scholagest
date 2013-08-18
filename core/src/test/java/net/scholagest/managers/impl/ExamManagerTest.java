@@ -8,7 +8,6 @@ import static org.mockito.Matchers.eq;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import net.scholagest.managers.IExamManager;
 import net.scholagest.managers.ontology.OntologyManager;
@@ -35,11 +34,6 @@ public class ExamManagerTest extends AbstractTestWithTransaction {
     private static final String EXAMS_BASE_PROPERTY_NAME = YEAR_NAME + "/" + CLASS_NAME + "/" + BRANCH_NAME + "/" + PERIOD_NAME + "/" + EXAM_NAME;
 
     private IExamManager examManager = new ExamManager(new OntologyManager());
-
-    @Test
-    public void test() {
-        System.out.println(UUID.randomUUID().toString());
-    }
 
     @Test
     public void testCheckWhetherExamExistsInPeriod() {

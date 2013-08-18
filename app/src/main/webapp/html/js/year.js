@@ -1,7 +1,7 @@
 function loadYears() {
 	sendGetRequest("../year/getYears", { properties: ["pYearName"] }, function(info) {
 		var yearActive = info.currentYear != null;
-		if (yearActive) {
+		if (yearActive && dijit.byId('newClassDialog') != undefined) {
 			dijit.byId('newClassDialog').currentYearKey = info.currentYear.key;
 		}
 		

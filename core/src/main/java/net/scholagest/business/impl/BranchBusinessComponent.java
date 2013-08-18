@@ -78,7 +78,7 @@ public class BranchBusinessComponent implements IBranchBusinessComponent {
         DBSet periodsSet = branch.getPeriods();
         for (int i = 1; i < 4; i++) {
             String periodName = "Trimestre " + i;
-            PeriodObject period = periodManager.createPeriod(periodName, classKey, branchName, className, yearName);
+            PeriodObject period = periodManager.createPeriod(periodName, classKey);
 
             ExamObject branchMean = createMeanExam(branch, classKey, className, yearName, branchName, periodName);
             period.setMeanKey(branchMean.getKey());

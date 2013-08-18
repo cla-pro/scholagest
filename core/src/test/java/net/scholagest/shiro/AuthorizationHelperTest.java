@@ -42,8 +42,8 @@ public class AuthorizationHelperTest {
 
         try {
             testee.checkAuthorizationRoles(Collections.<String> emptyList());
-            fail("Exception expected");
         } catch (ScholagestException e) {
+            fail("Exception not expected");
         }
 
         try {
@@ -68,8 +68,8 @@ public class AuthorizationHelperTest {
 
         try {
             testee.checkAuthorization(Collections.<String> emptyList(), Collections.<String> emptyList());
-            fail("Exception expected");
         } catch (ScholagestException e) {
+            fail("Exception not expected");
         }
 
         try {

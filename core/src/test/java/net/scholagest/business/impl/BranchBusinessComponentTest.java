@@ -71,7 +71,7 @@ public class BranchBusinessComponentTest extends AbstractTestWithTransaction {
                 BaseObjectMock.createBranchObject(BRANCH_KEY, createReadProperties()));
 
         periodManager = mock(IPeriodManager.class);
-        when(periodManager.createPeriod(anyString(), anyString(), anyString(), anyString(), anyString())).thenReturn(
+        when(periodManager.createPeriod(anyString(), anyString())).thenReturn(
                 BaseObjectMock.createPeriodObject(BRANCH_PERIOD_SET.toString(), createReadProperties()));
 
         examManager = mock(IExamManager.class);
@@ -150,7 +150,7 @@ public class BranchBusinessComponentTest extends AbstractTestWithTransaction {
         assertEquals(BRANCH_KEY, branch.getKey());
         verify(branchManager).createBranch(eq(BRANCH_NAME), eq(CLASS_KEY), eq(CLASS_NAME), eq(YEAR_NAME), anyMapOf(String.class, Object.class));
 
-        verify(periodManager, Mockito.times(3)).createPeriod(anyString(), eq(CLASS_KEY), eq(BRANCH_NAME), eq(CLASS_NAME), eq(YEAR_NAME));
+        verify(periodManager, Mockito.times(3)).createPeriod(anyString(), eq(CLASS_KEY));
         verify(classManager).getClassProperties(CLASS_KEY, new HashSet<String>(Arrays.asList(CoreNamespace.pClassBranches)));
     }
 

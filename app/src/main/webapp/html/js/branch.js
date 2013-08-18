@@ -24,19 +24,20 @@ function loadBranches() {
 		
 		sendGetRequest("../teacher/getClass", { yearKey: gradePageYearKey, teacherKey: myOwnTeacherKey }, function(classInfo) {
 			var classesList = classInfo.properties["pTeacherClasses"].value;
+			
+			clearDOM("branch-search-list");
+			var base = dojo.byId("branch-search-list");
 			if (classesList.length > 0) {
 				gradePageClassKey = classesList[0];
 				callGetClassInfo(gradePageClassKey, "pClassBranches", function(info) {
-					
 					var parameters = { branchKeys: info.properties["pClassBranches"].value, properties: ["pBranchName"] };
 					sendGetRequest("../branch/getPropertiesForList", parameters, function(branchInfo) {
-						clearDOM("branch-search-list");
-	
-						var base = dojo.byId("branch-search-list");
 						createHtmlListFromList(branchInfo, "branch-search-list", base,
 								buildListItemTextClosure(["pBranchName"]), selectBranchWrapper(gradePageClassKey, gradePageYearKey));
 					});
 				});
+			} else {
+				base.innerHTML = 'Aucune classe assignée';
 			}
 		});
 	});

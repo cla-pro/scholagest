@@ -29,6 +29,9 @@
     <rdfs:Class rdf:ID="http://scholagest.net#Set">
         <rdfs:comment>Set object</rdfs:comment>
     </rdfs:Class>
+    <rdfs:Class rdf:ID="http://scholagest.net#Map">
+        <rdfs:comment>Map object</rdfs:comment>
+    </rdfs:Class>
     <rdfs:Class rdf:ID="http://scholagest.net#Calendar">
         <rdfs:comment>Calendar object</rdfs:comment>
     </rdfs:Class>

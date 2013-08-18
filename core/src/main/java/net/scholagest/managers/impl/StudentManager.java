@@ -10,6 +10,7 @@ import net.scholagest.database.DatabaseException;
 import net.scholagest.database.ITransaction;
 import net.scholagest.managers.IOntologyManager;
 import net.scholagest.managers.IStudentManager;
+import net.scholagest.managers.ontology.types.DBMap;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.objects.GradeObject;
@@ -131,18 +132,16 @@ public class StudentManager extends ObjectManager implements IStudentManager {
     public Map<String, BaseObject> getStudentGrades(String studentKey, Set<String> examKeys, String yearKey) {
         ITransaction transaction = ScholagestThreadLocal.getTransaction();
 
-        String studentYearsKey = (String) transaction.get(studentKey, CoreNamespace.pStudentYears, null);
-        if (studentYearsKey == null) {
-            studentYearsKey = createStudentYears(transaction, studentKey);
-        }
-        String studentYearNodeKey = (String) transaction.get(studentYearsKey, yearKey, null);
-        if (studentYearNodeKey == null) {
-            studentYearNodeKey = createStudentYearNode(transaction, studentYearsKey, yearKey);
-        }
+        DBMap studentYearMap = getStudentYearMap(studentKey, transaction);
+        DBMap studentGradeMap = getStudentGradeMap(studentKey, yearKey, transaction, studentYearMap);
 
+        return storeAndReturnGrades(examKeys, transaction, studentGradeMap);
+    }
+
+    private Map<String, BaseObject> storeAndReturnGrades(Set<String> examKeys, ITransaction transaction, DBMap studentGradeMap) {
         Map<String, BaseObject> studentGrades = new HashMap<>();
         for (String examKey : examKeys) {
-            String gradeKey = (String) transaction.get(studentYearNodeKey, examKey, null);
+            String gradeKey = studentGradeMap.get(examKey);
 
             if (gradeKey == null) {
                 studentGrades.put(examKey, null);
@@ -151,33 +150,55 @@ public class StudentManager extends ObjectManager implements IStudentManager {
                 studentGrades.put(examKey, gradeObject);
             }
         }
-
         return studentGrades;
     }
 
-    private String createStudentYearNode(ITransaction transaction, String studentYearsKey, String yearKey) {
-        String yearName = yearKey.substring(yearKey.indexOf("#") + 1);
-        String studentYearNode = studentYearsKey + "_" + yearName;
-        transaction.insert(studentYearsKey, yearKey, studentYearNode, null);
-        return studentYearNode;
+    private DBMap getStudentYearMap(String studentKey, ITransaction transaction) {
+        String studentYearsKey = (String) transaction.get(studentKey, CoreNamespace.pStudentScholarInfo, null);
+        DBMap studentYearsMap = null;
+        if (studentYearsKey == null) {
+            studentYearsMap = createStudentYears(transaction, studentKey);
+            transaction.insert(studentKey, CoreNamespace.pStudentScholarInfo, studentYearsMap.getKey(), null);
+        } else {
+            studentYearsMap = new DBMap(transaction, studentYearsKey);
+        }
+        return studentYearsMap;
     }
 
-    private String createStudentYears(ITransaction transaction, String studentKey) throws DatabaseException {
+    private DBMap getStudentGradeMap(String studentKey, String yearKey, ITransaction transaction, DBMap studentYearsMap) {
+        String studentGradeMapKey = studentYearsMap.get(yearKey);
+        DBMap studentGradeMap = null;
+        if (studentGradeMapKey == null) {
+            studentGradeMap = createStudentYearNode(transaction, studentKey, yearKey);
+            studentYearsMap.put(yearKey, studentGradeMap.getKey());
+        } else {
+            studentGradeMap = new DBMap(transaction, studentGradeMapKey);
+        }
+        return studentGradeMap;
+    }
+
+    private DBMap createStudentYearNode(ITransaction transaction, String studentKey, String yearKey) {
+        String yearUUID = yearKey.substring(yearKey.indexOf("#") + 1);
+        String studentGradeMapKey = studentKey + "_grades_" + yearUUID;
+        DBMap studentGradeMap = DBMap.createDBMap(transaction, studentGradeMapKey);
+        return studentGradeMap;
+    }
+
+    private DBMap createStudentYears(ITransaction transaction, String studentKey) throws DatabaseException {
         String studentYearsKey = studentKey + YEARS_INFO_SUFFIX;
-        transaction.insert(studentKey, CoreNamespace.pStudentYears, studentYearsKey, null);
-        return studentYearsKey;
+        DBMap studentYearsMap = DBMap.createDBMap(transaction, studentYearsKey);
+        return studentYearsMap;
     }
 
     @Override
     public void persistStudentGrade(String studentKey, String yearKey, String examKey, BaseObject gradeObject) {
         ITransaction transaction = ScholagestThreadLocal.getTransaction();
 
-        String studentYearsKey = (String) transaction.get(studentKey, CoreNamespace.pStudentYears, null);
-
-        String studentYearKey = (String) transaction.get(studentYearsKey, yearKey, null);
+        DBMap studentYearMap = getStudentYearMap(studentKey, transaction);
+        DBMap studentGradeMap = getStudentGradeMap(studentKey, yearKey, transaction, studentYearMap);
 
         persistObject(transaction, gradeObject);
 
-        transaction.insert(studentYearKey, examKey, gradeObject.getKey(), null);
+        studentGradeMap.put(examKey, gradeObject.getKey());
     }
 }
