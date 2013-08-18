@@ -1,6 +1,7 @@
 package net.scholagest.app.rest;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -190,5 +191,33 @@ public class RestTeacherService extends AbstractService {
         }
 
         return "{}";
+    }
+
+    @GET
+    @Path("/getClass")
+    @Produces("text/json")
+    public String getClass(@QueryParam("token") String token, @QueryParam("teacherKey") String teacherKey, @QueryParam("yearKey") String yearKey) {
+        ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
+
+        try {
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
+
+            BaseObject teacherInfo = teacherService.getTeacherProperties(teacherKey,
+                    new HashSet<String>(Arrays.asList(CoreNamespace.pTeacherClasses)));
+            Map<String, OntologyElement> ontology = extractOntology(teacherInfo.getProperties().keySet());
+
+            RestObject restTeacherInfo = new RestToKdomConverter().restObjectFromKdom(teacherInfo);
+            new OntologyMerger(ontologyService).mergeOntologyWithRestObject(restTeacherInfo, ontology);
+
+            String json = new Gson().toJson(restTeacherInfo);
+            return "{info: " + json + "}";
+        } catch (ShiroException e) {
+            return handleShiroException(e);
+        } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
+        }
     }
 }

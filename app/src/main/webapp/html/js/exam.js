@@ -5,7 +5,7 @@ function createExam(closeId, txtIds) {
 	var branchKey = dialog.branchKey;
 	var periodKey = dialog.periodKey;
 	var keyValues = getKeysAndValues(txtIds);
-
+	
 	var parameters = {
 			keys: keyValues.keys,
 			values: keyValues.values,
@@ -14,11 +14,14 @@ function createExam(closeId, txtIds) {
 			branchKey: branchKey,
 			periodKey: periodKey
 		};
-	sendGetRequest("../exam/create", parameters, function(info) { loadStudents(); });
-
-	if (closeId != null) {
+	sendGetRequest("../exam/create", parameters, function(info) {
 		dialog.hide();
-	}
+		loadStudents(); 
+	}, function(errorJson) {
+		if (errorJson.errorCode == errorCodesMap.OBJECT_ALREADY_EXISTS) {
+			alert('Un examen avec le même nom existe déjà dans cette période')
+		}
+	});
 };
 
 function getExamsInfo(examList, properties, callback) {

@@ -1,4 +1,4 @@
-<div id="menu-element-students" data-dojo-type="dijit.layout.ContentPane" title="Elèves">
+<div id="menu-element-students" data-dojo-type="dijit.layout.ContentPane" title="El&egrave;ves">
     <script type="text/javascript">
         dojo.ready(function() {
             var tabs = dijit.byId("tabMenu");
@@ -6,6 +6,10 @@
                 if (nval.id == 'menu-element-students') {
                     loadStudents();
                 }
+            });
+
+            dijit.byId("newStudentDialog").on("hide", function() {
+            	resetDialogDiv(dijit.byId("newStudentDialog"));
             });
         });
     </script>
@@ -22,11 +26,11 @@
                                     <tr>
                                         <td>Nom</td>
                                         <td><input id="txtNewStudentLastName" propertyName="pStudentLastName" type="text" /></td>
-                                        <td>Prénom</td>
+                                        <td>Pr&eacute;nom</td>
                                         <td><input id="txtNewStudentFirstName" propertyName="pStudentFirstName" type="text" /></td>
                                     </tr>
                                     <tr>
-                                        <td>Rue et n°</td>
+                                        <td>Rue et n&deg;</td>
                                         <td colspan="3"><input type="text" style="width: 100%" id="txtNewStudentAddressStreet" propertyName="pStudentAddressStreet" /></td>
                                     </tr>
                                     <tr>
@@ -42,7 +46,7 @@
 <!--                                 </table> -->
 <!--                             </div> -->
 <!--                             <div data-dojo-type="dijit.layout.ContentPane" title="Retour"> -->
-<!--                                 Choisissez l'élève<br /> <select style="width: 100%"> -->
+<!--                                 Choisissez l'&eacute;l&egrave;ve<br /> <select style="width: 100%"> -->
 <!--                                 </select> -->
 <!--                             </div> -->
 <!--                         </div> -->
@@ -55,10 +59,10 @@
                         </table>
                     </div>
 <!--                    <div id="outStudentDialog" data-dojo-type="dijit.Dialog" -->
-<!--                        title="Sortie d'élève"> -->
+<!--                        title="Sortie d'&eacute;l&egrave;ve"> -->
 <!--                        <input type="radio" name="out" CHECKED>Sortie vers le cycle</input><br /> -->
-<!--                        <input type="radio" name="out">Changement d'établissement</input> <br /> <br /> -->
-<!--                        Choisissez l'élève<br /> -->
+<!--                        <input type="radio" name="out">Changement d'&eacute;tablissement</input> <br /> <br /> -->
+<!--                        Choisissez l'&eacute;l&egrave;ve<br /> -->
 <!--                        <select style="width: 100%"> -->
 <!--                        </select> -->
 
@@ -77,17 +81,17 @@
                             //dijit.byId("outStudentDialog").show();
                         };
                     </script>
-                    <button onclick="createNewStudent()">Ajouter un élève</button>
-<!--                    <button onclick="outStudent()">Faire sortir un élève</button> -->
+                    <button onclick="createNewStudent()">Ajouter un &eacute;l&egrave;ve</button>
+<!--                    <button onclick="outStudent()">Faire sortir un &eacute;l&egrave;ve</button> -->
                     <hr />
 <!--                    <input type="text" class="search-textbox" -->
-<!--                        placeholder="Nom de l'élève" /> -->
+<!--                        placeholder="Nom de l'&eacute;l&egrave;ve" /> -->
 <!--                    <button>Go</button> -->
 <!--                    <hr /> -->
 <!--                    <select style="width: 80%"> -->
-<!--                        <option>Elèves actuels</option> -->
-<!--                        <option>Anciens élèves</option> -->
-<!--                        <option>Tous les élèves</option> -->
+<!--                        <option>El&egrave;ves actuels</option> -->
+<!--                        <option>Anciens &eacute;l&egrave;ves</option> -->
+<!--                        <option>Tous les &eacute;l&egrave;ves</option> -->
 <!--                    </select> -->
                     <div id="student-search-list" style="height: 80%">
                     </div>
@@ -108,8 +112,8 @@
 <!--                                <td><input type="text" style="width: 100%" value="3" /></td> -->
 <!--                            </tr> -->
 <!--                            <tr> -->
-<!--                                <td style="width: 150px">Prénom</td> -->
-<!--                                <td><input type="text" style="width: 100%" value="Elève" /></td> -->
+<!--                                <td style="width: 150px">Pr&eacute;nom</td> -->
+<!--                                <td><input type="text" style="width: 100%" value="El&egrave;ve" /></td> -->
 <!--                            </tr> -->
 <!--                            <tr> -->
 <!--                                <td style="width: 150px">Adresse</td> -->
@@ -117,7 +121,7 @@
 <!--                                    value="21 Chemin de ..." /></td> -->
 <!--                            </tr> -->
 <!--                            <tr> -->
-<!--                                <td style="width: 150px">N° tèl</td> -->
+<!--                                <td style="width: 150px">N&deg; t&egrave;l</td> -->
 <!--                                <td><input type="text" style="width: 100%" -->
 <!--                                    value="+41 22 5897562" /></td> -->
 <!--                            </tr> -->
@@ -126,12 +130,12 @@
 <!--                                <td><input type="text" style="width: 100%" value="Suisse" /></td> -->
 <!--                            </tr> -->
 <!--                            <tr> -->
-<!--                                <td style="width: 150px">Profession de la mère</td> -->
+<!--                                <td style="width: 150px">Profession de la m&egrave;re</td> -->
 <!--                                <td><input type="text" style="width: 100%" -->
 <!--                                    value="Informaticienne" /></td> -->
 <!--                            </tr> -->
 <!--                            <tr> -->
-<!--                                <td style="width: 150px">Profession du père</td> -->
+<!--                                <td style="width: 150px">Profession du p&egrave;re</td> -->
 <!--                                <td><input type="text" style="width: 100%" value="Au foyer" /></td> -->
 <!--                            </tr> -->
 <!--                            <tr> -->
@@ -144,7 +148,7 @@
 <!--                                    value="Français - Allemand" /></td> -->
 <!--                            </tr> -->
 <!--                            <tr> -->
-<!--                                <td style="width: 150px">Date d'arrivée en suisse</td> -->
+<!--                                <td style="width: 150px">Date d'arriv&eacute;e en suisse</td> -->
 <!--                                <td><input type="text" style="width: 100%" value="-" /></td> -->
 <!--                            </tr> -->
 <!--                            <tr> -->
@@ -158,16 +162,16 @@
 <!--                                </td> -->
 <!--                            </tr> -->
 <!--                            <tr> -->
-<!--                                <td style="width: 150px">Crèche</td> -->
+<!--                                <td style="width: 150px">Cr&egrave;che</td> -->
 <!--                                <td><input type="text" style="width: 100%" value="-" /></td> -->
 <!--                            </tr> -->
 <!--                            <tr> -->
-<!--                                <td valign="top" style="width: 150px">Frères et soeurs</td> -->
+<!--                                <td valign="top" style="width: 150px">Fr&egrave;res et soeurs</td> -->
 <!--                                <td> -->
 <!--                                    <ul> -->
-<!--                                        <li><a href="#">Elève 12</a></li> -->
+<!--                                        <li><a href="#">El&egrave;ve 12</a></li> -->
 <!--                                    </ul> -->
-<!--                                    <button>Ajouter un frère ou une soeur</button> -->
+<!--                                    <button>Ajouter un fr&egrave;re ou une soeur</button> -->
 <!--                                </td> -->
 <!--                            </tr> -->
 <!--                            <tr> -->
@@ -176,7 +180,7 @@
 <!--                        </table> -->
 <!--                    </div> -->
 <!--                    <div class="student-part-title"> -->
-<!--                        <a>Fiche santé/a> -->
+<!--                        <a>Fiche sant&eacute;/a> -->
 <!--                        <button class="student-part-button">Ouvrir</button> -->
 <!--                    </div> -->
 <!--                    <div class="student-part-content" style="visibility: hidden">empty</div> -->

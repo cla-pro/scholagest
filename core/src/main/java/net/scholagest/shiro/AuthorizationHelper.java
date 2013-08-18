@@ -33,14 +33,30 @@ public class AuthorizationHelper {
     }
 
     public void checkAuthorization(List<String> validRoles, List<String> validPermissions) throws ScholagestException {
-        Subject subject = ScholagestThreadLocal.getSubject();
-
-        if (!checkRoles(subject, validRoles) && !checkPermissions(subject, validPermissions)) {
+        if (!isValid(validRoles, validPermissions)) {
             throw new ScholagestException(ScholagestExceptionErrorCode.INSUFFICIENT_PRIVILEGES, "Insufficient privilegies");
         }
     }
 
+    private boolean isValid(List<String> validRoles, List<String> validPermissions) {
+        Subject subject = ScholagestThreadLocal.getSubject();
+
+        if (validRoles.isEmpty() && !checkPermissions(subject, validPermissions)) {
+            return false;
+        } else if (validPermissions.isEmpty() && !checkRoles(subject, validRoles)) {
+            return false;
+        } else if (!checkRoles(subject, validRoles) && !checkPermissions(subject, validPermissions)) {
+            return false;
+        }
+
+        return true;
+    }
+
     private boolean checkRoles(Subject subject, List<String> validRoles) {
+        if (validRoles.isEmpty()) {
+            return true;
+        }
+
         for (String role : validRoles) {
             if (subject.hasRole(role)) {
                 return true;
@@ -51,6 +67,10 @@ public class AuthorizationHelper {
     }
 
     private boolean checkPermissions(Subject subject, List<String> validPermissions) {
+        if (validPermissions.isEmpty()) {
+            return true;
+        }
+
         for (String permission : validPermissions) {
             if (subject.isPermitted(permission)) {
                 return true;
@@ -65,9 +85,7 @@ public class AuthorizationHelper {
             return null;
         }
 
-        Subject subject = ScholagestThreadLocal.getSubject();
-
-        boolean hasAllRight = checkRoles(subject, validRoles) || checkPermissions(subject, validPermissions);
+        boolean hasAllRight = isValid(validRoles, validPermissions);
 
         for (String propertyName : new ArrayList<String>(object.getProperties().keySet())) {
             OntologyElement propertyOntology = ontologyBusinessComponent.getElementWithName(propertyName);

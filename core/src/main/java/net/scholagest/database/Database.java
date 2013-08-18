@@ -77,17 +77,24 @@ public class Database implements IDatabase {
         return HFactory.createKeyspace(keyspaceName, cluster);
     }
 
-    private class Transaction implements ITransaction {
-        private Keyspace keyspace = null;
-        private ColumnFamilyTemplate<String, String> template = null;
+    protected class Transaction implements ITransaction {
+        private Keyspace keyspace;
+        private ColumnFamilyTemplate<String, String> template;
+
+        // private TransactionCommiter transactionCommiter;
 
         public Transaction(Keyspace keyspace, ColumnFamilyTemplate<String, String> template) {
             this.keyspace = keyspace;
             this.template = template;
+            // this.transactionCommiter = new TransactionCommiter();
         }
 
         @Override
         public void insert(String key, String column, Object value, String type) throws DatabaseException {
+            // String originalValue = (String) get(key, column, type);
+            // transactionCommiter.add(new InsertDBAction(template, key, column,
+            // (String) value, originalValue));
+
             ColumnFamilyUpdater<String, String> updater = template.createUpdater(key);
 
             updater.setString(column, (String) value);
@@ -101,6 +108,10 @@ public class Database implements IDatabase {
 
         @Override
         public void delete(String key, String column, String type) throws DatabaseException {
+            // String originalValue = (String) get(key, column, type);
+            // transactionCommiter.add(new DeleteDBAction(template, key, column,
+            // originalValue));
+
             try {
                 template.deleteColumn(key, column);
             } catch (HectorException e) {
@@ -140,8 +151,7 @@ public class Database implements IDatabase {
 
         @Override
         public Map<String, Object> getRow(String key) throws DatabaseException {
-            // TODO Auto-generated method stub
-            return null;
+            throw new DatabaseException(-1, -1, "Not yet implemented");
         }
 
         @Override

@@ -28,7 +28,7 @@
         <rdfs:domain rdf:resource="sg:tUser"/>
         <rdfs:range rdf:resource="sg:Set"/>
     </rdfs:Property>
-    <rdfs:Property rdf:ID="pUserTeacker" rdfs:comment="User's teacher">
+    <rdfs:Property rdf:ID="pUserTeacher" rdfs:comment="User's teacher">
         <rdfs:domain rdf:resource="sg:tUser"/>
         <rdfs:range rdf:resource="sg:tTeacher"/>
     </rdfs:Property>
@@ -85,6 +85,10 @@
         <rdfs:range rdf:resource="sg:String"/>
         <!--<sg:displayText rdf:resource="Adresse" />-->
     </rdfs:Property>
+    <rdfs:Property rdf:ID="pTeacherClasses" rdfs:comment="Teacher's classes">
+        <rdfs:domain rdf:resource="sg:tTeacher"/>
+        <rdfs:range rdf:resource="sg:Set"/>
+    </rdfs:Property>
 	
     <rdfs:Property rdf:ID="pStudentPersonalInfo" rdfs:comment="Student's personal info">
         <rdfs:domain rdf:resource="sg:tStudent"/>
@@ -97,9 +101,9 @@
         <sg:displayText rdf:resource="Informations Médicales" />
         <sg:restricted rdf:resource="Restricted" />
     </rdfs:Property>
-    <rdfs:Property rdf:ID="pStudentYears" rdfs:comment="Student years' list">
+    <rdfs:Property rdf:ID="pStudentScholarInfo" rdfs:comment="Student years' list">
         <rdfs:domain rdf:resource="sg:tStudent"/>
-        <rdfs:range rdf:resource="sg:tStudentYears"/>
+        <rdfs:range rdf:resource="sg:Map"/>
         <sg:restricted rdf:resource="Restricted" />
     </rdfs:Property>
 	
@@ -207,7 +211,7 @@
     </rdfs:Property>
     <rdfs:Property rdf:ID="pPeriodClass" rdfs:comment="Period's class">
         <rdfs:domain rdf:resource="sg:tPeriod"/>
-        <rdfs:range rdf:resource="sg:String"/>
+        <rdfs:range rdf:resource="sg:tClass"/>
     </rdfs:Property>
     <rdfs:Property rdf:ID="pPeriodMean" rdfs:comment="Period's mean">
         <rdfs:domain rdf:resource="sg:tPeriod"/>
@@ -237,6 +241,6 @@
     </rdfs:Property>
     <rdfs:Property rdf:ID="pGradeExam" rdfs:comment="Grade's exam key">
         <rdfs:domain rdf:resource="sg:tGrade"/>
-        <rdfs:range rdf:resource="sg:String"/>
+        <rdfs:range rdf:resource="sg:tExam"/>
     </rdfs:Property>
 </rdf:RDF>

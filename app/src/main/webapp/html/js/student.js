@@ -7,7 +7,9 @@ function createStudent(closeId, txtIds) {
 	sendGetRequest("../student/create", { keys: keyValues.keys, values: keyValues.values }, function(info) { loadStudents(); });
 
 	if (closeId != null) {
-		dijit.byId(closeId).hide();
+		var dialog = dijit.byId(closeId);
+		resetDiv(dialog.containerNode);
+		dialog.hide();
 	}
 };
 function getStudentList(callback) {

@@ -3,6 +3,7 @@ package net.scholagest.managers.impl;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import net.scholagest.database.ITransaction;
 import net.scholagest.managers.IClassManager;
@@ -23,13 +24,20 @@ public class ClassManager extends ObjectManager implements IClassManager {
     }
 
     @Override
+    public boolean checkWhetherClassExistsInYear(String className, String yearName) {
+        ITransaction transaction = ScholagestThreadLocal.getTransaction();
+
+        String classBasePropertyName = createClassesBasePropertyName(yearName, className);
+        String classKey = (String) transaction.get(CoreNamespace.classesBase, classBasePropertyName, null);
+
+        return classKey != null;
+    }
+
+    @Override
     public ClassObject createClass(String className, String yearName, Map<String, Object> properties) {
         ITransaction transaction = ScholagestThreadLocal.getTransaction();
 
-        String classKey = CoreNamespace.classNs + "/" + yearName + "#" + className;
-
-        // BaseObject clazz = createObject(transaction, classKey,
-        // CoreNamespace.tClass);
+        String classKey = CoreNamespace.classNs + "/" + UUID.randomUUID().toString();
 
         DBSet students = DBSet.createDBSet(transaction, generateClassStudentsKey(classKey));
         DBSet teachers = DBSet.createDBSet(transaction, generateClassTeachersKey(classKey));

@@ -2,6 +2,7 @@ package net.scholagest.managers.impl;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import net.scholagest.database.ITransaction;
 import net.scholagest.managers.IOntologyManager;
@@ -21,10 +22,10 @@ public class PeriodManager extends ObjectManager implements IPeriodManager {
     }
 
     @Override
-    public PeriodObject createPeriod(String periodName, String classKey, String branchName, String className, String yearName) {
+    public PeriodObject createPeriod(String periodName, String classKey) {
         ITransaction transaction = ScholagestThreadLocal.getTransaction();
 
-        String periodKey = CoreNamespace.periodNs + "/" + yearName + "/" + className + "/" + branchName + "#" + periodName;
+        String periodKey = generatePeriodKey();
 
         String examSetKey = generatePeriodExamsKey(periodKey);
         DBSet examSet = DBSet.createDBSet(transaction, examSetKey);
@@ -37,6 +38,10 @@ public class PeriodManager extends ObjectManager implements IPeriodManager {
         persistObject(transaction, period);
 
         return period;
+    }
+
+    private String generatePeriodKey() {
+        return CoreNamespace.periodNs + "/" + UUID.randomUUID().toString();
     }
 
     private String generatePeriodExamsKey(String periodKey) {

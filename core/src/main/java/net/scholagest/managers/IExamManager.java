@@ -12,4 +12,6 @@ public interface IExamManager {
     public void setExamProperties(String key, Map<String, Object> examProperties);
 
     public ExamObject getExamProperties(String examKey, Set<String> properties);
+
+    public boolean checkWhetherExamExistsInPeriod(String examName, String yearName, String className, String branchName, String periodName);
 }

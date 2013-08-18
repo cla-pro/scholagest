@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Map;
 
+import net.scholagest.managers.ontology.types.DBSet;
 import net.scholagest.namespace.AuthorizationRolesNamespace;
 
 import org.apache.shiro.subject.Subject;
@@ -43,7 +44,14 @@ public abstract class AbstractTest {
         assertEquals(mock.size(), testee.size());
 
         for (Object key : mock.keySet()) {
-            assertEquals(mock.get(key), testee.get(key));
+            Object expected = mock.get(key);
+            if (expected instanceof DBSet) {
+                DBSet expectedDBSet = (DBSet) expected;
+                DBSet actualDBSet = (DBSet) testee.get(key);
+                assertEquals(expectedDBSet.size(), actualDBSet.size());
+            } else {
+                assertEquals(expected, testee.get(key));
+            }
         }
     }
 }

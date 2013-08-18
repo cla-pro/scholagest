@@ -164,13 +164,13 @@ function handleWebServiceError(error) {
 };
 
 function handleServiceError(errorJson) {
-    if (errorJson.errorCode == 3) {
+    if (errorJson.errorCode == errorCodesMap.INSUFFICIENT_PRIVILEGES) {
         alert("Droits insuffisants pour effectuer cette action");
-    } else if (errorJson.errorCode == 10) {
+    } else if (errorJson.errorCode == errorCodesMap.SESSION_EXPIRED) {
         clearScholagestCookieAndSwitchPage("html/session_expired.html");
-    } else {
-		alert("Error with code: " + errorJson.errorCode + " and message: " + errorJson.msg);
-	}
+    } //else {
+		//alert("Error with code: " + errorJson.errorCode + " and message: " + errorJson.msg);
+	//}
 };
 
 

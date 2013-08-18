@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Set;
 
 import net.scholagest.business.IBranchBusinessComponent;
+import net.scholagest.exception.ScholagestException;
+import net.scholagest.exception.ScholagestExceptionErrorCode;
 import net.scholagest.managers.IBranchManager;
 import net.scholagest.managers.IClassManager;
 import net.scholagest.managers.IExamManager;
@@ -46,8 +48,13 @@ public class BranchBusinessComponent implements IBranchBusinessComponent {
     public BranchObject createBranch(String classKey, Map<String, Object> branchProperties) throws Exception {
         String className = getClassName(classKey);
         String yearName = getYearName(classKey);
-
         String branchName = (String) branchProperties.get(CoreNamespace.pBranchName);
+
+        if (branchManager.checkWhetherBranchExistsInClass(branchName, className, yearName)) {
+            throw new ScholagestException(ScholagestExceptionErrorCode.OBJECT_ALREADY_EXISTS, "A branch with the same name " + branchName
+                    + " already exists for class=" + classKey);
+        }
+
         BranchObject branch = branchManager.createBranch(branchName, classKey, className, yearName, branchProperties);
 
         addBranchToClass(classKey, branch);
@@ -71,7 +78,7 @@ public class BranchBusinessComponent implements IBranchBusinessComponent {
         DBSet periodsSet = branch.getPeriods();
         for (int i = 1; i < 4; i++) {
             String periodName = "Trimestre " + i;
-            PeriodObject period = periodManager.createPeriod(periodName, classKey, branchName, className, yearName);
+            PeriodObject period = periodManager.createPeriod(periodName, classKey);
 
             ExamObject branchMean = createMeanExam(branch, classKey, className, yearName, branchName, periodName);
             period.setMeanKey(branchMean.getKey());

@@ -2,6 +2,7 @@ package net.scholagest.managers.impl;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import net.scholagest.database.ITransaction;
 import net.scholagest.managers.IBranchManager;
@@ -22,10 +23,20 @@ public class BranchManager extends ObjectManager implements IBranchManager {
     }
 
     @Override
+    public boolean checkWhetherBranchExistsInClass(String branchName, String className, String yearName) {
+        ITransaction transaction = ScholagestThreadLocal.getTransaction();
+
+        String branchesBasePropertyName = generateBranchesBasePropertyName(branchName, className, yearName);
+        String branchKey = (String) transaction.get(CoreNamespace.branchesBase, branchesBasePropertyName, null);
+
+        return branchKey != null;
+    }
+
+    @Override
     public BranchObject createBranch(String branchName, String classKey, String className, String yearName, Map<String, Object> properties) {
         ITransaction transaction = ScholagestThreadLocal.getTransaction();
 
-        String branchKey = CoreNamespace.branchNs + "/" + yearName + "/" + className + "#" + branchName;
+        String branchKey = CoreNamespace.branchNs + "#" + UUID.randomUUID().toString();
         BranchObject branch = new BranchObject(branchKey);
 
         branch.putAllProperties(properties);
@@ -42,7 +53,14 @@ public class BranchManager extends ObjectManager implements IBranchManager {
 
         persistObject(transaction, branch);
 
+        String branchesBasePropertyName = generateBranchesBasePropertyName(branchName, className, yearName);
+        transaction.insert(CoreNamespace.branchesBase, branchesBasePropertyName, branchKey, null);
+
         return branch;
+    }
+
+    private String generateBranchesBasePropertyName(String branchName, String className, String yearName) {
+        return yearName + "/" + className + "/" + branchName;
     }
 
     private String generateBranchPeriodsKey(String branchKey) {
