@@ -10,7 +10,7 @@ import net.scholagest.database.commiter.DBAction;
 class TransactionCommiter {
     private List<DBAction> dbActions = new ArrayList<>();
 
-    void add(DBAction dbAction) {
+    void addAction(DBAction dbAction) {
         dbActions.add(dbAction);
     }
 

@@ -24,4 +24,19 @@ public class DeleteDBAction extends KeyColumnDBAction {
     public void rollback() throws HectorException {
         insert(key, column, originalValue);
     }
+
+    @Override
+    public String getKey() {
+        return key;
+    }
+
+    @Override
+    public String getColumn() {
+        return column;
+    }
+
+    @Override
+    public String getValue() {
+        return null;
+    }
 }
