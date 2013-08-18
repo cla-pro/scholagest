@@ -30,4 +30,16 @@ public class InsertDBAction extends KeyColumnDBAction {
             insert(key, column, originalValue);
         }
     }
+
+    public String getKey() {
+        return key;
+    }
+
+    public String getColumn() {
+        return column;
+    }
+
+    public String getValue() {
+        return value;
+    }
 }
