@@ -16,4 +16,6 @@ public interface IUserService {
     public void setPassword(String teacherKey, String newPassword) throws Exception;
 
     public void logout(String token) throws Exception;
+
+    public void resetPassword(String teacherKey) throws Exception;
 }

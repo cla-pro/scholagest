@@ -15,7 +15,7 @@ import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IStudentService;
 import net.scholagest.services.kdom.DBToKdomConverter;
 import net.scholagest.shiro.AuthorizationHelper;
-import net.scholagest.utils.ConfigurationServiceImpl;
+import net.scholagest.utils.ConfigurationService;
 import net.scholagest.utils.ScholagestProperty;
 import net.scholagest.utils.ScholagestThreadLocal;
 
@@ -38,7 +38,7 @@ public class StudentService implements IStudentService {
         BaseObject student = null;
 
         ITransaction transaction = this.database
-                .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+                .getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAdminRole());
@@ -59,7 +59,7 @@ public class StudentService implements IStudentService {
     public void updateStudentProperties(String studentKey, Map<String, Object> personalProperties, Map<String, Object> medicalProperties)
             throws Exception {
         ITransaction transaction = this.database
-                .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+                .getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(studentKey));
@@ -78,7 +78,7 @@ public class StudentService implements IStudentService {
         BaseObject personalInfo = null;
 
         ITransaction transaction = this.database
-                .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+                .getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
@@ -102,7 +102,7 @@ public class StudentService implements IStudentService {
         BaseObject medicalInfo = null;
 
         ITransaction transaction = this.database
-                .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+                .getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
@@ -126,7 +126,7 @@ public class StudentService implements IStudentService {
         Set<BaseObject> students = new HashSet<>();
 
         ITransaction transaction = this.database
-                .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+                .getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
@@ -152,7 +152,7 @@ public class StudentService implements IStudentService {
         BaseObject student = null;
 
         ITransaction transaction = this.database
-                .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+                .getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
@@ -176,7 +176,7 @@ public class StudentService implements IStudentService {
         Map<String, Map<String, BaseObject>> grades = null;
 
         ITransaction transaction = this.database
-                .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+                .getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), new ArrayList<>(studentKeys));
@@ -197,7 +197,7 @@ public class StudentService implements IStudentService {
     public void setGrades(String studentKey, Map<String, BaseObject> studentGrades, String yearKey, String classKey, String branchKey,
             String periodKey) throws Exception {
         ITransaction transaction = this.database
-                .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+                .getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(studentKey));
@@ -215,7 +215,7 @@ public class StudentService implements IStudentService {
     public void setStudentPeriodMean(String studentKey, BaseObject studentMean, String yearKey, String classKey, String branchKey, String periodKey)
             throws Exception {
         ITransaction transaction = this.database
-                .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+                .getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(studentKey));
@@ -232,7 +232,7 @@ public class StudentService implements IStudentService {
     @Override
     public void setStudentBranchMean(String studentKey, BaseObject studentMean, String yearKey, String classKey, String branchKey) throws Exception {
         ITransaction transaction = this.database
-                .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+                .getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(studentKey));

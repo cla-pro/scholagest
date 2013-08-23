@@ -9,11 +9,19 @@ function getTeacherInfo(teacherKey) {
 		if (info.writable) {
 			if (teacherKey == myOwnTeacherKey) {
 				dojo.create("button", {type: "button", onclick:"openChangePasswordDialog(\"" + teacherKey + "\")", innerHTML: "Changer le mot de passe"}, base);
+			} else {
+				dojo.create("button", {type: "button", onclick:"resetPassword(\"" + teacherKey + "\")", innerHTML: "Réinitialiser le mot de passe"}, base);
 			}
+			
 			dojo.create("button",
 					{type: "button", onclick:"setTeacherInfo(\"" + teacherKey + "\")", innerHTML: "Enregistrer"}, base);
 		}
 	});
+};
+function resetPassword(teacherKey) {
+	if (window.confirm('Etes vous sûr de vouloir réinitialiser le mot de passe?')) {
+		sendPostRequest("../user/resetPassword", { teacherKey : teacherKey }, function(info) { alert("Mot de passe réinitialisé"); });
+    }
 };
 function openChangePasswordDialog(teacherKey) {
 	var changePasswordDialog = dijit.byId("changePasswordDialog");
@@ -29,7 +37,7 @@ function saveNewPassword(newPassword, repeatedNewPassword) {
 	} else {
 		resetDiv(changePasswordDialog.containerNode);
 		changePasswordDialog.hide();
-		sendPostRequest("../user/setPassword", { teacherKey : teacherKey, password: newPassword }, function(info) {});
+		sendPostRequest("../user/setPassword", { teacherKey : teacherKey, password: newPassword }, function(info) { alert("Mot de passe modifié"); });
 	}
 };
 function setTeacherInfo(teacherKey) {

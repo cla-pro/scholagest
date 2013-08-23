@@ -65,9 +65,13 @@ public class UserBusinessComponent implements IUserBusinessComponent {
         UserObject userObject = userManager.createUser(username, teacherKey);
         teacherObject.setUserKey(userObject.getKey());
 
-        setPassword(teacherKey, "");
+        setPassword(teacherKey, generateNewPassword());
 
         return userObject;
+    }
+
+    private String generateNewPassword() {
+        return "";
     }
 
     private String generateUsername(BaseObject teacherProperties) {
@@ -112,6 +116,11 @@ public class UserBusinessComponent implements IUserBusinessComponent {
         String encryptedPassword = encryptPassword(userObject.getKey(), newPassword);
 
         userObject.setPassword(encryptedPassword);
+    }
+
+    @Override
+    public void resetPassword(String teacherKey) {
+        setPassword(teacherKey, generateNewPassword());
     }
 
     private String encryptPassword(String userKey, String newPassword) {

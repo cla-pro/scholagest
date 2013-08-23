@@ -184,14 +184,14 @@ public class Database implements IDatabase {
         public void commit() throws DatabaseException {
             checkAlive();
             transactionCommiter.commit();
-            this.commited = true;
+            commited = true;
         }
 
         @Override
         public void rollback() throws DatabaseException {
             checkAlive();
             transactionCommiter.rollback();
-            this.rolledback = true;
+            rolledback = true;
         }
 
         private void checkAlive() {

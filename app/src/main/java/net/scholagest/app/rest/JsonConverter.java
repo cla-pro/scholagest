@@ -42,6 +42,10 @@ public class JsonConverter {
     }
 
     public Map<String, Object> convertObjectToJson(ScholagestObject scholagestObject, Map<String, OntologyElement> ontology) throws Exception {
+        if (scholagestObject == null) {
+            return null;
+        }
+
         Map<String, Object> jsonObject = convertObjectToJsonInternal(scholagestObject);
 
         jsonObject.put("properties", mergePropertiesWithOntology(scholagestObject.getProperties(), ontology));

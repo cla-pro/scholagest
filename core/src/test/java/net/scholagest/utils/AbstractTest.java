@@ -12,7 +12,7 @@ import org.mockito.Mockito;
 
 public abstract class AbstractTest {
     public String getKeyspace() {
-        return ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE);
+        return ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE);
     }
 
     public void defineAdminSubject() {

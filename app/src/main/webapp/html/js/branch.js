@@ -19,27 +19,31 @@ function displayBranchWrapper(classKey, yearKey) {
 };
 
 function loadBranches() {
+	var base = dojo.byId("branch-search-list");
 	sendGetRequest("../year/getCurrent", {}, function(yearInfo) {
-		gradePageYearKey = yearInfo.key;
-		
-		sendGetRequest("../teacher/getClass", { yearKey: gradePageYearKey, teacherKey: myOwnTeacherKey }, function(classInfo) {
-			var classesList = classInfo.properties["pTeacherClasses"].value;
+		if (yearInfo == null) {
+			base.innerHTML = 'Aucune classe assignée';
+		} else {
+			gradePageYearKey = yearInfo.key;
 			
-			clearDOM("branch-search-list");
-			var base = dojo.byId("branch-search-list");
-			if (classesList.length > 0) {
-				gradePageClassKey = classesList[0];
-				callGetClassInfo(gradePageClassKey, "pClassBranches", function(info) {
-					var parameters = { branchKeys: info.properties["pClassBranches"].value, properties: ["pBranchName"] };
-					sendGetRequest("../branch/getPropertiesForList", parameters, function(branchInfo) {
-						createHtmlListFromList(branchInfo, "branch-search-list", base,
-								buildListItemTextClosure(["pBranchName"]), selectBranchWrapper(gradePageClassKey, gradePageYearKey));
+			sendGetRequest("../teacher/getClass", { yearKey: gradePageYearKey, teacherKey: myOwnTeacherKey }, function(classInfo) {
+				var classesList = classInfo.properties["pTeacherClasses"].value;
+				
+				clearDOM("branch-search-list");
+				if (classesList.length > 0) {
+					gradePageClassKey = classesList[0];
+					callGetClassInfo(gradePageClassKey, "pClassBranches", function(info) {
+						var parameters = { branchKeys: info.properties["pClassBranches"].value, properties: ["pBranchName"] };
+						sendGetRequest("../branch/getPropertiesForList", parameters, function(branchInfo) {
+							createHtmlListFromList(branchInfo, "branch-search-list", base,
+									buildListItemTextClosure(["pBranchName"]), selectBranchWrapper(gradePageClassKey, gradePageYearKey));
+						});
 					});
-				});
-			} else {
-				base.innerHTML = 'Aucune classe assignée';
-			}
-		});
+				} else {
+					base.innerHTML = 'Aucune classe assignée';
+				}
+			});
+		}
 	});
 	
 	

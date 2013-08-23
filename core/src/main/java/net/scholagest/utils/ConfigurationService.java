@@ -4,15 +4,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-public class ConfigurationServiceImpl {
-    private static ConfigurationServiceImpl instance;
+public class ConfigurationService {
+    private static ConfigurationService instance;
 
     static {
-        instance = new ConfigurationServiceImpl();
+        instance = new ConfigurationService();
         instance.loadFile();
     }
 
-    public static ConfigurationServiceImpl getInstance() {
+    public static ConfigurationService getInstance() {
         return instance;
     }
 
