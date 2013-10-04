@@ -22,6 +22,16 @@
         <rdfs:range rdf:resource="String"/>
     </rdfs:Property>
     
+    <rdfs:Property rdf:ID="http://scholagest.net#required" rdfs:comment="Required field (not nullable)">
+        <rdfs:domain rdf:resource="rdfs:Property"/>
+        <rdfs:range rdf:resource="String"/>
+    </rdfs:Property>
+    
+    <rdfs:Property rdf:ID="http://scholagest.net#defaultValue" rdfs:comment="Default field's value">
+        <rdfs:domain rdf:resource="rdfs:Property"/>
+        <rdfs:range rdf:resource="String"/>
+    </rdfs:Property>
+    
     <rdfs:Class rdf:ID="http://scholagest.net#tUser">
         <rdfs:comment>User representation</rdfs:comment>
     </rdfs:Class>

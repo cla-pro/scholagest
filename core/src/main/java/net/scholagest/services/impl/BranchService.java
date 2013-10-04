@@ -19,6 +19,7 @@ import net.scholagest.services.kdom.DBToKdomConverter;
 import net.scholagest.shiro.AuthorizationHelper;
 import net.scholagest.utils.ConfigurationService;
 import net.scholagest.utils.ScholagestProperty;
+import net.scholagest.utils.ScholagestThreadLocal;
 
 import com.google.inject.Inject;
 
@@ -39,6 +40,7 @@ public class BranchService implements IBranchService {
         BaseObject branch = null;
 
         ITransaction transaction = database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ScholagestThreadLocal.setTransaction(transaction);
         try {
             authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(classKey));
 
@@ -59,6 +61,7 @@ public class BranchService implements IBranchService {
         BaseObject branchInfo = null;
 
         ITransaction transaction = database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ScholagestThreadLocal.setTransaction(transaction);
         try {
             String classKey = getClassKey(branchKey);
             if (classKey == null) {
@@ -82,6 +85,7 @@ public class BranchService implements IBranchService {
     @Override
     public void setBranchProperties(String branchKey, Map<String, Object> properties) throws Exception {
         ITransaction transaction = database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ScholagestThreadLocal.setTransaction(transaction);
         try {
             String classKey = getClassKey(branchKey);
             if (classKey == null) {
@@ -104,6 +108,7 @@ public class BranchService implements IBranchService {
         Map<String, Map<String, BaseObject>> means = new HashMap<>();
 
         ITransaction transaction = database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ScholagestThreadLocal.setTransaction(transaction);
         try {
             String classKey = getClassKey(branchKey);
             if (classKey == null) {

@@ -1,11 +1,11 @@
 var gradePageYearKey = null;
 var gradePageClassKey = null;
+var selectedBranchKey = null;
 
 function selectBranchWrapper(classKey, yearKey) {
 	return function (key) {
-		return function(e) {
-			getBranchInfo(key, ["pBranchName", "pBranchPeriods", "pBranchType"], displayBranchWrapper(classKey, yearKey));
-		};
+		selectedBranchKey = key;
+		getBranchInfo(key, ["pBranchName", "pBranchPeriods", "pBranchType"], displayBranchWrapper(classKey, yearKey));
 	};
 };
 
@@ -23,7 +23,9 @@ function loadBranches() {
 	sendGetRequest("../year/getCurrent", {}, function(yearInfo) {
 		if (yearInfo == null) {
 			base.innerHTML = 'Aucune classe assignée';
+			dojo.byId('btnNewBranch').style.visibility = 'hidden';
 		} else {
+			dojo.byId('btnNewBranch').style.visibility = '';
 			gradePageYearKey = yearInfo.key;
 			
 			sendGetRequest("../teacher/getClass", { yearKey: gradePageYearKey, teacherKey: myOwnTeacherKey }, function(classInfo) {
@@ -36,10 +38,11 @@ function loadBranches() {
 						var parameters = { branchKeys: info.properties["pClassBranches"].value, properties: ["pBranchName"] };
 						sendGetRequest("../branch/getPropertiesForList", parameters, function(branchInfo) {
 							createHtmlListFromList(branchInfo, "branch-search-list", base,
-									buildListItemTextClosure(["pBranchName"]), selectBranchWrapper(gradePageClassKey, gradePageYearKey));
+									buildListItemTextClosure(["pBranchName"]), selectBranchWrapper(gradePageClassKey, gradePageYearKey), selectedBranchKey);
 						});
 					});
 				} else {
+					dojo.byId('btnNewBranch').style.visibility = 'hidden';
 					base.innerHTML = 'Aucune classe assignée';
 				}
 			});

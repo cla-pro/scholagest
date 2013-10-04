@@ -1,12 +1,12 @@
-http://scholagest.net/class#6751c12f-d54e-4e1c-b87d-223079827a50:::pClassName:::1P A
-http://scholagest.net/class#6751c12f-d54e-4e1c-b87d-223079827a50:::http://www.w3.org/1999/02/22-rdf-syntax-ns#type:::http://scholagest.net#tClass
-http://scholagest.net/class#6751c12f-d54e-4e1c-b87d-223079827a50:::pClassYear:::http://scholagest.net/year#2012-2013
-http://scholagest.net/class#4340a173-0e8d-4459-b6b3-8131d97eabef:::pClassName:::2P B
-http://scholagest.net/class#4340a173-0e8d-4459-b6b3-8131d97eabef:::http://www.w3.org/1999/02/22-rdf-syntax-ns#type:::http://scholagest.net#tClass
-http://scholagest.net/class#4340a173-0e8d-4459-b6b3-8131d97eabef:::pClassYear:::http://scholagest.net/year#2011-2012
-http://scholagest.net#classes:::2012-2013/1P A:::http://scholagest.net/class#6751c12f-d54e-4e1c-b87d-223079827a50
-http://scholagest.net#classes:::2011-2012/2P B:::http://scholagest.net/class#4340a173-0e8d-4459-b6b3-8131d97eabef
-http://scholagest.net#classes:::2012-2013/2P A:::http://scholagest.net/class#73c5436c-ff01-4601-9fe2-871db752cded
-http://scholagest.net/class#73c5436c-ff01-4601-9fe2-871db752cded:::pClassName:::2P A
-http://scholagest.net/class#73c5436c-ff01-4601-9fe2-871db752cded:::http://www.w3.org/1999/02/22-rdf-syntax-ns#type:::http://scholagest.net#tClass
-http://scholagest.net/class#73c5436c-ff01-4601-9fe2-871db752cded:::pClassYear:::http://scholagest.net/year#2012-2013
+class#6751c12f-d54e-4e1c-b87d-223079827a50:::pClassName:::1P A
+class#6751c12f-d54e-4e1c-b87d-223079827a50:::http://www.w3.org/1999/02/22-rdf-syntax-ns#type:::http://scholagest.net#tClass
+class#6751c12f-d54e-4e1c-b87d-223079827a50:::pClassYear:::year#2012-2013
+class#4340a173-0e8d-4459-b6b3-8131d97eabef:::pClassName:::2P B
+class#4340a173-0e8d-4459-b6b3-8131d97eabef:::http://www.w3.org/1999/02/22-rdf-syntax-ns#type:::http://scholagest.net#tClass
+class#4340a173-0e8d-4459-b6b3-8131d97eabef:::pClassYear:::year#2011-2012
+base#classes:::2012-2013/1P A:::class#6751c12f-d54e-4e1c-b87d-223079827a50
+base#classes:::2011-2012/2P B:::class#4340a173-0e8d-4459-b6b3-8131d97eabef
+base#classes:::2012-2013/2P A:::class#73c5436c-ff01-4601-9fe2-871db752cded
+class#73c5436c-ff01-4601-9fe2-871db752cded:::pClassName:::2P A
+class#73c5436c-ff01-4601-9fe2-871db752cded:::http://www.w3.org/1999/02/22-rdf-syntax-ns#type:::http://scholagest.net#tClass
+class#73c5436c-ff01-4601-9fe2-871db752cded:::pClassYear:::year#2012-2013

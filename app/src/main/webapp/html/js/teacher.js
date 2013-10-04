@@ -1,3 +1,5 @@
+var selectedTeacherKey = null;
+
 function getTeacherInfo(teacherKey) {
 	sendGetRequest("../teacher/getProperties", { teacherKey: teacherKey }, function(info) {
 		var domId = "teacher-data";
@@ -5,6 +7,8 @@ function getTeacherInfo(teacherKey) {
 
 		var base = dojo.byId(domId);
 		createInfoHtmlTable(base, info.properties);
+		
+		selectedTeacherKey = teacherKey;
 
 		if (info.writable) {
 			if (teacherKey == myOwnTeacherKey) {
@@ -46,17 +50,15 @@ function setTeacherInfo(teacherKey) {
 };
 
 function selectTeacher(teacherKey) {
-	return function(e) {
-		var list = dojo.byId('teacher-search-list');
-		var old = list.selectedTeacher;
-		if (old != null)
-			old.className = 'search-list-item';
-
-		this.className = 'search-list-item-selected';
-		list.selectedTeacher = this;
-
-		getTeacherInfo(teacherKey);
-	};
+//	var list = dojo.byId('teacher-search-list');
+//	var old = list.selectedTeacher;
+//	if (old != null)
+//		old.className = 'search-list-item';
+//
+//	this.className = 'search-list-item-selected';
+//	list.selectedTeacher = this;
+//
+	getTeacherInfo(teacherKey);
 };
 
 function getTeacherList(callback) {
@@ -69,7 +71,7 @@ function loadTeachers() {
 
 		var base = dojo.byId("teacher-search-list");
 		createHtmlListFromList(teachers, "teacher-search-list", base,
-				buildListItemTextClosure(["pTeacherLastName", "pTeacherFirstName"]), selectTeacher);
+				buildListItemTextClosure(["pTeacherLastName", "pTeacherFirstName"]), selectTeacher, selectedTeacherKey);
 	});
 };
 

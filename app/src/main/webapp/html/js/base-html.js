@@ -98,10 +98,18 @@ function moveElements(sourceTree, destTree) {
 	};
 };
 
-function createLIItem(id, contentAsString, onClickFunction, cssStyle) {
-	var li = dojo.create("li", { id: id, innerHTML: contentAsString, className: cssStyle });
-	li.onclick = onClickFunction;
-	return li;
+function createLIItem(id, contentAsString, onClickFunction, cssStyle, base, key) {
+	var element = dojo.create("li",
+			{ id: id,
+		innerHTML: contentAsString,
+		className: cssStyle,
+		onclick: elementOnclickClosure(base, key, onClickFunction)});
+	element.key = key;
+	return element;
+	
+//	var li = dojo.create("li", { id: id, innerHTML: contentAsString, className: cssStyle });
+//	li.onclick = onClickFunction;
+//	return li;
 };
 
 function createAndFillUL(ulId, liItemsList, cssStyle, base) {
@@ -139,7 +147,7 @@ function buildListItemTextClosure(propertyNames) {
 	};
 };
 
-function createHtmlListFromList(list, listId, base, buildTextFunction, onclickClosure) {
+function createHtmlListFromList(list, listId, base, buildTextFunction, customOnclickClosure, selectedKey) {
 	var ul = dojo.create("ul", {
 		id: listId,
 		className: 'search-list'}, base);
@@ -147,12 +155,44 @@ function createHtmlListFromList(list, listId, base, buildTextFunction, onclickCl
 		var t = list[id];
 		var key = t.key;
 		var text = buildTextFunction(t);
+		
+		var className = 'search-list-item';
 
-		dojo.create("li",
+		var element = dojo.create("li",
 				{ innerHTML: text,
-			className: 'search-list-item',
-			onclick: onclickClosure(key)}, ul);
+			className: className,
+			onclick: elementOnclickClosure(base, key, customOnclickClosure)}, ul);
+		element.key = key;
 	}
+	
+	markAsSelectedListItemWithKey(base, selectedKey);
+};
+function elementOnclickClosure(list, key, customOnclickClosure) {
+	return function(e) {
+		var old = list.selectedItem;
+		if (old != null)
+			old.className = 'search-list-item';
+
+		markAsSelectedListItem(list, this);
+		
+		customOnclickClosure(key);
+	};
+};
+function markAsSelectedListItemWithKey(list, key) {
+	if (key == null)
+		return;
+	
+	var childNodes = list.childNodes[0].childNodes;
+	for (var i = 0; i < childNodes.length; i++) {
+		var node = childNodes[i];
+		if (node.key == key) {
+			markAsSelectedListItem(list, node);
+		}
+	}
+};
+function markAsSelectedListItem(list, node) {
+	node.className = 'search-list-item-selected';
+	list.selectedItem = node;
 };
 
 function createHtmlBaseGroup(parentDOM, title, domId) {

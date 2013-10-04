@@ -1,3 +1,5 @@
+var selectedClassKey = null;
+
 function createClassAndCloseDialog(closeId, txtNewClassNameId) {
     var yearKey = dijit.byId(closeId).currentYearKey;
     var className = dojo.byId(txtNewClassNameId).value;
@@ -6,13 +8,13 @@ function createClassAndCloseDialog(closeId, txtNewClassNameId) {
 };
 function selectClass(classKey) {
 	return function(e) {
-		var list = dojo.byId('year-search-list');
-		var old = list.selectedClass;
-		if (old != null)
-			old.className = 'search-list-item';
-
-		this.className = 'search-list-item-selected';
-		list.selectedClass = this;
+//		var list = dojo.byId('year-search-list');
+//		var old = list.selectedClass;
+//		if (old != null)
+//			old.className = 'search-list-item';
+//
+//		this.className = 'search-list-item-selected';
+//		list.selectedClass = this;
 
 		getClassInfo(classKey);
 	};
@@ -136,6 +138,8 @@ function setClassInfo(classKey) {
 }
 function getClassInfo(classKey) {
 	callGetClassInfo(classKey, null, function(info) {
+		selectedClassKey = classKey;
+		
 		var domId = "class-data";
 		clearDOM(domId);
 		
@@ -156,21 +160,26 @@ function callGetClassInfo(classKey, classProperties, callback) {
 	sendGetRequest("../class/getProperties", content, callback);
 }
 function mergeAndDisplayYearAndClassLists(yearList, classList) {
+	var base = dojo.byId('year-search-list-div');
 	var liItemsList = [];
 	for (var yearKey in yearList) {
 		var classes = classList[yearKey];
 		var yearInfo = yearList[yearKey];
 		
-		liItemsList.push(createLIItem(yearKey, yearInfo.properties['pYearName'].value, undefined, 'search-list-item-group-header'));
+		liItemsList.push(createLIItem(yearKey, yearInfo.properties['pYearName'].value, undefined, 'search-list-item-group-header', base, yearKey));
 		
 		for (var classIndex in classes) {
 			var classInfo = classes[classIndex];
 			var classKey = classInfo.key;
-			liItemsList.push(createLIItem(classKey, classInfo.properties['pClassName'].value, selectClass(classKey), 'search-list-item'));
+			var classNode = createLIItem(classKey, classInfo.properties['pClassName'].value, selectClass(classKey), 'search-list-item', base, classKey);
+			if (classKey == selectedClassKey) {
+				markAsSelectedListItem(base, classNode);
+			}
+			liItemsList.push(classNode);
 		}
 	}
 	
-	createAndFillUL('year-search-list', liItemsList, 'search-list', dojo.byId('year-search-list-div'));
+	createAndFillUL('year-search-list', liItemsList, 'search-list', base);
 }
 function loadClasses(yearList) {
 	var yearKeyList = [];

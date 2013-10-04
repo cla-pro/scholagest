@@ -27,7 +27,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 public class StudentManagerTest extends AbstractTestWithTransaction {
-    private static final String STUDENT_KEY = "http://scholagest.net/student#329c1a51-5469-4eac-a182-29afb1e5ecdb";
+    private static final String STUDENT_KEY = "student#329c1a51-5469-4eac-a182-29afb1e5ecdb";
 
     private IStudentManager studentManager = spy(new StudentManager(new OntologyManager()));
 

@@ -1,5 +1,5 @@
-http://scholagest.net/exam#83da81b7-47d7-441d-a682-3ef219983b14:::pExamName:::Recitation 1
-http://scholagest.net/exam#83da81b7-47d7-441d-a682-3ef219983b14:::pPeriodExams:::http://scholagest.net/exam/2012-2013/1P A/Math/Trimestre 1#Recitation 1_exams
-http://scholagest.net/exam#83da81b7-47d7-441d-a682-3ef219983b14:::http://www.w3.org/1999/02/22-rdf-syntax-ns#type:::http://scholagest.net#tExam
-http://scholagest.net/exam#83da81b7-47d7-441d-a682-3ef219983b14:::http://www.w3.org/1999/02/22-rdf-syntax-ns#type:::http://scholagest.net#Set
-http://scholagest.net#exams:::2012-2013/1P A/Math/Trimestre 1/Recitation 1:::http://scholagest.net/exam#83da81b7-47d7-441d-a682-3ef219983b14
+exam#83da81b7-47d7-441d-a682-3ef219983b14:::pExamName:::Recitation 1
+exam#83da81b7-47d7-441d-a682-3ef219983b14:::pPeriodExams:::exam/2012-2013/1P A/Math/Trimestre 1#Recitation 1_exams
+exam#83da81b7-47d7-441d-a682-3ef219983b14:::http://www.w3.org/1999/02/22-rdf-syntax-ns#type:::http://scholagest.net#tExam
+exam#83da81b7-47d7-441d-a682-3ef219983b14:::http://www.w3.org/1999/02/22-rdf-syntax-ns#type:::http://scholagest.net#Set
+base#exams:::2012-2013/1P A/Math/Trimestre 1/Recitation 1:::exam#83da81b7-47d7-441d-a682-3ef219983b14

@@ -23,7 +23,7 @@ public class TeacherManager extends ObjectManager implements ITeacherManager {
     }
 
     @Override
-    public TeacherObject createTeacher() {
+    public TeacherObject createTeacher(Map<String, Object> properties) {
         ITransaction transaction = ScholagestThreadLocal.getTransaction();
 
         String id = UUID.randomUUID().toString();
@@ -31,6 +31,8 @@ public class TeacherManager extends ObjectManager implements ITeacherManager {
         String teacherBase = CoreNamespace.teacherNs + "/" + id;
 
         TeacherObject teacherObject = new TeacherObject(teacherKey);
+
+        teacherObject.putAllProperties(properties);
 
         String classesKey = teacherBase + "#classes";
         DBSet classesDBSet = new DBSet(transaction, classesKey);

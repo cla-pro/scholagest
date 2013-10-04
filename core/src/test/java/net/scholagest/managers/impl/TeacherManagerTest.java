@@ -25,13 +25,13 @@ import net.scholagest.utils.ScholagestThreadLocal;
 import org.junit.Test;
 
 public class TeacherManagerTest extends AbstractTestWithTransaction {
-    private static final String TEACHER_KEY = "http://scholagest.net/teacher#e85af55b-8b34-4646-a872-1a6e9c210fe2";
+    private static final String TEACHER_KEY = "teacher#e85af55b-8b34-4646-a872-1a6e9c210fe2";
 
     private ITeacherManager teacherManager = spy(new TeacherManager(new OntologyManager()));
 
     @Test
     public void testCreateNewTeacher() throws Exception {
-        BaseObject teacher = teacherManager.createTeacher();
+        BaseObject teacher = teacherManager.createTeacher(new HashMap<String, Object>());
 
         verify(transaction).insert(anyString(), eq(RDF.type), eq(CoreNamespace.tTeacher), anyString());
         verify(transaction).insert(eq(CoreNamespace.teachersBase), anyString(), eq(teacher.getKey()), anyString());
@@ -75,8 +75,7 @@ public class TeacherManagerTest extends AbstractTestWithTransaction {
 
         Map<String, Object> teacherProperties = new TeacherManagerTest().createTeacherProperties();
 
-        BaseObject teacher = teacherManager.createTeacher();
-        teacherManager.setTeacherProperties(teacher.getKey(), teacherProperties);
+        teacherManager.createTeacher(teacherProperties);
 
         Map<String, Map<String, Map<String, Object>>> databaseContent = new HashMap<>();
         databaseContent.put(transaction.getKeyspace(), transaction.getValues());

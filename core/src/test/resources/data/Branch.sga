@@ -1,10 +1,10 @@
-http://scholagest.net/branch#6d4fd6a1-5291-4dbf-897c-7348153d4a3a:::http://www.w3.org/1999/02/22-rdf-syntax-ns#type:::http://scholagest.net#Set
-http://scholagest.net/branch#cbe012bd-e40b-4524-95bb-084bda2f570a:::pBranchName:::Math
-http://scholagest.net/branch#cbe012bd-e40b-4524-95bb-084bda2f570a:::pBranchPeriods:::http://scholagest.net/branch/2012-2013/1P A#Math_periods
-http://scholagest.net/branch#cbe012bd-e40b-4524-95bb-084bda2f570a:::http://www.w3.org/1999/02/22-rdf-syntax-ns#type:::http://scholagest.net#tBranch
-http://scholagest.net/branch/2012-2013/1P A#Math_periods:::http://www.w3.org/1999/02/22-rdf-syntax-ns#type:::http://scholagest.net#Set
-http://scholagest.net/branch#6d4fd6a1-5291-4dbf-897c-7348153d4a3a:::pBranchName:::Geographie
-http://scholagest.net/branch#6d4fd6a1-5291-4dbf-897c-7348153d4a3a:::pBranchPeriods:::http://scholagest.net/branch/2012-2013/1P A#Geographie_periods
-http://scholagest.net/branch#6d4fd6a1-5291-4dbf-897c-7348153d4a3a:::http://www.w3.org/1999/02/22-rdf-syntax-ns#type:::http://scholagest.net#tBranch
-http://scholagest.net#branches:::2012-2013/1P A/Math:::http://scholagest.net/branch#cbe012bd-e40b-4524-95bb-084bda2f570a
-http://scholagest.net#branches:::2012-2013/1P A/Geographie:::http://scholagest.net/branch#6d4fd6a1-5291-4dbf-897c-7348153d4a3a
+branch#6d4fd6a1-5291-4dbf-897c-7348153d4a3a:::http://www.w3.org/1999/02/22-rdf-syntax-ns#type:::http://scholagest.net#Set
+branch#cbe012bd-e40b-4524-95bb-084bda2f570a:::pBranchName:::Math
+branch#cbe012bd-e40b-4524-95bb-084bda2f570a:::pBranchPeriods:::branch/2012-2013/1P A#Math_periods
+branch#cbe012bd-e40b-4524-95bb-084bda2f570a:::http://www.w3.org/1999/02/22-rdf-syntax-ns#type:::http://scholagest.net#tBranch
+branch/2012-2013/1P A#Math_periods:::http://www.w3.org/1999/02/22-rdf-syntax-ns#type:::http://scholagest.net#Set
+branch#6d4fd6a1-5291-4dbf-897c-7348153d4a3a:::pBranchName:::Geographie
+branch#6d4fd6a1-5291-4dbf-897c-7348153d4a3a:::pBranchPeriods:::branch/2012-2013/1P A#Geographie_periods
+branch#6d4fd6a1-5291-4dbf-897c-7348153d4a3a:::http://www.w3.org/1999/02/22-rdf-syntax-ns#type:::http://scholagest.net#tBranch
+base#branches:::2012-2013/1P A/Math:::branch#cbe012bd-e40b-4524-95bb-084bda2f570a
+base#branches:::2012-2013/1P A/Geographie:::branch#6d4fd6a1-5291-4dbf-897c-7348153d4a3a

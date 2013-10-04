@@ -6,7 +6,7 @@ import java.util.Set;
 import net.scholagest.objects.TeacherObject;
 
 public interface ITeacherManager {
-    public TeacherObject createTeacher();
+    public TeacherObject createTeacher(Map<String, Object> teacherProperties);
 
     public Set<TeacherObject> getTeachers();
 
