@@ -1,6 +1,8 @@
 package net.scholagest.managers.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,6 +13,7 @@ import net.scholagest.managers.IClassManager;
 import net.scholagest.managers.ontology.OntologyManager;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
+import net.scholagest.objects.ClassObject;
 import net.scholagest.utils.AbstractTestWithTransaction;
 import net.scholagest.utils.DatabaseReaderWriter;
 import net.scholagest.utils.InMemoryDatabase;
@@ -29,17 +32,26 @@ public class ClassManagerTest extends AbstractTestWithTransaction {
     private IClassManager classManager = new ClassManager(new OntologyManager());
 
     @Test
-    public void testCreateNewClass() throws Exception {
-        BaseObject clazz = classManager.createClass(CLASS_NAME, YEAR_NAME, new HashMap<String, Object>());
+    public void testCheckWhetherClassExistsInYear() {
+        fillTransactionWithDataSets(new String[] { "Class" });
 
-        assertEquals(CLASS_KEY, clazz.getKey());
+        assertTrue(classManager.checkWhetherClassExistsInYear(CLASS_NAME, YEAR_NAME));
+        assertFalse(classManager.checkWhetherClassExistsInYear("6P A", YEAR_NAME));
+        assertFalse(classManager.checkWhetherClassExistsInYear(CLASS_NAME, "2011-2012"));
+    }
+
+    @Test
+    public void testCreateNewClass() throws Exception {
+        ClassObject classObject = classManager.createClass(CLASS_NAME, YEAR_NAME, new HashMap<String, Object>());
+
+        assertEquals(CoreNamespace.tClass, classObject.getType());
         Mockito.verify(transaction).insert(Mockito.eq(CoreNamespace.classesBase), Mockito.eq(YEAR_NAME + "/" + CLASS_NAME),
-                Mockito.eq(clazz.getKey()), Mockito.anyString());
+                Mockito.eq(classObject.getKey()), Mockito.anyString());
     }
 
     @Test
     public void testGetClasses() throws Exception {
-        super.fillTransactionWithDataSets(new String[] { "Class" });
+        fillTransactionWithDataSets(new String[] { "Class" });
 
         Set<BaseObject> classKeys = classManager.getClasses(YEAR_KEY);
         assertEquals(2, classKeys.size());
@@ -47,7 +59,7 @@ public class ClassManagerTest extends AbstractTestWithTransaction {
 
     @Test
     public void testSetAndGetClassProperties() throws Exception {
-        super.fillTransactionWithDataSets(new String[] { "Class" });
+        fillTransactionWithDataSets(new String[] { "Class" });
 
         Map<String, Object> properties = createClassProperties();
         classManager.setClassProperties(CLASS_KEY, properties);

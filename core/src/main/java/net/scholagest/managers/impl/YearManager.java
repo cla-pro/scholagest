@@ -2,6 +2,7 @@ package net.scholagest.managers.impl;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import net.scholagest.database.ITransaction;
 import net.scholagest.exception.ScholagestException;
@@ -25,10 +26,18 @@ public class YearManager extends ObjectManager implements IYearManager {
     }
 
     @Override
+    public boolean checkWhetherYearExists(String yearName) {
+        ITransaction transaction = ScholagestThreadLocal.getTransaction();
+
+        String yearKey = (String) transaction.get(CoreNamespace.yearsBase, yearName, null);
+        return yearKey != null;
+    }
+
+    @Override
     public BaseObject createNewYear(String yearName) {
         ITransaction transaction = ScholagestThreadLocal.getTransaction();
 
-        String yearKey = generateYearKey(yearName);
+        String yearKey = CoreNamespace.yearNs + "#" + UUID.randomUUID().toString();
 
         DBSet classes = DBSet.createDBSet(transaction, generateYearClassesKey(yearKey));
 
@@ -45,10 +54,6 @@ public class YearManager extends ObjectManager implements IYearManager {
 
     private String generateYearClassesKey(String yearKey) {
         return yearKey + "_classes";
-    }
-
-    private String generateYearKey(String yearName) {
-        return CoreNamespace.yearNs + "#" + yearName;
     }
 
     @Override

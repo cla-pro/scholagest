@@ -10,7 +10,7 @@ import net.scholagest.managers.ontology.OntologyElement;
 import net.scholagest.namespace.AuthorizationRolesNamespace;
 import net.scholagest.services.IOntologyService;
 import net.scholagest.shiro.AuthorizationHelper;
-import net.scholagest.utils.ConfigurationServiceImpl;
+import net.scholagest.utils.ConfigurationService;
 import net.scholagest.utils.ScholagestProperty;
 import net.scholagest.utils.ScholagestThreadLocal;
 
@@ -33,7 +33,7 @@ public class OntologyService implements IOntologyService {
         OntologyElement result = null;
 
         ITransaction transaction = this.database
-                .getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+                .getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
@@ -53,7 +53,7 @@ public class OntologyService implements IOntologyService {
     public boolean isSubtypeOf(String type, String supertype) throws Exception {
         boolean result = false;
 
-        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
@@ -73,7 +73,7 @@ public class OntologyService implements IOntologyService {
     public Set<String> filterPropertiesWithCorrectDomain(String domain, Set<String> properties) throws Exception {
         Set<String> result = new HashSet<>();
 
-        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
@@ -93,7 +93,7 @@ public class OntologyService implements IOntologyService {
     public Set<String> getPropertiesForType(String type) throws Exception {
         Set<String> result = new HashSet<>();
 
-        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());

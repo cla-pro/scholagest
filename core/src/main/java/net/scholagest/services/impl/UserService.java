@@ -15,7 +15,7 @@ import net.scholagest.namespace.AuthorizationRolesNamespace;
 import net.scholagest.objects.PageObject;
 import net.scholagest.services.IUserService;
 import net.scholagest.shiro.AuthorizationHelper;
-import net.scholagest.utils.ConfigurationServiceImpl;
+import net.scholagest.utils.ConfigurationService;
 import net.scholagest.utils.ScholagestProperty;
 import net.scholagest.utils.ScholagestThreadLocal;
 
@@ -40,7 +40,7 @@ public class UserService implements IUserService {
 
     @Override
     public List<String> getVisibleModules(String userKey) throws Exception {
-        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
 
         List<String> modules = Collections.emptyList();
@@ -80,7 +80,7 @@ public class UserService implements IUserService {
 
     @Override
     public Subject authenticateWithUsername(String username, String password) throws Exception {
-        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
 
         Subject subject = null;
@@ -97,7 +97,7 @@ public class UserService implements IUserService {
 
     @Override
     public Subject authenticateWithToken(String token) throws Exception {
-        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
 
         Subject subject = null;
@@ -114,7 +114,8 @@ public class UserService implements IUserService {
 
     @Override
     public String getTeacherKeyForToken(String token) throws Exception {
-        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ScholagestThreadLocal.setTransaction(transaction);
 
         String teacherKey = null;
         try {
@@ -130,7 +131,8 @@ public class UserService implements IUserService {
 
     @Override
     public void setPassword(String teacherKey, String newPassword) throws Exception {
-        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ScholagestThreadLocal.setTransaction(transaction);
 
         try {
             authorizationHelper.checkAuthorization(Arrays.<String> asList(), Arrays.asList(teacherKey));
@@ -144,8 +146,25 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public void resetPassword(String teacherKey) throws Exception {
+        ITransaction transaction = database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ScholagestThreadLocal.setTransaction(transaction);
+
+        try {
+            authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAdminRole());
+
+            userBusinessComponent.resetPassword(teacherKey);
+            transaction.commit();
+        } catch (Exception e) {
+            transaction.rollback();
+            throw e;
+        }
+    }
+
+    @Override
     public void logout(String token) throws Exception {
-        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ScholagestThreadLocal.setTransaction(transaction);
 
         try {
             userBusinessComponent.logout(token);

@@ -1,4 +1,4 @@
-<div id="menu-element-years" data-dojo-type="dijit.layout.ContentPane" title="Volée">
+<div id="menu-element-years" data-dojo-type="dijit.layout.ContentPane" title="Vol&eacute;e">
     <script type="text/javascript">
         dojo.ready(function() {
             var tabs = dijit.byId("tabMenu");
@@ -8,24 +8,34 @@
                     loadYears();
                 }
             });
+            
+            dijit.byId("newClassDialog").on("hide", function() {
+                resetDialogDiv(dijit.byId("newClassDialog"));
+            });
+            dijit.byId("startYearDialog").on("hide", function() {
+                resetDialogDiv(dijit.byId("startYearDialog"));
+            });
+//             dijit.byId("renameYearDialog").on("hide", function() {
+//                 resetDialogDiv(dijit.byId("renameYearDialog"));
+//             });
         });
     </script>
-    <div id="startYearDialog" data-dojo-type="dijit.Dialog" title="Démarrer une année" style="width: 300px">
+    <div id="startYearDialog" data-dojo-type="dijit.Dialog" title="D&eacute;marrer une ann&eacute;e" style="width: 300px">
         <table style="width: 100%">
             <tr>
-                <td colspan="2" style="width: 100%">Nom de l'année</td>
+                <td colspan="2" style="width: 100%">Nom de l'ann&eacute;e</td>
             </tr><tr>
                 <td colspan="2"><input type="text" id="txtNewYearName" style="width: 100%"></input></td>
             </tr><tr>
                 <td align="center"><button onclick="startYear('startYearDialog', 'txtNewYearName')">Ok</button></td>
-                <td align="center"><button>Annuler</button></td>
+                <td align="center"><button onclick="dijit.byId('startYearDialog').onCancel();">Annuler</button></td>
             </tr>
         </table>
     </div>
-<!--     <div id="renameYearDialog" data-dojo-type="dijit.Dialog" title="Renommer l'année en cours" style="width: 300px"> -->
+<!--     <div id="renameYearDialog" data-dojo-type="dijit.Dialog" title="Renommer l'ann&eacute;e en cours" style="width: 300px"> -->
 <!--         <table style="width: 100%"> -->
 <!--             <tr> -->
-<!--                 <td colspan="2" style="width: 100%">Nom de l'année</td> -->
+<!--                 <td colspan="2" style="width: 100%">Nom de l'ann&eacute;e</td> -->
 <!--             </tr><tr> -->
 <!--                 <td colspan="2"><input type="text" style="width: 100%"></input></td> -->
 <!--             </tr><tr> -->
@@ -45,19 +55,13 @@
         function showRenameYearDialog() {
             dijit.byId("renameYearDialog").show();
         }
-        function createClassAndCloseDialog(closeId, txtNewClassNameId) {
-            var yearKey = dijit.byId(closeId).currentYearKey;
-            var className = dojo.byId(txtNewClassNameId).value;
-            dijit.byId(closeId).hide();
-            createClass(yearKey, className);
-        }
     </script>
     <table style="width: 100%; height: 100%">
         <tr>
             <td colspan="2" align="center">
-                <button id='btnStartYear' onclick="showStartYearDialog();" disabled="disabled">Démarrer une nouvelle année</button>
-                <button id='btnStopYear' onclick="askConfirmStopYear();" disabled="disabled">Clôturer l'année</button>
-                <button id='btnRenameYear' onclick="showRenameYearDialog();" disabled="disabled" style="visibility: hidden">Renommer l'année en cours</button>
+                <button id='btnStartYear' onclick="showStartYearDialog();" disabled="disabled">D&eacute;marrer une nouvelle ann&eacute;e</button>
+                <button id='btnStopYear' onclick="askConfirmStopYear();" disabled="disabled">Cl&ocirc;turer l'ann&eacute;e</button>
+                <button id='btnRenameYear' onclick="showRenameYearDialog();" disabled="disabled" style="visibility: hidden">Renommer l'ann&eacute;e en cours</button>
             </td>
         </tr>
         <tr>
@@ -71,52 +75,16 @@
                             <tr>
                                 <td>Nom</td><td><input type="text" id="txtNewClassName" style="width:200px"></input></td>
                             </tr>
-<!--                             <tr> -->
-<!--                                 <td>Degré</td><td><select name="thelist1" style="width: 100%"> -->
-<!--                                       <option>1ère</option> -->
-<!--                                       <option>2ème</option> -->
-<!--                                       <option>3ème</option> -->
-<!--                                       <option>4ème</option> -->
-<!--                                       <option>5ème</option> -->
-<!--                                       <option>6ème</option> -->
-<!--                                       <option>7ème</option> -->
-<!--                                       <option>8ème</option> -->
-<!--                                     </select></td> -->
-<!--                             </tr> -->
-<!--                             <tr> -->
-<!--                                 <td>Type</td><td><select name="thelist2" style="width: 100%"> -->
-<!--                                       <option>Normal</option> -->
-<!--                                       <option>Acceuil</option> -->
-<!--                                     </select></td> -->
-<!--                             </tr> -->
-<!--                             <tr> -->
-<!--                                 <td>Reprendre</td><td><select name="thelist3" style="width: 100%"> -->
-<!--                                     <option>Aucun</option> -->
-<!--                                     <option>Classe 1P A</option> -->
-<!--                                     <option>Classe 1P B</option> -->
-<!--                                 </select></td> -->
-<!--                             </tr> -->
-<!--                             <tr> -->
-<!--                                 <td># de partie</td><td><select name="thelist1" style="width: 100%"> -->
-<!--                                       <option>1</option> -->
-<!--                                       <option>2</option> -->
-<!--                                       <option>3</option> -->
-<!--                                       <option>4</option> -->
-<!--                                       <option>5</option> -->
-<!--                                     </select></td> -->
-<!--                             </tr> -->
-<!--                             <tr> -->
-<!--                                 <td>Nom de partie</td><td><input type="text" style="width: 100%" value="Trimestre" /></td> -->
-<!--                             </tr> -->
                             <tr>
-                                <td align="center"><button onclick="createClassAndCloseDialog('newClassDialog', 'txtNewClassName')">Ok</button></td><td align="center"><button>Annuler</button></td>
+                                <td align="center"><button onclick="createClassAndCloseDialog('newClassDialog', 'txtNewClassName')">Ok</button></td>
+                                <td align="center"><button onclick="dijit.byId('newClassDialog').onCancel();">Annuler</button></td>
                             </tr>
                         </table>
                     </div>
 <!--                     <div id="removeClassDialog" data-dojo-type="dijit.Dialog" title="Supprimer une classe" style="width: 300px"> -->
 <!--                         <table style="width: 100%"> -->
 <!--                             <tr> -->
-<!--                                 <td colspan="2">Classe à supprimer</td> -->
+<!--                                 <td colspan="2">Classe ÃƒÆ’Ã‚Â  supprimer</td> -->
 <!--                             </tr><tr> -->
 <!--                                 <td colspan="2"><select name="thelist1" style="width: 100%"> -->
 <!--                                       <option>Classe 1P A</option> -->
@@ -157,12 +125,12 @@
             </td>
             <td valign="top" style="width: 80%">
                 <div id="class-data" class="class-info">
-                    <div id="addRemoveStudents" style="width:350px" data-dojo-type="dijit.Dialog" title="Ajouter/supprimer des élèves">
+                    <div id="addRemoveStudents" style="width:350px" data-dojo-type="dijit.Dialog" title="Ajouter/supprimer des &eacute;l&egrave;ves">
                         <table style="width: 100%">
                             <tr>
                                 <td colspan="3"><h2>Class 2P A</h2></td>
                             </tr><tr>
-                                <td>Non-assignés</td><td></td><td>Assignés</td>
+                                <td>Non-assign&eacute;s</td><td></td><td>Assign&eacute;s</td>
                             </tr><tr>
                                 <td><div style="border: 1px solid black; height: 200px"><div id="free-students"></div></div></td>
                                 <td>
@@ -184,7 +152,7 @@
                             <tr>
                                 <td colspan="3"><h2>Class 2P A</h2></td>
                             </tr><tr>
-                                <td>Non-assignés</td><td></td><td>Assignés</td>
+                                <td>Non-assign&eacute;s</td><td></td><td>Assign&eacute;s</td>
                             </tr><tr>
                                 <td><div style="border: 1px solid black; height: 100%" id="free-teachers"></div></td>
                                 <td>

@@ -1,8 +1,11 @@
+var gradePageYearKey = null;
+var gradePageClassKey = null;
+var selectedBranchKey = null;
+
 function selectBranchWrapper(classKey, yearKey) {
 	return function (key) {
-		return function(e) {
-			getBranchInfo(key, ["pBranchName", "pBranchPeriods", "pBranchType"], displayBranchWrapper(classKey, yearKey));
-		};
+		selectedBranchKey = key;
+		getBranchInfo(key, ["pBranchName", "pBranchPeriods", "pBranchType"], displayBranchWrapper(classKey, yearKey));
 	};
 };
 
@@ -16,19 +19,51 @@ function displayBranchWrapper(classKey, yearKey) {
 };
 
 function loadBranches() {
-	var classKey = "http://scholagest.net/class/2012-2013#1P A";
-	var yearKey = "http://scholagest.net/year#2012-2013";
-	
-	callGetClassInfo(classKey, "pClassBranches", function(info) {
-		var parameters = { branchKeys: info.properties["pClassBranches"].value, properties: ["pBranchName"] };
-		sendGetRequest("../branch/getPropertiesForList", parameters, function(branchInfo) {
-			clearDOM("branch-search-list");
-
-			var base = dojo.byId("branch-search-list");
-			createHtmlListFromList(branchInfo, "branch-search-list", base,
-					buildListItemTextClosure(["pBranchName"]), selectBranchWrapper(classKey, yearKey));
-		});
+	var base = dojo.byId("branch-search-list");
+	sendGetRequest("../year/getCurrent", {}, function(yearInfo) {
+		if (yearInfo == null) {
+			base.innerHTML = 'Aucune classe assignée';
+			dojo.byId('btnNewBranch').style.visibility = 'hidden';
+		} else {
+			dojo.byId('btnNewBranch').style.visibility = '';
+			gradePageYearKey = yearInfo.key;
+			
+			sendGetRequest("../teacher/getClass", { yearKey: gradePageYearKey, teacherKey: myOwnTeacherKey }, function(classInfo) {
+				var classesList = classInfo.properties["pTeacherClasses"].value;
+				
+				clearDOM("branch-search-list");
+				if (classesList.length > 0) {
+					gradePageClassKey = classesList[0];
+					callGetClassInfo(gradePageClassKey, "pClassBranches", function(info) {
+						var parameters = { branchKeys: info.properties["pClassBranches"].value, properties: ["pBranchName"] };
+						sendGetRequest("../branch/getPropertiesForList", parameters, function(branchInfo) {
+							createHtmlListFromList(branchInfo, "branch-search-list", base,
+									buildListItemTextClosure(["pBranchName"]), selectBranchWrapper(gradePageClassKey, gradePageYearKey), selectedBranchKey);
+						});
+					});
+				} else {
+					dojo.byId('btnNewBranch').style.visibility = 'hidden';
+					base.innerHTML = 'Aucune classe assignée';
+				}
+			});
+		}
 	});
+	
+	
+	
+//	var classKey = "http://scholagest.net/class/2012-2013#1P A";
+//	var yearKey = "http://scholagest.net/year#2012-2013";
+//	
+//	callGetClassInfo(classKey, "pClassBranches", function(info) {
+//		var parameters = { branchKeys: info.properties["pClassBranches"].value, properties: ["pBranchName"] };
+//		sendGetRequest("../branch/getPropertiesForList", parameters, function(branchInfo) {
+//			clearDOM("branch-search-list");
+//
+//			var base = dojo.byId("branch-search-list");
+//			createHtmlListFromList(branchInfo, "branch-search-list", base,
+//					buildListItemTextClosure(["pBranchName"]), selectBranchWrapper(classKey, yearKey));
+//		});
+//	});
 };
 
 function getBranchInfo(branchKey, properties, callback) {
@@ -44,16 +79,16 @@ function createBranch(closeId, txtNameId, gradesFlagChkId) {
 		branchType = "ALPHA_NUMERICAL";
 	}
 	
-
-	var classKey = "http://scholagest.net/class/2012-2013#1P A";
-	
 	sendGetRequest("../branch/create", {
-		classKey: classKey,
+		classKey: gradePageClassKey,
 		keys: ['pBranchName', 'pBranchType'],
 		values: [branchName, branchType]
-	}, function(info) { loadBranches(); });
-	
-	if (closeId != null) {
-		dijit.byId(closeId).hide();
-	}
+	}, function(info) {
+		dijit.byId(closeId).hide(); 
+		loadBranches();
+	}, function(errorJson) {
+		if (errorJson.errorCode == errorCodesMap.OBJECT_ALREADY_EXISTS) {
+			alert('Une branche avec le même nom existe déjà dans cette classe');
+		}
+	});
 };

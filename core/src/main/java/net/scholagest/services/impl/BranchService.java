@@ -17,8 +17,9 @@ import net.scholagest.objects.BranchObject;
 import net.scholagest.services.IBranchService;
 import net.scholagest.services.kdom.DBToKdomConverter;
 import net.scholagest.shiro.AuthorizationHelper;
-import net.scholagest.utils.ConfigurationServiceImpl;
+import net.scholagest.utils.ConfigurationService;
 import net.scholagest.utils.ScholagestProperty;
+import net.scholagest.utils.ScholagestThreadLocal;
 
 import com.google.inject.Inject;
 
@@ -38,7 +39,8 @@ public class BranchService implements IBranchService {
     public BaseObject createBranch(String classKey, Map<String, Object> branchProperties) throws Exception {
         BaseObject branch = null;
 
-        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ScholagestThreadLocal.setTransaction(transaction);
         try {
             authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(classKey));
 
@@ -58,7 +60,8 @@ public class BranchService implements IBranchService {
     public BaseObject getBranchProperties(String branchKey, Set<String> propertiesName) throws Exception {
         BaseObject branchInfo = null;
 
-        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ScholagestThreadLocal.setTransaction(transaction);
         try {
             String classKey = getClassKey(branchKey);
             if (classKey == null) {
@@ -81,7 +84,8 @@ public class BranchService implements IBranchService {
 
     @Override
     public void setBranchProperties(String branchKey, Map<String, Object> properties) throws Exception {
-        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ScholagestThreadLocal.setTransaction(transaction);
         try {
             String classKey = getClassKey(branchKey);
             if (classKey == null) {
@@ -103,7 +107,8 @@ public class BranchService implements IBranchService {
     public Map<String, Map<String, BaseObject>> getBranchMeans(String branchKey, Set<String> studentKeys) throws Exception {
         Map<String, Map<String, BaseObject>> means = new HashMap<>();
 
-        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ScholagestThreadLocal.setTransaction(transaction);
         try {
             String classKey = getClassKey(branchKey);
             if (classKey == null) {

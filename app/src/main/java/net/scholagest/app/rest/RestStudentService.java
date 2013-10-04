@@ -20,6 +20,7 @@ import net.scholagest.app.rest.object.RestStudentGradeList;
 import net.scholagest.app.rest.object.RestStudentGradeRequest;
 import net.scholagest.app.utils.JerseyHelper;
 import net.scholagest.exception.ScholagestException;
+import net.scholagest.exception.ScholagestRuntimeException;
 import net.scholagest.managers.ontology.OntologyElement;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
@@ -69,6 +70,8 @@ public class RestStudentService extends AbstractService {
             return handleShiroException(e);
         } catch (ScholagestException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
+        } catch (ScholagestRuntimeException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode:0, message:'" + e.getMessage() + "'}";
@@ -92,6 +95,8 @@ public class RestStudentService extends AbstractService {
         } catch (ShiroException e) {
             return handleShiroException(e);
         } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
+        } catch (ScholagestRuntimeException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
@@ -126,6 +131,8 @@ public class RestStudentService extends AbstractService {
             return handleShiroException(e);
         } catch (ScholagestException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
+        } catch (ScholagestRuntimeException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode:0, message:'" + e.getMessage() + "'}";
@@ -156,6 +163,8 @@ public class RestStudentService extends AbstractService {
         } catch (ShiroException e) {
             return handleShiroException(e);
         } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
+        } catch (ScholagestRuntimeException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
@@ -192,6 +201,8 @@ public class RestStudentService extends AbstractService {
             return handleShiroException(e);
         } catch (ScholagestException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
+        } catch (ScholagestRuntimeException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode:0, message:'" + e.getMessage() + "'}";
@@ -216,6 +227,8 @@ public class RestStudentService extends AbstractService {
         } catch (ShiroException e) {
             return handleShiroException(e);
         } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
+        } catch (ScholagestRuntimeException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
@@ -253,6 +266,8 @@ public class RestStudentService extends AbstractService {
             return handleShiroException(e);
         } catch (ScholagestException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
+        } catch (ScholagestRuntimeException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode:0, message:'" + e.getMessage() + "'}";
@@ -277,6 +292,8 @@ public class RestStudentService extends AbstractService {
         } catch (ShiroException e) {
             return handleShiroException(e);
         } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
+        } catch (ScholagestRuntimeException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
@@ -370,6 +387,8 @@ public class RestStudentService extends AbstractService {
         } catch (ShiroException e) {
             return handleShiroException(e);
         } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
+        } catch (ScholagestRuntimeException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();

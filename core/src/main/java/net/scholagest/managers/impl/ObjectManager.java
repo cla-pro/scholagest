@@ -1,6 +1,10 @@
 package net.scholagest.managers.impl;
 
+import java.util.Set;
+
 import net.scholagest.database.ITransaction;
+import net.scholagest.exception.ScholagestExceptionErrorCode;
+import net.scholagest.exception.ScholagestRuntimeException;
 import net.scholagest.managers.IOntologyManager;
 import net.scholagest.managers.ontology.OntologyElement;
 import net.scholagest.managers.ontology.RDF;
@@ -23,6 +27,8 @@ public class ObjectManager {
 
     protected void persistObject(ITransaction transaction, BaseObject object) {
         startManagingObject(transaction, object);
+        setDefaultValuesOrNullOnObjectsProperties(transaction, object);
+        checkRequiredFields(transaction, object);
         object.flushAllProperties();
     }
 
@@ -138,4 +144,40 @@ public class ObjectManager {
     // }
     // }
     // }
+
+    private void setDefaultValuesOrNullOnObjectsProperties(ITransaction transaction, BaseObject object) {
+        Set<String> ontologyProperties = ontologyManager.getPropertiesForType(object.getType());
+
+        for (String ontologyProperty : ontologyProperties) {
+            if (!RDF.type.equals(ontologyProperty) && object.getProperty(ontologyProperty) == null) {
+                OntologyElement element = ontologyManager.getElementWithName(ontologyProperty);
+                String value = element.getAttributeWithName(CoreNamespace.pOntologyPropertyDefaultValue);
+                if (value != null) {
+                    object.putProperty(ontologyProperty, value);
+                }
+            }
+        }
+    }
+
+    private void checkRequiredFields(ITransaction transaction, BaseObject object) {
+        Set<String> ontologyProperties = ontologyManager.getPropertiesForType(object.getType());
+
+        for (String ontologyProperty : ontologyProperties) {
+            OntologyElement element = ontologyManager.getElementWithName(ontologyProperty);
+            boolean isRequired = element.getAttributeWithName(CoreNamespace.pOntologyPropertyRequired) != null;
+            Object value = object.getProperty(ontologyProperty);
+            if (isRequired && !isValueSet(value)) {
+                throw new ScholagestRuntimeException(ScholagestExceptionErrorCode.MISSING_REQUIRED_FIELD, "The field " + ontologyProperty
+                        + " is required but not set");
+            }
+        }
+    }
+
+    private boolean isValueSet(Object value) {
+        if (value == null || "".equals(value)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 }

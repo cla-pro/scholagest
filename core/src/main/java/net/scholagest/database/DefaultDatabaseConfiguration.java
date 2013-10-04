@@ -3,6 +3,8 @@ package net.scholagest.database;
 import me.prettyprint.cassandra.service.CassandraHostConfigurator;
 import me.prettyprint.hector.api.ConsistencyLevelPolicy;
 import me.prettyprint.hector.api.factory.HFactory;
+import net.scholagest.utils.ConfigurationService;
+import net.scholagest.utils.ScholagestProperty;
 
 import com.google.inject.Inject;
 
@@ -21,8 +23,11 @@ public class DefaultDatabaseConfiguration implements IDatabaseConfiguration {
         CassandraHostConfigurator hostConfigurator = new CassandraHostConfigurator();
 
         // hostConfigurator.setHosts("192.168.2.113:9160");
-        hostConfigurator.setHosts("localhost:9160");
+        // hostConfigurator.setHosts("localhost:9160");
         // hostConfigurator.setHosts("scholagest-demo:9160");
+
+        String hosts = ConfigurationService.getInstance().getStringProperty(ScholagestProperty.CASSANDRA_HOSTS);
+        hostConfigurator.setHosts(hosts);
 
         return hostConfigurator;
     }

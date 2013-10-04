@@ -11,4 +11,6 @@ public interface IBranchManager {
     public void setBranchProperties(String branchKey, Map<String, Object> branchProperties);
 
     public BranchObject getBranchProperties(String branchKey, Set<String> properties);
+
+    public boolean checkWhetherBranchExistsInClass(String branchName, String className, String yearName);
 }

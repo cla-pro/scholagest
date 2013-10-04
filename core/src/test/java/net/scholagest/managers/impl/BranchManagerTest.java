@@ -1,6 +1,8 @@
 package net.scholagest.managers.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
@@ -29,22 +31,34 @@ public class BranchManagerTest extends AbstractTestWithTransaction {
     private static final String BRANCH_NAME = "Math";
     private static final String YEAR_NAME = "2012-2013";
     private static final String CLASS_NAME = "1P A";
-    private static final String BRANCH_KEY = CoreNamespace.branchNs + "/" + YEAR_NAME + "/" + CLASS_NAME + "#" + BRANCH_NAME;
+    private static final String BRANCH_KEY = CoreNamespace.branchNs + "#cbe012bd-e40b-4524-95bb-084bda2f570a";
+    private static final String BRANCHES_BASE_PROPERTY_NAME = YEAR_NAME + "/" + CLASS_NAME + "/" + BRANCH_NAME;
     private static final String CLASS_KEY = UUID.randomUUID().toString();
 
     private IBranchManager branchManager = new BranchManager(new OntologyManager());
 
     @Test
+    public void testCheckWhetherBranchExistsInClass() {
+        super.fillTransactionWithDataSets(new String[] { "Branch" });
+
+        assertTrue(branchManager.checkWhetherBranchExistsInClass(BRANCH_NAME, CLASS_NAME, YEAR_NAME));
+        assertFalse(branchManager.checkWhetherBranchExistsInClass("Histoire", CLASS_NAME, YEAR_NAME));
+        assertFalse(branchManager.checkWhetherBranchExistsInClass(BRANCH_NAME, "2P B", YEAR_NAME));
+        assertFalse(branchManager.checkWhetherBranchExistsInClass(BRANCH_NAME, CLASS_NAME, "2011-2012"));
+    }
+
+    @Test
     public void testCreateNewBranch() throws Exception {
         BranchObject branch = branchManager.createBranch(BRANCH_NAME, CLASS_KEY, CLASS_NAME, YEAR_NAME, createBranchProperties());
 
-        assertEquals(BRANCH_KEY, branch.getKey());
         assertEquals(CoreNamespace.tBranch, branch.getType());
         verify(transaction).insert(eq(branch.getKey()), eq(RDF.type), eq(CoreNamespace.tBranch), anyString());
         // Check default branch type
         verify(transaction).insert(eq(branch.getKey()), eq(CoreNamespace.pBranchType), eq(BranchType.NUMERICAL.name()), anyString());
         verify(transaction).insert(eq(branch.getKey()), eq(CoreNamespace.pBranchClass), eq(CLASS_KEY), anyString());
         verify(transaction).insert(eq(branch.getKey()), eq(CoreNamespace.pBranchPeriods), anyString(), anyString());
+
+        verify(transaction).insert(eq(CoreNamespace.branchesBase), eq(BRANCHES_BASE_PROPERTY_NAME), eq(branch.getKey()), anyString());
     }
 
     private HashMap<String, Object> createBranchProperties() {

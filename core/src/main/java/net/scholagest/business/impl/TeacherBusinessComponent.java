@@ -27,11 +27,8 @@ public class TeacherBusinessComponent implements ITeacherBusinessComponent {
 
     @Override
     public TeacherObject createTeacher(String teacherType, Map<String, Object> teacherProperties) {
-        TeacherObject teacherObject = teacherManager.createTeacher();
-
-        if (teacherProperties != null) {
-            teacherManager.setTeacherProperties(teacherObject.getKey(), teacherProperties);
-        }
+        teacherProperties.put("pTeacherType", teacherType);
+        TeacherObject teacherObject = teacherManager.createTeacher(teacherProperties);
 
         return teacherObject;
     }

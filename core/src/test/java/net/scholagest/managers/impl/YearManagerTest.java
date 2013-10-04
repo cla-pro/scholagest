@@ -1,7 +1,9 @@
 package net.scholagest.managers.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.spy;
 
@@ -28,11 +30,19 @@ public class YearManagerTest extends AbstractTestWithTransaction {
     private IYearManager yearManager = spy(new YearManager(new OntologyManager()));
 
     @Test
+    public void testCheckWhetherYearExists() {
+        super.fillTransactionWithDataSets(new String[] { "Year" });
+
+        assertTrue(yearManager.checkWhetherYearExists(YEAR_NAME));
+        assertFalse(yearManager.checkWhetherYearExists("2011-2012"));
+    }
+
+    @Test
     public void testCreateNewYear() throws Exception {
         BaseObject year = yearManager.createNewYear(YEAR_NAME);
 
+        assertEquals(CoreNamespace.tYear, year.getType());
         Mockito.verify(transaction).insert(Mockito.anyString(), Mockito.eq(CoreNamespace.pYearName), Mockito.eq(YEAR_NAME), Mockito.anyString());
-        assertEquals(YEAR_KEY, year.getKey());
     }
 
     @Test
