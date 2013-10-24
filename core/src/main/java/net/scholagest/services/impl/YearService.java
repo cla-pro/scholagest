@@ -1,5 +1,7 @@
 package net.scholagest.services.impl;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import net.scholagest.business.IOntologyBusinessComponent;
@@ -7,6 +9,7 @@ import net.scholagest.business.IYearBusinessComponent;
 import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
 import net.scholagest.namespace.AuthorizationRolesNamespace;
+import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IYearService;
 import net.scholagest.services.kdom.DBToKdomConverter;
@@ -33,8 +36,7 @@ public class YearService implements IYearService {
     public BaseObject startYear(String yearName) throws Exception {
         BaseObject year = null;
 
-        ITransaction transaction = this.database
-                .getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = this.database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAdminRole());
@@ -53,8 +55,7 @@ public class YearService implements IYearService {
 
     @Override
     public void stopYear() throws Exception {
-        ITransaction transaction = this.database
-                .getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = this.database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAdminRole());
@@ -72,8 +73,7 @@ public class YearService implements IYearService {
     public BaseObject getCurrentYearKey() throws Exception {
         BaseObject currentYear = null;
 
-        ITransaction transaction = this.database
-                .getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = this.database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
@@ -109,5 +109,23 @@ public class YearService implements IYearService {
         }
 
         return years;
+    }
+
+    @Override
+    public void renameYear(String yearKey, String newYearName) throws Exception {
+        ITransaction transaction = database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ScholagestThreadLocal.setTransaction(transaction);
+        try {
+            authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAdminRole());
+
+            Map<String, Object> yearProperties = new HashMap<>();
+            yearProperties.put(CoreNamespace.pYearName, newYearName);
+            yearBusinessComponent.setYearProperties(yearKey, yearProperties);
+
+            transaction.commit();
+        } catch (Exception e) {
+            transaction.rollback();
+            throw e;
+        }
     }
 }

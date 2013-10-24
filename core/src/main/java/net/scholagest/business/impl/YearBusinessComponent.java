@@ -1,6 +1,7 @@
 package net.scholagest.business.impl;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import net.scholagest.business.IYearBusinessComponent;
@@ -53,5 +54,10 @@ public class YearBusinessComponent implements IYearBusinessComponent {
         }
 
         return years;
+    }
+
+    @Override
+    public void setYearProperties(String yearKey, Map<String, Object> yearProperties) {
+        yearManager.setYearProperties(yearKey, yearProperties);
     }
 }

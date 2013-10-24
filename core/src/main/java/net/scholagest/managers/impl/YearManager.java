@@ -1,6 +1,7 @@
 package net.scholagest.managers.impl;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -121,5 +122,13 @@ public class YearManager extends ObjectManager implements IYearManager {
         String setKey = generateYearClassesKey(yearKey);
         DBSet classesSet = new DBSet(transaction, setKey);
         classesSet.add(classKey);
+    }
+
+    @Override
+    public void setYearProperties(String yearKey, Map<String, Object> yearProperties) {
+        ITransaction transaction = ScholagestThreadLocal.getTransaction();
+
+        BaseObject yearObject = new BaseObject(transaction, new ObjectHelper(getOntologyManager()), yearKey);
+        yearObject.putAllProperties(yearProperties);
     }
 }

@@ -9,29 +9,29 @@
 				}
 			});
 
-	        // dijit.byId("removeExamDialog").on("hide", function() {
-	        //          resetDialogDiv(dijit.byId("removeExamDialog"));
-	        // });
-	        // dijit.byId("setExamDialog").on("hide", function() {
-	        //          resetDialogDiv(dijit.byId("setExamDialog"));
-	        // });
-	        dijit.byId("newBranchDialog").on("hide", function() {
-	        	resetDialogDiv(dijit.byId("newBranchDialog"));
-	        });
-	        dijit.byId("newExamDialog").on("hide", function() {
-	        	resetDialogDiv(dijit.byId("newExamDialog"));
-	        });
-	        // dijit.byId("removeBranchDialog").on("hide", function() {
-	        //          resetDialogDiv(dijit.byId("removeBranchDialog"));
-	        // });
+			// dijit.byId("removeExamDialog").on("hide", function() {
+			//          resetDialogDiv(dijit.byId("removeExamDialog"));
+			// });
+			// dijit.byId("setExamDialog").on("hide", function() {
+			//          resetDialogDiv(dijit.byId("setExamDialog"));
+			// });
+			dijit.byId("newBranchDialog").on("hide", function() {
+				resetDialogDiv(dijit.byId("newBranchDialog"));
+			});
+			dijit.byId("newExamDialog").on("hide", function() {
+				resetDialogDiv(dijit.byId("newExamDialog"));
+			});
+			// dijit.byId("removeBranchDialog").on("hide", function() {
+			//          resetDialogDiv(dijit.byId("removeBranchDialog"));
+			// });
 		});
 	</script>
 	<table style="width: 100%; height: 100%">
 		<tr>
 			<td valign="top" style="width: 20%; height: 100%">
 				<div id="branch-search" class="vertical-search">
-					<button class="new-class" id="btnNewBranch" onclick="createNewBranch();">Nouvelle
-						branche</button>
+					<button class="new-class" id="btnNewBranch"
+						onclick="createNewBranch();">Nouvelle branche</button>
 					<!-- 					<button type="text" class="remove-class" onclick="deleteBranch();">Supprimer une branche</button> -->
 					<hr />
 					<div id="branch-search-list" class="search-list"></div>
@@ -42,15 +42,20 @@
 					<div id="newExamDialog" data-dojo-type="dijit.Dialog"
 						title="Nouvel examen">
 						<table style="width: 100%">
+                            <tr>
+                                <td colspan="2"><label id="lblNewExamMissingFields">Des champs obligatoires (*) n'ont pas &ecute;t&ecute; rempli</label></td>
+                            </tr>
 							<tr>
-								<td>Nom de l'examen</td>
+								<td><label id="lblNewExamName">Nom de l'examen</label></td>
 								<td><input type="text" id="txtNewExamName"
-									propertyName="pExamName" style="width: 100%" /></td>
+									propertyName="pExamName" required="required"
+									labelNodeId="lblNewExamName" style="width: 100%" /></td>
 							</tr>
 							<tr>
 								<td>Coefficient</td>
 								<td><input type="text" id="txtNewExamCoeff"
-									propertyName="pExamCoeff" defaultValue="1" style="width: 100%" value="1" /></td>
+									propertyName="pExamCoeff" defaultValue="1" style="width: 100%"
+									value="1" /></td>
 							</tr>
 							<tr>
 								<td align="center"><button
@@ -93,10 +98,12 @@
 						title="Nouvelle branche">
 						<table style="width: 100%">
 							<tr>
-								<td colspan="2">Nom de la branche</td>
+								<td colspan="2"><label id="lblNewBranchName">Nom de
+										la branche</label></td>
 							</tr>
 							<tr>
 								<td colspan="2"><input type="text" id="txtNewBranchName"
+									required="required" labelNodeId="lblNewBranchName"
 									style="width: 100%" /></td>
 							</tr>
 							<tr>

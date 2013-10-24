@@ -1,6 +1,10 @@
 var selectedClassKey = null;
 
 function createClassAndCloseDialog(closeId, txtNewClassNameId) {
+	if (checkRequiredFieldsAndMarkAsMissing([txtNewClassNameId])) {
+		return;
+	}
+	
     var yearKey = dijit.byId(closeId).currentYearKey;
     var className = dojo.byId(txtNewClassNameId).value;
     
@@ -144,7 +148,7 @@ function getClassInfo(classKey) {
 		clearDOM(domId);
 		
 		var base = dojo.byId(domId);
-		createInfoHtmlTable(base, info.properties, createListButtonsWrapper(completeAddRemoveStudents, completeAddRemoveTeachers), getListRealInfo);
+		createInfoHtmlTable(base, info.properties, true, createListButtonsWrapper(completeAddRemoveStudents, completeAddRemoveTeachers), getListRealInfo);
 
 		var save = dojo.create("button",
 				{type: "button", onclick:"setClassInfo(\"" + classKey + "\")", innerHTML: "Enregistrer"}, base);
@@ -199,7 +203,7 @@ function createClass(yearKey, className, dialogId) {
 				dijit.byId(dialogId).hide();
 			}, function(errorJson) {
 				if (errorJson.errorCode == errorCodesMap.OBJECT_ALREADY_EXISTS) {
-					alert('Une classe avec le même nom existe déjà dans cette année');
+					displayMessageDialog('Une classe avec le même nom existe déjà dans cette année');
 				}
 			});
 }

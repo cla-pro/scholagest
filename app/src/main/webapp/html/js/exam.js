@@ -1,4 +1,8 @@
 function createExam(closeId, txtIds) {
+	if (checkRequiredFieldsAndMarkAsMissing(txtIds)) {
+		return;
+	}
+	
 	var dialog = dijit.byId(closeId);
 	var yearKey = dialog.yearKey;
 	var classKey = dialog.classKey;
@@ -19,7 +23,7 @@ function createExam(closeId, txtIds) {
 		loadStudents(); 
 	}, function(errorJson) {
 		if (errorJson.errorCode == errorCodesMap.OBJECT_ALREADY_EXISTS) {
-			alert('Un examen avec le même nom existe déjà dans cette période')
+			displayMessageDialog('Un examen avec le même nom existe déjà dans cette période')
 		}
 	});
 };

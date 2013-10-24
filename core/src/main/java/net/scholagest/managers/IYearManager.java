@@ -1,5 +1,6 @@
 package net.scholagest.managers;
 
+import java.util.Map;
 import java.util.Set;
 
 import net.scholagest.objects.BaseObject;
@@ -19,5 +20,7 @@ public interface IYearManager {
 
     public void addClassToYear(String yearKey, String classKey);
 
-    boolean checkWhetherYearExists(String yearName);
+    public boolean checkWhetherYearExists(String yearName);
+
+    public void setYearProperties(String yearKey, Map<String, Object> yearProperties);
 }

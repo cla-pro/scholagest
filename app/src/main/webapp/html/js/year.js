@@ -4,6 +4,9 @@ function loadYears() {
 		if (yearActive && dijit.byId('newClassDialog') != undefined) {
 			dijit.byId('newClassDialog').currentYearKey = info.currentYear.key;
 		}
+		if (yearActive && dijit.byId('renameYearDialog') != undefined) {
+			dijit.byId('renameYearDialog').currentYearKey = info.currentYear.key;
+		}
 		
 		if (typeof window.changeYearsButtonChange == 'function') {
 			changeYearsButtonChange(info.currentYear != null);

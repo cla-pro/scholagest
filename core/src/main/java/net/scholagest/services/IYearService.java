@@ -18,4 +18,6 @@ public interface IYearService {
     public BaseObject getCurrentYearKey() throws Exception;
 
     public Set<BaseObject> getYearsWithProperties(Set<String> properties) throws Exception;
+
+    public void renameYear(String yearKey, String newYearName) throws Exception;
 }

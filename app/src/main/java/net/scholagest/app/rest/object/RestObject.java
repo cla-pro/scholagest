@@ -6,7 +6,7 @@ public class RestObject {
     private String key;
     private String type;
     private Map<String, RestProperty> properties;
-    private boolean writable;
+    private boolean writable = false;
 
     public String getKey() {
         return key;

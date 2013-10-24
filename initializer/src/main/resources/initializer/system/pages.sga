@@ -9,6 +9,7 @@ html_teacher_grade;modules/teacher/teacher-grades.html;teacher
 js_error_code;js/error_code.js;admin,teacher
 js_base;js/base.js;admin,teacher
 js_base_html;js/base-html.js;admin,teacher
+js_base_dialog;js/base-dialog.js;admin,teacher
 js_teacher;js/teacher.js;admin,teacher
 js_student;js/student.js;admin,teacher
 js_exam;js/exam.js;admin,teacher

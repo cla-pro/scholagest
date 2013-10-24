@@ -118,7 +118,7 @@ function saveBranchMeans(tableDom, yearKey, classKey, branchKey, isBranchNumeric
         }
         
         if (hasErrors) {
-            alert('Erreurs dans les notes.');
+        	displayMessageDialog('Erreurs dans les notes.');
         } else {
             sendSaveGradesRequest(yearKey, classKey, branchKey, null, grades, {}, branchMeans);
         }
@@ -273,7 +273,7 @@ function saveGrades(tableDom, yearKey, classKey, branchKey, periodKey, students,
 		}
 		
 		if (hasErrors) {
-			alert('Erreurs dans les notes.');
+			displayMessageDialog('Erreurs dans les notes.');
 		} else {
 			sendSaveGradesRequest(yearKey, classKey, branchKey, periodKey, grades, periodMeans, {});
 		}

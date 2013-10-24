@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<changesets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="file:///d:/programming/eclipse-workspace/scholagest/initializer/src/main/xjb/xsd/changeset.xsd">
+    <changeset filename="change_sets/change_set_0_7_0_to_0_8_0.xml" />
+</changesets>

@@ -6,7 +6,7 @@ function getTeacherInfo(teacherKey) {
 		clearDOM(domId);
 
 		var base = dojo.byId(domId);
-		createInfoHtmlTable(base, info.properties);
+		createInfoHtmlTable(base, info.properties, info.writable);
 		
 		selectedTeacherKey = teacherKey;
 
@@ -24,7 +24,7 @@ function getTeacherInfo(teacherKey) {
 };
 function resetPassword(teacherKey) {
 	if (window.confirm('Etes vous sûr de vouloir réinitialiser le mot de passe?')) {
-		sendPostRequest("../user/resetPassword", { teacherKey : teacherKey }, function(info) { alert("Mot de passe réinitialisé"); });
+		sendPostRequest("../user/resetPassword", { teacherKey : teacherKey }, function(info) { displayMessageDialog("Mot de passe réinitialisé"); });
     }
 };
 function openChangePasswordDialog(teacherKey) {
@@ -33,15 +33,19 @@ function openChangePasswordDialog(teacherKey) {
 	changePasswordDialog.show();
 };
 function saveNewPassword(newPassword, repeatedNewPassword) {
+	if (checkRequiredFieldsAndMarkAsMissing(["txtNewPassword", "txtNewPasswordRepeat"])) {
+		return;
+	}
+	
 	var changePasswordDialog = dijit.byId("changePasswordDialog");
 	var teacherKey = changePasswordDialog.teacherKey;
 
 	if (newPassword != repeatedNewPassword) {
-		alert("Le mot de passe n'a pas été répété correctement");
+		displayMessageDialog("Le mot de passe n'a pas été répété correctement");
 	} else {
 		resetDiv(changePasswordDialog.containerNode);
 		changePasswordDialog.hide();
-		sendPostRequest("../user/setPassword", { teacherKey : teacherKey, password: newPassword }, function(info) { alert("Mot de passe modifié"); });
+		sendPostRequest("../user/setPassword", { teacherKey : teacherKey, password: newPassword }, function(info) { displayMessageDialog("Mot de passe modifié"); });
 	}
 };
 function setTeacherInfo(teacherKey) {
@@ -80,6 +84,10 @@ function getTeachersInfo(teacherList, properties, callback) {
 };
 
 function createTeacher(closeId, teacherTypeSelectId, txtIds) {
+	if (checkRequiredFieldsAndMarkAsMissing(txtIds)) {
+		return;
+	}
+	
 	var keys = [];
 	var values = [];
 	for (var id in txtIds) {

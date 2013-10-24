@@ -7,7 +7,7 @@ import net.scholagest.objects.BaseObject;
 import net.scholagest.objects.StudentObject;
 
 public interface IStudentManager {
-    public StudentObject createStudent();
+    public StudentObject createStudent(Map<String, Object> personalProperties);
 
     public void setPersonalProperties(String studentKey, Map<String, Object> properties);
 

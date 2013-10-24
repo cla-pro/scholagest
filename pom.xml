@@ -55,6 +55,12 @@
             </modules>
         </profile>
         <profile>
+            <id>cassandra</id>
+            <modules>
+                <module>cassandra-explorer</module>
+            </modules>
+        </profile>
+        <profile>
             <id>tester</id>
             <modules>
                 <module>tester</module>

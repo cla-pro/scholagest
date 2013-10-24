@@ -47,11 +47,7 @@ public class StudentBusinessComponent implements IStudentBusinessComponent {
 
     @Override
     public BaseObject createStudent(Map<String, Object> personalProperties) throws Exception {
-        BaseObject student = studentManager.createStudent();
-
-        if (personalProperties != null) {
-            studentManager.setPersonalProperties(student.getKey(), personalProperties);
-        }
+        BaseObject student = studentManager.createStudent(personalProperties);
 
         return student;
     }

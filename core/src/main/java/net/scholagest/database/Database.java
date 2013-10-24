@@ -1,6 +1,10 @@
 package net.scholagest.database;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -13,12 +17,17 @@ import me.prettyprint.cassandra.service.template.ColumnFamilyTemplate;
 import me.prettyprint.cassandra.service.template.ThriftColumnFamilyTemplate;
 import me.prettyprint.hector.api.Cluster;
 import me.prettyprint.hector.api.Keyspace;
+import me.prettyprint.hector.api.beans.ColumnSlice;
 import me.prettyprint.hector.api.beans.HColumn;
+import me.prettyprint.hector.api.beans.OrderedRows;
+import me.prettyprint.hector.api.beans.Row;
 import me.prettyprint.hector.api.ddl.ColumnFamilyDefinition;
 import me.prettyprint.hector.api.ddl.ComparatorType;
 import me.prettyprint.hector.api.ddl.KeyspaceDefinition;
 import me.prettyprint.hector.api.exceptions.HectorException;
 import me.prettyprint.hector.api.factory.HFactory;
+import me.prettyprint.hector.api.query.QueryResult;
+import me.prettyprint.hector.api.query.RangeSlicesQuery;
 import me.prettyprint.hector.api.query.SliceQuery;
 import net.scholagest.database.cache.CacheResult;
 import net.scholagest.database.cache.TransactionCache;
@@ -192,6 +201,115 @@ public class Database implements IDatabase {
             checkAlive();
             transactionCommiter.rollback();
             rolledback = true;
+        }
+
+        @Override
+        public Iterator<DbRow> getAllRows() {
+            final RangeSlicesQuery<String, String, String> rangeSlicesQuery = HFactory
+                    .createRangeSlicesQuery(keyspace, StringSerializer.get(), StringSerializer.get(), StringSerializer.get())
+                    .setColumnFamily(COLUMN_FAMILY_NAME).setRange(null, null, false, 100);
+
+            return new Iterator<DbRow>() {
+                private Iterator<DbRow> currentIterator = null;
+                private String lastReturnedKey = null;
+
+                @Override
+                public boolean hasNext() {
+                    pickNextIterator();
+                    return currentIterator.hasNext();
+                }
+
+                @Override
+                public DbRow next() {
+                    pickNextIterator();
+
+                    DbRow next = currentIterator.next();
+                    lastReturnedKey = next.getKey();
+                    return next;
+                }
+
+                private void pickNextIterator() {
+                    if (currentIterator == null || !currentIterator.hasNext()) {
+                        Iterator<DbRow> nextIterator = getRowsFromKey(rangeSlicesQuery, lastReturnedKey, 100);
+                        currentIterator = nextIterator;
+                    }
+                }
+
+                @Override
+                public void remove() {
+
+                }
+            };
+        }
+
+        private Iterator<DbRow> getRowsFromKey(RangeSlicesQuery<String, String, String> rangeSlicesQuery, String startKey, int rowCount) {
+            int effectiveRowCount = getEffectivRowCount(rowCount, startKey);
+
+            rangeSlicesQuery.setKeys(startKey, null);
+            rangeSlicesQuery.setRowCount(effectiveRowCount);
+
+            QueryResult<OrderedRows<String, String, String>> result = rangeSlicesQuery.execute();
+            OrderedRows<String, String, String> rows = result.get();
+            Iterator<Row<String, String, String>> rowsIterator = rows.iterator();
+
+            Iterator<DbRow> extractedRows = extractRows(rowsIterator, startKey);
+            return extractedRows;
+
+            // we'll skip this first one, since it is the same as the last one
+            // from previous time we executed
+            // if (startKey != null && rowsIterator != null) {
+            // rowsIterator.next();
+            // }
+            //
+            // while (rowsIterator.hasNext()) {
+            // Row<UUID, String, Long> row = rowsIterator.next();
+            // lastKey = row.getKey();
+            //
+            // if (row.getColumnSlice().getColumns().isEmpty()) {
+            // continue;
+            // }
+            //
+            // System.out.println(row);
+            // }
+        }
+
+        private int getEffectivRowCount(int rowCount, String startKey) {
+            if (startKey == null) {
+                return rowCount;
+            } else {
+                return rowCount + 1;
+            }
+        }
+
+        private Iterator<DbRow> extractRows(Iterator<Row<String, String, String>> rowsIterator, String keyToIgnore) {
+            List<DbRow> extracted = new ArrayList<>();
+
+            while (rowsIterator.hasNext()) {
+                Row<String, String, String> row = rowsIterator.next();
+
+                if (mustKeyBeExtracted(keyToIgnore, row)) {
+                    extracted.add(extractSingleRow(row));
+                }
+            }
+
+            return extracted.iterator();
+        }
+
+        private DbRow extractSingleRow(Row<String, String, String> row) {
+            Map<String, Object> extractedColumns = new HashMap<>();
+
+            ColumnSlice<String, String> columnSlice = row.getColumnSlice();
+            List<HColumn<String, String>> columns = columnSlice.getColumns();
+
+            for (HColumn<String, String> column : columns) {
+                extractedColumns.put(column.getName(), column.getValue());
+            }
+
+            return new DbRow(row.getKey(), extractedColumns);
+        }
+
+        private boolean mustKeyBeExtracted(String keyToIgnore, Row<String, String, String> row) {
+            return keyToIgnore == null || !row.getKey().equals(keyToIgnore);
         }
 
         private void checkAlive() {

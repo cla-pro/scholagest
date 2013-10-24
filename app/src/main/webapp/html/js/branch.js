@@ -71,6 +71,10 @@ function getBranchInfo(branchKey, properties, callback) {
 }
 
 function createBranch(closeId, txtNameId, gradesFlagChkId) {
+	if (checkRequiredFieldsAndMarkAsMissing([txtNameId])) {
+		return;
+	}
+	
 	var branchName = dojo.byId(txtNameId).value;
 	var branchType = "";
 	if (dojo.byId(gradesFlagChkId).checked) {
@@ -88,7 +92,7 @@ function createBranch(closeId, txtNameId, gradesFlagChkId) {
 		loadBranches();
 	}, function(errorJson) {
 		if (errorJson.errorCode == errorCodesMap.OBJECT_ALREADY_EXISTS) {
-			alert('Une branche avec le même nom existe déjà dans cette classe');
+			displayMessageDialog('Une branche avec le même nom existe déjà dans cette classe');
 		}
 	});
 };

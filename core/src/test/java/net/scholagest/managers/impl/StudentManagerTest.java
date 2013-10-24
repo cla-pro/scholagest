@@ -33,7 +33,7 @@ public class StudentManagerTest extends AbstractTestWithTransaction {
 
     @Test
     public void testCreateNewStudent() throws Exception {
-        BaseObject student = studentManager.createStudent();
+        BaseObject student = studentManager.createStudent(createStudentPersonal());
 
         Mockito.verify(transaction).insert(Mockito.eq(CoreNamespace.studentsBase), Mockito.anyString(), Mockito.eq(student.getKey()),
                 Mockito.anyString());
@@ -117,8 +117,7 @@ public class StudentManagerTest extends AbstractTestWithTransaction {
         Map<String, Object> personalProperties = new StudentManagerTest().createStudentPersonal();
         Map<String, Object> medicalProperties = new StudentManagerTest().createStudentMedical();
 
-        BaseObject studentKey = studentManager.createStudent();
-        studentManager.setPersonalProperties(studentKey.getKey(), personalProperties);
+        BaseObject studentKey = studentManager.createStudent(personalProperties);
         studentManager.setMedicalProperties(studentKey.getKey(), medicalProperties);
 
         Map<String, Map<String, Map<String, Object>>> databaseContent = new HashMap<>();

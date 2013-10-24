@@ -1,80 +1,100 @@
-<div id="menu-element-teachers" data-dojo-type="dijit.layout.ContentPane" title="Professeurs" selected="true">
-    <script type="text/javascript">
-        dojo.ready(function() {
-            var tabs = dijit.byId("tabMenu");
-            tabs.watch("selectedChildWidget", function(name, oval, nval) {
-                if (nval.id == 'menu-element-teachers') {
-                    loadTeachers();
-                }
-            });
-            tabs.startup();
-            loadTeachers();
-            
-            dijit.byId("newTeacherDialog").on("hide", function() {
-            	resetDialogDiv(dijit.byId("newTeacherDialog"));
-            });
-            dijit.byId("removeTeacherDialog").on("hide", function() {
-            	resetDialogDiv(dijit.byId("removeTeacherDialog"));
-            });
-            dijit.byId("changePasswordDialog").on("hide", function() {
-            	resetDialogDiv(dijit.byId("changePasswordDialog"));
-            });
-        });
-    </script>
-    <div id="changePasswordDialog" data-dojo-type="dijit.Dialog" title="Changer le mot de passe">
-        <table style="width: 100%">
-            <tr>
-                <td>Nouveau mot de passe</td><td><input type="password" style="width:100%" id="txtNewPassword" /></td>
-            </tr><tr>
-                <td>R&eacute;p&eacute;ter le mot de passe</td><td><input type="password" style="width:100%" id="txtNewPasswordRepeat" /></td>
-            </tr><tr>
-                <td align="center">
-                    <button onclick="saveNewPassword(dojo.byId('txtNewPassword').value, dojo.byId('txtNewPasswordRepeat').value)">Ok</button>
-                </td>
-                <td align="center"><button>Annuler</button></td>
-            </tr>
-        </table>
-    </div>
+<div id="menu-element-teachers"
+	data-dojo-type="dijit.layout.ContentPane" title="Professeurs"
+	selected="true">
+	<script type="text/javascript">
+		dojo.ready(function() {
+			var tabs = dijit.byId("tabMenu");
+			tabs.watch("selectedChildWidget", function(name, oval, nval) {
+				if (nval.id == 'menu-element-teachers') {
+					loadTeachers();
+				}
+			});
+			tabs.startup();
+			loadTeachers();
+
+			dijit.byId("newTeacherDialog").on("hide", function() {
+				resetDialogDiv(dijit.byId("newTeacherDialog"));
+			});
+			dijit.byId("removeTeacherDialog").on("hide", function() {
+				resetDialogDiv(dijit.byId("removeTeacherDialog"));
+			});
+			dijit.byId("changePasswordDialog").on("hide", function() {
+				resetDialogDiv(dijit.byId("changePasswordDialog"));
+			});
+		});
+	</script>
+	<div id="changePasswordDialog" data-dojo-type="dijit.Dialog"
+		title="Changer le mot de passe">
+		<table style="width: 100%">
+			<tr>
+				<td>Nouveau mot de passe</td>
+				<td><input type="password" style="width: 100%"
+					id="txtNewPassword" /></td>
+			</tr>
+			<tr>
+				<td>R&eacute;p&eacute;ter le mot de passe</td>
+				<td><input type="password" style="width: 100%"
+					id="txtNewPasswordRepeat" /></td>
+			</tr>
+			<tr>
+				<td align="center">
+					<button
+						onclick="saveNewPassword(dojo.byId('txtNewPassword').value, dojo.byId('txtNewPasswordRepeat').value)">Ok</button>
+				</td>
+				<td align="center"><button>Annuler</button></td>
+			</tr>
+		</table>
+	</div>
 	<table id="teacherTable" style="width: 100%; height: 100%">
 		<tr>
 			<td valign="top" style="width: 20%; height: 100%">
 				<div id="teacher-search" class="vertical-search">
-					<div id="newTeacherDialog" data-dojo-type="dijit.Dialog" title="Nouveau professeur">
+					<div id="newTeacherDialog" data-dojo-type="dijit.Dialog"
+						title="Nouveau professeur">
 						<table style="width: 100%">
 							<tr>
 								<td>Type</td>
-								<td>
-									<select style="width: 100%" propertyName="pTeacherType" id="selectNewTeacherType">
+								<td><select style="width: 100%" propertyName="pTeacherType"
+									id="selectNewTeacherType">
 										<option value="teacher" selected="selected">Normal</option>
 										<option value="admin">Administrateur</option>
 										<option value="helpteacher">Appui</option>
-									</select>
-								</td>
+								</select></td>
 							</tr>
 							<tr>
-								<td>Nom*</td>
-								<td><input id="txtNewTeacherLastName" propertyName="pTeacherLastName" required="required" type="text" style="width: 100%" /></td>
+								<td><label id="lblNewTeacherLastName">Nom</label></td>
+								<td><input id="txtNewTeacherLastName"
+									propertyName="pTeacherLastName" required="required"
+									labelNodeId="lblNewTeacherLastName" type="text"
+									style="width: 100%" /></td>
 							</tr>
 							<tr>
-								<td>Pr&eacute;nom*</td>
-								<td><input id="txtNewTeacherFirstName" propertyName="pTeacherFirstName" required="required" type="text" style="width: 100%" /></td>
+								<td><label id="lblNewTeacherFirstName">Pr&eacute;nom</td>
+								<td><input id="txtNewTeacherFirstName"
+									propertyName="pTeacherFirstName" required="required"
+									labelNodeId="lblNewTeacherFirstName" type="text"
+									style="width: 100%" /></td>
 							</tr>
 							<tr>
 								<td>Email</td>
-								<td><input id="txtNewTeacherMail" propertyName="pTeacherMail" type="text" style="width: 100%" /></td>
+								<td><input id="txtNewTeacherMail"
+									propertyName="pTeacherMail" type="text" style="width: 100%" /></td>
 							</tr>
 							<tr>
 								<td>N&deg; de t&eacute;l</td>
-								<td><input id="txtNewTeacherPhone" propertyName="pTeacherPhone" style="width: 100%" type="text" /></td>
+								<td><input id="txtNewTeacherPhone"
+									propertyName="pTeacherPhone" style="width: 100%" type="text" /></td>
 							</tr>
 							<tr>
 								<td>Adresse</td>
-								<td><input id="txtNewTeacherAddress" propertyName="pTeacherAddress" style="width: 100%" type="text" /></td>
+								<td><input id="txtNewTeacherAddress"
+									propertyName="pTeacherAddress" style="width: 100%" type="text" /></td>
 							</tr>
 							<tr>
 								<td align="center"><button
-									onclick="createTeacher('newTeacherDialog', 'selectNewTeacherType', ['txtNewTeacherLastName', 'txtNewTeacherFirstName', 'txtNewTeacherMail', 'txtNewTeacherPhone', 'txtNewTeacherAddress'])">Ok</button></td>
-								<td align="center"><button onclick="dijit.byId('newTeacherDialog').hide()">Annuler</button></td>
+										onclick="createTeacher('newTeacherDialog', 'selectNewTeacherType', ['txtNewTeacherLastName', 'txtNewTeacherFirstName', 'txtNewTeacherMail', 'txtNewTeacherPhone', 'txtNewTeacherAddress'])">Ok</button></td>
+								<td align="center"><button
+										onclick="dijit.byId('newTeacherDialog').hide()">Annuler</button></td>
 							</tr>
 						</table>
 					</div>
@@ -106,10 +126,10 @@
 						};
 					</script>
 					<button onclick="createNewTeacher()">Ajouter un professeur</button>
-<!-- 					<button onclick="deleteTeacher()">Supprimer un professeur</button> -->
-<!-- 					<input type="text" class="search-textbox" -->
-<!-- 						placeholder="Nom du professeur" /> -->
-<!-- 					<button>Go</button> -->
+					<!-- 					<button onclick="deleteTeacher()">Supprimer un professeur</button> -->
+					<!-- 					<input type="text" class="search-textbox" -->
+					<!-- 						placeholder="Nom du professeur" /> -->
+					<!-- 					<button>Go</button> -->
 					<hr />
 					<div id="teacher-search-list" class="search-list"></div>
 				</div>

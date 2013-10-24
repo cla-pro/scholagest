@@ -22,6 +22,7 @@ import net.scholagest.app.utils.JerseyHelper;
 import net.scholagest.exception.ScholagestException;
 import net.scholagest.exception.ScholagestRuntimeException;
 import net.scholagest.managers.ontology.OntologyElement;
+import net.scholagest.namespace.AuthorizationRolesNamespace;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IOntologyService;
@@ -30,6 +31,7 @@ import net.scholagest.services.IUserService;
 import net.scholagest.utils.ScholagestThreadLocal;
 
 import org.apache.shiro.ShiroException;
+import org.apache.shiro.subject.Subject;
 
 import com.google.gson.Gson;
 import com.google.inject.Inject;
@@ -157,6 +159,11 @@ public class RestStudentService extends AbstractService {
 
             RestObject restStudentInfo = new RestToKdomConverter().restObjectFromKdom(studentInfo);
             new OntologyMerger(ontologyService).mergeOntologyWithRestObject(restStudentInfo, ontology);
+
+            Subject subject = ScholagestThreadLocal.getSubject();
+            if (subject.hasRole(AuthorizationRolesNamespace.ROLE_ADMIN) || subject.isPermitted(studentKey)) {
+                restStudentInfo.setWritable(true);
+            }
 
             String json = new Gson().toJson(restStudentInfo);
             return "{info: " + json + "}";

@@ -2,6 +2,7 @@ package net.scholagest.business.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Matchers.anySetOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
@@ -73,7 +74,8 @@ public class StudentBusinessComponentTest extends AbstractTestWithTransaction {
 
     @Before
     public void setup() throws Exception {
-        when(studentManager.createStudent()).thenReturn(BaseObjectMock.createStudentObject(STUDENT_KEY, new HashMap<String, Object>()));
+        when(studentManager.createStudent(anyMapOf(String.class, Object.class))).thenReturn(
+                BaseObjectMock.createStudentObject(STUDENT_KEY, new HashMap<String, Object>()));
         when(studentManager.getMedicalProperties(STUDENT_KEY, createStudentMedicalProperties().keySet())).thenReturn(
                 BaseObjectMock.createBaseObject(null, null, createStudentMedicalProperties()));
         when(studentManager.getPersonalProperties(STUDENT_KEY, createStudentPersonalProperties().keySet())).thenReturn(
@@ -126,7 +128,7 @@ public class StudentBusinessComponentTest extends AbstractTestWithTransaction {
         BaseObject studentKey = testee.createStudent(properties);
 
         assertEquals(STUDENT_KEY, studentKey.getKey());
-        verify(studentManager).createStudent();
+        verify(studentManager).createStudent(properties);
     }
 
     @Test

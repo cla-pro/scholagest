@@ -160,12 +160,12 @@ function handleJsonError(errorJson, errorCallback) {
 };
 
 function handleWebServiceError(error) {
-	alert("error = " + error);
+	displayMessageDialog("error = " + error);
 };
 
 function handleServiceError(errorJson) {
     if (errorJson.errorCode == errorCodesMap.INSUFFICIENT_PRIVILEGES) {
-        alert("Droits insuffisants pour effectuer cette action");
+    	displayMessageDialog("Droits insuffisants pour effectuer cette action");
     } else if (errorJson.errorCode == errorCodesMap.SESSION_EXPIRED) {
         clearScholagestCookieAndSwitchPage("html/session_expired.html");
     } //else {

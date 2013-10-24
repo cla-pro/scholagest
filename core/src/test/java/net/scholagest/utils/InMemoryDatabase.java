@@ -2,10 +2,12 @@ package net.scholagest.utils;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import net.scholagest.database.DatabaseException;
+import net.scholagest.database.DbRow;
 import net.scholagest.database.IDatabase;
 import net.scholagest.database.ITransaction;
 
@@ -87,6 +89,12 @@ public class InMemoryDatabase implements IDatabase {
                 return new HashMap<>();
             }
             return columns;
+        }
+
+        @Override
+        public Iterator<DbRow> getAllRows() throws DatabaseException {
+            // TODO Auto-generated method stub
+            return null;
         }
 
         public String getKeyspace() {

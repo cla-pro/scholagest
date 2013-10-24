@@ -4,10 +4,12 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
+import net.scholagest.app.rest.object.RestYearRenameRequest;
 import net.scholagest.exception.ScholagestException;
 import net.scholagest.exception.ScholagestRuntimeException;
 import net.scholagest.objects.BaseObject;
@@ -132,6 +134,31 @@ public class RestYearService extends AbstractService {
                 currentYearJson = ", currentYear: " + gson.toJson(converter.convertObjectToJson(currentYearKey)) + "";
             }
             return "{info: {years: " + years + currentYearJson + "}}";
+        } catch (ShiroException e) {
+            return handleShiroException(e);
+        } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
+        } catch (ScholagestRuntimeException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
+        }
+    }
+
+    @POST
+    @Path("/rename")
+    @Produces("text/json")
+    public String renameYear(String content) {
+        ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
+        try {
+            RestYearRenameRequest request = new Gson().fromJson(content, RestYearRenameRequest.class);
+
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(request.getToken()));
+
+            yearService.renameYear(request.getKey(), request.getNewYearName());
+
+            return "{}";
         } catch (ShiroException e) {
             return handleShiroException(e);
         } catch (ScholagestException e) {

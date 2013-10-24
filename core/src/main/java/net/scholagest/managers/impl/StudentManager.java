@@ -31,7 +31,7 @@ public class StudentManager extends ObjectManager implements IStudentManager {
     }
 
     @Override
-    public StudentObject createStudent() {
+    public StudentObject createStudent(Map<String, Object> personalProperties) {
         ITransaction transaction = ScholagestThreadLocal.getTransaction();
 
         String studentUUID = UUID.randomUUID().toString();
@@ -42,6 +42,8 @@ public class StudentManager extends ObjectManager implements IStudentManager {
         BaseObject medicalInfo = new BaseObject(generateMedicalInfoKey(studentBase), CoreNamespace.tStudentMedicalInfo);
 
         StudentObject studentObject = new StudentObject(studentKey);
+
+        personalInfo.putAllProperties(personalProperties);
 
         studentObject.setPersonalInfoKey(personalInfo.getKey());
         studentObject.setMedicalInfoKey(medicalInfo.getKey());

@@ -279,7 +279,7 @@ function createHtmlList(parentTable, propertyName, data, createListButtonsClosur
 	}
 };
 
-function createInfoHtmlTable(parentDOM, info, createListButtonsClosure, listGetterClosure) {
+function createInfoHtmlTable(parentDOM, info, writable, createListButtonsClosure, listGetterClosure) {
 	for (var i in info) {
 		var data = info[i];
 		var value = data.value;
@@ -295,51 +295,3 @@ function createInfoHtmlTable(parentDOM, info, createListButtonsClosure, listGett
 		}
 	}
 };
-//Method used to get the values from the different dialogs. DO NOT REMOVE.
-function getKeysAndValues(txtIds) {
-	var keys = [];
-	var values = [];
-	for (var id in txtIds) {
-		var node = dojo.byId(txtIds[id]);
-
-		var value = node.value;
-		var name = node.attributes.getNamedItem('propertyName').nodeValue;
-
-		if (name != null && value != null) {
-			keys.push(name);
-			values.push(value);
-		}
-	}
-
-	return {keys: keys, values: values};
-};
-function resetDialogDiv(dialogDiv) {
-	resetDiv(dialogDiv.containerNode);
-}
-function resetDiv(div) {
-	for (var i = 0; i < div.childNodes.length; i++) {
-		var node = div.childNodes[i];
-		if (isContainerNode(node)) {
-			resetDiv(node);
-		} else if (isTextNode(node)) {
-			resetTextBox(node);
-		}
-	}
-};
-function resetTextBox(node) {
-	if (node.defaultValue == undefined) {
-		node.value = '';
-	} else {
-		node.value = node.defaultValue;
-	}
-};
-function isContainerNode(node) {
-	var nodeName = node.nodeName.toUpperCase();
-	if (nodeName == 'DIV' || nodeName == 'SPAN' || nodeName == 'TABLE' || nodeName == 'TD' || nodeName == 'TR' || nodeName == 'TBODY') {
-		return true;
-	}
-	return false;
-};
-function isTextNode(node) {
-	return node.nodeName.toUpperCase() == 'INPUT' && node.type == 'text';
-}

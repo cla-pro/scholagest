@@ -1,5 +1,7 @@
-<div id="menu-element-teachers" data-dojo-type="dijit.layout.ContentPane" title="Professeurs" selected="true">
-    <script type="text/javascript">
+<div id="menu-element-teachers"
+	data-dojo-type="dijit.layout.ContentPane" title="Professeurs"
+	selected="true">
+	<script type="text/javascript">
         dojo.ready(function() {
             var tabs = dijit.byId("tabMenu");
             tabs.watch("selectedChildWidget", function(name, oval, nval) {
@@ -15,28 +17,39 @@
             });
         });
     </script>
-    <div id="changePasswordDialog" data-dojo-type="dijit.Dialog" title="Changer le mot de passe">
-        <table style="width: 100%">
-            <tr>
-                <td>Nouveau mot de passe</td><td><input type="password" id="txtNewPassword" style="width:100%" /></td>
-            </tr><tr>
-                <td>Répèter le mot de passe</td><td><input type="password" id="txtNewPasswordRepeat" style="width:100%" /></td>
-            </tr><tr>
-                <td align="center">
-                    <button onclick="saveNewPassword(dojo.byId('txtNewPassword').value, dojo.byId('txtNewPasswordRepeat').value)">Ok</button>
-                </td>
-                <td align="center"><button>Annuler</button></td>
-            </tr>
-        </table>
-    </div>
+	<div id="changePasswordDialog" data-dojo-type="dijit.Dialog"
+		title="Changer le mot de passe">
+		<table style="width: 100%">
+			<tr>
+				<td><label id="lblNewPassword">Nouveau mot de passe</label></td>
+				<td><input type="password" id="txtNewPassword"
+					required="required" labelNodeId="lblNewPassword"
+					style="width: 100%" /></td>
+			</tr>
+			<tr>
+				<td><label id="lblNewPasswordRepeat">R&ecute;p&ecute;ter
+						le mot de passe</label></td>
+				<td><input type="password" id="txtNewPasswordRepeat"
+					required="required" labelNodeId="lblNewPasswordRepeat"
+					style="width: 100%" /></td>
+			</tr>
+			<tr>
+				<td align="center">
+					<button
+						onclick="saveNewPassword(dojo.byId('txtNewPassword').value, dojo.byId('txtNewPasswordRepeat').value)">Ok</button>
+				</td>
+				<td align="center"><button>Annuler</button></td>
+			</tr>
+		</table>
+	</div>
 	<table id="teacherTable" style="width: 100%; height: 100%">
 		<tr>
 			<td valign="top" style="width: 20%; height: 100%">
 				<div id="teacher-search" class="vertical-search">
-					
-<!-- 					<input type="text" class="search-textbox" -->
-<!-- 						placeholder="Nom du professeur" /> -->
-<!-- 					<button>Go</button> -->
+
+					<!-- 					<input type="text" class="search-textbox" -->
+					<!-- 						placeholder="Nom du professeur" /> -->
+					<!-- 					<button>Go</button> -->
 					<hr />
 					<div id="teacher-search-list" class="search-list"></div>
 				</div>

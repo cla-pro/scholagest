@@ -38,6 +38,27 @@
         </span>
     </div>
     
+    <div id="messageDialog" data-dojo-type="dijit.Dialog" title="Information">
+        <table>
+            <tr>
+                <td><label id="lblMessageDialog"></label></td>
+            </tr>
+            <tr>
+                <td align="center"><button onclick="dijit.byId('messageDialog').hide()">Ok</button>
+            </tr>
+        </table>
+    </div>
+    <div id="messageConfirmDialog" data-dojo-type="dijit.Dialog" title="Question">
+        <table>
+            <tr>
+                <td><label id="lblMessageConfirmDialog"></label></td>
+            </tr>
+            <tr>
+                <td align="center"><button id="msgConfirmDialogOk">Oui</button>
+                <td align="center"><button onclick="dijit.byId('messageConfirmDialog').hide()">Non</button>
+            </tr>
+        </table>
+    </div>
     <div id="scholagestContent" style="height: 100%"></div>
 </body>
 </html>

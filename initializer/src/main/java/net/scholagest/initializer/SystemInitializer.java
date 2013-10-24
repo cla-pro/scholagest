@@ -163,7 +163,7 @@ public class SystemInitializer {
             String password = user.get(2);
             String role = user.get(3);
 
-            LOG.debug("Insert admin: \"" + firstName + "\" \"" + lastName + "\";" + password);
+            LOG.info("Insert admin: \"" + firstName + "\" \"" + lastName + "\";" + password);
             Map<String, Object> teacherProperties = createTeacherProperties(firstName, lastName);
             TeacherObject teacher = teacherBusinessComponent.createTeacher(role, teacherProperties);
 
