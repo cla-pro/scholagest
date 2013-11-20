@@ -9,15 +9,15 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.ServletContext;
-import javax.ws.rs.GET;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import net.scholagest.app.rest.object.RestRequest;
+import net.scholagest.app.rest.object.RestAuthenticationRequest;
+import net.scholagest.app.rest.object.RestBaseRequest;
 import net.scholagest.app.rest.object.RestSetPassword;
 import net.scholagest.app.utils.HtmlPageBuilder;
 import net.scholagest.app.utils.JsonObject;
@@ -49,16 +49,18 @@ public class RestUserService extends AbstractService {
         this.userService = userService;
     }
 
-    @GET
+    @POST
     @Path("/authenticate")
     @Produces("text/json")
-    public String authenticate(@QueryParam("username") String username, @QueryParam("password") String password) {
+    public String authenticate(String content) {
         try {
-            Subject subject = userService.authenticateWithUsername(username, password);
+            RestAuthenticationRequest request = new Gson().fromJson(content, RestAuthenticationRequest.class);
+            Subject subject = userService.authenticateWithUsername(request.getUsername(), request.getPassword());
 
             String token = (String) subject.getPrincipals().fromRealm(RealmAuthenticationAndAuthorization.TOKEN_KEY).iterator().next();
 
-            return new JsonObject("token", token, "nextpage", getBaseUrl() + "services/user/getPage?token=" + token).toString();
+            // ?token=" + token
+            return new JsonObject("token", token, "nextpage", getBaseUrl() + "services/user/getPage").toString();
         } catch (ShiroException e) {
             return handleShiroException(e);
         } catch (ScholagestException e) {
@@ -71,10 +73,10 @@ public class RestUserService extends AbstractService {
         }
     }
 
-    @GET
+    @POST
     @Path("/getPage")
     @Produces(MediaType.TEXT_HTML + ";charset=UTF-8")
-    public String getPage(@QueryParam("token") String token) {
+    public String getPage(@FormParam("token") String token) {
         List<String> pages = new ArrayList<>();
         String teacherKey = null;
         try {
@@ -106,9 +108,9 @@ public class RestUserService extends AbstractService {
 
         String basePage = loadFile("html" + File.separatorChar + "base.html");
         HtmlPageBuilder htmlPageBuilder = new HtmlPageBuilder("id", "scholagestContent");
-        List<String> content = new ArrayList<>();
-        content.add(builder.toString());
-        String finalPage = htmlPageBuilder.inject(basePage, content);
+        List<String> contentList = new ArrayList<>();
+        contentList.add(builder.toString());
+        String finalPage = htmlPageBuilder.inject(basePage, contentList);
         return finalPage;
     }
 
@@ -149,7 +151,7 @@ public class RestUserService extends AbstractService {
                 return "{errorCode: 0, message: 'Empty content'}";
             }
 
-            RestRequest request = new Gson().fromJson(content, RestRequest.class);
+            RestBaseRequest request = new Gson().fromJson(content, RestBaseRequest.class);
 
             userService.authenticateWithToken(request.getToken());
 
@@ -216,16 +218,17 @@ public class RestUserService extends AbstractService {
         return "{}";
     }
 
-    @GET
+    @POST
     @Path("/logout")
     @Produces("text/json")
-    public String logout(@QueryParam("token") String token) {
+    public String logout(String content) {
         ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         try {
-            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
+            RestBaseRequest request = new Gson().fromJson(content, RestBaseRequest.class);
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(request.getToken()));
 
-            userService.logout(token);
+            userService.logout(request.getToken());
         } catch (ShiroException e) {
             return handleShiroException(e);
         } catch (ScholagestException e) {

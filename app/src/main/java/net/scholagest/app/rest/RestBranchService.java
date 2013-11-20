@@ -3,19 +3,20 @@ package net.scholagest.app.rest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 
+import net.scholagest.app.rest.object.RestGetMeansBranchRequest;
+import net.scholagest.app.rest.object.RestGetObjectRequest;
+import net.scholagest.app.rest.object.RestGetObjectSubListRequest;
 import net.scholagest.app.rest.object.RestObject;
-import net.scholagest.app.rest.object.RestRequest;
+import net.scholagest.app.rest.object.RestSetObjectRequest;
+import net.scholagest.app.rest.object.create.RestCreateBranchRequest;
 import net.scholagest.app.utils.JerseyHelper;
 import net.scholagest.exception.ScholagestException;
 import net.scholagest.exception.ScholagestRuntimeException;
@@ -48,19 +49,19 @@ public class RestBranchService extends AbstractService {
         this.converter = new JsonConverter(ontologyService);
     }
 
-    @GET
+    @POST
     @Path("/create")
     @Produces("text/json")
-    public String createBranch(@QueryParam("token") String token, @QueryParam("classKey") String classKey, @QueryParam("keys") List<String> keys,
-            @QueryParam("values") List<String> values) {
+    public String createBranch(String content) {
         ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         try {
-            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
+            RestCreateBranchRequest request = new Gson().fromJson(content, RestCreateBranchRequest.class);
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(request.getToken()));
 
-            Map<String, Object> branchInfo = JerseyHelper.listToMap(keys, new ArrayList<Object>(values));
+            Map<String, Object> branchInfo = JerseyHelper.listToMap(request.getKeys(), new ArrayList<Object>(request.getValues()));
 
-            BaseObject clazz = branchService.createBranch(classKey, branchInfo);
+            BaseObject clazz = branchService.createBranch(request.getClassKey(), branchInfo);
             RestObject restBranch = new RestToKdomConverter().restObjectFromKdom(clazz);
 
             String json = new Gson().toJson(restBranch);
@@ -77,21 +78,22 @@ public class RestBranchService extends AbstractService {
         }
     }
 
-    @GET
-    @Path("/getPropertiesForList")
+    @POST
+    @Path("/getBranchesInfo")
     @Produces("text/json")
-    public String getBranchProperties(@QueryParam("token") String token, @QueryParam("branchKeys") List<String> branchKeys,
-            @QueryParam("properties") Set<String> properties) {
+    public String getBranchListProperties(String content) {
         ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
         try {
-            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
+            RestGetObjectSubListRequest request = new Gson().fromJson(content, RestGetObjectSubListRequest.class);
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(request.getToken()));
 
+            Set<String> properties = request.getProperties();
             if (properties == null || properties.isEmpty()) {
                 properties = ontologyService.getPropertiesForType(CoreNamespace.tBranch);
             }
 
             Set<BaseObject> branchObjects = new HashSet<>();
-            for (String branchKey : branchKeys) {
+            for (String branchKey : request.getKeys()) {
                 BaseObject branchInfo = branchService.getBranchProperties(branchKey, new HashSet<String>(properties));
                 branchObjects.add(branchInfo);
             }
@@ -112,20 +114,21 @@ public class RestBranchService extends AbstractService {
         }
     }
 
-    @GET
+    @POST
     @Path("/getProperties")
     @Produces("text/json")
-    public String getBranchProperties(@QueryParam("token") String token, @QueryParam("branchKey") String branchKey,
-            @QueryParam("properties") Set<String> properties) {
+    public String getBranchProperties(String content) {
         ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
         try {
-            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
+            RestGetObjectRequest request = new Gson().fromJson(content, RestGetObjectRequest.class);
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(request.getToken()));
 
-            if (properties == null || properties.isEmpty()) {
+            Set<String> properties = request.getProperties();
+            if (request.arePropertiesEmpty()) {
                 properties = ontologyService.getPropertiesForType(CoreNamespace.tBranch);
             }
 
-            BaseObject branchInfo = branchService.getBranchProperties(branchKey, new HashSet<String>(properties));
+            BaseObject branchInfo = branchService.getBranchProperties(request.getKey(), properties);
 
             Object convertObjectToJson = converter.convertObjectToJson(branchInfo);
 
@@ -146,16 +149,14 @@ public class RestBranchService extends AbstractService {
     @POST
     @Path("/setProperties")
     @Produces("text/json")
-    public String setBranchProperties(@QueryParam("token") String token, String content) {
+    public String setBranchProperties(String content) {
         ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
         try {
-            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
+            RestSetObjectRequest request = new Gson().fromJson(content, RestSetObjectRequest.class);
 
-            RestRequest request = new Gson().fromJson(content, RestRequest.class);
-            RestObject requestObject = request.getObject();
-            BaseObject baseObject = new RestToKdomConverter().baseObjectFromRest(requestObject);
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(request.getToken()));
 
-            branchService.setBranchProperties(requestObject.getKey(), baseObject.getProperties());
+            branchService.setBranchProperties(request.getKey(), request.getProperties());
         } catch (ShiroException e) {
             return handleShiroException(e);
         } catch (ScholagestException e) {
@@ -170,16 +171,16 @@ public class RestBranchService extends AbstractService {
         return "{}";
     }
 
-    @GET
+    @POST
     @Path("/getMeans")
     @Produces("text/json")
-    public String getMeans(@QueryParam("token") String token, @QueryParam("branchKey") String branchKey,
-            @QueryParam("studentKeys") Set<String> studentKeys, @QueryParam("yearKey") String yearKey) {
+    public String getMeans(String content) {
         ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
         try {
-            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
+            RestGetMeansBranchRequest request = new Gson().fromJson(content, RestGetMeansBranchRequest.class);
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(request.getToken()));
 
-            Map<String, Map<String, BaseObject>> means = branchService.getBranchMeans(branchKey, studentKeys);
+            Map<String, Map<String, BaseObject>> means = branchService.getBranchMeans(request.getBranchKey(), request.getStudentKeys());
 
             Map<String, Object> jsonMeans = new HashMap<>();
             String meanKey = means.keySet().iterator().next();

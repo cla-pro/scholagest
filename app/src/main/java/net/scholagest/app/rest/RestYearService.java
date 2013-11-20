@@ -3,12 +3,13 @@ package net.scholagest.app.rest;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 
+import net.scholagest.app.rest.object.RestBaseRequest;
+import net.scholagest.app.rest.object.RestGetObjectListRequest;
+import net.scholagest.app.rest.object.RestStartYearRequest;
 import net.scholagest.app.rest.object.RestYearRenameRequest;
 import net.scholagest.exception.ScholagestException;
 import net.scholagest.exception.ScholagestRuntimeException;
@@ -38,16 +39,17 @@ public class RestYearService extends AbstractService {
         this.converter = new JsonConverter(ontologyService);
     }
 
-    @GET
+    @POST
     @Path("/start")
     @Produces("text/json")
-    public String startYear(@QueryParam("token") String token, @QueryParam("name") String yearName) {
+    public String startYear(String content) {
         ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         try {
-            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
+            RestStartYearRequest request = new Gson().fromJson(content, RestStartYearRequest.class);
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(request.getToken()));
 
-            BaseObject year = yearService.startYear(yearName);
+            BaseObject year = yearService.startYear(request.getYearName());
 
             Gson gson = new Gson();
             String json = gson.toJson(year);
@@ -64,14 +66,16 @@ public class RestYearService extends AbstractService {
         }
     }
 
-    @GET
+    @POST
     @Path("/stop")
     @Produces("text/json")
-    public String stopYear(@QueryParam("token") String token) {
+    public String stopYear(String content) { // @QueryParam("token") String
+                                             // token) {
         ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         try {
-            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
+            RestBaseRequest request = new Gson().fromJson(content, RestBaseRequest.class);
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(request.getToken()));
 
             yearService.stopYear();
         } catch (ShiroException e) {
@@ -88,15 +92,16 @@ public class RestYearService extends AbstractService {
         return "{}";
     }
 
-    @GET
+    @POST
     @Path("/getCurrent")
     @Produces("text/json")
-    public String getCurrent(@QueryParam("token") String token) {
+    public String getCurrent(String content) {
         ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         BaseObject currentYear = null;
         try {
-            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
+            RestBaseRequest request = new Gson().fromJson(content, RestBaseRequest.class);
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(request.getToken()));
 
             currentYear = yearService.getCurrentYearKey();
 
@@ -115,15 +120,17 @@ public class RestYearService extends AbstractService {
         }
     }
 
-    @GET
+    @POST
     @Path("/getYears")
     @Produces("text/json")
-    public String getYears(@QueryParam("token") String token, @QueryParam("properties") Set<String> properties) {
+    public String getYears(String content) {
         ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
         try {
-            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
+            RestGetObjectListRequest request = new Gson().fromJson(content, RestGetObjectListRequest.class);
 
-            Set<BaseObject> yearsInfo = yearService.getYearsWithProperties(properties);
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(request.getToken()));
+
+            Set<BaseObject> yearsInfo = yearService.getYearsWithProperties(request.getProperties());
             BaseObject currentYearKey = yearService.getCurrentYearKey();
 
             Gson gson = new Gson();

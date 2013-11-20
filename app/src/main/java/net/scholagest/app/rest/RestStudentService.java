@@ -8,16 +8,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 
+import net.scholagest.app.rest.object.RestGetObjectListRequest;
+import net.scholagest.app.rest.object.RestGetObjectRequest;
+import net.scholagest.app.rest.object.RestGetObjectSubListRequest;
+import net.scholagest.app.rest.object.RestGetStudentGradesRequest;
 import net.scholagest.app.rest.object.RestObject;
-import net.scholagest.app.rest.object.RestRequest;
+import net.scholagest.app.rest.object.RestSetObjectRequest;
 import net.scholagest.app.rest.object.RestStudentGradeList;
-import net.scholagest.app.rest.object.RestStudentGradeRequest;
+import net.scholagest.app.rest.object.create.RestCreateStudentRequest;
 import net.scholagest.app.utils.JerseyHelper;
 import net.scholagest.exception.ScholagestException;
 import net.scholagest.exception.ScholagestRuntimeException;
@@ -51,16 +53,17 @@ public class RestStudentService extends AbstractService {
         this.userService = userService;
     }
 
-    @GET
+    @POST
     @Path("/create")
     @Produces("text/json")
-    public String createStudent(@QueryParam("token") String token, @QueryParam("keys") List<String> keys, @QueryParam("values") List<String> values) {
+    public String createStudent(String content) {
         ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         try {
-            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
+            RestCreateStudentRequest request = new Gson().fromJson(content, RestCreateStudentRequest.class);
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(request.getToken()));
 
-            Map<String, Object> personalInfo = JerseyHelper.listToMap(keys, new ArrayList<Object>(values));
+            Map<String, Object> personalInfo = JerseyHelper.listToMap(request.getKeys(), new ArrayList<Object>(request.getValues()));
 
             // 2. Update the database.
             BaseObject student = studentService.createStudent(personalInfo);
@@ -80,16 +83,17 @@ public class RestStudentService extends AbstractService {
         }
     }
 
-    @GET
+    @POST
     @Path("/getStudents")
     @Produces("text/json")
-    public String getStudents(@QueryParam("token") String token, @QueryParam("properties") Set<String> properties) {
+    public String getStudents(String content) {
         ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         try {
-            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
+            RestGetObjectListRequest request = new Gson().fromJson(content, RestGetObjectListRequest.class);
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(request.getToken()));
 
-            Set<BaseObject> students = studentService.getStudentsWithProperties(properties);
+            Set<BaseObject> students = studentService.getStudentsWithProperties(request.getProperties());
             List<RestObject> restStudents = new RestToKdomConverter().restObjectsFromKdoms(students);
 
             String json = new Gson().toJson(restStudents);
@@ -106,19 +110,19 @@ public class RestStudentService extends AbstractService {
         }
     }
 
-    @GET
+    @POST
     @Path("/getStudentsInfo")
     @Produces("text/json")
-    public String getStudentsInfo(@QueryParam("token") String token, @QueryParam("students") Set<String> studentKeyList,
-            @QueryParam("properties") Set<String> properties) {
+    public String getStudentsInfo(String content) {
         ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         try {
-            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
+            RestGetObjectSubListRequest request = new Gson().fromJson(content, RestGetObjectSubListRequest.class);
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(request.getToken()));
 
             Set<BaseObject> students = new HashSet<>();
-            for (String studentKey : studentKeyList) {
-                BaseObject studentPersonalInfo = studentService.getStudentPersonalProperties(studentKey, properties);
+            for (String studentKey : request.getKeys()) {
+                BaseObject studentPersonalInfo = studentService.getStudentPersonalProperties(studentKey, request.getProperties());
                 BaseObject student = new BaseObject(studentKey, CoreNamespace.tStudent);
                 student.setProperties(studentPersonalInfo.getProperties());
 
@@ -141,27 +145,28 @@ public class RestStudentService extends AbstractService {
         }
     }
 
-    @GET
+    @POST
     @Path("/getProperties")
     @Produces("text/json")
-    public String getStudentProperties(@QueryParam("token") String token, @QueryParam("studentKey") String studentKey,
-            @QueryParam("properties") Set<String> properties) {
+    public String getStudentProperties(String content) {
         ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         try {
-            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
+            RestGetObjectRequest request = new Gson().fromJson(content, RestGetObjectRequest.class);
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(request.getToken()));
 
+            Set<String> properties = request.getProperties();
             if (properties == null || properties.isEmpty()) {
                 properties = ontologyService.getPropertiesForType(CoreNamespace.tStudent);
             }
-            BaseObject studentInfo = studentService.getStudentProperties(studentKey, new HashSet<String>(properties));
+            BaseObject studentInfo = studentService.getStudentProperties(request.getKey(), properties);
             Map<String, OntologyElement> ontology = extractOntology(studentInfo.getProperties().keySet());
 
             RestObject restStudentInfo = new RestToKdomConverter().restObjectFromKdom(studentInfo);
             new OntologyMerger(ontologyService).mergeOntologyWithRestObject(restStudentInfo, ontology);
 
             Subject subject = ScholagestThreadLocal.getSubject();
-            if (subject.hasRole(AuthorizationRolesNamespace.ROLE_ADMIN) || subject.isPermitted(studentKey)) {
+            if (subject.hasRole(AuthorizationRolesNamespace.ROLE_ADMIN) || subject.isPermitted(request.getKey())) {
                 restStudentInfo.setWritable(true);
             }
 
@@ -179,16 +184,17 @@ public class RestStudentService extends AbstractService {
         }
     }
 
-    @GET
+    @POST
     @Path("/getPersonalProperties")
     @Produces("text/json")
-    public String getStudentPersonalInfo(@QueryParam("token") String token, @QueryParam("studentKey") String studentKey,
-            @QueryParam("properties") Set<String> properties) {
+    public String getStudentPersonalInfo(String content) {
         ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         try {
-            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
+            RestGetObjectRequest request = new Gson().fromJson(content, RestGetObjectRequest.class);
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(request.getToken()));
 
+            Set<String> properties = request.getProperties();
             if (properties == null || properties.isEmpty()) {
                 properties = ontologyService.getPropertiesForType(CoreNamespace.tStudentPersonalInfo);
             }
@@ -196,7 +202,7 @@ public class RestStudentService extends AbstractService {
             Set<String> personalInfoProperties = ontologyService.filterPropertiesWithCorrectDomain(ScholagestNamespace.tStudentPersonalInfo,
                     new HashSet<String>(properties));
 
-            BaseObject personalObject = studentService.getStudentPersonalProperties(studentKey, personalInfoProperties);
+            BaseObject personalObject = studentService.getStudentPersonalProperties(request.getKey(), personalInfoProperties);
             Map<String, OntologyElement> personalOntology = extractOntology(personalObject.getProperties().keySet());
 
             RestObject restPersonalInfo = new RestToKdomConverter().restObjectFromKdom(personalObject);
@@ -223,14 +229,11 @@ public class RestStudentService extends AbstractService {
         ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         try {
-            RestRequest request = new Gson().fromJson(content, RestRequest.class);
+            RestSetObjectRequest request = new Gson().fromJson(content, RestSetObjectRequest.class);
 
             ScholagestThreadLocal.setSubject(userService.authenticateWithToken(request.getToken()));
 
-            RestObject requestObject = request.getObject();
-            BaseObject baseObject = new RestToKdomConverter().baseObjectFromRest(requestObject);
-
-            studentService.updateStudentProperties(baseObject.getKey(), baseObject.getProperties(), new HashMap<String, Object>());
+            studentService.updateStudentProperties(request.getKey(), request.getProperties(), new HashMap<String, Object>());
         } catch (ShiroException e) {
             return handleShiroException(e);
         } catch (ScholagestException e) {
@@ -245,23 +248,24 @@ public class RestStudentService extends AbstractService {
         return "{}";
     }
 
-    @GET
+    @POST
     @Path("/getMedicalProperties")
     @Produces("text/json")
-    public String getStudentMedicalInfo(@QueryParam("token") String token, @QueryParam("studentKey") String studentKey,
-            @QueryParam("properties") Set<String> properties) {
+    public String getStudentMedicalInfo(String content) {
         ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         try {
-            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
+            RestGetObjectRequest request = new Gson().fromJson(content, RestGetObjectRequest.class);
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(request.getToken()));
 
+            Set<String> properties = request.getProperties();
             if (properties == null || properties.isEmpty()) {
                 properties = ontologyService.getPropertiesForType(CoreNamespace.tStudentMedicalInfo);
             }
             Set<String> medicalInfoProperties = ontologyService.filterPropertiesWithCorrectDomain(ScholagestNamespace.tStudentMedicalInfo,
                     new HashSet<String>(properties));
 
-            BaseObject medicalObject = studentService.getStudentMedicalProperties(studentKey, medicalInfoProperties);
+            BaseObject medicalObject = studentService.getStudentMedicalProperties(request.getKey(), medicalInfoProperties);
             Map<String, OntologyElement> medicalOntology = extractOntology(medicalObject.getProperties().keySet());
 
             RestObject restMedicalInfo = new RestToKdomConverter().restObjectFromKdom(medicalObject);
@@ -288,14 +292,11 @@ public class RestStudentService extends AbstractService {
         ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         try {
-            RestRequest request = new Gson().fromJson(content, RestRequest.class);
+            RestSetObjectRequest request = new Gson().fromJson(content, RestSetObjectRequest.class);
 
             ScholagestThreadLocal.setSubject(userService.authenticateWithToken(request.getToken()));
 
-            RestObject requestObject = request.getObject();
-            BaseObject baseObject = new RestToKdomConverter().baseObjectFromRest(requestObject);
-
-            studentService.updateStudentProperties(baseObject.getKey(), new HashMap<String, Object>(), baseObject.getProperties());
+            studentService.updateStudentProperties(request.getKey(), new HashMap<String, Object>(), request.getProperties());
         } catch (ShiroException e) {
             return handleShiroException(e);
         } catch (ScholagestException e) {
@@ -310,17 +311,18 @@ public class RestStudentService extends AbstractService {
         return "{}";
     }
 
-    @GET
+    @POST
     @Path("/getStudentsGrades")
     @Produces("text/json")
-    public String getStudentsGrades(@QueryParam("token") String token, @QueryParam("studentKeys") Set<String> studentKeys,
-            @QueryParam("examKeys") Set<String> examKeys, @QueryParam("yearKey") String yearKey) {
+    public String getStudentsGrades(String content) {
         ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         try {
-            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
+            RestGetStudentGradesRequest request = new Gson().fromJson(content, RestGetStudentGradesRequest.class);
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(request.getToken()));
 
-            Map<String, Map<String, BaseObject>> grades = studentService.getGrades(studentKeys, examKeys, yearKey);
+            Map<String, Map<String, BaseObject>> grades = studentService.getGrades(request.getStudentKeys(), request.getExamKeys(),
+                    request.getYearKey());
 
             String json = gradeMapToJson(grades);
             return "{info: " + json + "}";
@@ -363,10 +365,9 @@ public class RestStudentService extends AbstractService {
         ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         try {
-            RestStudentGradeRequest request = new Gson().fromJson(content, RestStudentGradeRequest.class);
-            RestStudentGradeList gradeList = request.getGrades();
+            RestStudentGradeList gradeList = new Gson().fromJson(content, RestStudentGradeList.class);
 
-            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(request.getToken()));
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(gradeList.getToken()));
 
             Map<String, Map<String, RestObject>> restStudentGrades = gradeList.getGrades();
             Map<String, RestObject> restPeriodStudentMeans = gradeList.getPeriodMeans();

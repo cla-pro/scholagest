@@ -2,6 +2,7 @@ package net.scholagest.services.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -37,8 +38,7 @@ public class StudentService implements IStudentService {
     public BaseObject createStudent(Map<String, Object> personalProperties) throws Exception {
         BaseObject student = null;
 
-        ITransaction transaction = this.database
-                .getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = this.database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAdminRole());
@@ -58,8 +58,7 @@ public class StudentService implements IStudentService {
     @Override
     public void updateStudentProperties(String studentKey, Map<String, Object> personalProperties, Map<String, Object> medicalProperties)
             throws Exception {
-        ITransaction transaction = this.database
-                .getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = this.database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(studentKey));
@@ -77,8 +76,7 @@ public class StudentService implements IStudentService {
     public BaseObject getStudentPersonalProperties(String studentKey, Set<String> propertyNames) throws Exception {
         BaseObject personalInfo = null;
 
-        ITransaction transaction = this.database
-                .getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = this.database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
@@ -101,8 +99,7 @@ public class StudentService implements IStudentService {
     public BaseObject getStudentMedicalProperties(String studentKey, Set<String> propertyNames) throws Exception {
         BaseObject medicalInfo = null;
 
-        ITransaction transaction = this.database
-                .getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = this.database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
@@ -125,8 +122,7 @@ public class StudentService implements IStudentService {
     public Set<BaseObject> getStudentsWithProperties(Set<String> propertyNames) throws Exception {
         Set<BaseObject> students = new HashSet<>();
 
-        ITransaction transaction = this.database
-                .getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = this.database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
@@ -151,8 +147,7 @@ public class StudentService implements IStudentService {
     public BaseObject getStudentProperties(String studentKey, Set<String> propertyNames) throws Exception {
         BaseObject student = null;
 
-        ITransaction transaction = this.database
-                .getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = this.database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
@@ -175,14 +170,13 @@ public class StudentService implements IStudentService {
     public Map<String, Map<String, BaseObject>> getGrades(Set<String> studentKeys, Set<String> examKeys, String yearKey) throws Exception {
         Map<String, Map<String, BaseObject>> grades = null;
 
-        ITransaction transaction = this.database
-                .getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = this.database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), new ArrayList<>(studentKeys));
 
-            grades = studentBusinessComponent.getGrades(studentKeys, examKeys, yearKey);
-            // TODO convert grades
+            Map<String, Map<String, BaseObject>> dbGrades = studentBusinessComponent.getGrades(studentKeys, examKeys, yearKey);
+            grades = convertGrades(dbGrades);
 
             transaction.commit();
         } catch (Exception e) {
@@ -193,11 +187,32 @@ public class StudentService implements IStudentService {
         return grades;
     }
 
+    private Map<String, Map<String, BaseObject>> convertGrades(Map<String, Map<String, BaseObject>> grades) {
+        Map<String, Map<String, BaseObject>> convertedGrades = new HashMap<>();
+        DBToKdomConverter converter = new DBToKdomConverter();
+
+        for (String studentKey : grades.keySet()) {
+            Map<String, BaseObject> studentGrades = grades.get(studentKey);
+            Map<String, BaseObject> studentRestGrades = new HashMap<>();
+            for (String gradeKey : studentGrades.keySet()) {
+                BaseObject baseObject = studentGrades.get(gradeKey);
+                if (baseObject == null) {
+                    studentRestGrades.put(gradeKey, null);
+                } else {
+                    studentRestGrades.put(gradeKey, converter.convertDbToKdom(baseObject, null));
+                }
+            }
+
+            convertedGrades.put(studentKey, studentRestGrades);
+        }
+
+        return convertedGrades;
+    }
+
     @Override
     public void setGrades(String studentKey, Map<String, BaseObject> studentGrades, String yearKey, String classKey, String branchKey,
             String periodKey) throws Exception {
-        ITransaction transaction = this.database
-                .getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = this.database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(studentKey));
@@ -214,8 +229,7 @@ public class StudentService implements IStudentService {
     @Override
     public void setStudentPeriodMean(String studentKey, BaseObject studentMean, String yearKey, String classKey, String branchKey, String periodKey)
             throws Exception {
-        ITransaction transaction = this.database
-                .getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = this.database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(studentKey));
@@ -231,8 +245,7 @@ public class StudentService implements IStudentService {
 
     @Override
     public void setStudentBranchMean(String studentKey, BaseObject studentMean, String yearKey, String classKey, String branchKey) throws Exception {
-        ITransaction transaction = this.database
-                .getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = this.database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(studentKey));

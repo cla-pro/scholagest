@@ -1,7 +1,7 @@
 var selectedClassKey = null;
 
 function createClassAndCloseDialog(closeId, txtNewClassNameId) {
-	if (checkRequiredFieldsAndMarkAsMissing([txtNewClassNameId])) {
+	if (checkRequiredFieldsAndMarkAsMissing(closeId, [txtNewClassNameId])) {
 		return;
 	}
 	
@@ -12,14 +12,6 @@ function createClassAndCloseDialog(closeId, txtNewClassNameId) {
 };
 function selectClass(classKey) {
 	return function(e) {
-//		var list = dojo.byId('year-search-list');
-//		var old = list.selectedClass;
-//		if (old != null)
-//			old.className = 'search-list-item';
-//
-//		this.className = 'search-list-item-selected';
-//		list.selectedClass = this;
-
 		getClassInfo(classKey);
 	};
 };
@@ -155,13 +147,12 @@ function getClassInfo(classKey) {
 	});
 }
 function callGetClassInfo(classKey, classProperties, callback) {
-	var content = {//automatically added token: dojo.cookie("scholagest_token"),
-			classKey: classKey};
+	var content = { key: classKey };
 	if (classProperties != null) {
 		content["properties"] = classProperties;
 	}
 	
-	sendGetRequest("../class/getProperties", content, callback);
+	sendPostRequest("../class/getProperties", content, callback);
 }
 function mergeAndDisplayYearAndClassLists(yearList, classList) {
 	var base = dojo.byId('year-search-list-div');
@@ -191,13 +182,13 @@ function loadClasses(yearList) {
 		yearKeyList.push(yearKey);
 	}
 	
-	sendGetRequest("../class/getClasses", { properties: ["pClassName"], years: yearKeyList }, function(info) {
+	sendPostRequest("../class/getClasses", { properties: ["pClassName"], yearKeys: yearKeyList }, function(info) {
 		clearDOM("year-search-list-div");
 		mergeAndDisplayYearAndClassLists(yearList, info);
 	});
 }
 function createClass(yearKey, className, dialogId) {
-	sendGetRequest("../class/create", { yearKey: yearKey, keys: ["pClassName"], values: [className] },
+	sendPostRequest("../class/create", { yearKey: yearKey, keys: ["pClassName"], values: [className] },
 			function(info) { 
 				loadClasses(dojo.byId('year-search-list-div').yearsList);
 				dijit.byId(dialogId).hide();

@@ -1,5 +1,5 @@
 function createExam(closeId, txtIds) {
-	if (checkRequiredFieldsAndMarkAsMissing(txtIds)) {
+	if (checkRequiredFieldsAndMarkAsMissing(closeId, txtIds)) {
 		return;
 	}
 	
@@ -18,7 +18,7 @@ function createExam(closeId, txtIds) {
 			branchKey: branchKey,
 			periodKey: periodKey
 		};
-	sendGetRequest("../exam/create", parameters, function(info) {
+	sendPostRequest("../exam/create", parameters, function(info) {
 		dialog.hide();
 		loadStudents(); 
 	}, function(errorJson) {
@@ -29,5 +29,5 @@ function createExam(closeId, txtIds) {
 };
 
 function getExamsInfo(examList, properties, callback) {
-	sendGetRequest("../exam/getExamsInfo", { exams: examList, properties: properties }, callback);
+	sendPostRequest("../exam/getExamsInfo", { keys: examList, properties: properties }, callback);
 };

@@ -2,16 +2,16 @@ package net.scholagest.app.rest;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 
+import net.scholagest.app.rest.object.RestGetMeansPeriodRequest;
+import net.scholagest.app.rest.object.RestGetObjectSubListRequest;
 import net.scholagest.app.rest.object.RestObject;
 import net.scholagest.exception.ScholagestException;
 import net.scholagest.exception.ScholagestRuntimeException;
@@ -43,21 +43,22 @@ public class RestPeriodService extends AbstractService {
         this.userService = userService;
     }
 
-    @GET
-    @Path("/getPropertiesForList")
+    @POST
+    @Path("/getPeriodsInfo")
     @Produces("text/json")
-    public String getPeriodProperties(@QueryParam("token") String token, @QueryParam("periodKeys") List<String> periodKeys,
-            @QueryParam("properties") Set<String> properties) {
+    public String getPeriodProperties(String content) {
         ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
         try {
-            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
+            RestGetObjectSubListRequest request = new Gson().fromJson(content, RestGetObjectSubListRequest.class);
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(request.getToken()));
 
+            Set<String> properties = request.getProperties();
             if (properties == null || properties.isEmpty()) {
                 properties = ontologyService.getPropertiesForType(CoreNamespace.tPeriod);
             }
 
             Map<String, Object> jsonObjects = new HashMap<>();
-            for (String periodKey : periodKeys) {
+            for (String periodKey : request.getKeys()) {
                 BaseObject periodInfo = periodService.getPeriodProperties(periodKey, new HashSet<String>(properties));
 
                 Map<String, OntologyElement> ontology = extractOntology(periodInfo.getProperties().keySet());
@@ -81,16 +82,16 @@ public class RestPeriodService extends AbstractService {
         }
     }
 
-    @GET
+    @POST
     @Path("/getMeans")
     @Produces("text/json")
-    public String getMeans(@QueryParam("token") String token, @QueryParam("periodKey") String periodKey,
-            @QueryParam("studentKeys") Set<String> studentKeys, @QueryParam("yearKey") String yearKey) {
+    public String getMeans(String content) {
         ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
         try {
-            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
+            RestGetMeansPeriodRequest request = new Gson().fromJson(content, RestGetMeansPeriodRequest.class);
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(request.getToken()));
 
-            Map<String, Map<String, BaseObject>> means = periodService.getPeriodMeans(periodKey, studentKeys);
+            Map<String, Map<String, BaseObject>> means = periodService.getPeriodMeans(request.getPeriodKey(), request.getStudentKeys());
 
             Map<String, Object> jsonMeans = new HashMap<>();
             String meanKey = means.keySet().iterator().next();

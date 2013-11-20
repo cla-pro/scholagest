@@ -1,28 +1,15 @@
 package net.scholagest.app.rest.object;
 
-import java.util.Map;
 
-public class RestYearRenameRequest {
-    private String token;
-    private Map<String, String> object;
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public void setObject(Map<String, String> object) {
-        this.object = object;
-    }
+public class RestYearRenameRequest extends RestBaseRequest {
+    private String key;
+    private String newYearName;
 
     public String getKey() {
-        return object.get("key");
+        return key;
     }
 
     public String getNewYearName() {
-        return object.get("newYearName");
+        return newYearName;
     }
 }

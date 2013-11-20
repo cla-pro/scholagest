@@ -7,12 +7,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 
+import net.scholagest.app.rest.object.RestGetObjectSubListRequest;
 import net.scholagest.app.rest.object.RestObject;
+import net.scholagest.app.rest.object.create.RestCreateExamRequest;
 import net.scholagest.app.utils.JerseyHelper;
 import net.scholagest.exception.ScholagestException;
 import net.scholagest.exception.ScholagestRuntimeException;
@@ -40,20 +41,20 @@ public class RestExamService extends AbstractService {
         this.userService = userService;
     }
 
-    @GET
+    @POST
     @Path("/create")
     @Produces("text/json")
-    public String createExam(@QueryParam("token") String token, @QueryParam("yearKey") String yearKey, @QueryParam("classKey") String classKey,
-            @QueryParam("branchKey") String branchKey, @QueryParam("periodKey") String periodKey, @QueryParam("keys") List<String> keys,
-            @QueryParam("values") List<String> values) {
+    public String createExam(String content) {
         ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         try {
-            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
+            RestCreateExamRequest request = new Gson().fromJson(content, RestCreateExamRequest.class);
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(request.getToken()));
 
-            Map<String, Object> classInfo = JerseyHelper.listToMap(keys, new ArrayList<Object>(values));
+            Map<String, Object> classInfo = JerseyHelper.listToMap(request.getKeys(), new ArrayList<Object>(request.getValues()));
 
-            BaseObject exam = examService.createExam(yearKey, classKey, branchKey, periodKey, classInfo);
+            BaseObject exam = examService.createExam(request.getYearKey(), request.getClassKey(), request.getBranchKey(), request.getPeriodKey(),
+                    classInfo);
             RestObject restClass = new RestToKdomConverter().restObjectFromKdom(exam);
 
             String json = new Gson().toJson(restClass);
@@ -70,19 +71,19 @@ public class RestExamService extends AbstractService {
         }
     }
 
-    @GET
+    @POST
     @Path("/getExamsInfo")
     @Produces("text/json")
-    public String getTeachersInfo(@QueryParam("token") String token, @QueryParam("exams") Set<String> examKeyList,
-            @QueryParam("properties") Set<String> properties) {
+    public String getExamsInfo(String content) {
         ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
 
         try {
-            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(token));
+            RestGetObjectSubListRequest request = new Gson().fromJson(content, RestGetObjectSubListRequest.class);
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(request.getToken()));
 
             Set<BaseObject> teachers = new HashSet<>();
-            for (String teacherKey : examKeyList) {
-                BaseObject exam = examService.getExamProperties(teacherKey, properties);
+            for (String teacherKey : request.getKeys()) {
+                BaseObject exam = examService.getExamProperties(teacherKey, request.getProperties());
 
                 teachers.add(exam);
             }

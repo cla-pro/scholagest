@@ -2,7 +2,7 @@ package net.scholagest.app.rest.object;
 
 import java.util.Map;
 
-public class RestStudentGradeList {
+public class RestStudentGradeList extends RestBaseRequest {
     private Map<String, Map<String, RestObject>> grades;
     private Map<String, RestObject> periodMeans;
     private Map<String, RestObject> branchMeans;

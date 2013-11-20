@@ -6,13 +6,13 @@ function changeYearsButtonChange(yearActive) {
 	dojo.byId('btnYearRemoveClass').disabled = !yearActive;
 };
 function startYear(closeId, txtYearNameId) {
-	if (checkRequiredFieldsAndMarkAsMissing([txtYearNameId])) {
+	if (checkRequiredFieldsAndMarkAsMissing(closeId, [txtYearNameId])) {
 		return;
 	}
 	
 	var yearName = dojo.byId(txtYearNameId).value;
 	
-	sendGetRequest("../year/start", { name: yearName }, function(info) {
+	sendPostRequest("../year/start", { yearName: yearName }, function(info) {
 		dijit.byId(closeId).hide();
 		
 		changeYearsButtonChange(true);
@@ -26,10 +26,10 @@ function startYear(closeId, txtYearNameId) {
 	});
 };
 function stopYear() {
-	sendGetRequest("../year/stop", {}, function(info) { changeYearsButtonChange(false); });
+	sendPostRequest("../year/stop", {}, function(info) { changeYearsButtonChange(false); });
 };
 function renameYear(closeId, txtNewYearNameId) {
-	if (checkRequiredFieldsAndMarkAsMissing([txtNewYearNameId])) {
+	if (checkRequiredFieldsAndMarkAsMissing(closeId, [txtNewYearNameId])) {
 		return;
 	}
 

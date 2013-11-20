@@ -24,24 +24,31 @@
 		});
 	</script>
 	<div id="changePasswordDialog" data-dojo-type="dijit.Dialog"
-		title="Changer le mot de passe">
+		title="Changer le mot de passe" lblErrorId="lblChangePasswordError">
 		<table style="width: 100%">
+            <tr>
+                <td colspan="2"><label id="lblChangePasswordError" style="color: red" /></td>
+            </tr>
 			<tr>
-				<td>Nouveau mot de passe</td>
+				<td><label id="lblNewPassword">Nouveau mot de passe</label></td>
 				<td><input type="password" style="width: 100%"
-					id="txtNewPassword" /></td>
+					id="txtNewPassword" 
+                    required="required" labelNodeId="lblNewPassword"/></td>
 			</tr>
 			<tr>
-				<td>R&eacute;p&eacute;ter le mot de passe</td>
-				<td><input type="password" style="width: 100%"
-					id="txtNewPasswordRepeat" /></td>
+                <td><label id="lblNewPasswordRepeat">R&eacute;p&eacute;ter
+                        le mot de passe</label></td>
+                <td><input type="password" id="txtNewPasswordRepeat"
+                    required="required" labelNodeId="lblNewPasswordRepeat"
+                    style="width: 100%" /></td>
 			</tr>
 			<tr>
 				<td align="center">
 					<button
-						onclick="saveNewPassword(dojo.byId('txtNewPassword').value, dojo.byId('txtNewPasswordRepeat').value)">Ok</button>
+						onclick="saveNewPassword('changePasswordDialog', dojo.byId('txtNewPassword').value, dojo.byId('txtNewPasswordRepeat').value)">Ok</button>
 				</td>
-				<td align="center"><button>Annuler</button></td>
+                <td align="center"><button
+                        onclick="dijit.byId('changePasswordDialog').hide();">Annuler</button></td>
 			</tr>
 		</table>
 	</div>
@@ -50,8 +57,11 @@
 			<td valign="top" style="width: 20%; height: 100%">
 				<div id="teacher-search" class="vertical-search">
 					<div id="newTeacherDialog" data-dojo-type="dijit.Dialog"
-						title="Nouveau professeur">
+						title="Nouveau professeur" lblErrorId="lblNewTeacherError">
 						<table style="width: 100%">
+						    <tr>
+						        <td colspan="2"><label id="lblNewTeacherError" style="color: red" />
+						    </tr>
 							<tr>
 								<td>Type</td>
 								<td><select style="width: 100%" propertyName="pTeacherType"
@@ -99,8 +109,11 @@
 						</table>
 					</div>
 					<div id="removeTeacherDialog" data-dojo-type="dijit.Dialog"
-						title="Supprimer un professeur">
+						title="Supprimer un professeur" lblErrorId="lblRemoveTeacherError">
 						<table style="width: 100%">
+                            <tr>
+                                <td colspan="2"><label id="lblRemoveTeacherError" style="color: red" /></td>
+                            </tr>
 							<tr>
 								<td colspan="2">Choisissez le professeur à supprimer<br />(Le
 									compte utilisateur uniquement est supprimé)

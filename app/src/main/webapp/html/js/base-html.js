@@ -24,10 +24,11 @@ function infoSetterListClosure(htmlList, label) {
 
 function infoGetterTxtClosure(originalInfo, txtBox) {
 	return function() {
-		return {
-			value: txtBox.value,
-			type: originalInfo.type
-		};
+//		return {
+//			value: txtBox.value,
+//			type: originalInfo.type
+//		};
+		return txtBox.value;
 	};
 };
 
@@ -38,10 +39,11 @@ function infoGetterForSaveListClosure(originalInfo, htmlList) {
 		for (var index in values) {
 			elements.push(values[index].info.key);
 		}
-		return {
-			value: elements,
-			type: originalInfo.type
-		};
+//		return {
+//			value: elements,
+//			type: originalInfo.type
+//		};
+		return elements;
 	};
 };
 

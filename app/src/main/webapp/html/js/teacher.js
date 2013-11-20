@@ -1,7 +1,7 @@
 var selectedTeacherKey = null;
 
 function getTeacherInfo(teacherKey) {
-	sendGetRequest("../teacher/getProperties", { teacherKey: teacherKey }, function(info) {
+	sendPostRequest("../teacher/getProperties", { key: teacherKey }, function(info) {
 		var domId = "teacher-data";
 		clearDOM(domId);
 
@@ -32,15 +32,17 @@ function openChangePasswordDialog(teacherKey) {
 	changePasswordDialog.teacherKey = teacherKey;
 	changePasswordDialog.show();
 };
-function saveNewPassword(newPassword, repeatedNewPassword) {
-	if (checkRequiredFieldsAndMarkAsMissing(["txtNewPassword", "txtNewPasswordRepeat"])) {
+function saveNewPassword(dialogId, newPassword, repeatedNewPassword) {
+	if (checkRequiredFieldsAndMarkAsMissing(dialogId, ["txtNewPassword", "txtNewPasswordRepeat"])) {
 		return;
 	}
 	
 	var changePasswordDialog = dijit.byId("changePasswordDialog");
 	var teacherKey = changePasswordDialog.teacherKey;
 
-	if (newPassword != repeatedNewPassword) {
+	if (isEmpty(newPassword)) {
+		displayMessageDialog("Le mot de passe ne peut pas être vide");
+	} else if (newPassword != repeatedNewPassword) {
 		displayMessageDialog("Le mot de passe n'a pas été répété correctement");
 	} else {
 		resetDiv(changePasswordDialog.containerNode);
@@ -54,19 +56,11 @@ function setTeacherInfo(teacherKey) {
 };
 
 function selectTeacher(teacherKey) {
-//	var list = dojo.byId('teacher-search-list');
-//	var old = list.selectedTeacher;
-//	if (old != null)
-//		old.className = 'search-list-item';
-//
-//	this.className = 'search-list-item-selected';
-//	list.selectedTeacher = this;
-//
 	getTeacherInfo(teacherKey);
 };
 
 function getTeacherList(callback) {
-	sendGetRequest("../teacher/getTeachers", { properties: ["pTeacherLastName", "pTeacherFirstName"] }, callback);
+	sendPostRequest("../teacher/getTeachers", { properties: ["pTeacherLastName", "pTeacherFirstName"] }, callback);
 };
 
 function loadTeachers() {
@@ -80,11 +74,11 @@ function loadTeachers() {
 };
 
 function getTeachersInfo(teacherList, properties, callback) {
-	sendGetRequest("../teacher/getTeachersInfo", { teachers: teacherList, properties: properties }, callback);
+	sendPostRequest("../teacher/getTeachersInfo", { keys: teacherList, properties: properties }, callback);
 };
 
 function createTeacher(closeId, teacherTypeSelectId, txtIds) {
-	if (checkRequiredFieldsAndMarkAsMissing(txtIds)) {
+	if (checkRequiredFieldsAndMarkAsMissing(closeId, txtIds)) {
 		return;
 	}
 	
@@ -105,7 +99,7 @@ function createTeacher(closeId, teacherTypeSelectId, txtIds) {
 	var teacherTypeSelect = dojo.byId(teacherTypeSelectId);
 	var teacherType = teacherTypeSelect.options[teacherTypeSelect.selectedIndex].value;
 
-	sendGetRequest("../teacher/create", { keys: keys, values: values, teacherType: teacherType }, function(info) { loadTeachers(); })
+	sendPostRequest("../teacher/create", { keys: keys, values: values, teacherType: teacherType }, function(info) { loadTeachers(); })
 
 	if (closeId != null) {
 		var dialog = dijit.byId(closeId);

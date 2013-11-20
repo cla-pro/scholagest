@@ -32,7 +32,7 @@ function getKeysAndValues(txtIds) {
 	return {keys: keys, values: values};
 };
 
-function checkRequiredFieldsAndMarkAsMissing(txtIds) {
+function checkRequiredFieldsAndMarkAsMissing(dialogId, txtIds) {
 	var foundMissingRequiredField = false;
 	for (var id in txtIds) {
 		var nodeId = txtIds[id];
@@ -50,6 +50,13 @@ function checkRequiredFieldsAndMarkAsMissing(txtIds) {
 				resetFieldMissingMark(labelNode);
 			}
 		}
+	}
+	
+	var lblErrorId = dijit.byId(dialogId).lblerrorid;
+	if (foundMissingRequiredField) {
+		displayErrorText(lblErrorId);
+	} else {
+		hideErrorText(lblErrorId);
 	}
 	
 	return foundMissingRequiredField;
@@ -90,11 +97,11 @@ function resetFieldMissingMark(labelNode) {
 	labelNode.style.color = 'black';
 };
 
-
-
-
 function resetDialogDiv(dialogDiv) {
 	resetDiv(dialogDiv.containerNode);
+	
+	var lblErrorId = dialogDiv.lblerrorid;
+	hideErrorText(lblErrorId);
 }
 function resetDiv(div) {
 	for (var i = 0; i < div.childNodes.length; i++) {
@@ -112,6 +119,12 @@ function resetTextBox(node) {
 	} else {
 		node.value = node.defaultValue;
 	}
+
+	if (isFieldRequired(node)) {
+		var labelNodeAttribute = node.attributes.getNamedItem('labelNodeId');
+		var labelNode = dojo.byId(labelNodeAttribute.nodeValue);
+		resetFieldMissingMark(labelNode);
+	}
 };
 function isContainerNode(node) {
 	var nodeName = node.nodeName.toUpperCase();
@@ -121,5 +134,18 @@ function isContainerNode(node) {
 	return false;
 };
 function isTextNode(node) {
-	return node.nodeName.toUpperCase() == 'INPUT' && node.type == 'text';
+	return node.nodeName.toUpperCase() == 'INPUT' && (node.type == 'text' || node.type == 'password');
+};
+
+function displayErrorText(lblErrorId) {
+	var lblError = dojo.byId(lblErrorId);
+	if (lblError != null) {
+		dojo.byId(lblErrorId).innerHTML = 'Les champs marqués d\'une * doivent être remplis';
+	}
+};
+function hideErrorText(lblErrorId) {
+	var lblError = dojo.byId(lblErrorId);
+	if (lblError != null) {
+		dojo.byId(lblErrorId).innerHTML = '';
+	}
 };
