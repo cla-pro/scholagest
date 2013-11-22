@@ -1,3 +1,5 @@
+var selectedTeacherKey = null;
+
 function getTeacherInfo(teacherKey) {
 	sendGetRequest("../teacher/getProperties", { teacherKey: teacherKey }, function(info) {
 		var domId = "teacher-data";
@@ -5,15 +7,25 @@ function getTeacherInfo(teacherKey) {
 
 		var base = dojo.byId(domId);
 		createInfoHtmlTable(base, info.properties);
+		
+		selectedTeacherKey = teacherKey;
 
 		if (info.writable) {
 			if (teacherKey == myOwnTeacherKey) {
 				dojo.create("button", {type: "button", onclick:"openChangePasswordDialog(\"" + teacherKey + "\")", innerHTML: "Changer le mot de passe"}, base);
+			} else {
+				dojo.create("button", {type: "button", onclick:"resetPassword(\"" + teacherKey + "\")", innerHTML: "Réinitialiser le mot de passe"}, base);
 			}
+			
 			dojo.create("button",
 					{type: "button", onclick:"setTeacherInfo(\"" + teacherKey + "\")", innerHTML: "Enregistrer"}, base);
 		}
 	});
+};
+function resetPassword(teacherKey) {
+	if (window.confirm('Etes vous sûr de vouloir réinitialiser le mot de passe?')) {
+		sendPostRequest("../user/resetPassword", { teacherKey : teacherKey }, function(info) { alert("Mot de passe réinitialisé"); });
+    }
 };
 function openChangePasswordDialog(teacherKey) {
 	var changePasswordDialog = dijit.byId("changePasswordDialog");
@@ -27,8 +39,9 @@ function saveNewPassword(newPassword, repeatedNewPassword) {
 	if (newPassword != repeatedNewPassword) {
 		alert("Le mot de passe n'a pas été répété correctement");
 	} else {
+		resetDiv(changePasswordDialog.containerNode);
 		changePasswordDialog.hide();
-		sendPostRequest("../user/setPassword", { teacherKey : teacherKey, password: newPassword }, function(info) {});
+		sendPostRequest("../user/setPassword", { teacherKey : teacherKey, password: newPassword }, function(info) { alert("Mot de passe modifié"); });
 	}
 };
 function setTeacherInfo(teacherKey) {
@@ -37,17 +50,15 @@ function setTeacherInfo(teacherKey) {
 };
 
 function selectTeacher(teacherKey) {
-	return function(e) {
-		var list = dojo.byId('teacher-search-list');
-		var old = list.selectedTeacher;
-		if (old != null)
-			old.className = 'search-list-item';
-
-		this.className = 'search-list-item-selected';
-		list.selectedTeacher = this;
-
-		getTeacherInfo(teacherKey);
-	};
+//	var list = dojo.byId('teacher-search-list');
+//	var old = list.selectedTeacher;
+//	if (old != null)
+//		old.className = 'search-list-item';
+//
+//	this.className = 'search-list-item-selected';
+//	list.selectedTeacher = this;
+//
+	getTeacherInfo(teacherKey);
 };
 
 function getTeacherList(callback) {
@@ -60,7 +71,7 @@ function loadTeachers() {
 
 		var base = dojo.byId("teacher-search-list");
 		createHtmlListFromList(teachers, "teacher-search-list", base,
-				buildListItemTextClosure(["pTeacherLastName", "pTeacherFirstName"]), selectTeacher);
+				buildListItemTextClosure(["pTeacherLastName", "pTeacherFirstName"]), selectTeacher, selectedTeacherKey);
 	});
 };
 
@@ -89,6 +100,8 @@ function createTeacher(closeId, teacherTypeSelectId, txtIds) {
 	sendGetRequest("../teacher/create", { keys: keys, values: values, teacherType: teacherType }, function(info) { loadTeachers(); })
 
 	if (closeId != null) {
-		dijit.byId(closeId).hide();
+		var dialog = dijit.byId(closeId);
+		resetDiv(dialog.containerNode);
+		dialog.hide();
 	}
 };

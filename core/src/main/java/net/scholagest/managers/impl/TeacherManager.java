@@ -8,6 +8,7 @@ import java.util.UUID;
 import net.scholagest.database.ITransaction;
 import net.scholagest.managers.IOntologyManager;
 import net.scholagest.managers.ITeacherManager;
+import net.scholagest.managers.ontology.types.DBSet;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.ObjectHelper;
 import net.scholagest.objects.TeacherObject;
@@ -22,7 +23,7 @@ public class TeacherManager extends ObjectManager implements ITeacherManager {
     }
 
     @Override
-    public TeacherObject createTeacher() {
+    public TeacherObject createTeacher(Map<String, Object> properties) {
         ITransaction transaction = ScholagestThreadLocal.getTransaction();
 
         String id = UUID.randomUUID().toString();
@@ -31,13 +32,13 @@ public class TeacherManager extends ObjectManager implements ITeacherManager {
 
         TeacherObject teacherObject = new TeacherObject(teacherKey);
 
-        // Classes node
-        String classesKey = teacherBase + "#classes";
-        teacherObject.putProperty(CoreNamespace.pTeacherClasses, classesKey);
+        teacherObject.putAllProperties(properties);
 
-        // Property nodes
-        String propertiesKey = teacherBase + "#properties";
-        teacherObject.putProperty(CoreNamespace.pTeacherProperties, propertiesKey);
+        String classesKey = teacherBase + "#classes";
+        DBSet classesDBSet = new DBSet(transaction, classesKey);
+        teacherObject.putProperty(CoreNamespace.pTeacherClasses, classesDBSet);
+
+        persistObject(transaction, teacherObject);
 
         transaction.insert(CoreNamespace.teachersBase, teacherKey, teacherKey, null);
 

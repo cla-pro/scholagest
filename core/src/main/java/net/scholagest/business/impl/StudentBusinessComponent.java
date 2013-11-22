@@ -270,14 +270,15 @@ public class StudentBusinessComponent implements IStudentBusinessComponent {
     }
 
     private String generateGradeKey(String yearKey, String classKey, String branchKey, String periodKey, String examKey) {
-        String yearName = getYearName(yearKey);
-        String className = getClassName(classKey);
-        String branchName = getBranchName(branchKey);
-        String periodName = getPeriodName(periodKey);
-        String examName = getExamName(examKey);
+        // String yearName = getYearName(yearKey);
+        // String className = getClassName(classKey);
+        // String branchName = getBranchName(branchKey);
+        // String periodName = getPeriodName(periodKey);
+        // String examName = getExamName(examKey);
 
-        return CoreNamespace.gradeNs + "/" + yearName + "/" + className + "/" + branchName + "/" + periodName + "/" + examName + "#"
-                + UUID.randomUUID().toString();
+        return CoreNamespace.gradeNs + "#" + UUID.randomUUID().toString();
+        // yearName + "/" + className + "/" + branchName + "/" + periodName +
+        // "/" + examName + "#" + UUID.randomUUID().toString();
     }
 
     private String getYearName(String yearKey) {

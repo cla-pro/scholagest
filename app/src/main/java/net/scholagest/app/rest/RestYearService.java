@@ -9,6 +9,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
 import net.scholagest.exception.ScholagestException;
+import net.scholagest.exception.ScholagestRuntimeException;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IOntologyService;
 import net.scholagest.services.IUserService;
@@ -53,6 +54,8 @@ public class RestYearService extends AbstractService {
             return handleShiroException(e);
         } catch (ScholagestException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
+        } catch (ScholagestRuntimeException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode:0, message:'" + e.getMessage() + "'}";
@@ -72,6 +75,8 @@ public class RestYearService extends AbstractService {
         } catch (ShiroException e) {
             return handleShiroException(e);
         } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
+        } catch (ScholagestRuntimeException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
@@ -99,6 +104,8 @@ public class RestYearService extends AbstractService {
         } catch (ShiroException e) {
             return handleShiroException(e);
         } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
+        } catch (ScholagestRuntimeException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
@@ -128,6 +135,8 @@ public class RestYearService extends AbstractService {
         } catch (ShiroException e) {
             return handleShiroException(e);
         } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
+        } catch (ScholagestRuntimeException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();

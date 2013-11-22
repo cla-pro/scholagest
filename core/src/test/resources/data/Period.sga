@@ -1,4 +1,4 @@
-http://scholagest.net/period/2012-2013/1P A/Math#Trimestre 1_exams:::http://www.w3.org/1999/02/22-rdf-syntax-ns#type:::http://scholagest.net#Set
-http://scholagest.net/period/2012-2013/1P A/Math#Trimestre 1:::pPeriodExams:::http://scholagest.net/period/2012-2013/1P A/Math#Trimestre 1_exams
-http://scholagest.net/period/2012-2013/1P A/Math#Trimestre 1:::http://www.w3.org/1999/02/22-rdf-syntax-ns#type:::http://scholagest.net#tPeriod
-http://scholagest.net/period/2012-2013/1P A/Math#Trimestre 1:::pPeriodName:::Trimestre 1
+period#fddb452e-5d0d-4dfb-9898-19a686a0fe9e_exams:::http://www.w3.org/1999/02/22-rdf-syntax-ns#type:::http://scholagest.net#Set
+period#fddb452e-5d0d-4dfb-9898-19a686a0fe9e:::pPeriodExams:::period/2012-2013/1P A/Math#Trimestre 1_exams
+period#fddb452e-5d0d-4dfb-9898-19a686a0fe9e:::http://www.w3.org/1999/02/22-rdf-syntax-ns#type:::http://scholagest.net#tPeriod
+period#fddb452e-5d0d-4dfb-9898-19a686a0fe9e:::pPeriodName:::Trimestre 1

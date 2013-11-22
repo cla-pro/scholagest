@@ -87,8 +87,10 @@ public class BaseObject implements ScholagestObject {
             value = properties.get(propertyName);
         } else if (objectHelper != null) {
             value = objectHelper.getObjectProperty(transaction, key, propertyName);
-            properties.put(propertyName, value);
             readProperties.add(propertyName);
+            if (value != null) {
+                properties.put(propertyName, value);
+            }
             return value;
         }
 

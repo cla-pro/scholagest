@@ -9,6 +9,10 @@
             });
             tabs.startup();
             loadTeachers();
+            
+            dijit.byId("changePasswordDialog").on("hide", function() {
+            	resetDialogDiv(dijit.byId("changePasswordDialog"));
+            });
         });
     </script>
     <div id="changePasswordDialog" data-dojo-type="dijit.Dialog" title="Changer le mot de passe">

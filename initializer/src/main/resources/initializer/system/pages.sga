@@ -6,6 +6,7 @@ html_teacher_teacher;modules/teacher/teacher-teacher.html;teacher
 html_teacher_student;modules/teacher/teacher-student.html;teacher
 html_teacher_year;modules/teacher/teacher-year.html;teacher
 html_teacher_grade;modules/teacher/teacher-grades.html;teacher
+js_error_code;js/error_code.js;admin,teacher
 js_base;js/base.js;admin,teacher
 js_base_html;js/base-html.js;admin,teacher
 js_teacher;js/teacher.js;admin,teacher

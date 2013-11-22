@@ -17,7 +17,7 @@ import net.scholagest.objects.PeriodObject;
 import net.scholagest.services.IPeriodService;
 import net.scholagest.services.kdom.DBToKdomConverter;
 import net.scholagest.shiro.AuthorizationHelper;
-import net.scholagest.utils.ConfigurationServiceImpl;
+import net.scholagest.utils.ConfigurationService;
 import net.scholagest.utils.ScholagestProperty;
 import net.scholagest.utils.ScholagestThreadLocal;
 
@@ -37,7 +37,7 @@ public class PeriodService implements IPeriodService {
 
     @Override
     public void setPeriodProperties(String periodKey, Map<String, Object> periodProperties) throws Exception {
-        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             String classKey = getClassKey(periodKey);
@@ -59,7 +59,7 @@ public class PeriodService implements IPeriodService {
     public BaseObject getPeriodProperties(String periodKey, Set<String> propertyNames) throws Exception {
         BaseObject period = null;
 
-        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             String classKey = getClassKey(periodKey);
@@ -85,7 +85,7 @@ public class PeriodService implements IPeriodService {
     public Map<String, Map<String, BaseObject>> getPeriodMeans(String periodKey, Set<String> studentKeys) throws Exception {
         Map<String, Map<String, BaseObject>> means = new HashMap<>();
 
-        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             String classKey = getClassKey(periodKey);

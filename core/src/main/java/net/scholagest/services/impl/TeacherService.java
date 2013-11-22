@@ -18,7 +18,7 @@ import net.scholagest.objects.UserObject;
 import net.scholagest.services.ITeacherService;
 import net.scholagest.services.kdom.DBToKdomConverter;
 import net.scholagest.shiro.AuthorizationHelper;
-import net.scholagest.utils.ConfigurationServiceImpl;
+import net.scholagest.utils.ConfigurationService;
 import net.scholagest.utils.ScholagestProperty;
 import net.scholagest.utils.ScholagestThreadLocal;
 
@@ -43,7 +43,7 @@ public class TeacherService implements ITeacherService {
     public BaseObject createTeacher(String teacherType, Map<String, Object> teacherProperties) throws Exception {
         BaseObject teacher = null;
 
-        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAdminRole());
@@ -87,7 +87,7 @@ public class TeacherService implements ITeacherService {
     public Set<BaseObject> getTeachers() throws Exception {
         Set<BaseObject> teachers = null;
 
-        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
@@ -108,7 +108,7 @@ public class TeacherService implements ITeacherService {
     public Set<BaseObject> getTeachersWithProperties(Set<String> propertyNames) throws Exception {
         Set<BaseObject> teachers = null;
 
-        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());
@@ -130,7 +130,7 @@ public class TeacherService implements ITeacherService {
 
     @Override
     public void setTeacherProperties(String teacherKey, Map<String, Object> properties) throws Exception {
-        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(teacherKey));
@@ -148,7 +148,7 @@ public class TeacherService implements ITeacherService {
     public BaseObject getTeacherProperties(String teacherKey, Set<String> propertyNames) throws Exception {
         BaseObject teacher = null;
 
-        ITransaction transaction = database.getTransaction(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        ITransaction transaction = database.getTransaction(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         ScholagestThreadLocal.setTransaction(transaction);
         try {
             authorizationHelper.checkAuthorizationRoles(AuthorizationRolesNamespace.getAllRoles());

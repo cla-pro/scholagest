@@ -73,7 +73,7 @@ public class RestUserService extends AbstractService {
 
     @GET
     @Path("/getPage")
-    @Produces(MediaType.TEXT_HTML)
+    @Produces(MediaType.TEXT_HTML + ";charset=UTF-8")
     public String getPage(@QueryParam("token") String token) {
         List<String> pages = new ArrayList<>();
         String teacherKey = null;
@@ -108,14 +108,15 @@ public class RestUserService extends AbstractService {
         HtmlPageBuilder htmlPageBuilder = new HtmlPageBuilder("id", "scholagestContent");
         List<String> content = new ArrayList<>();
         content.add(builder.toString());
-        return htmlPageBuilder.inject(basePage, content);
+        String finalPage = htmlPageBuilder.inject(basePage, content);
+        return finalPage;
     }
 
     private String loadFile(String fileName) {
         StringBuilder builder = new StringBuilder();
         BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new InputStreamReader(context.getResourceAsStream(fileName)));
+            reader = new BufferedReader(new InputStreamReader(context.getResourceAsStream(fileName), "UTF-8"));
 
             String line = reader.readLine();
             while (line != null) {
@@ -157,6 +158,8 @@ public class RestUserService extends AbstractService {
             return handleShiroException(e);
         } catch (ScholagestException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
+        } catch (ScholagestRuntimeException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             return "{errorCode:0, message:'" + e.getMessage() + "'}";
@@ -187,6 +190,32 @@ public class RestUserService extends AbstractService {
         return "{}";
     }
 
+    @POST
+    @Path("/resetPassword")
+    @Produces("text/json")
+    public String resetPassword(String content) {
+        ScholagestThreadLocal.setRequestId(REQUEST_ID_PREFIX + UUID.randomUUID());
+
+        try {
+            RestSetPassword request = new Gson().fromJson(content, RestSetPassword.class);
+
+            ScholagestThreadLocal.setSubject(userService.authenticateWithToken(request.getToken()));
+
+            userService.resetPassword(request.getTeacherKey());
+        } catch (ShiroException e) {
+            return handleShiroException(e);
+        } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
+        } catch (ScholagestRuntimeException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{errorCode:0, message:'" + e.getMessage() + "'}";
+        }
+
+        return "{}";
+    }
+
     @GET
     @Path("/logout")
     @Produces("text/json")
@@ -200,6 +229,8 @@ public class RestUserService extends AbstractService {
         } catch (ShiroException e) {
             return handleShiroException(e);
         } catch (ScholagestException e) {
+            return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
+        } catch (ScholagestRuntimeException e) {
             return generateScholagestExceptionMessage(e.getErrorCode(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();

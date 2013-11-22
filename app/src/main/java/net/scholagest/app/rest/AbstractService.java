@@ -10,7 +10,7 @@ import net.scholagest.exception.ScholagestRuntimeException;
 import net.scholagest.managers.ontology.OntologyElement;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.services.IOntologyService;
-import net.scholagest.utils.ConfigurationServiceImpl;
+import net.scholagest.utils.ConfigurationService;
 import net.scholagest.utils.ScholagestProperty;
 
 import org.apache.shiro.ShiroException;
@@ -28,7 +28,7 @@ public abstract class AbstractService {
     }
 
     protected String getBaseUrl() {
-        return ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.BASE_URL);
+        return ConfigurationService.getInstance().getStringProperty(ScholagestProperty.BASE_URL);
     }
 
     protected String handleShiroException(ShiroException e) {

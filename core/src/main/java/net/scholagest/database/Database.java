@@ -10,7 +10,6 @@ import me.prettyprint.cassandra.service.ColumnSliceIterator;
 import me.prettyprint.cassandra.service.ThriftKsDef;
 import me.prettyprint.cassandra.service.template.ColumnFamilyResult;
 import me.prettyprint.cassandra.service.template.ColumnFamilyTemplate;
-import me.prettyprint.cassandra.service.template.ColumnFamilyUpdater;
 import me.prettyprint.cassandra.service.template.ThriftColumnFamilyTemplate;
 import me.prettyprint.hector.api.Cluster;
 import me.prettyprint.hector.api.Keyspace;
@@ -21,6 +20,10 @@ import me.prettyprint.hector.api.ddl.KeyspaceDefinition;
 import me.prettyprint.hector.api.exceptions.HectorException;
 import me.prettyprint.hector.api.factory.HFactory;
 import me.prettyprint.hector.api.query.SliceQuery;
+import net.scholagest.database.cache.CacheResult;
+import net.scholagest.database.cache.TransactionCache;
+import net.scholagest.database.commiter.DeleteDBAction;
+import net.scholagest.database.commiter.InsertDBAction;
 
 import com.google.inject.Inject;
 
@@ -77,52 +80,83 @@ public class Database implements IDatabase {
         return HFactory.createKeyspace(keyspaceName, cluster);
     }
 
-    private class Transaction implements ITransaction {
-        private Keyspace keyspace = null;
-        private ColumnFamilyTemplate<String, String> template = null;
+    protected class Transaction implements ITransaction {
+        private Keyspace keyspace;
+        private ColumnFamilyTemplate<String, String> template;
+
+        private TransactionCommiter transactionCommiter;
+        private TransactionCache transactionCache;
+
+        private boolean commited;
+        private boolean rolledback;
 
         public Transaction(Keyspace keyspace, ColumnFamilyTemplate<String, String> template) {
             this.keyspace = keyspace;
             this.template = template;
+            this.transactionCommiter = new TransactionCommiter();
+            this.transactionCache = new TransactionCache();
+            this.commited = false;
+            this.rolledback = false;
         }
 
         @Override
         public void insert(String key, String column, Object value, String type) throws DatabaseException {
-            ColumnFamilyUpdater<String, String> updater = template.createUpdater(key);
+            checkAlive();
+            String originalValue = (String) get(key, column, type);
+            InsertDBAction insertDbAction = new InsertDBAction(template, key, column, (String) value, originalValue);
+            transactionCommiter.addAction(insertDbAction);
+            transactionCache.addAction(insertDbAction);
 
-            updater.setString(column, (String) value);
-
-            try {
-                template.update(updater);
-            } catch (HectorException e) {
-                throw new DatabaseException(-1, -1, e.getMessage(), e);
-            }
+            // ColumnFamilyUpdater<String, String> updater =
+            // template.createUpdater(key);
+            //
+            // updater.setString(column, (String) value);
+            //
+            // try {
+            // template.update(updater);
+            // } catch (HectorException e) {
+            // throw new DatabaseException(-1, -1, e.getMessage(), e);
+            // }
         }
 
         @Override
         public void delete(String key, String column, String type) throws DatabaseException {
-            try {
-                template.deleteColumn(key, column);
-            } catch (HectorException e) {
-                throw new DatabaseException(-1, -1, e.getMessage(), e);
-            }
+            checkAlive();
+            String originalValue = (String) get(key, column, type);
+            DeleteDBAction deleteDbAction = new DeleteDBAction(template, key, column, originalValue);
+            transactionCommiter.addAction(deleteDbAction);
+            transactionCache.addAction(deleteDbAction);
+
+            // try {
+            // template.deleteColumn(key, column);
+            // } catch (HectorException e) {
+            // throw new DatabaseException(-1, -1, e.getMessage(), e);
+            // }
         }
 
         @Override
         public Object get(String key, String column, String type) throws DatabaseException {
-            Object result = null;
-            try {
-                ColumnFamilyResult<String, String> columnFamilyResult = template.queryColumns(key);
-                result = columnFamilyResult.getString(column);
-            } catch (HectorException e) {
-                throw new DatabaseException(-1, -1, e.getMessage(), e);
-            }
+            checkAlive();
 
-            return result;
+            CacheResult cacheResult = transactionCache.get(key, column);
+            if (cacheResult.isFound()) {
+                return cacheResult.getValue();
+            } else {
+                Object result = null;
+                try {
+                    ColumnFamilyResult<String, String> columnFamilyResult = template.queryColumns(key);
+                    result = columnFamilyResult.getString(column);
+                } catch (HectorException e) {
+                    throw new DatabaseException(-1, -1, e.getMessage(), e);
+                }
+
+                return result;
+            }
         }
 
         @Override
         public Set<String> getColumns(String key) throws DatabaseException {
+            checkAlive();
             SliceQuery<String, String, String> query = HFactory
                     .createSliceQuery(keyspace, StringSerializer.get(), StringSerializer.get(), StringSerializer.get()).setKey(key)
                     .setColumnFamily(COLUMN_FAMILY_NAME);
@@ -135,25 +169,37 @@ public class Database implements IDatabase {
                 columns.add(col.getName());
             }
 
+            transactionCache.updateColumns(key, columns);
+
             return columns;
         }
 
         @Override
         public Map<String, Object> getRow(String key) throws DatabaseException {
-            // TODO Auto-generated method stub
-            return null;
+            checkAlive();
+            throw new DatabaseException(-1, -1, "Not yet implemented");
         }
 
         @Override
         public void commit() throws DatabaseException {
-            // TODO Auto-generated method stub
-
+            checkAlive();
+            transactionCommiter.commit();
+            commited = true;
         }
 
         @Override
         public void rollback() throws DatabaseException {
-            // TODO Auto-generated method stub
+            checkAlive();
+            transactionCommiter.rollback();
+            rolledback = true;
+        }
 
+        private void checkAlive() {
+            if (commited) {
+                throw new DatabaseException(-1, -1, "Not allowed to perfom actions on commited transcation");
+            } else if (rolledback) {
+                throw new DatabaseException(-1, -1, "Not allowed to perfom actions on rolledback transcation");
+            }
         }
     }
 }

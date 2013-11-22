@@ -1,6 +1,6 @@
-http://scholagest.net/teacher#teachers:::http://scholagest.net/teacher#e85af55b-8b34-4646-a872-1a6e9c210fe2:::http://scholagest.net/teacher#e85af55b-8b34-4646-a872-1a6e9c210fe2
-http://scholagest.net/teacher#e85af55b-8b34-4646-a872-1a6e9c210fe2:::pTeacherClasses:::http://scholagest.net/teacher/e85af55b-8b34-4646-a872-1a6e9c210fe2#classes
-http://scholagest.net/teacher#e85af55b-8b34-4646-a872-1a6e9c210fe2:::pTeacherFirstName:::Gilles
-http://scholagest.net/teacher#e85af55b-8b34-4646-a872-1a6e9c210fe2:::pTeacherProperties:::http://scholagest.net/teacher/e85af55b-8b34-4646-a872-1a6e9c210fe2#properties
-http://scholagest.net/teacher#e85af55b-8b34-4646-a872-1a6e9c210fe2:::http://www.w3.org/1999/02/22-rdf-syntax-ns#type:::tTeacher
-http://scholagest.net/teacher#e85af55b-8b34-4646-a872-1a6e9c210fe2:::pTeacherLastName:::Dupont
+base#teachers:::teacher#e85af55b-8b34-4646-a872-1a6e9c210fe2:::teacher#e85af55b-8b34-4646-a872-1a6e9c210fe2
+teacher#e85af55b-8b34-4646-a872-1a6e9c210fe2:::pTeacherClasses:::teacher/e85af55b-8b34-4646-a872-1a6e9c210fe2#classes
+teacher#e85af55b-8b34-4646-a872-1a6e9c210fe2:::pTeacherFirstName:::Gilles
+teacher#e85af55b-8b34-4646-a872-1a6e9c210fe2:::pTeacherProperties:::teacher/e85af55b-8b34-4646-a872-1a6e9c210fe2#properties
+teacher#e85af55b-8b34-4646-a872-1a6e9c210fe2:::http://www.w3.org/1999/02/22-rdf-syntax-ns#type:::tTeacher
+teacher#e85af55b-8b34-4646-a872-1a6e9c210fe2:::pTeacherLastName:::Dupont

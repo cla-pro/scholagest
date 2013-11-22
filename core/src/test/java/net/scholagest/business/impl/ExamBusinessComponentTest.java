@@ -2,12 +2,18 @@ package net.scholagest.business.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyMapOf;
+import static org.mockito.Matchers.anySetOf;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import net.scholagest.business.IExamBusinessComponent;
+import net.scholagest.exception.ScholagestException;
+import net.scholagest.exception.ScholagestExceptionErrorCode;
 import net.scholagest.managers.IBranchManager;
 import net.scholagest.managers.IClassManager;
 import net.scholagest.managers.IExamManager;
@@ -46,41 +52,51 @@ public class ExamBusinessComponentTest extends AbstractTestWithTransaction {
 
     private IExamBusinessComponent testee;
 
-    @SuppressWarnings("unchecked")
     @Before
     public void setup() throws Exception {
         examManager = Mockito.mock(IExamManager.class);
-        Mockito.when(
+        when(
                 examManager.createExam(eq(EXAM_NAME), eq(CLASS_KEY), eq(PERIOD_NAME), eq(BRANCH_NAME), eq(CLASS_NAME), eq(YEAR_NAME),
                         anyMapOf(String.class, Object.class))).thenReturn(BaseObjectMock.createExamObject(EXAM_KEY, new HashMap<String, Object>()));
-        Mockito.when(examManager.getExamProperties(Mockito.eq(EXAM_KEY), Mockito.anySet())).thenReturn(
+        when(examManager.getExamProperties(eq(EXAM_KEY), anySetOf(String.class))).thenReturn(
                 BaseObjectMock.createExamObject(EXAM_KEY, createProperties()));
 
         periodManager = Mockito.mock(IPeriodManager.class);
-        Mockito.when(periodManager.getPeriodProperties(Mockito.eq(PERIOD_KEY), Mockito.anySet())).thenReturn(
+        when(periodManager.getPeriodProperties(eq(PERIOD_KEY), anySetOf(String.class))).thenReturn(
                 BaseObjectMock.createPeriodObject(PERIOD_KEY,
                         createMap(CoreNamespace.pPeriodName, PERIOD_NAME, CoreNamespace.pPeriodExams, new DBSet(transaction, null))));
 
         branchManager = Mockito.mock(IBranchManager.class);
-        Mockito.when(branchManager.getBranchProperties(Mockito.eq(BRANCH_KEY), Mockito.anySet())).thenReturn(
+        when(branchManager.getBranchProperties(eq(BRANCH_KEY), anySetOf(String.class))).thenReturn(
                 BaseObjectMock.createBranchObject(BRANCH_KEY, createMap(CoreNamespace.pBranchName, BRANCH_NAME)));
 
         classManager = Mockito.mock(IClassManager.class);
-        Mockito.when(classManager.getClassProperties(Mockito.eq(CLASS_KEY), Mockito.anySet())).thenReturn(
+        when(classManager.getClassProperties(eq(CLASS_KEY), anySetOf(String.class))).thenReturn(
                 BaseObjectMock.createClassObject(CLASS_KEY, createMap(CoreNamespace.pClassName, CLASS_NAME)));
 
         yearManager = Mockito.mock(IYearManager.class);
-        Mockito.when(yearManager.getYearProperties(Mockito.eq(YEAR_KEY), Mockito.anySet())).thenReturn(
+        when(yearManager.getYearProperties(eq(YEAR_KEY), anySetOf(String.class))).thenReturn(
                 BaseObjectMock.createBaseObject(YEAR_KEY, CoreNamespace.tYear, createMap(CoreNamespace.pYearName, YEAR_NAME)));
 
         testee = new ExamBusinessComponent(examManager, periodManager, branchManager, classManager, yearManager);
     }
 
     @Test
+    public void testCreateExamNameAlreadyUsed() throws Exception {
+        when(examManager.checkWhetherExamExistsInPeriod(anyString(), anyString(), anyString(), anyString(), anyString())).thenReturn(true);
+
+        try {
+            testee.createExam(YEAR_KEY, CLASS_KEY, BRANCH_KEY, PERIOD_KEY, createProperties());
+        } catch (ScholagestException e) {
+            assertEquals(ScholagestExceptionErrorCode.OBJECT_ALREADY_EXISTS, e.getErrorCode());
+        }
+    }
+
+    @Test
     public void testCreateExam() throws Exception {
         ExamObject exam = testee.createExam(YEAR_KEY, CLASS_KEY, BRANCH_KEY, PERIOD_KEY, createProperties());
 
-        Mockito.verify(examManager).createExam(eq(EXAM_NAME), eq(CLASS_KEY), eq(PERIOD_NAME), eq(BRANCH_NAME), eq(CLASS_NAME), eq(YEAR_NAME),
+        verify(examManager).createExam(eq(EXAM_NAME), eq(CLASS_KEY), eq(PERIOD_NAME), eq(BRANCH_NAME), eq(CLASS_NAME), eq(YEAR_NAME),
                 anyMapOf(String.class, Object.class));
 
         assertEquals(EXAM_KEY, exam.getKey());

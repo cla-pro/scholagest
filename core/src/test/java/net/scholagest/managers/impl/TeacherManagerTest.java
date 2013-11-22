@@ -1,7 +1,10 @@
 package net.scholagest.managers.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,6 +12,7 @@ import java.util.Set;
 
 import net.scholagest.managers.ITeacherManager;
 import net.scholagest.managers.ontology.OntologyManager;
+import net.scholagest.managers.ontology.RDF;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.objects.TeacherObject;
@@ -19,19 +23,18 @@ import net.scholagest.utils.InMemoryDatabase.InMemoryTransaction;
 import net.scholagest.utils.ScholagestThreadLocal;
 
 import org.junit.Test;
-import org.mockito.Mockito;
 
 public class TeacherManagerTest extends AbstractTestWithTransaction {
-    private static final String TEACHER_KEY = "http://scholagest.net/teacher#e85af55b-8b34-4646-a872-1a6e9c210fe2";
+    private static final String TEACHER_KEY = "teacher#e85af55b-8b34-4646-a872-1a6e9c210fe2";
 
     private ITeacherManager teacherManager = spy(new TeacherManager(new OntologyManager()));
 
     @Test
     public void testCreateNewTeacher() throws Exception {
-        BaseObject teacher = teacherManager.createTeacher();
+        BaseObject teacher = teacherManager.createTeacher(new HashMap<String, Object>());
 
-        Mockito.verify(transaction).insert(Mockito.eq(CoreNamespace.teachersBase), Mockito.anyString(), Mockito.eq(teacher.getKey()),
-                Mockito.anyString());
+        verify(transaction).insert(anyString(), eq(RDF.type), eq(CoreNamespace.tTeacher), anyString());
+        verify(transaction).insert(eq(CoreNamespace.teachersBase), anyString(), eq(teacher.getKey()), anyString());
     }
 
     @Test
@@ -72,8 +75,7 @@ public class TeacherManagerTest extends AbstractTestWithTransaction {
 
         Map<String, Object> teacherProperties = new TeacherManagerTest().createTeacherProperties();
 
-        BaseObject teacher = teacherManager.createTeacher();
-        teacherManager.setTeacherProperties(teacher.getKey(), teacherProperties);
+        teacherManager.createTeacher(teacherProperties);
 
         Map<String, Map<String, Map<String, Object>>> databaseContent = new HashMap<>();
         databaseContent.put(transaction.getKeyspace(), transaction.getValues());

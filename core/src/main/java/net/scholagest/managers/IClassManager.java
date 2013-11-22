@@ -14,4 +14,6 @@ public interface IClassManager {
     public void setClassProperties(String classKey, Map<String, Object> classProperties);
 
     public ClassObject getClassProperties(String classKey, Set<String> properties);
+
+    public boolean checkWhetherClassExistsInYear(String className, String yearName);
 }

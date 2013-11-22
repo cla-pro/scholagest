@@ -22,4 +22,6 @@ public interface IUserBusinessComponent {
     public void setPassword(String teacherKey, String newPassword);
 
     public void logout(String token);
+
+    public void resetPassword(String teacherKey);
 }

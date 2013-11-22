@@ -10,7 +10,7 @@ import net.scholagest.database.ITransaction;
 import net.scholagest.services.IStudentService;
 import net.scholagest.services.ITeacherService;
 import net.scholagest.services.IUserService;
-import net.scholagest.utils.ConfigurationServiceImpl;
+import net.scholagest.utils.ConfigurationService;
 import net.scholagest.utils.ScholagestProperty;
 import net.scholagest.utils.ScholagestThreadLocal;
 
@@ -42,7 +42,7 @@ public class TesterInitializer extends SystemInitializer {
 
     @Inject
     public TesterInitializer(IStudentService studentService, ITeacherService teacherService, IUserService userService) {
-        super.setKeyspace(ConfigurationServiceImpl.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
+        super.setKeyspace(ConfigurationService.getInstance().getStringProperty(ScholagestProperty.KEYSPACE));
         this.studentService = studentService;
         this.teacherService = teacherService;
         this.userService = userService;
