@@ -21,11 +21,9 @@ import java.util.UUID;
 import net.scholagest.business.IStudentBusinessComponent;
 import net.scholagest.exception.ScholagestException;
 import net.scholagest.managers.IBranchManager;
-import net.scholagest.managers.IClassManager;
 import net.scholagest.managers.IExamManager;
 import net.scholagest.managers.IPeriodManager;
 import net.scholagest.managers.IStudentManager;
-import net.scholagest.managers.IYearManager;
 import net.scholagest.managers.ontology.types.DBSet;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
@@ -56,12 +54,6 @@ public class StudentBusinessComponentTest extends AbstractTestWithTransaction {
     private IStudentManager studentManager;
 
     @Mock
-    private IYearManager yearManager;
-
-    @Mock
-    private IClassManager classManager;
-
-    @Mock
     private IBranchManager branchManager;
 
     @Mock
@@ -83,16 +75,10 @@ public class StudentBusinessComponentTest extends AbstractTestWithTransaction {
         when(studentManager.getStudents()).thenReturn(
                 new HashSet<>(Arrays.asList(BaseObjectMock.createStudentObject(STUDENT_KEY, new HashMap<String, Object>()))));
 
-        when(yearManager.getYearProperties(anyString(), anySetOf(String.class))).thenReturn(
-                BaseObjectMock.createBaseObject(UUID.randomUUID().toString(), CoreNamespace.tYear, new HashMap<String, Object>()));
-
         HashMap<String, Object> periodProperties = new HashMap<String, Object>();
         periodProperties.put(CoreNamespace.pPeriodExams, new DBSet(transaction, UUID.randomUUID().toString()));
         when(periodManager.getPeriodProperties(anyString(), anySetOf(String.class))).thenReturn(
                 BaseObjectMock.createPeriodObject(UUID.randomUUID().toString(), periodProperties));
-
-        when(classManager.getClassProperties(anyString(), anySetOf(String.class))).thenReturn(
-                BaseObjectMock.createClassObject(UUID.randomUUID().toString(), new HashMap<String, Object>()));
 
         HashMap<String, Object> branchProperties = new HashMap<String, Object>();
         branchProperties.put(CoreNamespace.pBranchPeriods, new DBSet(transaction, UUID.randomUUID().toString()));
@@ -102,7 +88,7 @@ public class StudentBusinessComponentTest extends AbstractTestWithTransaction {
         when(examManager.getExamProperties(anyString(), anySetOf(String.class))).thenReturn(
                 BaseObjectMock.createExamObject(UUID.randomUUID().toString(), new HashMap<String, Object>()));
 
-        testee = new StudentBusinessComponent(studentManager, yearManager, classManager, branchManager, periodManager, examManager);
+        testee = new StudentBusinessComponent(studentManager, branchManager, periodManager, examManager);
     }
 
     private Map<String, Object> createStudentPersonalProperties() {
@@ -284,5 +270,10 @@ public class StudentBusinessComponentTest extends AbstractTestWithTransaction {
         grades.put(UUID.randomUUID().toString(), BaseObjectMock.createBaseObject(UUID.randomUUID().toString(), CoreNamespace.tGrade, properties));
 
         return grades;
+    }
+
+    @Test
+    public void testStudentBusinessComponent() throws Exception {
+        throw new RuntimeException("not yet implemented");
     }
 }

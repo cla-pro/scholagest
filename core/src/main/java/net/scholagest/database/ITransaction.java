@@ -1,7 +1,6 @@
 package net.scholagest.database;
 
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 public interface ITransaction {
@@ -13,7 +12,7 @@ public interface ITransaction {
 
     public Set<String> getColumns(String key) throws DatabaseException;
 
-    public Map<String, Object> getRow(String key) throws DatabaseException;
+    public Iterator<DbRow> getRowsFromKey(String startKey, int size);
 
     public Iterator<DbRow> getAllRows() throws DatabaseException;
 

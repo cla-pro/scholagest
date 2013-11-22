@@ -11,11 +11,9 @@ import net.scholagest.business.IStudentBusinessComponent;
 import net.scholagest.exception.ScholagestException;
 import net.scholagest.exception.ScholagestExceptionErrorCode;
 import net.scholagest.managers.IBranchManager;
-import net.scholagest.managers.IClassManager;
 import net.scholagest.managers.IExamManager;
 import net.scholagest.managers.IPeriodManager;
 import net.scholagest.managers.IStudentManager;
-import net.scholagest.managers.IYearManager;
 import net.scholagest.managers.ontology.types.DBSet;
 import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
@@ -31,15 +29,11 @@ public class StudentBusinessComponent implements IStudentBusinessComponent {
     private IExamManager examManager;
     private IPeriodManager periodManager;
     private IBranchManager branchManager;
-    private IClassManager classManager;
-    private IYearManager yearManager;
 
     @Inject
-    public StudentBusinessComponent(IStudentManager studentManager, IYearManager yearManager, IClassManager classManager,
-            IBranchManager branchManager, IPeriodManager periodManager, IExamManager examManager) {
+    public StudentBusinessComponent(IStudentManager studentManager, IBranchManager branchManager, IPeriodManager periodManager,
+            IExamManager examManager) {
         this.studentManager = studentManager;
-        this.yearManager = yearManager;
-        this.classManager = classManager;
         this.branchManager = branchManager;
         this.periodManager = periodManager;
         this.examManager = examManager;
@@ -47,9 +41,7 @@ public class StudentBusinessComponent implements IStudentBusinessComponent {
 
     @Override
     public BaseObject createStudent(Map<String, Object> personalProperties) throws Exception {
-        BaseObject student = studentManager.createStudent(personalProperties);
-
-        return student;
+        return studentManager.createStudent(personalProperties);
     }
 
     @Override
@@ -266,37 +258,6 @@ public class StudentBusinessComponent implements IStudentBusinessComponent {
     }
 
     private String generateGradeKey(String yearKey, String classKey, String branchKey, String periodKey, String examKey) {
-        // String yearName = getYearName(yearKey);
-        // String className = getClassName(classKey);
-        // String branchName = getBranchName(branchKey);
-        // String periodName = getPeriodName(periodKey);
-        // String examName = getExamName(examKey);
-
         return CoreNamespace.gradeNs + "#" + UUID.randomUUID().toString();
-        // yearName + "/" + className + "/" + branchName + "/" + periodName +
-        // "/" + examName + "#" + UUID.randomUUID().toString();
-    }
-
-    private String getYearName(String yearKey) {
-        return (String) yearManager.getYearProperties(yearKey, new HashSet<String>()).getProperty(CoreNamespace.pYearName);
-    }
-
-    private String getClassName(String classKey) {
-        return (String) classManager.getClassProperties(classKey, new HashSet<String>()).getProperty(CoreNamespace.pClassName);
-    }
-
-    private String getBranchName(String branchKey) {
-        return (String) branchManager.getBranchProperties(branchKey, new HashSet<String>()).getProperty(CoreNamespace.pBranchName);
-    }
-
-    private String getPeriodName(String periodKey) {
-        if (periodKey == null) {
-            return "";
-        }
-        return (String) periodManager.getPeriodProperties(periodKey, new HashSet<String>()).getProperty(CoreNamespace.pPeriodName);
-    }
-
-    private String getExamName(String examKey) {
-        return (String) examManager.getExamProperties(examKey, new HashSet<String>()).getProperty(CoreNamespace.pExamName);
     }
 }

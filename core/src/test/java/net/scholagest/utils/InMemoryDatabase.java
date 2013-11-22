@@ -83,12 +83,9 @@ public class InMemoryDatabase implements IDatabase {
         }
 
         @Override
-        public Map<String, Object> getRow(String key) throws DatabaseException {
-            Map<String, Object> columns = values.get(key);
-            if (columns == null) {
-                return new HashMap<>();
-            }
-            return columns;
+        public Iterator<DbRow> getRowsFromKey(String startKey, int size) {
+            // TODO Auto-generated method stub
+            return null;
         }
 
         @Override

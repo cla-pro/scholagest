@@ -184,12 +184,6 @@ public class Database implements IDatabase {
         }
 
         @Override
-        public Map<String, Object> getRow(String key) throws DatabaseException {
-            checkAlive();
-            throw new DatabaseException(-1, -1, "Not yet implemented");
-        }
-
-        @Override
         public void commit() throws DatabaseException {
             checkAlive();
             transactionCommiter.commit();
@@ -204,7 +198,25 @@ public class Database implements IDatabase {
         }
 
         @Override
+        public Iterator<DbRow> getRowsFromKey(String startKey, int size) {
+            checkAlive();
+
+            final RangeSlicesQuery<String, String, String> rangeSlicesQuery = HFactory
+                    .createRangeSlicesQuery(keyspace, StringSerializer.get(), StringSerializer.get(), StringSerializer.get())
+                    .setColumnFamily(COLUMN_FAMILY_NAME).setRange(null, null, false, size);
+            rangeSlicesQuery.setKeys(startKey, null);
+            rangeSlicesQuery.setRowCount(size);
+
+            QueryResult<OrderedRows<String, String, String>> result = rangeSlicesQuery.execute();
+            OrderedRows<String, String, String> rows = result.get();
+            Iterator<Row<String, String, String>> rowsIterator = rows.iterator();
+            return extractRows(rowsIterator, startKey);
+        }
+
+        @Override
         public Iterator<DbRow> getAllRows() {
+            checkAlive();
+
             final RangeSlicesQuery<String, String, String> rangeSlicesQuery = HFactory
                     .createRangeSlicesQuery(keyspace, StringSerializer.get(), StringSerializer.get(), StringSerializer.get())
                     .setColumnFamily(COLUMN_FAMILY_NAME).setRange(null, null, false, 100);
