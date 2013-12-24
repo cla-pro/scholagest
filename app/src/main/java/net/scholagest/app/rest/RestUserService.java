@@ -10,6 +10,7 @@ import java.util.UUID;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -59,7 +60,6 @@ public class RestUserService extends AbstractService {
 
             String token = (String) subject.getPrincipals().fromRealm(RealmAuthenticationAndAuthorization.TOKEN_KEY).iterator().next();
 
-            // ?token=" + token
             return new JsonObject("token", token, "nextpage", getBaseUrl() + "services/user/getPage").toString();
         } catch (ShiroException e) {
             return handleShiroException(e);
@@ -71,6 +71,13 @@ public class RestUserService extends AbstractService {
             e.printStackTrace();
             return "{errorCode:0, message:'" + e.getMessage() + "'}";
         }
+    }
+
+    @GET
+    @Path("getPage")
+    @Produces(MediaType.TEXT_HTML + ";charset=UTF-8")
+    public String getPageGet() {
+        return loadFile("html" + File.separatorChar + "base-get-request.html");
     }
 
     @POST

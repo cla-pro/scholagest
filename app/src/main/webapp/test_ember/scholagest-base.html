@@ -1,0 +1,143 @@
+<!DOCTYPE html PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN' 'http://www.w3.org/TR/html4/loose.dtd'>
+<html>
+<head>
+	<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+	<script type='text/x-handlebars' id="application">
+        <header>
+            <img src="../html/images/scholagest-logo1-2-small.png" class="app-logo" />
+            
+            <div>
+                <span>{{#link-to "students"}}Elèves{{/link-to}}</span>
+                <span>{{#link-to "teachers"}}Professeurs{{/link-to}}</span>
+            </div>
+        </header>
+        
+        <div>
+            {{outlet}}
+        </div>
+        
+        <footer>
+            
+        </footer>
+	</script>
+	<script type='text/x-handlebars' id="students">
+        <ul>
+            {{#each student in controller}}
+                <li>
+                    {{#link-to "student" student}}
+                        {{student.fullName}}
+                    {{/link-to}}
+                </li>
+            {{else}}
+                <li>Pas d'élèves...</li>
+            {{/each}}
+        </ul>
+
+        {{outlet}}
+	</script>
+	<script type='text/x-handlebars' id="student">
+        <h2>{{firstName}} {{lastName}}</h2>
+        
+        {{input value=firstName}}
+        
+        <button {{action "delete"}}>Delete</button>
+	</script>
+	
+	<script type='text/x-handlebars' id="teachers">
+        <h1>Teachers</h1>
+        <ul>
+            {{#each teacher in controller}}
+                <li>
+                    {{#link-to "teacher" teacher}}
+                        {{teacher.fullName}}
+                    {{/link-to}}
+                </li>
+            {{else}}
+                <li>Pas de professeur...</li>
+            {{/each}}
+        </ul>
+
+        {{outlet}}
+	</script>
+	<script type='text/x-handlebars' id="teacher">
+        <h2>Teacher - {{firstName}} {{lastName}}</h2>
+        
+        {{input value=firstName}}
+        
+        <button {{action "delete"}}>Delete</button>
+	</script>
+	
+	<script src='../jquery-1.10.2.js'></script>
+	<script src='../handlebars-1.1.2.js'></script>
+	<script src='../ember.js'></script>
+	<script src='../ember-data.js'></script>
+	<script type='text/javascript'>
+		   Scholagest = Ember.Application.create({
+			   LOG_TRANSITIONS: false
+		   });
+		   
+		   DS.RESTAdapter.reopen({
+			   host: 'http://localhost:8080',
+			   namespace: 'scholagest-app/services'
+		   });
+
+//            Scholagest.ApplicationAdapter = DS.FixtureAdapter;
+           Scholagest.ApplicationAdapter = DS.RESTAdapter;
+		   
+		   Scholagest.Student = DS.Model.extend({
+			   //id: DS.attr(),
+			   firstName: DS.attr(),
+			   lastName: DS.attr(),
+			   
+			   fullName: function() {
+				   return this.get('firstName') + " - " + this.get('lastName');
+			   }.property('firstName', 'lastName')
+		   });
+	       Scholagest.Teacher = DS.Model.extend({
+	           //id: DS.attr(),
+	           firstName: DS.attr(),
+	           lastName: DS.attr(),
+	           
+	           fullName: function() {
+	               return this.get('firstName') + " - " + this.get('lastName');
+	           }.property('firstName', 'lastName')
+	       });
+		   
+		   Scholagest.Student.FIXTURES = [{
+	           id: 1,
+	           firstName: 'Cédric',
+	           lastName: 'Lavanchy'
+	       }, {
+	           id: 2,
+	           firstName: 'Valérie',
+	           lastName: 'Parvex'
+	       }];
+// 	       Scholagest.Teacher.FIXTURES = [{
+// 	           id: 1,
+// 	           firstName: 'Elodie',
+// 	           lastName: 'Lavanchy'
+// 	       }, {
+// 	           id: 2,
+// 	           firstName: 'Thibaud',
+// 	           lastName: 'Hottelier'
+// 	       }];
+		   
+		   Scholagest.Router.map(function() {
+	           this.resource('students', function() {
+	        	   this.resource('student', { path: '/:student_id' }, function() {});
+	           });
+	           this.resource('teachers', function() {
+	               this.resource('teacher', { path: '/:teacher_id' }, function() {});
+	           });
+		   });
+	</script>
+<!-- 	<script src="js/rest_adapter.js"></script> -->
+    <script src='js/index.js'></script>
+    <script src='js/student.js'></script>
+	<script src='js/teacher.js'></script>
+	
+	<title>Scholagest</title>
+</head>
+<body>
+</body>
+</html>

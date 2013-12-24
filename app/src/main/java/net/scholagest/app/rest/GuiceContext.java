@@ -3,6 +3,7 @@ package net.scholagest.app.rest;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.scholagest.app.rest.ember.TeachersRest;
 import net.scholagest.business.IBranchBusinessComponent;
 import net.scholagest.business.IClassBusinessComponent;
 import net.scholagest.business.IExamBusinessComponent;
@@ -124,19 +125,22 @@ public class GuiceContext extends GuiceServletContextListener {
                 bind(IPageManager.class).to(PageManager.class);
                 bind(IPageBusinessComponent.class).to(PageBusinessComponent.class);
 
-                bind(RestTeacherService.class);
-                bind(RestStudentService.class);
-                bind(RestUserService.class);
-                bind(RestYearService.class);
-                bind(RestClassService.class);
-                bind(RestBranchService.class);
-                bind(RestPeriodService.class);
-                bind(RestClassService.class);
-                bind(RestExamService.class);
+                // bind(RestTeacherService.class);
+                // bind(RestStudentService.class);
+                // bind(RestUserService.class);
+                // bind(RestYearService.class);
+                // bind(RestClassService.class);
+                // bind(RestBranchService.class);
+                // bind(RestPeriodService.class);
+                // bind(RestClassService.class);
+                // bind(RestExamService.class);
+
+                bind(TeachersRest.class);
 
                 // Route all requests through GuiceContainer
                 Map<String, String> params = new HashMap<>();
-                params.put("com.sun.jersey.config.property.packages", "net.scholagest.rest");
+                params.put("com.sun.jersey.config.property.packages", "net.scholagest.rest.ember");
+                params.put("com.sun.jersey.api.json.POJOMappingFeature", "true");
                 serve("/services/*").with(GuiceContainer.class, params);
             }
         }, new ShiroModule() {

@@ -133,4 +133,9 @@ public class UserBusinessComponent implements IUserBusinessComponent {
     public void logout(String token) {
         userManager.deleteToken(token);
     }
+
+    @Override
+    public UserObject getUser(String userKey) throws Exception {
+        return userManager.getUser(userKey);
+    }
 }

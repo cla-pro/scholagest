@@ -24,4 +24,6 @@ public interface IUserBusinessComponent {
     public void logout(String token);
 
     public void resetPassword(String teacherKey);
+
+    public UserObject getUser(String userKey) throws Exception;
 }

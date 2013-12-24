@@ -8,6 +8,7 @@ import net.scholagest.business.ITeacherBusinessComponent;
 import net.scholagest.exception.ScholagestExceptionErrorCode;
 import net.scholagest.exception.ScholagestRuntimeException;
 import net.scholagest.managers.ITeacherManager;
+import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.TeacherObject;
 
 import com.google.inject.Inject;
@@ -27,7 +28,7 @@ public class TeacherBusinessComponent implements ITeacherBusinessComponent {
 
     @Override
     public TeacherObject createTeacher(String teacherType, Map<String, Object> teacherProperties) {
-        teacherProperties.put("pTeacherType", teacherType);
+        teacherProperties.put(CoreNamespace.pTeacherType, teacherType);
         TeacherObject teacherObject = teacherManager.createTeacher(teacherProperties);
 
         return teacherObject;
