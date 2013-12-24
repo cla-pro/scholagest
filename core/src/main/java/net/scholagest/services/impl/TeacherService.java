@@ -1,6 +1,7 @@
 package net.scholagest.services.impl;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,6 +13,7 @@ import net.scholagest.database.ITransaction;
 import net.scholagest.exception.ScholagestExceptionErrorCode;
 import net.scholagest.exception.ScholagestRuntimeException;
 import net.scholagest.namespace.AuthorizationRolesNamespace;
+import net.scholagest.namespace.CoreNamespace;
 import net.scholagest.objects.BaseObject;
 import net.scholagest.objects.TeacherObject;
 import net.scholagest.objects.UserObject;
@@ -135,6 +137,7 @@ public class TeacherService implements ITeacherService {
         try {
             authorizationHelper.checkAuthorization(AuthorizationRolesNamespace.getAdminRole(), Arrays.asList(teacherKey));
 
+            checkTeacherTypeAndUpdateRole(teacherKey, (String) properties.get(CoreNamespace.pTeacherType));
             teacherBusinessComponent.setTeacherProperties(teacherKey, properties);
 
             transaction.commit();
@@ -142,6 +145,22 @@ public class TeacherService implements ITeacherService {
             transaction.rollback();
             throw e;
         }
+    }
+
+    private void checkTeacherTypeAndUpdateRole(String teacherKey, String teacherType) throws Exception {
+        if (teacherType != null) {
+            TeacherObject teacherObject = teacherBusinessComponent.getTeacherProperties(teacherKey, new HashSet<String>());
+
+            if (hasTeacherTypeTypeChanged(teacherObject, teacherType)) {
+                UserObject userObject = userBusinessComponent.getUser(teacherObject.getUserKey());
+                userObject.getRoles().add(convertTeacherTypeToRole(teacherType));
+            }
+        }
+    }
+
+    private boolean hasTeacherTypeTypeChanged(TeacherObject teacherObject, String teacherType) {
+        String oldTeacherType = (String) teacherObject.getProperty(CoreNamespace.pTeacherType);
+        return !teacherType.equals(oldTeacherType);
     }
 
     @Override

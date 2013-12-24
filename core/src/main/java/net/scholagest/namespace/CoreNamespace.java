@@ -35,6 +35,7 @@ public class CoreNamespace {
     private static final String pTeacherNs = "pTeacher";
     public static final String pTeacherClasses = pTeacherNs + "Classes";
     public static final String pTeacherUser = pTeacherNs + "User";
+    public static final String pTeacherType = pTeacherNs + "Type";
 
     private static final String pUserNs = "pUser";
     public static final String pUserUsername = pUserNs + "Username";
