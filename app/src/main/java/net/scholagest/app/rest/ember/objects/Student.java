@@ -1,4 +1,4 @@
-package net.scholagest.app.rest.ember;
+package net.scholagest.app.rest.ember.objects;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,12 +36,4 @@ public class Student {
     public Map<String, String> getLinks() {
         return links;
     }
-
-    // public String getPersonal() {
-    // return personal;
-    // }
-    //
-    // public String getMedical() {
-    // return medical;
-    // }
 }

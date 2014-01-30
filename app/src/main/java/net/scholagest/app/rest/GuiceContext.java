@@ -3,9 +3,14 @@ package net.scholagest.app.rest;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.scholagest.app.rest.ember.BranchesRest;
+import net.scholagest.app.rest.ember.ClassesRest;
+import net.scholagest.app.rest.ember.ExamsRest;
+import net.scholagest.app.rest.ember.PeriodsRest;
 import net.scholagest.app.rest.ember.StudentsRest;
-import net.scholagest.app.rest.ember.TeachersFullRest;
+import net.scholagest.app.rest.ember.TeacherDetailsRest;
 import net.scholagest.app.rest.ember.TeachersRest;
+import net.scholagest.app.rest.ember.YearsRest;
 import net.scholagest.business.IBranchBusinessComponent;
 import net.scholagest.business.IClassBusinessComponent;
 import net.scholagest.business.IExamBusinessComponent;
@@ -137,9 +142,15 @@ public class GuiceContext extends GuiceServletContextListener {
                 // bind(RestClassService.class);
                 // bind(RestExamService.class);
 
+                bind(YearsRest.class);
+                bind(ClassesRest.class);
+                bind(PeriodsRest.class);
+                bind(BranchesRest.class);
+                bind(ExamsRest.class);
+                bind(YearsRest.class);
                 bind(StudentsRest.class);
                 bind(TeachersRest.class);
-                bind(TeachersFullRest.class);
+                bind(TeacherDetailsRest.class);
 
                 // Route all requests through GuiceContainer
                 Map<String, String> params = new HashMap<>();

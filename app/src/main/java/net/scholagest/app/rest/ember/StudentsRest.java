@@ -2,15 +2,21 @@ package net.scholagest.app.rest.ember;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import net.scholagest.app.rest.AbstractService;
+import net.scholagest.app.rest.ember.objects.Student;
+import net.scholagest.app.rest.ember.objects.StudentMedical;
+import net.scholagest.app.rest.ember.objects.StudentPersonal;
+import net.scholagest.app.rest.ember.objects.Students;
 import net.scholagest.services.IOntologyService;
 import net.scholagest.services.ITeacherService;
 import net.scholagest.services.IUserService;
@@ -39,10 +45,28 @@ public class StudentsRest extends AbstractService {
         super(ontologyService);
     }
 
+    // @GET
+    // @Produces(MediaType.APPLICATION_JSON)
+    // public Students getStudents() {
+    // return new Students(new ArrayList<Student>(students.values()));
+    // }
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Students getStudents() {
-        return new Students(new ArrayList<Student>(students.values()));
+    public Students getStudents(@QueryParam("ids[]") final List<String> ids) {
+        if (ids.isEmpty()) {
+            return new Students(new ArrayList<Student>(students.values()));
+        } else {
+            final List<Student> studentsToReturn = new ArrayList<Student>();
+
+            for (Student student : students.values()) {
+                if (ids.contains(student.getId())) {
+                    studentsToReturn.add(student);
+                }
+            }
+
+            return new Students(studentsToReturn);
+        }
     }
 
     @GET
