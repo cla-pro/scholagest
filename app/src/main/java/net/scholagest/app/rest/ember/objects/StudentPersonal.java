@@ -1,4 +1,4 @@
-package net.scholagest.app.rest.ember;
+package net.scholagest.app.rest.ember.objects;
 
 public class StudentPersonal {
     private String id;

@@ -5,22 +5,6 @@ Scholagest.TeachersRoute = Ember.Route.extend({
 });
 Scholagest.TeachersController = Ember.ArrayController.extend({
 });
-//Scholagest.TeachersView = Ember.View.extend({
-//    content: null,
-//    templateName: 'teachers',
-//    attributes: function() {
-//        console.log('called')
-//        var instance = this.get('content');
-//        var keys = instance.get('constructor.attributes.keys').toArray();
-//        return keys.reduce(function(result, attribute) {
-//            result.push({
-//                name: attribute,
-//                value: instance.get(attribute)    
-//            });
-//            return result;            
-//        }, []);
-//    }.property()
-//});
 
 Scholagest.TeacherRoute = Ember.Route.extend({
 	model: function(params) {
@@ -46,6 +30,41 @@ Scholagest.TeacherController = Ember.ObjectController.extend({
 			this.get('model').deleteRecord();
 			this.get('model').save();
 			this.transitionToRoute('teachers');
+		},
+		save: function() {
+			var teacher = this.get('model');
+			if (teacher.get('isDirty')) {
+				teacher.save();
+			}
+			var teacherDetail = teacher.get('detail');
+			if (teacherDetail.get('isDirty')) {
+				teacherDetail.get('content').save();
+			}
+		}
+	}
+});
+
+Scholagest.NewTeacherRoute = Ember.Route.extend({
+	model: function(params) {
+		return {};
+	}
+});
+Scholagest.NewTeacherController = Ember.ObjectController.extend({
+	actions: {
+		create: function(router, event) {
+			var content = this.get('content');
+			var teacherDetail = this.store.createRecord('teacherDetail', { 
+				address: content.address, 
+				phone: content.phone,
+				email: content.email
+			});
+			var teacher = this.store.createRecord('teacher', {
+				firstName: content.firstName,
+				lastName: content.lastName,
+				detail: teacherDetail
+			});
+			teacherDetail.save();
+			teacher.save();
 		}
 	}
 });

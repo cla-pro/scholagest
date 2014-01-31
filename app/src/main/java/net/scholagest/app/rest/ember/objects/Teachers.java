@@ -1,4 +1,4 @@
-package net.scholagest.app.rest.ember;
+package net.scholagest.app.rest.ember.objects;
 
 import java.util.List;
 
@@ -15,9 +15,5 @@ public class Teachers {
 
     public List<Teacher> getTeachers() {
         return teachers;
-    }
-
-    public void setTeachers(List<Teacher> teachers) {
-        this.teachers = teachers;
     }
 }

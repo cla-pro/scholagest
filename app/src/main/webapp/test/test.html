@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+    <div id="testDiv" style="width: 200px; height: 100px; overflow-y: scroll; border: black solid 1px">
+        <ul id="ul" style="margin: 0px">
+            <li>1</li>
+            <li>2</li>
+            <li>3</li>
+            <li>4</li>
+            <li>5</li>
+            <li>6</li>
+            <li>7</li>
+            <li>8</li>
+            <li>9</li>
+            <li>10</li>
+            <li>11</li>
+            <li>12</li>
+            <li>13</li>
+            <li>14</li>
+            <li>15</li>
+            <li>16</li>
+        </ul>
+    </div>
+    <label id="lbl"></label>
+    <label id="lblLoad"></label>
+    <script type="text/javascript">
+    var div = document.getElementById('testDiv');
+    
+    div.reachBottom = false;
+    div.onmousewheel = function(e) {
+    	var ul = document.getElementById('ul');
+    	
+    	if (div.scrollTop >= (ul.offsetHeight - div.offsetHeight)) {
+    		if (div.reachBottom) {
+    			document.getElementById('lblLoad').innerHTML = "load data";
+    		} else {
+                document.getElementById('lblLoad').innerHTML = "reach bottom";
+                div.reachBottom = true;
+    		}
+    	} else {
+            document.getElementById('lblLoad').innerHTML = "not at bottom";
+            div.reachBottom = false;
+    	}
+    	
+        document.getElementById('lbl').innerHTML = div.scrollTop + " -> " + ul.offsetHeight + " -> " + div.offsetHeight;
+    };
+    </script>
+</body>
+</html>

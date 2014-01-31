@@ -1,4 +1,4 @@
-package net.scholagest.app.rest.ember;
+package net.scholagest.app.rest.ember.objects;
 
 import java.util.List;
 

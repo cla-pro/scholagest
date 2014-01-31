@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<script type="text/javascript">
+	var dojoConfig = {
+		parseOnLoad : true
+	};
+</script>
+<script src="../../../dojo/1.8.1/dojo/dojo.js"></script>
+<script type="text/javascript">
+require(["dojo/ready"], function(ready) {
+    ready(function() {
+          require(["dojo/cookie"], function(cookie) {
+               ready(function() {
+                   var token = cookie("scholagest_token");
+                   var url = window.location;
+                   
+                   var myForm = document.createElement("form");
+                   myForm.method = "post";
+                   myForm.action = url;
+                   
+                   var myInput = document.createElement("input");
+                   myInput.setAttribute("name", "token");
+                   myInput.setAttribute("value", token);
+                   myForm.appendChild(myInput);
+                   
+                   document.body.appendChild(myForm);
+                   myForm.submit();
+                   document.body.removeChild(myForm);
+               });
+          });
+    });
+});
+// 	dojo.require("dojo.cookie", function() {
+// 		var token = dojo.cookie("scholagest_token");
+// 		var url = window.location;
+		
+// 		var myForm = document.createElement("form");
+//         myForm.method = "post";
+//         myForm.action = url;
+        
+//         var myInput = document.createElement("input");
+//         myInput.setAttribute("name", "token");
+//         myInput.setAttribute("value", token);
+//         myForm.appendChild(myInput);
+        
+//         document.body.appendChild(myForm);
+//         myForm.submit();
+//         document.body.removeChild(myForm);
+// 	});
+</script>
+<title>Scholagest</title>
+</head>
+<body />

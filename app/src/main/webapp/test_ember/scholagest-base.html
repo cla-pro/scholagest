@@ -9,6 +9,9 @@
             <div>
                 <span>{{#link-to "students"}}Etudiants{{/link-to}}</span>
                 <span>{{#link-to "teachers"}}Professeurs{{/link-to}}</span>
+                <span>{{#link-to "years"}}Volées{{/link-to}}</span>
+                <span>{{#link-to "periods"}}Périodes{{/link-to}}</span>
+                <span>{{#link-to "newTeacher"}}Nouveau Professeur{{/link-to}}</span>
             </div>
         </header>
         
@@ -76,7 +79,7 @@
     </script>
 	
 	<script type='text/x-handlebars' id="teachers">
-        <h1>Teachers</h1>
+        <h1>Professeurs</h1>
         <ul>
             {{#each teacher in controller}}
                 <li>
@@ -91,8 +94,31 @@
 
         {{outlet}}
 	</script>
-	<script type='text/x-handlebars' id="teacher">
+    <script type='text/x-handlebars' id="teacher">
         <h2>{{fullName}}</h2>
+        
+        <table>
+            <tr>
+                <td>Prénom</td><td>{{input value=firstName}}</td>
+            </tr>
+            <tr>
+                <td>Nom</td><td>{{input value=lastName}}</td>
+            </tr>
+            <tr>
+                <td>Email</td><td>{{input value=detail.email}}</td>
+            </tr>
+            <tr>
+                <td>Adresse</td><td>{{input value=detail.address}}</td>
+            </tr>
+            <tr>
+                <td>Téléphone</td><td>{{input value=detail.phone}}</td>
+            </tr>
+        </table>
+
+        <button {{action save}}>Enregistrer</button>
+    </script>
+    <script type='text/x-handlebars' id="newTeacher">
+        <h2>Nouveau professeur</h2>
         
         <table>
             <tr>
@@ -111,8 +137,121 @@
                 <td>Téléphone</td><td>{{input value=phone}}</td>
             </tr>
         </table>
+
+        <button {{action create}} >Enregistrer</button>
+    </script>
+    
+    <script type='text/x-handlebars' id="years">
+        <h2>Volées</h2>
         
-	</script>
+        <ul>
+            {{#each year in controller}}
+                <li>{{year.name}}</li>
+                {{#each class in year.classes}}
+                    <li>
+                        {{#link-to "class" class}}
+                            {{class.name}}
+                        {{/link-to}}
+                    </li>
+                    {{! <li>{{class.name</li> }}
+                {{/each}}
+            {{else}}
+                <li>Pas de volée...</li>
+            {{/each}}
+        </ul>
+
+        {{outlet}}
+    </script>
+    <script type='text/x-handlebars' id="class">
+        <h1>Classe {{name}}</h1>
+
+        <table>
+            <tr>
+                <td>Nom</td><td>{{input value=name}}</td>
+            </tr>
+            <tr>
+                <td>Elèves</td>
+                <td>
+                    <ul>
+                        {{#each student in students}}
+                            <li>{{student.fullName}}</li>
+                        {{else}}
+                            <li>Pas d'élève</li>
+                        {{/each}}
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td>Professeurs</td>
+                <td>
+                    <ul>
+                        {{#each teacher in teachers}}
+                            <li>{{teacher.fullName}}</li>
+                        {{else}}
+                            <li>Pas de professeur</li>
+                        {{/each}}
+                    </ul>
+                </td>
+            </tr>
+        </table>
+    </script>
+    
+    <script type='text/x-handlebars' id="periods">
+        <h2>Périodes</h2>
+        
+        <ul>
+            {{#each period in controller}}
+                <li>
+                    {{#link-to "period" period}}
+                        {{period.name}}
+                    {{/link-to}}
+                </li>
+            {{else}}
+                <li>Pas de période...</li>
+            {{/each}}
+        </ul>
+
+        {{outlet}}
+    </script>
+    <script type='text/x-handlebars' id="period">
+        <h2>{{name}}</h2>
+        
+        <ul>
+            {{#each branch in branches}}
+                <li>
+                    {{#link-to "branch" branch}}
+                        {{branch.name}}
+                    {{/link-to}}
+                </li>
+            {{else}}
+                <li>Pas de branche...</li>
+            {{/each}}
+        </ul>
+
+        {{outlet}}
+    </script>
+    <script type='text/x-handlebars' id="branch">
+        <h2>{{name}}</h2>
+        
+        <table>
+            <tr>
+                <td></td>
+                {{#each exam in exams}}
+                    <td>{{exam.name}}</td>
+                {{/each}}
+            </tr>
+            {{#each student in period.clazz.students}}
+                <tr>
+                    <td>{{student.fullName}}</td>
+                    {{#each exam in exams}}
+                        <td>{{resultView exam student.id}}</td>
+                    {{/each}}
+                </tr>
+            {{/each}}
+        </table>
+
+        <button {{action save}} >Enregistrer</button>
+    </script>
 	<!-- 
         {{! {{#each attribute in metadata }}
         {{!     {{attribute.name }}
@@ -130,69 +269,23 @@
 		   Scholagest = Ember.Application.create({
 			   LOG_TRANSITIONS: true
 		   });
-		   
-<!-- 		   Scholagest.AutoTextField = Ember.View.extend({ -->
-<!-- 		       name: null, -->
-<!-- 		       template: Ember.Handlebars.compile('{{input value=attribute.object.' + name + '}}') -->
-<!-- 		   }); -->
-<!-- 		   Scholagest.AutoTextField = Ember.ContainerView.extend({ -->
-<!-- 		       type: null, -->
-<!-- 		       name: null, -->
-<!-- 		       object: null, -->
-		
-<!-- 		       init: function() { -->
-<!-- 		           this._super(); -->
-<!-- 		           this.createChildView(); -->
-<!-- 		       }, -->
-<!-- 		       createChildView: function() { -->
-<!-- 		           var textField = Ember.TextField.create({ -->
-<!--                                valueBinding: this.get('object').get(this.get('name')) -->
-<!--                             }); -->
-<!--                    textField.addObserver('value', this, function(sender, key, value, rev) { -->
-<!--                        this.get('object').set(this.get('name'), value); -->
-<!--                    }); -->
-<!-- 		           this.set('currentView', textField);    -->
-<!-- 		       }.observes('name', 'object') -->
-<!-- 		   }); -->
-		   
 
+//            Scholagest.TeacherSerializer = DS.RESTSerializer.extend({
+//                serializeBelongsTo: function(record, json, relationship) {
+//                    var key = relationship.key;
+            
+//                    var belongsTo = Ember.get(record, key);
+            
+//                    key = this.keyForRelationship ? this.keyForRelationship(key, "belongsTo") : key;
+            
+//                    // .get('content') is required because of the async in the model definition.
+//                    json[key] = Ember.isNone(belongsTo) ? belongsTo : belongsTo.get('content').toJSON();
+//                }
+//            });
            Scholagest.ApplicationAdapter = DS.RESTAdapter;
            DS.RESTAdapter.reopen({
                host: 'http://localhost:8080',
                namespace: 'scholagest-app/services'
-           });
-		   
-           Scholagest.StudentPersonal = DS.Model.extend({
-               street: DS.attr(),
-               city: DS.attr(),
-               postcode: DS.attr(),
-               religion: DS.attr()
-           });
-           Scholagest.StudentMedical = DS.Model.extend({
-               doctor: DS.attr()
-           });
-		   Scholagest.Student = DS.Model.extend({
-			   //id: DS.attr(),
-			   firstName: DS.attr(),
-			   lastName: DS.attr(),
-			   personal: DS.belongsTo('studentPersonal', { async: true }),
-			   medical: DS.belongsTo('studentMedical', { async: true }),
-			   
-			   fullName: function() {
-				   return this.get('firstName') + " - " + this.get('lastName');
-			   }.property('firstName', 'lastName')
-		   });
-           Scholagest.Teacher = DS.Model.extend({
-               //id: DS.attr(),
-               firstName: DS.attr(),
-               lastName: DS.attr(),
-               email: DS.attr(),
-               address: DS.attr(),
-               phone: DS.attr(),
-               
-               fullName: function() {
-                   return this.get('firstName') + " - " + this.get('lastName');
-               }.property('firstName', 'lastName')
            });
 		   
 		   Scholagest.Router.map(function() {
@@ -200,14 +293,36 @@
 	        	   this.resource('student', { path: '/:student_id' }, function() {});
 	           });
                this.resource('teachers', function() {
-	               this.resource('teacher', { path: '/:teacher_id' }, function() {});
-	           });
+                   this.resource('teacher', { path: '/:teacher_id' }, function() {});
+               });
+               this.resource('years', function() {
+                   this.resource('class', { path: '/:class_id' }, function() {});
+               });
+               this.resource('periods', function() {
+                   this.resource('period', { path: '/:period_id' }, function() {
+                	   this.resource('branch', { path: '/:branch_id' }, function() {});
+                   });
+               });
+               this.resource('newTeacher', function() {});
+		   });
+		   
+		   Ember.Handlebars.helper('resultView', function(exam, student_id) {
+			   var result = exam.getResult(student_id);
+			   if (result == null) {
+				   return new Handlebars.SafeString('no result');
+			   } else {
+                   //return new Handlebars.SafeString('<input type="text" {{value=}} />');
+                   return new Handlebars.SafeString('<input type="text" value="' + result.get('grade') + '" />');
+			   }
 		   });
 	</script>
-<!-- 	<script src="js/rest_adapter.js"></script> -->
+    <script src='js/model.js'></script>
     <script src='js/index.js'></script>
+    <script src='js/year.js'></script>
+    <script src='js/class.js'></script>
     <script src='js/student.js'></script>
-	<script src='js/teacher.js'></script>
+    <script src='js/teacher.js'></script>
+    <script src='js/branch.js'></script>
 	
 	<title>Scholagest</title>
 </head>
