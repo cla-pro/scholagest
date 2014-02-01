@@ -57,7 +57,7 @@ public class StudentsRest extends AbstractService {
         if (ids.isEmpty()) {
             return new Students(new ArrayList<Student>(students.values()));
         } else {
-            final List<Student> studentsToReturn = new ArrayList<Student>();
+            final List<Student> studentsToReturn = new ArrayList<>();
 
             for (Student student : students.values()) {
                 if (ids.contains(student.getId())) {
@@ -67,6 +67,19 @@ public class StudentsRest extends AbstractService {
 
             return new Students(studentsToReturn);
         }
+    }
+
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Students getStudents(@PathParam("id") final String id) {
+        final List<Student> studentsToReturn = new ArrayList<>();
+
+        if (students.containsKey(id)) {
+            studentsToReturn.add(students.get(id));
+        }
+
+        return new Students(studentsToReturn);
     }
 
     @GET

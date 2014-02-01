@@ -3,14 +3,16 @@ package net.scholagest.app.rest.ember.objects;
 public class Result {
     private String id;
     private double grade;
-    private String student;
-    private final String exam;
+    private String studentResult;
+    private String exam;
 
-    public Result(final String id, final double grade, final String exam, final String student) {
+    public Result() {}
+
+    public Result(final String id, final double grade, final String exam, final String studentResult) {
         this.id = id;
         this.grade = grade;
         this.exam = exam;
-        this.student = student;
+        this.studentResult = studentResult;
     }
 
     public String getId() {
@@ -33,11 +35,11 @@ public class Result {
         return exam;
     }
 
-    public String getStudent() {
-        return student;
+    public String getStudentResult() {
+        return studentResult;
     }
 
-    public void setStudent(String student) {
-        this.student = student;
+    public void setStudentResult(String studentResult) {
+        this.studentResult = studentResult;
     }
 }

@@ -63,6 +63,7 @@ Scholagest.Exam = DS.Model.extend({
 });
 
 Scholagest.StudentResult = DS.Model.extend({
+    branch: DS.belongsTo('branch', { async: true }),
 	student: DS.belongsTo('student', { async: true }),
 	results: DS.hasMany('result')
 });
@@ -84,5 +85,6 @@ Scholagest.StudentResult = DS.Model.extend({
 //});
 Scholagest.Result = DS.Model.extend({
 	grade: DS.attr(),
-	//studentResult: DS.belongsTo('studentResult', { async: true })
+	exam: DS.belongsTo('exam', { async: true }),
+	studentResult: DS.belongsTo('studentResult', { async: true })
 });

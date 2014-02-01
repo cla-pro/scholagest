@@ -23,8 +23,8 @@ Scholagest.BranchController = Ember.ObjectController.extend({
 	actions: {
 		save: function() {
 			var branch = this.get('model');
-			branch.get('exams').forEach(function(exam) {
-				exam.get('results').forEach(function(result) {
+			branch.get('studentResults').forEach(function(studentResult) {
+				studentResult.get('results').forEach(function(result) {
 					if (result.get('isDirty')) {
 						result.save();
 					}

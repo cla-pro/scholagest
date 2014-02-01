@@ -240,11 +240,12 @@
                     <td>{{exam.name}}</td>
                 {{/each}}
             </tr>
-            {{#each student in period.clazz.students}}
+            
+            {{#each studentResult in studentResults}}
                 <tr>
-                    <td>{{student.fullName}}</td>
-                    {{#each exam in exams}}
-                        <td>{{resultView exam student.id}}</td>
+                    <td>{{studentResult.student.fullName}}</td>
+                    {{#each result in studentResult.results}}
+                        <td>{{input value=result.grade}}</td>
                     {{/each}}
                 </tr>
             {{/each}}
@@ -252,6 +253,14 @@
 
         <button {{action save}} >Enregistrer</button>
     </script>
+    <!-- {{#each student in period.clazz.students}}
+                <tr>
+                    <td>{{student.fullName}}</td>
+                    {{#each exam in exams}}
+                        <td>{{resultView exam student.id}}</td>
+                    {{/each}}
+                </tr>
+            {{/each}} -->
 	<!-- 
         {{! {{#each attribute in metadata }}
         {{!     {{attribute.name }}
