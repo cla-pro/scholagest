@@ -1,0 +1,26 @@
+OK - Login page
+OK -- Login/User information
+OK - Logout page
+OK - Expired session page
+- Assign students/teachers to class
+OK - Handle means for the branches
+OK -- Update the model to have isNumeric in branch and display the grade
+OK -- Automatically update them if isNumeric=true and some of the grades have been updated or the coeff (ember)
+OK -- Save the means if isNumeric=false
+- Object creation:
+-- Student
+-- Teacher
+-- Class
+--- On class creation, automatically create X periods
+-- Branch
+-- Exam
+- Handle year (start/stop)
+- Update of objects:
+-- Year (name)
+-- Student (values)
+-- Teacher (values)
+-- Class (name, students, teachers)
+-- Branch (name)
+-- Exam (name, coeff)
+-- Result (grade)
+- Display old years of the students

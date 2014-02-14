@@ -5,14 +5,6 @@
 	<script type='text/x-handlebars' id="application">
         <header>
             <img src="../html/images/scholagest-logo1-2-small.png" class="app-logo" />
-            
-            <div>
-                <span>{{#link-to "students"}}Etudiants{{/link-to}}</span>
-                <span>{{#link-to "teachers"}}Professeurs{{/link-to}}</span>
-                <span>{{#link-to "years"}}Volées{{/link-to}}</span>
-                <span>{{#link-to "periods"}}Périodes{{/link-to}}</span>
-                <span>{{#link-to "newTeacher"}}Nouveau Professeur{{/link-to}}</span>
-            </div>
         </header>
         
         <div>
@@ -20,8 +12,57 @@
         </div>
         
         <footer>
-            
+            0.12.0-SNAPSHOT
         </footer>
+	</script>
+	<script type="text/x-handlebars" id="login">
+	    <table>
+            <tr>
+                <td>Nom d'utilisateur</td>
+                <td>{{input value=username}}</td>
+            </tr>
+            <tr>
+                <td>Mot de passe</td>
+                <td>{{input type="password" value=password}}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <button type="submit" {{action login}} {{bindAttr disabled="isProcessing"}}>Log in!</button>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    {{#if loginFailed}}
+                        <div style="color: red">
+                            Nom d'utilisateur ou mot passe invalide
+                        </div>
+                    {{/if}}
+                </td>
+            </tr>
+        </table>
+	</script>
+    <script type="text/x-handlebars" id="logout">
+        <h1>Vous avez été déconnecté</h1>
+        {{#link-to "login"}}Retour au login{{/link-to}}
+    </script>
+    <script type="text/x-handlebars" id="sessionexpired">
+        <h1>La session n'est plus valide</h1>
+        {{#link-to "login"}}Retour au login{{/link-to}}
+    </script>
+	<script type="text/x-handlebars" id="base">
+        <div>
+            <span>{{#link-to "students"}}Etudiants{{/link-to}}</span>
+            <span>{{#link-to "teachers"}}Professeurs{{/link-to}}</span>
+            <span>{{#link-to "years"}}Volées{{/link-to}}</span>
+            <span>{{#link-to "periods"}}Périodes{{/link-to}}</span>
+<!--             <span>{{#link-to "newTeacher"}}Nouveau Professeur{{/link-to}}</span> -->
+            <span>{{#link-to "logout"}}Logout{{/link-to}}</span>
+        </div>
+        
+        <div>
+            {{outlet}}
+        </div>
 	</script>
 	<script type='text/x-handlebars' id="students">
         <ul>
@@ -45,7 +86,7 @@
         {{partial "studentMedical"}}
     </script>
     <script type='text/x-handlebars' id="studentPersonal">
-        <h2>Informations personnelles</h2>
+        <h3>Informations personnelles</h3>
         
         <table>
             <tr>
@@ -69,7 +110,7 @@
         </table>
     </script>
     <script type='text/x-handlebars' id="studentMedical">
-        <h2>Informations personnelles</h2>
+        <h3>Informations personnelles</h3>
         
         <table>
             <tr>
@@ -239,6 +280,7 @@
                 {{#each exam in exams}}
                     <td>{{exam.name}}</td>
                 {{/each}}
+                <td>Moyenne</td>
             </tr>
             
             {{#each studentResult in studentResults}}
@@ -247,20 +289,18 @@
                     {{#each result in studentResult.results}}
                         <td>{{input value=result.grade}}</td>
                     {{/each}}
+                    
+                    {{#if branch.numerical}}
+                        <td>{{studentResult.mean.computedMean}}</td>
+                    {{else}}
+                        <td>{{input value=studentResult.mean.grade}}</td>
+                    {{/if}}
                 </tr>
             {{/each}}
         </table>
 
         <button {{action save}} >Enregistrer</button>
     </script>
-    <!-- {{#each student in period.clazz.students}}
-                <tr>
-                    <td>{{student.fullName}}</td>
-                    {{#each exam in exams}}
-                        <td>{{resultView exam student.id}}</td>
-                    {{/each}}
-                </tr>
-            {{/each}} -->
 	<!-- 
         {{! {{#each attribute in metadata }}
         {{!     {{attribute.name }}
@@ -270,63 +310,50 @@
         {{! {{/each }}
         
         {{! <button {{action "delete"}}>Delete</button> }} -->
-	<script src='../jquery-1.10.2.js'></script>
+    <script src='../jquery-1.10.2.js'></script>
+    <script src='../jquery.json-2.4.js'></script>
 	<script src='../handlebars-1.1.2.js'></script>
 	<script src='../ember.js'></script>
 	<script src='../ember-data.js'></script>
-	<script type='text/javascript'>
-		   Scholagest = Ember.Application.create({
-			   LOG_TRANSITIONS: true
-		   });
-
-//            Scholagest.TeacherSerializer = DS.RESTSerializer.extend({
-//                serializeBelongsTo: function(record, json, relationship) {
-//                    var key = relationship.key;
-            
-//                    var belongsTo = Ember.get(record, key);
-            
-//                    key = this.keyForRelationship ? this.keyForRelationship(key, "belongsTo") : key;
-            
-//                    // .get('content') is required because of the async in the model definition.
-//                    json[key] = Ember.isNone(belongsTo) ? belongsTo : belongsTo.get('content').toJSON();
-//                }
-//            });
-           Scholagest.ApplicationAdapter = DS.RESTAdapter;
-           DS.RESTAdapter.reopen({
-               host: 'http://localhost:8080',
-               namespace: 'scholagest-app/services'
-           });
-		   
-		   Scholagest.Router.map(function() {
-	           this.resource('students', function() {
-	        	   this.resource('student', { path: '/:student_id' }, function() {});
-	           });
-               this.resource('teachers', function() {
-                   this.resource('teacher', { path: '/:teacher_id' }, function() {});
-               });
-               this.resource('years', function() {
-                   this.resource('class', { path: '/:class_id' }, function() {});
-               });
-               this.resource('periods', function() {
-                   this.resource('period', { path: '/:period_id' }, function() {
-                	   this.resource('branch', { path: '/:branch_id' }, function() {});
-                   });
-               });
-               this.resource('newTeacher', function() {});
-		   });
-		   
-		   Ember.Handlebars.helper('resultView', function(exam, student_id) {
-			   var result = exam.getResult(student_id);
-			   if (result == null) {
-				   return new Handlebars.SafeString('no result');
-			   } else {
-                   //return new Handlebars.SafeString('<input type="text" {{value=}} />');
-                   return new Handlebars.SafeString('<input type="text" value="' + result.get('grade') + '" />');
-			   }
-		   });
-	</script>
-    <script src='js/model.js'></script>
+    <script type="text/javascript">
+        Scholagest = Ember.Application.create({
+		    LOG_TRANSITIONS: true
+		});
+		Scholagest.ApplicationAdapter = DS.RESTAdapter;
+		
+		DS.RESTAdapter.reopen({
+		    host: 'http://localhost:8080',
+		    namespace: 'scholagest-app/services'
+		});
+		
+		Scholagest.Router.map(function() {
+			this.resource('login', function() {});
+			this.resource('logout', function() {});
+			this.resource('sessionexpired', function() {});
+			this.resource('base', function() {
+				this.resource('students', function() {
+				    this.resource('student', { path: '/:student_id' }, function() {});
+				});
+				this.resource('teachers', function() {
+				    this.resource('teacher', { path: '/:teacher_id' }, function() {});
+				});
+				this.resource('years', function() {
+				    this.resource('class', { path: '/:class_id' }, function() {});
+				});
+				this.resource('periods', function() {
+				    this.resource('period', { path: '/:period_id' }, function() {
+				        this.resource('branch', { path: '/:branch_id' }, function() {});
+				    });
+				});
+				this.resource('newTeacher', function() {});
+			});
+		});
+    </script>
     <script src='js/index.js'></script>
+    <script src='js/base.js'></script>
+    <script src='js/model.js'></script>
+    <script src='js/login.js'></script>
+    <script src='js/model.js'></script>
     <script src='js/year.js'></script>
     <script src='js/class.js'></script>
     <script src='js/student.js'></script>

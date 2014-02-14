@@ -11,6 +11,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import net.scholagest.app.rest.AbstractService;
+import net.scholagest.app.rest.ember.authorization.CheckAuthorization;
 import net.scholagest.app.rest.ember.objects.Year;
 import net.scholagest.services.IOntologyService;
 
@@ -30,6 +31,7 @@ public class YearsRest extends AbstractService {
         super(ontologyService);
     }
 
+    @CheckAuthorization
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Map<String, Collection<Year>> getYears() {

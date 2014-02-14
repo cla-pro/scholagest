@@ -29,6 +29,13 @@ Scholagest.BranchController = Ember.ObjectController.extend({
 						result.save();
 					}
 				});
+				
+				if (!branch.get('numerical')) {
+				    var mean = studentResult.get('mean');
+				    if (mean.get('isDirty')) {
+				        mean.save();
+				    }
+				}
 			});
 		}
 	}

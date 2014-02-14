@@ -13,6 +13,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import net.scholagest.app.rest.AbstractService;
+import net.scholagest.app.rest.ember.authorization.CheckAuthorization;
 import net.scholagest.app.rest.ember.objects.TeacherDetail;
 import net.scholagest.services.IOntologyService;
 import net.scholagest.services.ITeacherService;
@@ -34,6 +35,7 @@ public class TeacherDetailsRest extends AbstractService {
         super(ontologyService);
     }
 
+    @CheckAuthorization
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -46,6 +48,7 @@ public class TeacherDetailsRest extends AbstractService {
         return result;
     }
 
+    @CheckAuthorization
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -62,6 +65,7 @@ public class TeacherDetailsRest extends AbstractService {
         toBeMerged.setPhone(teacherDetail.getPhone());
     }
 
+    @CheckAuthorization
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Map<String, TeacherDetail> createTeacherDetail(Map<String, TeacherDetail> payload) {

@@ -14,6 +14,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import net.scholagest.app.rest.AbstractService;
+import net.scholagest.app.rest.ember.authorization.CheckAuthorization;
 import net.scholagest.app.rest.ember.objects.Clazz;
 import net.scholagest.services.IOntologyService;
 
@@ -34,6 +35,7 @@ public class ClassesRest extends AbstractService {
         super(ontologyService);
     }
 
+    @CheckAuthorization
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Map<String, List<Clazz>> getClasses(@QueryParam("ids[]") final List<String> ids) {
@@ -48,6 +50,7 @@ public class ClassesRest extends AbstractService {
         return toReturn;
     }
 
+    @CheckAuthorization
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)

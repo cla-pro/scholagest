@@ -9,27 +9,16 @@
         <filter-name>GuiceFilter</filter-name>
         <filter-class>com.google.inject.servlet.GuiceFilter</filter-class>
     </filter>
+    <filter>
+        <filter-name>AuthorizationFilter</filter-name>
+        <filter-class>net.scholagest.app.rest.ember.authorization.AuthorizationFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AuthorizationFilter</filter-name>
+        <url-pattern>/services/*</url-pattern>
+    </filter-mapping>
     <filter-mapping>
         <filter-name>GuiceFilter</filter-name>
         <url-pattern>/services/*</url-pattern>
     </filter-mapping>
-<!-- 	<servlet> -->
-<!-- 		<servlet-name>scholagest-app</servlet-name> -->
-<!-- 		<servlet-class> -->
-<!-- 			com.sun.jersey.spi.container.servlet.ServletContainer -->
-<!-- 		</servlet-class> -->
-    <!-- 		<init-param> -->
-    <!-- 			<param-name>com.sun.jersey.config.property.resourceConfigClass</param-name> -->
-    <!-- 			<param-value>com.sun.jersey.api.core.PackagesResourceConfig</param-value> -->
-    <!-- 		</init-param> -->
-<!-- 		<init-param> -->
-<!-- 			<param-name>com.sun.jersey.config.property.packages</param-name> -->
-<!-- 			<param-value>net.scholagest.rest</param-value> -->
-<!-- 		</init-param> -->
-<!-- 		<load-on-startup>1</load-on-startup> -->
-<!-- 	</servlet> -->
-<!-- 	<servlet-mapping> -->
-<!-- 		<servlet-name>scholagest-app</servlet-name> -->
-<!-- 		<url-pattern>/services/*</url-pattern> -->
-<!-- 	</servlet-mapping> -->
 </web-app>

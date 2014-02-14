@@ -6,12 +6,17 @@ import java.util.Map;
 import net.scholagest.app.rest.ember.BranchesRest;
 import net.scholagest.app.rest.ember.ClassesRest;
 import net.scholagest.app.rest.ember.ExamsRest;
+import net.scholagest.app.rest.ember.LoginRest;
+import net.scholagest.app.rest.ember.MeansRest;
 import net.scholagest.app.rest.ember.PeriodsRest;
 import net.scholagest.app.rest.ember.ResultsRest;
 import net.scholagest.app.rest.ember.StudentsRest;
 import net.scholagest.app.rest.ember.TeacherDetailsRest;
 import net.scholagest.app.rest.ember.TeachersRest;
+import net.scholagest.app.rest.ember.UsersRest;
 import net.scholagest.app.rest.ember.YearsRest;
+import net.scholagest.app.rest.ember.authorization.AuthorizationVerifier;
+import net.scholagest.app.rest.ember.authorization.CheckAuthorization;
 import net.scholagest.business.IBranchBusinessComponent;
 import net.scholagest.business.IClassBusinessComponent;
 import net.scholagest.business.IExamBusinessComponent;
@@ -81,6 +86,7 @@ import org.apache.shiro.guice.ShiroModule;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.matcher.Matchers;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.sun.jersey.guice.JerseyServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
@@ -91,6 +97,10 @@ public class GuiceContext extends GuiceServletContextListener {
         Injector injector = Guice.createInjector(new JerseyServletModule() {
             @Override
             protected void configureServlets() {
+                AuthorizationVerifier authorizationVerifier = new AuthorizationVerifier();
+                requestInjection(authorizationVerifier);
+                bindInterceptor(Matchers.any(), Matchers.annotatedWith(CheckAuthorization.class), authorizationVerifier);
+
                 bind(IDatabaseConfiguration.class).to(DefaultDatabaseConfiguration.class);
                 bind(IDatabase.class).to(Database.class);
 
@@ -143,11 +153,14 @@ public class GuiceContext extends GuiceServletContextListener {
                 // bind(RestClassService.class);
                 // bind(RestExamService.class);
 
+                bind(LoginRest.class);
+                bind(UsersRest.class);
                 bind(YearsRest.class);
                 bind(ClassesRest.class);
                 bind(PeriodsRest.class);
                 bind(BranchesRest.class);
                 bind(ResultsRest.class);
+                bind(MeansRest.class);
                 bind(ExamsRest.class);
                 bind(YearsRest.class);
                 bind(StudentsRest.class);

@@ -1,4 +1,4 @@
-Scholagest.TeachersRoute = Ember.Route.extend({
+Scholagest.TeachersRoute = Scholagest.AuthenticatedRoute.extend({
 	model: function() {
 		return this.store.find('teacher');
 	}

@@ -13,6 +13,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import net.scholagest.app.rest.AbstractService;
+import net.scholagest.app.rest.ember.authorization.CheckAuthorization;
 import net.scholagest.app.rest.ember.objects.Student;
 import net.scholagest.app.rest.ember.objects.StudentMedical;
 import net.scholagest.app.rest.ember.objects.StudentPersonal;
@@ -51,6 +52,7 @@ public class StudentsRest extends AbstractService {
     // return new Students(new ArrayList<Student>(students.values()));
     // }
 
+    @CheckAuthorization
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Students getStudents(@QueryParam("ids[]") final List<String> ids) {
@@ -69,6 +71,7 @@ public class StudentsRest extends AbstractService {
         }
     }
 
+    @CheckAuthorization
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -82,6 +85,7 @@ public class StudentsRest extends AbstractService {
         return new Students(studentsToReturn);
     }
 
+    @CheckAuthorization
     @GET
     @Path("/{id}/personal")
     @Produces(MediaType.APPLICATION_JSON)
@@ -94,6 +98,7 @@ public class StudentsRest extends AbstractService {
         return result;
     }
 
+    @CheckAuthorization
     @GET
     @Path("/{id}/medical")
     @Produces(MediaType.APPLICATION_JSON)

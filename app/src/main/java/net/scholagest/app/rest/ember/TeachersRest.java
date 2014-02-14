@@ -15,6 +15,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import net.scholagest.app.rest.AbstractService;
+import net.scholagest.app.rest.ember.authorization.CheckAuthorization;
 import net.scholagest.app.rest.ember.objects.Teacher;
 import net.scholagest.app.rest.ember.objects.Teachers;
 import net.scholagest.services.IOntologyService;
@@ -37,17 +38,18 @@ public class TeachersRest extends AbstractService {
         super(ontologyService);
     }
 
+    @CheckAuthorization
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Teachers getTeachers() {
         return new Teachers(new ArrayList<Teacher>(teachers.values()));
     }
 
+    @CheckAuthorization
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     public void saveTeacher(@PathParam("id") String id, Map<String, Teacher> teacher) {
-        System.out.println("Teacher must be saved " + id);
         mergeTeachers(id, teacher.get("teacher"));
     }
 
@@ -58,6 +60,7 @@ public class TeachersRest extends AbstractService {
         toBeMerged.setLastName(teacher.getLastName());
     }
 
+    @CheckAuthorization
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Map<String, Teacher> createTeacher(Map<String, Teacher> payload) {
@@ -81,10 +84,10 @@ public class TeachersRest extends AbstractService {
         return "" + (max + 1);
     }
 
+    @CheckAuthorization
     @Path("/{id}")
     @DELETE
     public void deleteTeacher(@PathParam("id") String id) {
-        System.out.println("delete teacher with id=" + id);
         teachers.remove(id);
     }
 }

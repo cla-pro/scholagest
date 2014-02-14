@@ -7,12 +7,14 @@ public class StudentResult {
     private String student;
     private String branch;
     private List<String> results;
+    private String mean;
 
-    public StudentResult(final String id, final String student, final String branch, final List<String> results) {
+    public StudentResult(final String id, final String student, final String branch, final List<String> results, final String mean) {
         this.id = id;
         this.student = student;
         this.branch = branch;
         this.results = results;
+        this.mean = mean;
     }
 
     public String getId() {
@@ -45,5 +47,13 @@ public class StudentResult {
 
     public void setResults(List<String> results) {
         this.results = results;
+    }
+
+    public String getMean() {
+        return mean;
+    }
+
+    public void setMean(String mean) {
+        this.mean = mean;
     }
 }
