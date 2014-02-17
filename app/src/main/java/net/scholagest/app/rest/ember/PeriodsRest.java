@@ -11,6 +11,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import net.scholagest.app.rest.AbstractService;
+import net.scholagest.app.rest.ember.authorization.CheckAuthorization;
 import net.scholagest.app.rest.ember.objects.Period;
 import net.scholagest.services.IOntologyService;
 
@@ -31,9 +32,10 @@ public class PeriodsRest extends AbstractService {
         super(ontologyService);
     }
 
+    @CheckAuthorization
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, Collection<Period>> getBranches() {
+    public Map<String, Collection<Period>> getPeriods() {
         Map<String, Collection<Period>> periodsToReturn = new HashMap<>();
 
         periodsToReturn.put("periods", periods.values());

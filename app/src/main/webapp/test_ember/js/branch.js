@@ -1,9 +1,23 @@
 Scholagest.PeriodsRoute = Ember.Route.extend({
 	model: function() {
-		return this.store.find('period');
+        var user = Scholagest.SessionManager.get('user');
+        if (user == null) {
+            return null;
+        } else {
+            var userClass = user.get('clazz');
+            // Force load of periods
+            userClass.get('periods').forEach(function(period) {});
+            return userClass;
+        }
+//        if (userClass == null) {
+//            return [];
+//        } else {
+//            return userClass.get('periods');
+//        }
+        // return this.store.find('period');
 	}
 });
-Scholagest.PeriodsController = Ember.ArrayController.extend({
+Scholagest.PeriodsController = Ember.ObjectController.extend({
 });
 
 Scholagest.PeriodRoute = Ember.Route.extend({
@@ -23,13 +37,23 @@ Scholagest.BranchController = Ember.ObjectController.extend({
 	actions: {
 		save: function() {
 			var branch = this.get('model');
-			branch.get('exams').forEach(function(exam) {
-				exam.get('results').forEach(function(result) {
+			branch.get('studentResults').forEach(function(studentResult) {
+				studentResult.get('results').forEach(function(result) {
 					if (result.get('isDirty')) {
 						result.save();
 					}
 				});
+				
+				if (!branch.get('numerical')) {
+				    var mean = studentResult.get('mean');
+				    if (mean.get('isDirty')) {
+				        mean.save();
+				    }
+				}
 			});
 		}
-	}
+	},
+    editExam: function(event) {
+        alert(event.context);
+    }
 });

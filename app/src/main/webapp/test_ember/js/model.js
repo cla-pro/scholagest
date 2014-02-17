@@ -1,3 +1,9 @@
+Scholagest.User = DS.Model.extend({
+    sessionId: DS.attr(),
+    teacher: DS.belongsTo('teacher'),
+    clazz: DS.belongsTo('class')
+});
+
 Scholagest.StudentPersonal = DS.Model.extend({
 	street: DS.attr(),
     city: DS.attr(),
@@ -34,7 +40,8 @@ Scholagest.Teacher = DS.Model.extend({
 
 Scholagest.Year = DS.Model.extend({
 	name: DS.attr(),
-	classes: DS.hasMany('class', { async: true })
+	running: DS.attr('boolean'),
+	classes: DS.hasMany('class', { async: true, embedded: 'always' })
 });
 
 Scholagest.Class = DS.Model.extend({
@@ -52,37 +59,58 @@ Scholagest.Period = DS.Model.extend({
 });
 Scholagest.Branch = DS.Model.extend({
 	name: DS.attr(),
+	numerical: DS.attr('boolean'),
 	period: DS.belongsTo('period', { async: true }),
-	exams: DS.hasMany('exam', { async: true }),
-	studentResults: DS.hasMany('studentResult')
+	exams: DS.hasMany('exam', { async: true, embedded: 'always' }),
+	studentResults: DS.hasMany('studentResult', { embedded: 'always' })
 });
 Scholagest.Exam = DS.Model.extend({
 	name: DS.attr(),
-	coeff: DS.attr(),
-	branch: DS.belongsTo('branch', { async: true })
+	coeff: DS.attr('number'),
+    edit: DS.attr('boolean', { defaultValue: false }),
+	branch: DS.belongsTo('branch', { async: true }),
+	
+	startEdit: function() {
+        this.set('edit', true);
+    },
+    saveExam: function() {
+        this.save();
+        this.set('edit', false);
+    }
 });
 
 Scholagest.StudentResult = DS.Model.extend({
+    branch: DS.belongsTo('branch'),
 	student: DS.belongsTo('student', { async: true }),
-	results: DS.hasMany('result')
+	results: DS.hasMany('result'),
+	mean: DS.belongsTo('mean')
 });
-//Scholagest.Exam = DS.Model.extend({
-//	name: DS.attr(),
-//	coeff: DS.attr(),
-//	branch: DS.belongsTo('branch'),
-//	results: DS.hasMany('result'),
-//	
-//	getResult: function(student_id) {
-//		var filteredResult = null;
-//		this.get('results').forEach(function(result) {
-//			if (result.get('student').get('id') == student_id) {
-//				filteredResult = result;
-//			}
-//		});
-//		return filteredResult;
-//	}
-//});
 Scholagest.Result = DS.Model.extend({
-	grade: DS.attr(),
-	//studentResult: DS.belongsTo('studentResult', { async: true })
+	grade: DS.attr('number'),
+	exam: DS.belongsTo('exam'),
+	studentResult: DS.belongsTo('studentResult')
+});
+Scholagest.Mean = DS.Model.extend({
+    grade: DS.attr(),
+    studentResult: DS.belongsTo('studentResult'),
+    
+    computedMean: function() {
+        var studentRes = this.get('studentResult');
+        var branch = studentRes.get('branch');
+        if (branch.get('numerical') == true) {
+            var total = 0.0;
+            var count = 0;
+            
+            studentRes.get('results').forEach(function (result) {
+                var exam = result.get('exam');
+                var coeff = exam.get('coeff');
+                total += coeff * result.get('grade');
+                count += coeff;
+            });
+            
+            return total / count;
+        } else {
+            return this.get('grade');
+        }
+    }.property('studentResult.results.@each.grade', 'studentResult.results.@each.exam.coeff')
 });

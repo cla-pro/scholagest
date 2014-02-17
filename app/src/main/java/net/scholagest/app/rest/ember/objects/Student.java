@@ -1,14 +1,11 @@
 package net.scholagest.app.rest.ember.objects;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class Student {
     private String id;
     private String firstName;
     private String lastName;
-
-    private Map<String, String> links;
+    private String personal;
+    private String medical;
 
     public Student() {}
 
@@ -16,24 +13,39 @@ public class Student {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.links = new HashMap<>();
-        links.put("personal", personal);
-        links.put("medical", medical);
+        this.personal = personal;
+        this.medical = medical;
     }
 
     public String getId() {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getFirstName() {
         return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     public String getLastName() {
         return lastName;
     }
 
-    public Map<String, String> getLinks() {
-        return links;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getPersonal() {
+        return personal;
+    }
+
+    public String getMedical() {
+        return medical;
     }
 }
