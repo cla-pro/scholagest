@@ -14,11 +14,11 @@ OK -- Save the means if isNumeric=false
 --- On class creation, automatically create X periods
 -- Branch
 -- Exam
-- Handle year (start/stop)
+OK - Handle year (start/stop)
 - Update of objects:
--- Year (name)
--- Student (values)
--- Teacher (values)
+OK -- Year (name)
+OK -- Student (values)
+OK -- Teacher (values)
 -- Class (name, students, teachers)
 -- Branch (name)
 -- Exam (name, coeff)

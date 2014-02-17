@@ -10,6 +10,8 @@ import net.scholagest.app.rest.ember.LoginRest;
 import net.scholagest.app.rest.ember.MeansRest;
 import net.scholagest.app.rest.ember.PeriodsRest;
 import net.scholagest.app.rest.ember.ResultsRest;
+import net.scholagest.app.rest.ember.StudentMedicalsRest;
+import net.scholagest.app.rest.ember.StudentPersonalsRest;
 import net.scholagest.app.rest.ember.StudentsRest;
 import net.scholagest.app.rest.ember.TeacherDetailsRest;
 import net.scholagest.app.rest.ember.TeachersRest;
@@ -164,6 +166,8 @@ public class GuiceContext extends GuiceServletContextListener {
                 bind(ExamsRest.class);
                 bind(YearsRest.class);
                 bind(StudentsRest.class);
+                bind(StudentPersonalsRest.class);
+                bind(StudentMedicalsRest.class);
                 bind(TeachersRest.class);
                 bind(TeacherDetailsRest.class);
 

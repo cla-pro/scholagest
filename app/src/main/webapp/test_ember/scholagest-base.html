@@ -9,11 +9,20 @@
         
         <div>
             {{outlet}}
+            {{outlet modal}}
         </div>
         
         <footer>
             0.12.0-SNAPSHOT
         </footer>
+	</script>
+<!-- 	 {{action "close"}} -->
+	<script type="text/x-handlebars" id="components/modal-dialog">
+	    <div class="overlay">
+	        <div class="modal" {{action bubbles=false}}>
+	            {{yield}}
+	        </div>
+	    </div>
 	</script>
 	<script type="text/x-handlebars" id="login">
 	    <table>
@@ -56,7 +65,6 @@
             <span>{{#link-to "teachers"}}Professeurs{{/link-to}}</span>
             <span>{{#link-to "years"}}Volées{{/link-to}}</span>
             <span>{{#link-to "periods"}}Périodes{{/link-to}}</span>
-<!--             <span>{{#link-to "newTeacher"}}Nouveau Professeur{{/link-to}}</span> -->
             <span>{{#link-to "logout"}}Logout{{/link-to}}</span>
         </div>
         
@@ -83,7 +91,10 @@
         <h2>{{firstName}} {{lastName}}</h2>
         
         {{partial "studentPersonal"}}
+        <button {{action savePersonal}}>Enregistrer</button>
+        
         {{partial "studentMedical"}}
+        <button {{action saveMedical}}>Enregistrer</button>
     </script>
     <script type='text/x-handlebars' id="studentPersonal">
         <h3>Informations personnelles</h3>
@@ -121,6 +132,9 @@
 	
 	<script type='text/x-handlebars' id="teachers">
         <h1>Professeurs</h1>
+        <div>
+            <button {{action 'openModal' 'newTeacher'}}>Nouveau professeur</button>
+        </div>
         <ul>
             {{#each teacher in controller}}
                 <li>
@@ -159,32 +173,53 @@
         <button {{action save}}>Enregistrer</button>
     </script>
     <script type='text/x-handlebars' id="newTeacher">
-        <h2>Nouveau professeur</h2>
-        
-        <table>
-            <tr>
-                <td>Prénom</td><td>{{input value=firstName}}</td>
-            </tr>
-            <tr>
-                <td>Nom</td><td>{{input value=lastName}}</td>
-            </tr>
-            <tr>
-                <td>Email</td><td>{{input value=email}}</td>
-            </tr>
-            <tr>
-                <td>Adresse</td><td>{{input value=address}}</td>
-            </tr>
-            <tr>
-                <td>Téléphone</td><td>{{input value=phone}}</td>
-            </tr>
-        </table>
-
-        <button {{action create}} >Enregistrer</button>
+        {{#modal-dialog action="close"}}
+	        <h2>Nouveau professeur</h2>
+	        
+	        <table>
+	            <tr>
+	                <td>Prénom</td><td>{{input value=firstName}}</td>
+	            </tr>
+	            <tr>
+	                <td>Nom</td><td>{{input value=lastName}}</td>
+	            </tr>
+	            <tr>
+	                <td>Email</td><td>{{input value=email}}</td>
+	            </tr>
+	            <tr>
+	                <td>Adresse</td><td>{{input value=address}}</td>
+	            </tr>
+	            <tr>
+	                <td>Téléphone</td><td>{{input value=phone}}</td>
+	            </tr>
+	        </table>
+	
+	        <button {{action create}} >Enregistrer</button>
+	    {{/modal-dialog}}
     </script>
     
     <script type='text/x-handlebars' id="years">
         <h2>Volées</h2>
         
+        {{#if isStarting}}
+            <span>
+                {{input value=newYearName}}
+                <button {{action createYear}}>Démarrer!</button>
+            </span>
+        {{else}}
+            <button {{action startYear}} {{bind-attr disabled=isStarted}}>Démarrer une année</button>
+        {{/if}}
+        <button {{action stopYear}} {{bind-attr disabled=isStopped}}>Arrêter une année</button>
+        {{#if isRenaming}}
+            <span>
+               {{input value=runningYear.name}}
+                <button {{action renameYear}}>Renommer!</button>
+            </span>
+        {{else}}
+            <button {{action startRenaming}} {{bind-attr disabled=isStopped}}>Renommer une année</button>
+        {{/if}}
+        
+        <button {{action createClass}} {{bind-attr disabled=isStopped}}>Créer une classe</button>
         <ul>
             {{#each year in controller}}
                 <li>{{year.name}}</li>
@@ -241,7 +276,7 @@
         <h2>Périodes</h2>
         
         <ul>
-            {{#each period in controller}}
+            {{#each period in periods}}
                 <li>
                     {{#link-to "period" period}}
                         {{period.name}}
@@ -277,8 +312,8 @@
         <table>
             <tr>
                 <td></td>
-                {{#each exam in exams}}
-                    <td>{{exam.name}}</td>
+                {{#each exams}}
+                    <td>{{partial "exam"}}</td>
                 {{/each}}
                 <td>Moyenne</td>
             </tr>
@@ -300,6 +335,13 @@
         </table>
 
         <button {{action save}} >Enregistrer</button>
+    </script>
+    <script type='text/x-handlebars' id="exam">
+        {{#if edit}}
+            {{input value=name}} (coeff: {{input value=coeff}}) <button {{action "saveExam"}}>Enregistrer</button>
+        {{else}}
+            {{name}} (coeff: {{coeff}}) <button {{action "editExam" target="controller"}}>Editer</button>
+        {{/if}}
     </script>
 	<!-- 
         {{! {{#each attribute in metadata }}
@@ -324,6 +366,17 @@
 		DS.RESTAdapter.reopen({
 		    host: 'http://localhost:8080',
 		    namespace: 'scholagest-app/services'
+		});
+		
+		DS.RESTSerializer.reopen({
+			serializeHasMany: function(record, json, relationship) {
+				var key = relationship.key;
+				var relationshipType = DS.RelationshipChange.determineRelationshipType(record.constructor, relationship);
+				
+				if (relationshipType === 'manyToNone' || relationshipType === 'manyToMany' || relationshipType === 'manyToOne') {
+				    json[key] = Ember.get(record, key).mapBy('id');
+				}
+			}
 		});
 		
 		Scholagest.Router.map(function() {

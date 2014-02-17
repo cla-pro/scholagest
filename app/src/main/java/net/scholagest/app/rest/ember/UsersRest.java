@@ -19,8 +19,8 @@ public class UsersRest {
     public static Map<String, User> users = new HashMap<>();
 
     static {
-        users.put("1", new User("1", "1"));
-        users.put("2", new User("2", "2"));
+        users.put("1", new User("1", "1", "1"));
+        users.put("2", new User("2", "2", "3"));
     }
 
     @CheckAuthorization

@@ -3,10 +3,12 @@ package net.scholagest.app.rest.ember.objects;
 public class User {
     private String id;
     private String teacher;
+    private String clazz;
 
-    public User(final String id, final String teacher) {
+    public User(final String id, final String teacher, final String clazz) {
         this.id = id;
         this.teacher = teacher;
+        this.clazz = clazz;
     }
 
     public void setId(String id) {
@@ -23,5 +25,9 @@ public class User {
 
     public String getTeacher() {
         return teacher;
+    }
+
+    public String getClazz() {
+        return clazz;
     }
 }

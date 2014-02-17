@@ -1,11 +1,10 @@
 package net.scholagest.app.rest.ember.objects;
 
-
 public class Exam {
     private String id;
     private String name;
     private int coeff;
-    private final String branch;
+    private String branch;
 
     public Exam(final String id, final String name, final int coeff, final String branch) {
         this.id = id;

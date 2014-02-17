@@ -1,9 +1,23 @@
 Scholagest.PeriodsRoute = Ember.Route.extend({
 	model: function() {
-		return this.store.find('period');
+        var user = Scholagest.SessionManager.get('user');
+        if (user == null) {
+            return null;
+        } else {
+            var userClass = user.get('clazz');
+            // Force load of periods
+            userClass.get('periods').forEach(function(period) {});
+            return userClass;
+        }
+//        if (userClass == null) {
+//            return [];
+//        } else {
+//            return userClass.get('periods');
+//        }
+        // return this.store.find('period');
 	}
 });
-Scholagest.PeriodsController = Ember.ArrayController.extend({
+Scholagest.PeriodsController = Ember.ObjectController.extend({
 });
 
 Scholagest.PeriodRoute = Ember.Route.extend({
@@ -38,5 +52,8 @@ Scholagest.BranchController = Ember.ObjectController.extend({
 				}
 			});
 		}
-	}
+	},
+    editExam: function(event) {
+        alert(event.context);
+    }
 });

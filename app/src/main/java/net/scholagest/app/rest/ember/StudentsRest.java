@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -15,42 +16,24 @@ import javax.ws.rs.core.MediaType;
 import net.scholagest.app.rest.AbstractService;
 import net.scholagest.app.rest.ember.authorization.CheckAuthorization;
 import net.scholagest.app.rest.ember.objects.Student;
-import net.scholagest.app.rest.ember.objects.StudentMedical;
-import net.scholagest.app.rest.ember.objects.StudentPersonal;
 import net.scholagest.app.rest.ember.objects.Students;
 import net.scholagest.services.IOntologyService;
-import net.scholagest.services.ITeacherService;
-import net.scholagest.services.IUserService;
 
 import com.google.inject.Inject;
 
 @Path("/students")
 public class StudentsRest extends AbstractService {
     public static Map<String, Student> students = new HashMap<>();
-    public static Map<String, StudentPersonal> personals = new HashMap<>();
-    public static Map<String, StudentMedical> medicals = new HashMap<>();
 
     static {
-        students.put("1", new Student("1", "Elodie", "Lavanchy", "personal", "medical"));
-        students.put("2", new Student("2", "Thibaud", "Hottelier", "personal", "medical"));
-
-        personals.put("1", new StudentPersonal("1", "Route du Verney 8", "Perly", "1242", "Protestant"));
-        personals.put("2", new StudentPersonal("2", "Post Street 711", "San Francisco", "1242", null));
-
-        medicals.put("1", new StudentMedical("1", null));
-        medicals.put("2", new StudentMedical("2", null));
+        students.put("1", new Student("1", "Elodie", "Lavanchy", "1", "1"));
+        students.put("2", new Student("2", "Thibaud", "Hottelier", "2", "2"));
     }
 
     @Inject
-    public StudentsRest(ITeacherService teacherService, IOntologyService ontologyService, IUserService userService) {
+    public StudentsRest(IOntologyService ontologyService) {
         super(ontologyService);
     }
-
-    // @GET
-    // @Produces(MediaType.APPLICATION_JSON)
-    // public Students getStudents() {
-    // return new Students(new ArrayList<Student>(students.values()));
-    // }
 
     @CheckAuthorization
     @GET
@@ -75,7 +58,7 @@ public class StudentsRest extends AbstractService {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Students getStudents(@PathParam("id") final String id) {
+    public Students getStudent(@PathParam("id") final String id) {
         final List<Student> studentsToReturn = new ArrayList<>();
 
         if (students.containsKey(id)) {
@@ -86,28 +69,15 @@ public class StudentsRest extends AbstractService {
     }
 
     @CheckAuthorization
-    @GET
-    @Path("/{id}/personal")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, StudentPersonal> getPersonal(@PathParam("id") String id) {
-        StudentPersonal studentPersonal = personals.get(id);
-
-        final Map<String, StudentPersonal> result = new HashMap<>();
-        result.put("studentPersonal", studentPersonal);
-
-        return result;
+    @PUT
+    @Path("/{id}")
+    public void saveStudent(@PathParam("id") final String id, final Map<String, Student> payload) {
+        final Student student = payload.get("student");
+        mergeStudent(students.get(id), student);
     }
 
-    @CheckAuthorization
-    @GET
-    @Path("/{id}/medical")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, StudentMedical> getMedical(@PathParam("id") String id) {
-        StudentMedical studentMedical = medicals.get(id);
-
-        final Map<String, StudentMedical> result = new HashMap<>();
-        result.put("studentMedical", studentMedical);
-
-        return result;
+    private void mergeStudent(Student base, Student toMerge) {
+        base.setFirstName(toMerge.getFirstName());
+        base.setLastName(toMerge.getLastName());
     }
 }

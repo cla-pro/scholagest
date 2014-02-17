@@ -1,6 +1,14 @@
 Scholagest.TeachersRoute = Scholagest.AuthenticatedRoute.extend({
 	model: function() {
 		return this.store.find('teacher');
+	},
+	actions: {
+	    openModal: function(modalName) {
+    	    return this.render(modalName, {
+    	        into: 'application',
+    	        outlet: 'modal'
+    	    });
+    	}
 	}
 });
 Scholagest.TeachersController = Ember.ArrayController.extend({
