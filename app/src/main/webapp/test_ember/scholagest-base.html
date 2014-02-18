@@ -293,10 +293,10 @@
         <h2>{{name}}</h2>
         
         <ul>
-            {{#each branch in branches}}
+            {{#each branchPeriod in branchPeriods}}
                 <li>
-                    {{#link-to "branch" branch}}
-                        {{branch.name}}
+                    {{#link-to "branchPeriod" branchPeriod}}
+                        {{branchPeriod.branch.name}}
                     {{/link-to}}
                 </li>
             {{else}}
@@ -306,13 +306,17 @@
 
         {{outlet}}
     </script>
-    <script type='text/x-handlebars' id="branch">
-        <h2>{{name}}</h2>
+    <script type='text/x-handlebars' id="branchPeriod">
+        {{#if isBranchEditing}}
+            {{input value=branch.name}} <button {{action saveBranch}}>Enregistrer</button>
+        {{else}}
+            <h2>{{branch.name}}</h2> <button {{action editBranch}}>Modifier</button>
+        {{/if}}
         
         <table>
             <tr>
                 <td>
-                    {{#if isEditing}}
+                    {{#if isExamEditing}}
                         <button {{action "saveExams"}}>Enregistrer</button>
                     {{else}}
                         <button {{action "editExams"}}>Editer les examens</button>
@@ -332,9 +336,9 @@
                     {{/each}}
                     
                     {{#if isNumerical}}
-                        <td>true {{studentResult.mean.computedMean}}</td>
+                        <td>{{studentResult.mean.computedMean}}</td>
                     {{else}}
-                        <td>false {{input value=studentResult.mean.grade}}</td>
+                        <td>{{input value=studentResult.mean.grade}}</td>
                     {{/if}}
                 </tr>
             {{/each}}
@@ -343,7 +347,7 @@
         <button {{action saveGrades}} >Enregistrer</button>
     </script>
     <script type='text/x-handlebars' id="exam">
-        {{#if isEditing}}
+        {{#if isExamEditing}}
             {{input value=exam.name}} (coeff: {{input value=exam.coeff}})
         {{else}}
             {{exam.name}} (coeff: {{exam.coeff}})
@@ -411,7 +415,7 @@
 				});
 				this.resource('periods', function() {
 				    this.resource('period', { path: '/:period_id' }, function() {
-				        this.resource('branch', { path: '/:branch_id' }, function() {});
+				        this.resource('branchPeriod', { path: '/:branch_period_id' }, function() {});
 				    });
 				});
 				this.resource('newTeacher', function() {});

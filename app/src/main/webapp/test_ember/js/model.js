@@ -48,6 +48,7 @@ Scholagest.Class = DS.Model.extend({
 	name: DS.attr(),
 	year: DS.belongsTo('year', { async: true }),
 	periods: DS.hasMany('period', { async: true }),
+	branches: DS.hasMany('branch', { async: true }),
 	students: DS.hasMany('student', { async: true }),
 	teachers: DS.hasMany('teacher', { async: true })
 });
@@ -55,14 +56,13 @@ Scholagest.Class = DS.Model.extend({
 Scholagest.Period = DS.Model.extend({
 	name: DS.attr(),
 	clazz: DS.belongsTo('class', { async: true }),
-	branches: DS.hasMany('branch', { async: true })
+	branchPeriods: DS.hasMany('branchPeriod', { async: true })
 });
 Scholagest.Branch = DS.Model.extend({
 	name: DS.attr(),
 	numerical: DS.attr('boolean'),
-	period: DS.belongsTo('period', { async: true }),
-	exams: DS.hasMany('exam', { async: true, embedded: 'always' }),
-	studentResults: DS.hasMany('studentResult', { embedded: 'always' }),
+	clazz: DS.belongsTo('class', { async: true }),
+	branchPeriods: DS.hasMany('branchPeriod', { async: true }),
 	
 	isNumerical: function() {
 		if (this.get('numerical') == true) {
@@ -72,14 +72,21 @@ Scholagest.Branch = DS.Model.extend({
 		}
 	}.property('numerical')
 });
+Scholagest.BranchPeriod = DS.Model.extend({
+	branch: DS.belongsTo('branch'),
+	period: DS.belongsTo('period', { async: true }),
+	exams: DS.hasMany('exam', { async: true, embedded: 'always' }),
+	studentResults: DS.hasMany('studentResult', { embedded: 'always' }),
+	
+});
 Scholagest.Exam = DS.Model.extend({
 	name: DS.attr(),
 	coeff: DS.attr('number'),
-	branch: DS.belongsTo('branch', { async: true }),
+	branchPeriod: DS.belongsTo('branchPeriod', { async: true }),
 });
 
 Scholagest.StudentResult = DS.Model.extend({
-    branch: DS.belongsTo('branch'),
+	branchPeriod: DS.belongsTo('branchPeriod'),
 	student: DS.belongsTo('student', { async: true }),
 	results: DS.hasMany('result'),
 	mean: DS.belongsTo('mean')
@@ -89,6 +96,7 @@ Scholagest.Result = DS.Model.extend({
 	exam: DS.belongsTo('exam'),
 	studentResult: DS.belongsTo('studentResult'),
 	
+	// Hack required for the mean to be updated.
 	changeCounter: DS.attr('number', { defaultValue: 0 }),
 	coeffChange: function() {
 		this.set('changeCounter', this.get('changeCounter') + 1);

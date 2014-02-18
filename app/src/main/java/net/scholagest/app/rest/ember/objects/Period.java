@@ -6,20 +6,22 @@ public class Period {
     private String id;
     private String name;
     private String clazz;
-    private List<String> branches;
+    private List<String> branchPeriods;
 
-    public Period(final String id, final String name, final String clazz, final List<String> branches) {
+    public Period() {}
+
+    public Period(final String id, final String name, final String clazz, final List<String> branchPeriods) {
         this.id = id;
         this.name = name;
         this.clazz = clazz;
-        this.branches = branches;
+        this.branchPeriods = branchPeriods;
     }
 
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(final String id) {
         this.id = id;
     }
 
@@ -27,7 +29,7 @@ public class Period {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -35,15 +37,15 @@ public class Period {
         return clazz;
     }
 
-    public void setClazz(String clazz) {
+    public void setClazz(final String clazz) {
         this.clazz = clazz;
     }
 
-    public List<String> getBranches() {
-        return branches;
+    public List<String> getBranchPeriods() {
+        return branchPeriods;
     }
 
-    public void setBranches(List<String> branches) {
-        this.branches = branches;
+    public void setBranchPeriods(final List<String> branchPeriods) {
+        this.branchPeriods = branchPeriods;
     }
 }

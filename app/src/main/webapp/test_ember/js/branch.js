@@ -22,37 +22,50 @@ Scholagest.PeriodRoute = Ember.Route.extend({
 Scholagest.PeriodController = Ember.ObjectController.extend({
 });
 
-Scholagest.BranchRoute = Ember.Route.extend({
+Scholagest.BranchPeriodRoute = Ember.Route.extend({
 	model: function(params) {
-		return this.store.find('branch', params.branch_id);
+		return this.store.find('branchPeriod', params.branch_period_id);
 	}
 });
-Scholagest.BranchController = Ember.ObjectController.extend({
-	isEditing: false,
+Scholagest.BranchPeriodController = Ember.ObjectController.extend({
+	isBranchEditing: false,
+	isExamEditing: false,
 	
 	actions: {
+		editBranch: function() {
+			this.set('isBranchEditing', true);
+		},
+		saveBranch: function() {
+			var model = this.get('model');
+			var branch = model.get('branch');
+			if (branch.get('isDirty')) {
+				branch.save();
+			}
+			
+			this.set('isBranchEditing', false);
+		},
 		editExams: function() {
-	        this.set('isEditing', true);
+	        this.set('isExamEditing', true);
 	    },
 	    saveExams: function() {
-	    	var branch = this.get('model');
-	    	branch.get('exams').forEach(function(exam) {
+	    	var branchPeriod = this.get('model');
+	    	branchPeriod.get('exams').forEach(function(exam) {
 	    		if (exam.get('isDirty')) {
 	    			exam.save();
 	    		}
 	    	});
-	        this.set('isEditing', false);
+	        this.set('isExamEditing', false);
 	    },
 		saveGrades: function() {
-			var branch = this.get('model');
-			branch.get('studentResults').forEach(function(studentResult) {
+			var branchPeriod = this.get('model');
+			branchPeriod.get('studentResults').forEach(function(studentResult) {
 				studentResult.get('results').forEach(function(result) {
 					if (result.get('isDirty')) {
 						result.save();
 					}
 				});
 				
-				if (!branch.get('numerical')) {
+				if (!branchPeriod.get('numerical')) {
 				    var mean = studentResult.get('mean');
 				    if (mean.get('isDirty')) {
 				        mean.save();

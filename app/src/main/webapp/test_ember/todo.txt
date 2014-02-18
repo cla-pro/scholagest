@@ -20,7 +20,7 @@ OK -- Year (name)
 OK -- Student (values)
 OK -- Teacher (values)
 -- Class (name, students, teachers)
--- Branch (name)
+OK -- Branch (name)
 OK -- Exam (name, coeff)
 OK -- Result (grade)
 - Display old years of the students
