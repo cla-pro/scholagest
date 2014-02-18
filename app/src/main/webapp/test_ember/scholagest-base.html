@@ -37,7 +37,7 @@
             <tr>
                 <td></td>
                 <td>
-                    <button type="submit" {{action login}} {{bindAttr disabled="isProcessing"}}>Log in!</button>
+                    <button type="submit" {{action login}} {{bind-attr disabled="isProcessing"}}>Log in!</button>
                 </td>
             </tr>
             <tr>
@@ -311,8 +311,14 @@
         
         <table>
             <tr>
-                <td></td>
-                {{#each exams}}
+                <td>
+                    {{#if isEditing}}
+                        <button {{action "saveExams"}}>Enregistrer</button>
+                    {{else}}
+                        <button {{action "editExams"}}>Editer les examens</button>
+                    {{/if}}
+                </td>
+                {{#each exam in exams}}
                     <td>{{partial "exam"}}</td>
                 {{/each}}
                 <td>Moyenne</td>
@@ -325,22 +331,22 @@
                         <td>{{input value=result.grade}}</td>
                     {{/each}}
                     
-                    {{#if branch.numerical}}
-                        <td>{{studentResult.mean.computedMean}}</td>
+                    {{#if isNumerical}}
+                        <td>true {{studentResult.mean.computedMean}}</td>
                     {{else}}
-                        <td>{{input value=studentResult.mean.grade}}</td>
+                        <td>false {{input value=studentResult.mean.grade}}</td>
                     {{/if}}
                 </tr>
             {{/each}}
         </table>
 
-        <button {{action save}} >Enregistrer</button>
+        <button {{action saveGrades}} >Enregistrer</button>
     </script>
     <script type='text/x-handlebars' id="exam">
-        {{#if edit}}
-            {{input value=name}} (coeff: {{input value=coeff}}) <button {{action "saveExam"}}>Enregistrer</button>
+        {{#if isEditing}}
+            {{input value=exam.name}} (coeff: {{input value=exam.coeff}})
         {{else}}
-            {{name}} (coeff: {{coeff}}) <button {{action "editExam" target="controller"}}>Editer</button>
+            {{exam.name}} (coeff: {{exam.coeff}})
         {{/if}}
     </script>
 	<!-- 
@@ -378,6 +384,16 @@
 				}
 			}
 		});
+		
+// 		Scholagest.ResultSerializer = DS.RESTSerializer.extend({
+// 			normalize: function(type, hash, prop) {
+// 				var object = this._super(type, hash, prop);
+// 				object[''] = 0;
+// 				object[] = function() {
+					
+// 				};
+// 			}
+// 		});
 		
 		Scholagest.Router.map(function() {
 			this.resource('login', function() {});

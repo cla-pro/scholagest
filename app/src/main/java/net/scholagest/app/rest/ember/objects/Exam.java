@@ -6,6 +6,8 @@ public class Exam {
     private int coeff;
     private String branch;
 
+    public Exam() {}
+
     public Exam(final String id, final String name, final int coeff, final String branch) {
         this.id = id;
         this.name = name;
@@ -17,7 +19,7 @@ public class Exam {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(final String id) {
         this.id = id;
     }
 
@@ -25,7 +27,7 @@ public class Exam {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -33,7 +35,7 @@ public class Exam {
         return coeff;
     }
 
-    public void setCoeff(int coeff) {
+    public void setCoeff(final int coeff) {
         this.coeff = coeff;
     }
 

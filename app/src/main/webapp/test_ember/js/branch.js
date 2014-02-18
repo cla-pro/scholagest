@@ -9,12 +9,6 @@ Scholagest.PeriodsRoute = Ember.Route.extend({
             userClass.get('periods').forEach(function(period) {});
             return userClass;
         }
-//        if (userClass == null) {
-//            return [];
-//        } else {
-//            return userClass.get('periods');
-//        }
-        // return this.store.find('period');
 	}
 });
 Scholagest.PeriodsController = Ember.ObjectController.extend({
@@ -34,8 +28,22 @@ Scholagest.BranchRoute = Ember.Route.extend({
 	}
 });
 Scholagest.BranchController = Ember.ObjectController.extend({
+	isEditing: false,
+	
 	actions: {
-		save: function() {
+		editExams: function() {
+	        this.set('isEditing', true);
+	    },
+	    saveExams: function() {
+	    	var branch = this.get('model');
+	    	branch.get('exams').forEach(function(exam) {
+	    		if (exam.get('isDirty')) {
+	    			exam.save();
+	    		}
+	    	});
+	        this.set('isEditing', false);
+	    },
+		saveGrades: function() {
 			var branch = this.get('model');
 			branch.get('studentResults').forEach(function(studentResult) {
 				studentResult.get('results').forEach(function(result) {
@@ -52,8 +60,5 @@ Scholagest.BranchController = Ember.ObjectController.extend({
 				}
 			});
 		}
-	},
-    editExam: function(event) {
-        alert(event.context);
-    }
+	}
 });
