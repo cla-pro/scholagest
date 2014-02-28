@@ -354,8 +354,6 @@
             {{/each}}
         </ul>
 
-        <button {{action test}}>test</button>
-
         {{outlet}}
     </script>
     <script type='text/x-handlebars' id="period">
@@ -380,6 +378,15 @@
             {{input value=branch.name}} <button {{action saveBranch}}>Enregistrer</button>
         {{else}}
             <h2>{{branch.name}}</h2> <button {{action editBranch}}>Modifier</button>
+        {{/if}}
+        
+        {{#if isExamCreating}}
+            <span>
+                {{input value=newExamName}}
+                <button {{action createExam}}>Créer</button>
+            </span>
+        {{else}}
+            <button {{action startExamCreation}}>Créer un examen</button>
         {{/if}}
         
         <table>

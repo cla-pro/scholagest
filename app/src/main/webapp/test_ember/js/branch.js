@@ -24,10 +24,6 @@ Scholagest.PeriodsController = Ember.ObjectController.extend({
 	},
 	
 	actions: {
-		test: function() {
-			var b = this.store.find('branch', '3');
-			alert(b.get('name'));
-		},
 		startBranchCreation: function() {
 			this.set('isBranchCreation', true);
 		},
@@ -62,12 +58,41 @@ Scholagest.BranchPeriodRoute = Ember.Route.extend({
 	}
 });
 Scholagest.BranchPeriodController = Ember.ObjectController.extend({
-	isBranchEditing: false,
-	isExamEditing: false,
+    // values = ['reading', 'branchEdition', 'examEdition', 'examCreation']
+    state: null,
+    newExamName: null,
+    
+	isBranchEditing: function() {
+        return this.get('state') === 'branchEdition';
+    }.property('state'),
+	isExamEditing: function() {
+        return this.get('state') === 'examEdition';
+    }.property('state'),
+	isExamCreating: function() {
+        return this.get('state') === 'examCreation';
+    }.property('state'),
+	
+	init: function() {
+        this._super();
+        this.set('state', 'reading');
+    },
 	
 	actions: {
+        startExamCreation: function() {
+            this.set('state', 'examCreation');
+        },
+        createExam: function() {
+            var exam = this.store.createRecord('exam', { 
+                name: this.get('newExamName'),
+                coeff: 1,
+                branchPeriod: this.get('model')
+            });
+            
+            exam.save();
+            this.set('state', 'normal');
+        },
 		editBranch: function() {
-			this.set('isBranchEditing', true);
+			this.set('state', 'branchEdition');
 		},
 		saveBranch: function() {
 			var model = this.get('model');
@@ -76,10 +101,10 @@ Scholagest.BranchPeriodController = Ember.ObjectController.extend({
 				branch.save();
 			}
 			
-			this.set('isBranchEditing', false);
+			this.set('state', 'reading');
 		},
 		editExams: function() {
-	        this.set('isExamEditing', true);
+	        this.set('state', 'examEdition');
 	    },
 	    saveExams: function() {
 	    	var branchPeriod = this.get('model');
@@ -88,7 +113,7 @@ Scholagest.BranchPeriodController = Ember.ObjectController.extend({
 	    			exam.save();
 	    		}
 	    	});
-	        this.set('isExamEditing', false);
+	        this.set('state', 'reading');
 	    },
 		saveGrades: function() {
 			var branchPeriod = this.get('model');

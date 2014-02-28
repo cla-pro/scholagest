@@ -1,24 +1,24 @@
 package net.scholagest.app.rest.ember.objects;
 
 public class Result extends Base {
-    private double grade;
+    private Double grade;
     private String studentResult;
     private String exam;
 
     public Result() {}
 
-    public Result(final String id, final double grade, final String exam, final String studentResult) {
+    public Result(final String id, final Double grade, final String exam, final String studentResult) {
         super(id);
         this.grade = grade;
         this.exam = exam;
         this.studentResult = studentResult;
     }
 
-    public double getGrade() {
+    public Double getGrade() {
         return grade;
     }
 
-    public void setGrade(final double grade) {
+    public void setGrade(final Double grade) {
         this.grade = grade;
     }
 

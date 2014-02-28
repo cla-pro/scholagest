@@ -22,16 +22,16 @@ public class ResultsRest extends AbstractService {
 
     static {
         results.put("1", new Result("1", 3.5, "1", "1"));
-        results.put("2", new Result("2", 5, "2", "1"));
+        results.put("2", new Result("2", 5.0, "2", "1"));
         results.put("3", new Result("3", 4.25, "6", "1"));
         results.put("4", new Result("4", 3.5, "3", "2"));
-        results.put("5", new Result("5", 5, "4", "2"));
-        results.put("6", new Result("6", 5, "5", "2"));
+        results.put("5", new Result("5", 5.0, "4", "2"));
+        results.put("6", new Result("6", 5.0, "5", "2"));
         results.put("7", new Result("7", 4.25, "7", "2"));
     }
 
     @Inject
-    public ResultsRest(IOntologyService ontologyService) {
+    public ResultsRest(final IOntologyService ontologyService) {
         super(ontologyService);
     }
 
@@ -39,11 +39,11 @@ public class ResultsRest extends AbstractService {
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void saveResult(@PathParam("id") String id, Map<String, Result> result) {
+    public void saveResult(@PathParam("id") final String id, final Map<String, Result> result) {
         mergeResult(id, result.get("result"));
     }
 
-    void mergeResult(String id, Result result) {
+    void mergeResult(final String id, final Result result) {
         final Result toBeMerged = results.get(id);
         toBeMerged.setGrade(result.getGrade());
     }

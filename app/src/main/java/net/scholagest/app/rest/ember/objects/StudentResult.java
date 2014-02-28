@@ -1,5 +1,6 @@
 package net.scholagest.app.rest.ember.objects;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class StudentResult extends Base {
@@ -12,7 +13,7 @@ public class StudentResult extends Base {
         super(id);
         this.student = student;
         this.branch = branch;
-        this.results = results;
+        this.results = new ArrayList<>(results);
         this.mean = mean;
     }
 

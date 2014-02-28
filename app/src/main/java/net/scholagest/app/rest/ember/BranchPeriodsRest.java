@@ -105,7 +105,7 @@ public class BranchPeriodsRest extends AbstractService {
 
         for (final BranchPeriod branchPeriod : branchPeriods) {
             for (final String resultId : branchPeriod.getStudentResults()) {
-                studentResults.add(ExamsRest.studentResult.get(resultId));
+                studentResults.add(ExamsRest.studentResults.get(resultId));
             }
         }
 

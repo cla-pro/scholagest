@@ -3,15 +3,15 @@ package net.scholagest.app.rest.ember.objects;
 public class Exam extends Base {
     private String name;
     private int coeff;
-    private String branch;
+    private String branchPeriod;
 
     public Exam() {}
 
-    public Exam(final String id, final String name, final int coeff, final String branch) {
+    public Exam(final String id, final String name, final int coeff, final String branchPeriod) {
         super(id);
         this.name = name;
         this.coeff = coeff;
-        this.branch = branch;
+        this.branchPeriod = branchPeriod;
     }
 
     public String getName() {
@@ -30,7 +30,7 @@ public class Exam extends Base {
         this.coeff = coeff;
     }
 
-    public String getBranch() {
-        return branch;
+    public String getBranchPeriod() {
+        return branchPeriod;
     }
 }
