@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -37,7 +39,7 @@ public class ExamsRest extends AbstractService {
     }
 
     @Inject
-    public ExamsRest(IOntologyService ontologyService) {
+    public ExamsRest(final IOntologyService ontologyService) {
         super(ontologyService);
     }
 
@@ -45,9 +47,22 @@ public class ExamsRest extends AbstractService {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Map<String, List<Object>> getExams() {
-        Map<String, List<Object>> examsToReturn = new HashMap<>();
+        final Map<String, List<Object>> examsToReturn = new HashMap<>();
 
         return examsToReturn;
     }
 
+    @CheckAuthorization
+    @PUT
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public void saveExam(@PathParam("id") final String id, final Map<String, Exam> payload) {
+        final Exam exam = payload.get("exam");
+        mergeExam(exams.get(id), exam);
+    }
+
+    private void mergeExam(final Exam base, final Exam toMerge) {
+        base.setCoeff(toMerge.getCoeff());
+        base.setName(toMerge.getName());
+    }
 }

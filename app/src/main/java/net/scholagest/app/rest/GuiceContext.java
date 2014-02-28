@@ -3,6 +3,7 @@ package net.scholagest.app.rest;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.scholagest.app.rest.ember.BranchPeriodsRest;
 import net.scholagest.app.rest.ember.BranchesRest;
 import net.scholagest.app.rest.ember.ClassesRest;
 import net.scholagest.app.rest.ember.ExamsRest;
@@ -96,10 +97,10 @@ import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 public class GuiceContext extends GuiceServletContextListener {
     @Override
     protected Injector getInjector() {
-        Injector injector = Guice.createInjector(new JerseyServletModule() {
+        final Injector injector = Guice.createInjector(new JerseyServletModule() {
             @Override
             protected void configureServlets() {
-                AuthorizationVerifier authorizationVerifier = new AuthorizationVerifier();
+                final AuthorizationVerifier authorizationVerifier = new AuthorizationVerifier();
                 requestInjection(authorizationVerifier);
                 bindInterceptor(Matchers.any(), Matchers.annotatedWith(CheckAuthorization.class), authorizationVerifier);
 
@@ -161,6 +162,7 @@ public class GuiceContext extends GuiceServletContextListener {
                 bind(ClassesRest.class);
                 bind(PeriodsRest.class);
                 bind(BranchesRest.class);
+                bind(BranchPeriodsRest.class);
                 bind(ResultsRest.class);
                 bind(MeansRest.class);
                 bind(ExamsRest.class);
@@ -172,7 +174,7 @@ public class GuiceContext extends GuiceServletContextListener {
                 bind(TeacherDetailsRest.class);
 
                 // Route all requests through GuiceContainer
-                Map<String, String> params = new HashMap<>();
+                final Map<String, String> params = new HashMap<>();
                 params.put("com.sun.jersey.config.property.packages", "net.scholagest.rest.ember");
                 params.put("com.sun.jersey.api.json.POJOMappingFeature", "true");
                 serve("/services/*").with(GuiceContainer.class, params);
@@ -184,7 +186,7 @@ public class GuiceContext extends GuiceServletContextListener {
             }
         });
 
-        org.apache.shiro.mgt.SecurityManager securityManager = injector.getInstance(org.apache.shiro.mgt.SecurityManager.class);
+        final org.apache.shiro.mgt.SecurityManager securityManager = injector.getInstance(org.apache.shiro.mgt.SecurityManager.class);
         SecurityUtils.setSecurityManager(securityManager);
 
         return injector;

@@ -3,7 +3,9 @@ package net.scholagest.app.rest.ember;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -27,7 +29,7 @@ public class StudentPersonalsRest extends AbstractService {
     }
 
     @Inject
-    public StudentPersonalsRest(IOntologyService ontologyService) {
+    public StudentPersonalsRest(final IOntologyService ontologyService) {
         super(ontologyService);
     }
 
@@ -52,10 +54,22 @@ public class StudentPersonalsRest extends AbstractService {
         mergeStudentPersonal(personals.get(id), studentPersonal);
     }
 
-    private void mergeStudentPersonal(StudentPersonal base, StudentPersonal toMerge) {
+    private void mergeStudentPersonal(final StudentPersonal base, final StudentPersonal toMerge) {
         base.setCity(toMerge.getCity());
         base.setPostcode(toMerge.getPostcode());
         base.setReligion(toMerge.getReligion());
         base.setStreet(toMerge.getStreet());
+    }
+
+    @CheckAuthorization
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Map<String, StudentPersonal> createStudentPersonals(final Map<String, StudentPersonal> payload) {
+        final StudentPersonal studentPersonal = payload.get("studentPersonal");
+        final String id = IdHelper.getNextId(personals.keySet());
+        studentPersonal.setId(id);
+        personals.put(id, studentPersonal);
+
+        return payload;
     }
 }

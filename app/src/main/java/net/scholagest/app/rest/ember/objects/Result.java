@@ -1,7 +1,6 @@
 package net.scholagest.app.rest.ember.objects;
 
-public class Result {
-    private String id;
+public class Result extends Base {
     private double grade;
     private String studentResult;
     private String exam;
@@ -9,25 +8,17 @@ public class Result {
     public Result() {}
 
     public Result(final String id, final double grade, final String exam, final String studentResult) {
-        this.id = id;
+        super(id);
         this.grade = grade;
         this.exam = exam;
         this.studentResult = studentResult;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public double getGrade() {
         return grade;
     }
 
-    public void setGrade(double grade) {
+    public void setGrade(final double grade) {
         this.grade = grade;
     }
 
@@ -39,7 +30,7 @@ public class Result {
         return studentResult;
     }
 
-    public void setStudentResult(String studentResult) {
+    public void setStudentResult(final String studentResult) {
         this.studentResult = studentResult;
     }
 }

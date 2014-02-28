@@ -7,17 +7,17 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
+import javax.ws.rs.PathParam;
 
 import net.scholagest.app.rest.AbstractService;
 import net.scholagest.app.rest.ember.authorization.CheckAuthorization;
 import net.scholagest.app.rest.ember.objects.Branch;
-import net.scholagest.app.rest.ember.objects.Exam;
-import net.scholagest.app.rest.ember.objects.Result;
-import net.scholagest.app.rest.ember.objects.StudentResult;
+import net.scholagest.app.rest.ember.objects.BranchPeriod;
+import net.scholagest.app.rest.ember.objects.Clazz;
+import net.scholagest.app.rest.ember.objects.Period;
 import net.scholagest.services.IOntologyService;
 
 import com.google.inject.Inject;
@@ -27,92 +27,78 @@ public class BranchesRest extends AbstractService {
     public static Map<String, Branch> branches = new HashMap<>();
 
     static {
-        branches.put("1", new Branch("1", "Math", true, "1", Arrays.asList("1", "2"), Arrays.asList("1")));
-        branches.put("2", new Branch("2", "Histoire", false, "1", Arrays.asList("3", "4", "5"), Arrays.asList("2")));
-        branches.put("3", new Branch("3", "Math", true, "2", new ArrayList<String>(), new ArrayList<String>()));
-        branches.put("4", new Branch("4", "Histoire", false, "2", new ArrayList<String>(), new ArrayList<String>()));
-        branches.put("5", new Branch("5", "Math", true, "3", new ArrayList<String>(), new ArrayList<String>()));
+        branches.put("1", new Branch("1", "Math", true, "1", Arrays.asList("1", "3", "5")));
+        branches.put("2", new Branch("2", "Histoire", false, "1", Arrays.asList("2", "4")));
     }
 
     @Inject
-    public BranchesRest(IOntologyService ontologyService) {
+    public BranchesRest(final IOntologyService ontologyService) {
         super(ontologyService);
     }
 
     @CheckAuthorization
+    @Path("/{id}")
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, List<Object>> getBranches(@QueryParam("ids[]") final List<String> ids) {
-        Map<String, List<Object>> toReturn = new HashMap<>();
-
-        final List<Branch> branchesWithIds = branchesWithIds(ids);
-        final List<Exam> examsForBranches = examsForBranches(branchesWithIds);
-        final List<StudentResult> studentResultsForExams = studentResultsForBranches(branchesWithIds);
-        final List<Result> resultsForStudentResults = resultsForStudentResults(studentResultsForExams);
-        final List<Result> meansForStudentResults = meansForStudentResults(studentResultsForExams);
-
-        toReturn.put("branches", new ArrayList<Object>(branchesWithIds));
-        toReturn.put("exams", new ArrayList<Object>(examsForBranches));
-        toReturn.put("studentResults", new ArrayList<Object>(studentResultsForExams));
-        toReturn.put("results", new ArrayList<Object>(resultsForStudentResults));
-        toReturn.put("means", new ArrayList<Object>(meansForStudentResults));
-
-        return toReturn;
+    public Map<String, Branch> getBranch(@PathParam("id") final String id) {
+        final Map<String, Branch> result = new HashMap<String, Branch>();
+        final Branch branch = branches.get(id);
+        result.put("branch", branch);
+        return result;
     }
 
-    private List<Result> meansForStudentResults(List<StudentResult> studentResultsForExams) {
-        final List<Result> means = new ArrayList<>();
-
-        for (StudentResult studentResult : studentResultsForExams) {
-            means.add(ResultsRest.results.get(studentResult.getMean()));
-        }
-
-        return means;
+    @CheckAuthorization
+    @Path("/{id}")
+    @PUT
+    public void saveBranch(@PathParam("id") final String id, final Map<String, Branch> payload) {
+        final Branch branch = payload.get("branch");
+        mergeBranch(branches.get(id), branch);
     }
 
-    private List<Result> resultsForStudentResults(List<StudentResult> studentResultsForExams) {
-        final List<Result> results = new ArrayList<>();
-
-        for (StudentResult studentResult : studentResultsForExams) {
-            for (String resultId : studentResult.getResults()) {
-                results.add(ResultsRest.results.get(resultId));
-            }
-        }
-
-        return results;
+    private void mergeBranch(final Branch base, final Branch toMerge) {
+        base.setName(toMerge.getName());
     }
 
-    private List<StudentResult> studentResultsForBranches(List<Branch> branchesWithIds) {
-        final List<StudentResult> studentResults = new ArrayList<>();
+    @CheckAuthorization
+    @POST
+    public Map<String, Object> createBranch(final Map<String, Branch> payload) {
+        final Branch branch = payload.get("branch");
+        final String id = IdHelper.getNextId(branches.keySet());
+        branch.setId(id);
 
-        for (Branch branch : branchesWithIds) {
-            for (String resultId : branch.getStudentResults()) {
-                studentResults.add(ExamsRest.studentResult.get(resultId));
-            }
-        }
+        final List<BranchPeriod> newBranchPeriods = createBranchPeriods(branch);
+        branch.setBranchPeriods(IdHelper.extractIds(newBranchPeriods));
 
-        return studentResults;
+        branches.put(id, branch);
+
+        final Map<String, Object> response = new HashMap<>();
+        response.put("branch", branch);
+        response.put("branchPeriods", new ArrayList<Object>(newBranchPeriods));
+        response.put("periods", new ArrayList<Object>(updatePeriods(newBranchPeriods)));
+
+        return response;
     }
 
-    private List<Exam> examsForBranches(List<Branch> branchesWithIds) {
-        final List<Exam> exams = new ArrayList<>();
-
-        for (Branch branch : branchesWithIds) {
-            for (String examId : branch.getExams()) {
-                exams.add(ExamsRest.exams.get(examId));
-            }
+    private List<Period> updatePeriods(final List<BranchPeriod> newBranchPeriods) {
+        final List<Period> updated = new ArrayList<>();
+        for (final BranchPeriod branchPeriod : newBranchPeriods) {
+            final Period period = PeriodsRest.periods.get(branchPeriod.getPeriod());
+            period.getBranchPeriods().add(branchPeriod.getId());
+            updated.add(period);
         }
-
-        return exams;
+        return updated;
     }
 
-    private List<Branch> branchesWithIds(List<String> ids) {
-        ArrayList<Branch> filtered = new ArrayList<>();
+    private List<BranchPeriod> createBranchPeriods(final Branch branch) {
+        final Clazz clazz = ClassesRest.classes.get(branch.getClazz());
 
-        for (String id : ids) {
-            filtered.add(branches.get(id));
+        final List<BranchPeriod> newBranchPeriods = new ArrayList<>();
+        for (final String periodId : clazz.getPeriods()) {
+            final String id = IdHelper.getNextId(BranchPeriodsRest.branchPeriods.keySet());
+            final BranchPeriod branchPeriod = new BranchPeriod(id, branch.getId(), periodId, new ArrayList<String>(), new ArrayList<String>());
+            BranchPeriodsRest.branchPeriods.put(id, branchPeriod);
+            newBranchPeriods.add(branchPeriod);
         }
 
-        return filtered;
+        return newBranchPeriods;
     }
 }

@@ -5,7 +5,7 @@
  *            Portions Copyright 2008-2011 Apple Inc. All rights reserved.
  * @license   Licensed under MIT license
  *            See https://raw.github.com/emberjs/ember.js/master/LICENSE
- * @version   1.5.0-beta.1
+ * @version   1.5.0-beta.2+pre.3ce8f9ac
  */
 
 
@@ -206,7 +206,7 @@ if (!Ember.testing) {
  *            Portions Copyright 2008-2011 Apple Inc. All rights reserved.
  * @license   Licensed under MIT license
  *            See https://raw.github.com/emberjs/ember.js/master/LICENSE
- * @version   1.5.0-beta.1
+ * @version   1.5.0-beta.2+pre.3ce8f9ac
  */
 
 
@@ -289,7 +289,7 @@ var define, requireModule, require, requirejs;
 
   @class Ember
   @static
-  @version 1.5.0-beta.1
+  @version 1.5.0-beta.2+pre.3ce8f9ac
 */
 
 if ('undefined' === typeof Ember) {
@@ -316,10 +316,10 @@ Ember.toString = function() { return "Ember"; };
 /**
   @property VERSION
   @type String
-  @default '1.5.0-beta.1'
+  @default '1.5.0-beta.2+pre.3ce8f9ac'
   @static
 */
-Ember.VERSION = '1.5.0-beta.1';
+Ember.VERSION = '1.5.0-beta.2+pre.3ce8f9ac';
 
 /**
   Standard environmental variables. You can define these in a global `EmberENV`

@@ -3,7 +3,9 @@ package net.scholagest.app.rest.ember;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -27,7 +29,7 @@ public class StudentMedicalsRest extends AbstractService {
     }
 
     @Inject
-    public StudentMedicalsRest(IOntologyService ontologyService) {
+    public StudentMedicalsRest(final IOntologyService ontologyService) {
         super(ontologyService);
     }
 
@@ -35,8 +37,8 @@ public class StudentMedicalsRest extends AbstractService {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, StudentMedical> getMedical(@PathParam("id") String id) {
-        StudentMedical studentMedical = medicals.get(id);
+    public Map<String, StudentMedical> getMedical(@PathParam("id") final String id) {
+        final StudentMedical studentMedical = medicals.get(id);
 
         final Map<String, StudentMedical> result = new HashMap<>();
         result.put("studentMedical", studentMedical);
@@ -52,8 +54,20 @@ public class StudentMedicalsRest extends AbstractService {
         mergeStudentMedical(medicals.get(id), studentMedical);
     }
 
-    private void mergeStudentMedical(StudentMedical base, StudentMedical toMerge) {
+    private void mergeStudentMedical(final StudentMedical base, final StudentMedical toMerge) {
         base.setDoctor(toMerge.getDoctor());
         ;
+    }
+
+    @CheckAuthorization
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Map<String, StudentMedical> createStudentPersonals(final Map<String, StudentMedical> payload) {
+        final StudentMedical studentMedical = payload.get("studentMedical");
+        final String id = IdHelper.getNextId(medicals.keySet());
+        studentMedical.setId(id);
+        medicals.put(id, studentMedical);
+
+        return payload;
     }
 }

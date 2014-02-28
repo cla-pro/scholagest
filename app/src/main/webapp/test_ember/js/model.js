@@ -48,39 +48,45 @@ Scholagest.Class = DS.Model.extend({
 	name: DS.attr(),
 	year: DS.belongsTo('year', { async: true }),
 	periods: DS.hasMany('period', { async: true }),
-	students: DS.hasMany('student', { async: true }),
-	teachers: DS.hasMany('teacher', { async: true })
+	branches: DS.hasMany('branch', { async: true }),
+	students: DS.hasMany('student', { async: true, embedded: 'always' }),
+	teachers: DS.hasMany('teacher', { async: true, embedded: 'always' })
 });
 
 Scholagest.Period = DS.Model.extend({
 	name: DS.attr(),
 	clazz: DS.belongsTo('class', { async: true }),
-	branches: DS.hasMany('branch', { async: true })
+	branchPeriods: DS.hasMany('branchPeriod', { async: true })
 });
 Scholagest.Branch = DS.Model.extend({
 	name: DS.attr(),
 	numerical: DS.attr('boolean'),
+	clazz: DS.belongsTo('class', { async: true }),
+	branchPeriods: DS.hasMany('branchPeriod'),
+	
+	isNumerical: function() {
+		if (this.get('numerical') == true) {
+			return true;
+		} else {
+			return false;
+		}
+	}.property('numerical')
+});
+Scholagest.BranchPeriod = DS.Model.extend({
+	branch: DS.belongsTo('branch'),
 	period: DS.belongsTo('period', { async: true }),
-	exams: DS.hasMany('exam', { async: true, embedded: 'always' }),
-	studentResults: DS.hasMany('studentResult', { embedded: 'always' })
+	exams: DS.hasMany('exam', { embedded: 'always' }),
+	studentResults: DS.hasMany('studentResult', { embedded: 'always' }),
+	
 });
 Scholagest.Exam = DS.Model.extend({
 	name: DS.attr(),
 	coeff: DS.attr('number'),
-    edit: DS.attr('boolean', { defaultValue: false }),
-	branch: DS.belongsTo('branch', { async: true }),
-	
-	startEdit: function() {
-        this.set('edit', true);
-    },
-    saveExam: function() {
-        this.save();
-        this.set('edit', false);
-    }
+	branchPeriod: DS.belongsTo('branchPeriod', { async: true }),
 });
 
 Scholagest.StudentResult = DS.Model.extend({
-    branch: DS.belongsTo('branch'),
+	branchPeriod: DS.belongsTo('branchPeriod'),
 	student: DS.belongsTo('student', { async: true }),
 	results: DS.hasMany('result'),
 	mean: DS.belongsTo('mean')
@@ -88,7 +94,13 @@ Scholagest.StudentResult = DS.Model.extend({
 Scholagest.Result = DS.Model.extend({
 	grade: DS.attr('number'),
 	exam: DS.belongsTo('exam'),
-	studentResult: DS.belongsTo('studentResult')
+	studentResult: DS.belongsTo('studentResult'),
+	
+	// Hack required for the mean to be updated.
+	changeCounter: DS.attr('number', { defaultValue: 0 }),
+	coeffChange: function() {
+		this.set('changeCounter', this.get('changeCounter') + 1);
+	}.observes('exam.coeff')
 });
 Scholagest.Mean = DS.Model.extend({
     grade: DS.attr(),
@@ -102,15 +114,19 @@ Scholagest.Mean = DS.Model.extend({
             var count = 0;
             
             studentRes.get('results').forEach(function (result) {
+            	var grade = result.get('grade');
                 var exam = result.get('exam');
                 var coeff = exam.get('coeff');
-                total += coeff * result.get('grade');
-                count += coeff;
+                if (grade != undefined && grade != null) {
+	                total += coeff * grade;
+	                count += coeff;
+                }
             });
             
             return total / count;
         } else {
             return this.get('grade');
         }
-    }.property('studentResult.results.@each.grade', 'studentResult.results.@each.exam.coeff')
+        // Invalid @each observer: 'studentResult.results.@each.exam.coeff'
+    }.property('studentResult.results.@each.grade', 'studentResult.results.@each.changeCounter')
 });

@@ -1,6 +1,6 @@
 @SET SUBDIR=%~dp0
 
-@call mvn clean install -Papplication -DskipTests
+@call mvn install -Papplication -DskipTests
 
 @c:
 @cd "C:\Program Files\Apache Software Foundation\apache-tomcat-7.0.26"

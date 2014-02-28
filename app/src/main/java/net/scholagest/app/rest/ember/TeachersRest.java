@@ -17,6 +17,7 @@ import javax.ws.rs.core.MediaType;
 import net.scholagest.app.rest.AbstractService;
 import net.scholagest.app.rest.ember.authorization.CheckAuthorization;
 import net.scholagest.app.rest.ember.objects.Teacher;
+import net.scholagest.app.rest.ember.objects.TeacherDetail;
 import net.scholagest.app.rest.ember.objects.Teachers;
 import net.scholagest.services.IOntologyService;
 import net.scholagest.services.ITeacherService;
@@ -34,7 +35,7 @@ public class TeachersRest extends AbstractService {
     }
 
     @Inject
-    public TeachersRest(ITeacherService teacherService, IOntologyService ontologyService, IUserService userService) {
+    public TeachersRest(final ITeacherService teacherService, final IOntologyService ontologyService, final IUserService userService) {
         super(ontologyService);
     }
 
@@ -49,12 +50,12 @@ public class TeachersRest extends AbstractService {
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void saveTeacher(@PathParam("id") String id, Map<String, Teacher> teacher) {
+    public void saveTeacher(@PathParam("id") final String id, final Map<String, Teacher> teacher) {
         mergeTeachers(id, teacher.get("teacher"));
     }
 
-    private void mergeTeachers(String id, Teacher teacher) {
-        Teacher toBeMerged = teachers.get(id);
+    private void mergeTeachers(final String id, final Teacher teacher) {
+        final Teacher toBeMerged = teachers.get(id);
 
         toBeMerged.setFirstName(teacher.getFirstName());
         toBeMerged.setLastName(teacher.getLastName());
@@ -63,31 +64,27 @@ public class TeachersRest extends AbstractService {
     @CheckAuthorization
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Map<String, Teacher> createTeacher(Map<String, Teacher> payload) {
-        Teacher teacher = payload.get("teacher");
-        String id = getNextId(teachers);
+    public Map<String, Object> createTeacher(final Map<String, Teacher> payload) {
+        final Teacher teacher = payload.get("teacher");
+        final String id = IdHelper.getNextId(teachers.keySet());
         teacher.setId(id);
         teachers.put(id, teacher);
 
-        return payload;
-    }
+        final String detailId = IdHelper.getNextId(TeacherDetailsRest.teacherDetails.keySet());
+        final TeacherDetail teacherDetail = new TeacherDetail(detailId, null, null, null);
+        TeacherDetailsRest.teacherDetails.put(detailId, teacherDetail);
 
-    private String getNextId(Map<String, Teacher> teachers) {
-        int max = 0;
-        for (String id : teachers.keySet()) {
-            Integer intId = Integer.valueOf(id);
-            if (intId > max) {
-                max = intId;
-            }
-        }
+        final Map<String, Object> response = new HashMap<String, Object>();
+        response.put("teacher", teacher);
+        response.put("teacherDetail", teacherDetail);
 
-        return "" + (max + 1);
+        return response;
     }
 
     @CheckAuthorization
     @Path("/{id}")
     @DELETE
-    public void deleteTeacher(@PathParam("id") String id) {
+    public void deleteTeacher(@PathParam("id") final String id) {
         teachers.remove(id);
     }
 }

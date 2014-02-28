@@ -1,33 +1,27 @@
 package net.scholagest.app.rest.ember.objects;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class Period {
-    private String id;
+public class Period extends Base {
     private String name;
     private String clazz;
-    private List<String> branches;
+    private List<String> branchPeriods;
 
-    public Period(final String id, final String name, final String clazz, final List<String> branches) {
-        this.id = id;
+    public Period() {}
+
+    public Period(final String id, final String name, final String clazz, final List<String> branchPeriods) {
+        super(id);
         this.name = name;
         this.clazz = clazz;
-        this.branches = branches;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+        this.branchPeriods = new ArrayList<String>(branchPeriods);
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -35,15 +29,15 @@ public class Period {
         return clazz;
     }
 
-    public void setClazz(String clazz) {
+    public void setClazz(final String clazz) {
         this.clazz = clazz;
     }
 
-    public List<String> getBranches() {
-        return branches;
+    public List<String> getBranchPeriods() {
+        return branchPeriods;
     }
 
-    public void setBranches(List<String> branches) {
-        this.branches = branches;
+    public void setBranchPeriods(final List<String> branchPeriods) {
+        this.branchPeriods = branchPeriods;
     }
 }

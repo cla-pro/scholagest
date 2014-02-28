@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -25,13 +27,14 @@ public class ClassesRest extends AbstractService {
     public static Map<String, Clazz> classes = new HashMap<>();
 
     static {
-        classes.put("1", new Clazz("1", "1P A", Arrays.asList("1", "2", "3"), Arrays.asList("1"), Arrays.asList("1")));
-        classes.put("2", new Clazz("2", "2P A", new ArrayList<String>(), Arrays.asList("2"), Arrays.asList("2")));
-        classes.put("3", new Clazz("3", "5P A", new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>()));
+        classes.put("1", new Clazz("1", "1P A", "1", Arrays.asList("1", "2", "3"), Arrays.asList("1"), Arrays.asList("1"), Arrays.asList("1", "2")));
+        classes.put("2", new Clazz("2", "2P A", "2", new ArrayList<String>(), Arrays.asList("2"), Arrays.asList("2"), new ArrayList<String>()));
+        classes.put("3", new Clazz("3", "5P A", "2", new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(),
+                new ArrayList<String>()));
     }
 
     @Inject
-    public ClassesRest(IOntologyService ontologyService) {
+    public ClassesRest(final IOntologyService ontologyService) {
         super(ontologyService);
     }
 
@@ -42,7 +45,7 @@ public class ClassesRest extends AbstractService {
         final Map<String, List<Clazz>> toReturn = new HashMap<>();
         final List<Clazz> classesToReturn = new ArrayList<>();
 
-        for (String id : ids) {
+        for (final String id : ids) {
             classesToReturn.add(classes.get(id));
         }
         toReturn.put("classes", classesToReturn);
@@ -52,14 +55,41 @@ public class ClassesRest extends AbstractService {
 
     @CheckAuthorization
     @GET
-    @Path("{id}")
+    @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, Clazz> getClass(@PathParam("id") String id) {
+    public Map<String, Clazz> getClass(@PathParam("id") final String id) {
         final Map<String, Clazz> toReturn = new HashMap<>();
 
-        Clazz clazz = classes.get(id);
+        final Clazz clazz = classes.get(id);
         toReturn.put("class", clazz);
 
         return toReturn;
+    }
+
+    @CheckAuthorization
+    @PUT
+    @Path("/{id}")
+    public void saveClass(@PathParam("id") final String id, final Map<String, Clazz> payload) {
+        final Clazz clazz = payload.get("class");
+        mergeClazz(classes.get(id), clazz);
+    }
+
+    private void mergeClazz(final Clazz base, final Clazz toMerge) {
+        base.setName(toMerge.getName());
+        base.setStudents(toMerge.getStudents());
+        base.setTeachers(toMerge.getTeachers());
+    }
+
+    @CheckAuthorization
+    @POST
+    public Map<String, Clazz> createClass(final Map<String, Clazz> payload) {
+        final Clazz clazz = payload.get("class");
+
+        final String id = IdHelper.getNextId(classes.keySet());
+        clazz.setId(id);
+
+        classes.put(id, clazz);
+
+        return payload;
     }
 }

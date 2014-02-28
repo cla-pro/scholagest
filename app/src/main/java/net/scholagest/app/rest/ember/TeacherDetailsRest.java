@@ -31,7 +31,7 @@ public class TeacherDetailsRest extends AbstractService {
     }
 
     @Inject
-    public TeacherDetailsRest(ITeacherService teacherService, IOntologyService ontologyService, IUserService userService) {
+    public TeacherDetailsRest(final ITeacherService teacherService, final IOntologyService ontologyService, final IUserService userService) {
         super(ontologyService);
     }
 
@@ -39,7 +39,7 @@ public class TeacherDetailsRest extends AbstractService {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, TeacherDetail> getTeacherDetail(@PathParam("id") String id) {
+    public Map<String, TeacherDetail> getTeacherDetail(@PathParam("id") final String id) {
         final TeacherDetail teacherDetail = teacherDetails.get(id);
 
         final Map<String, TeacherDetail> result = new HashMap<>();
@@ -52,13 +52,13 @@ public class TeacherDetailsRest extends AbstractService {
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void saveTeacherDetail(@PathParam("id") String id, Map<String, TeacherDetail> teacherDetail) {
+    public void saveTeacherDetail(@PathParam("id") final String id, final Map<String, TeacherDetail> teacherDetail) {
         System.out.println("TeacherDetail must be saved " + id);
         mergeTeacherDetail(id, teacherDetail.get("teacherDetail"));
     }
 
-    private void mergeTeacherDetail(String id, TeacherDetail teacherDetail) {
-        TeacherDetail toBeMerged = teacherDetails.get(id);
+    private void mergeTeacherDetail(final String id, final TeacherDetail teacherDetail) {
+        final TeacherDetail toBeMerged = teacherDetails.get(id);
 
         toBeMerged.setAddress(teacherDetail.getAddress());
         toBeMerged.setEmail(teacherDetail.getEmail());
@@ -68,24 +68,12 @@ public class TeacherDetailsRest extends AbstractService {
     @CheckAuthorization
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Map<String, TeacherDetail> createTeacherDetail(Map<String, TeacherDetail> payload) {
-        TeacherDetail teacherDetail = payload.get("teacherDetail");
-        String id = getNextId(teacherDetails);
+    public Map<String, TeacherDetail> createTeacherDetail(final Map<String, TeacherDetail> payload) {
+        final TeacherDetail teacherDetail = payload.get("teacherDetail");
+        final String id = IdHelper.getNextId(teacherDetails.keySet());
         teacherDetail.setId(id);
         teacherDetails.put(id, teacherDetail);
 
         return payload;
-    }
-
-    private String getNextId(Map<String, TeacherDetail> teacherDetails) {
-        int max = 0;
-        for (String id : teacherDetails.keySet()) {
-            Integer intId = Integer.valueOf(id);
-            if (intId > max) {
-                max = intId;
-            }
-        }
-
-        return "" + (max + 1);
     }
 }
