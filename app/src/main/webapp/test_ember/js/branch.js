@@ -12,6 +12,40 @@ Scholagest.PeriodsRoute = Ember.Route.extend({
 	}
 });
 Scholagest.PeriodsController = Ember.ObjectController.extend({
+	isBranchCreation: null,
+	newBranchInfo: null,
+	
+	init: function() {
+		this.set('isBranchCreation', false);
+		this.set('newBranchInfo', {
+			name: '',
+			numerical: true
+		})
+	},
+	
+	actions: {
+		test: function() {
+			var b = this.store.find('branch', '3');
+			alert(b.get('name'));
+		},
+		startBranchCreation: function() {
+			this.set('isBranchCreation', true);
+		},
+		createBranch: function() {
+			var clazz = this.get('model');
+			var info = this.get('newBranchInfo');
+			var branch = this.store.createRecord('branch', {
+				name: info.name,
+				numerical: info.numerical,
+				clazz: clazz
+			});
+			
+			// The server must create the branchPeriod
+			branch.save();
+			
+			this.set('isBranchCreation', false);
+		}
+	}
 });
 
 Scholagest.PeriodRoute = Ember.Route.extend({

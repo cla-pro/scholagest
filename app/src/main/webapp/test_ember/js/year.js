@@ -9,9 +9,15 @@ Scholagest.YearsRoute = Ember.Route.extend({
 //		}
 		return years
 	},
+	// Called after the init method of the controller
 	setupController: function(controller, model) {
 	    controller.set('model', model);
 	    controller.set('runningYear', this.getRunningYear(model));
+    	if (controller.get('runningYear')) {
+    		controller.set('state', 'running');
+    	} else {
+    		controller.set('state', 'stopped');
+    	}
 	},
 	
 	getRunningYear: function(years) {
@@ -24,55 +30,81 @@ Scholagest.YearsRoute = Ember.Route.extend({
         return runningYear;
     }
 });
+
 Scholagest.YearsController = Ember.ArrayController.extend({
-    isStarting: false,
-    newYearName: "",
-    isRenaming: false,
+	// values = ['starting', 'running', 'stopped', 'stopping', 'renaming', 'classCreation']
+	state: null,
+    newYearName: '',
+    newClassName: '',
     runningYear: null,
 
-    isStarted: function() {
-        return !this.get('isStopped');
-    }.property('isStopped', 'runningYear'),
-    
-    isStopped: function() {
-        return !this.get('runningYear');
-    }.property('runningYear'),
+	isStarting: function() {
+	    return this.get('state') === 'starting';
+	}.property('state'),
+	isNotRunning: function() {
+	    return !(this.get('state') === 'running');
+	}.property('state'),
+    isNotStopped: function() {
+	    return !(this.get('state') === 'stopped');
+    }.property('state'),
+    isStopping: function() {
+	    return this.get('state') === 'stopping';
+    }.property('state'),
+    isRenaming: function() {
+	    return this.get('state') === 'renaming';
+    }.property('state'),
+    isClassCreation: function() {
+	    return this.get('state') === 'classCreation';
+    }.property('state'),
     
     actions: {
         startYear: function() {
-            this.set('isStarting', true);
+            this.set('state', 'starting');
         },
         createYear: function() {
-            this.set('isStarted', true);
-            this.set('isStarting', false);
-            this.set('isStopped', false);
-            
             var newYear = this.store.createRecord('year', {
                 running: true,
                 name: this.get('newYearName')
             });
             newYear.save();
             
-            this.set('runningYear', newYear);
+            this.set('state', 'running');
+            this.set('newYearName', '');
         },
         stopYear: function() {
-            this.set('isStarted', false);
-            this.set('isStopped', true);
-            this.set('isRenaming', false);
-            
             var running = this.get('runningYear');
             running.set('running', false);
             running.save();
             
-            this.get('model').set('runningYear', null);
+            this.set('runningYear', null);
+            this.set('state', 'stopped');
         },
         startRenaming: function() {
-            this.set('isRenaming', true);
+            this.set('state', 'renaming');
         },
         renameYear: function() {
-            this.set('isRenaming', false);
+            this.set('state', 'running');
 
             this.get('runningYear').save();
+        },
+        startCreatingClass: function() {
+        	this.set('state', 'classCreation');
+        },
+        createClass: function() {
+        	var runningYear = this.get('runningYear');
+        	var clazz = this.store.createRecord('class', { 
+				name: this.get('newClassName'),
+				year: runningYear
+			});
+        	clazz.save().then(function() {
+            	runningYear.get('classes').pushObject(clazz);
+            	runningYear.save();
+        	}, function() {
+        	  // Error callback
+        	});
+        	
+        	this.set('state', 'running');
+            this.set('newClassName', '');
         }
     }
 });

@@ -1,9 +1,9 @@
 package net.scholagest.app.rest.ember.objects;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class Period {
-    private String id;
+public class Period extends Base {
     private String name;
     private String clazz;
     private List<String> branchPeriods;
@@ -11,18 +11,10 @@ public class Period {
     public Period() {}
 
     public Period(final String id, final String name, final String clazz, final List<String> branchPeriods) {
-        this.id = id;
+        super(id);
         this.name = name;
         this.clazz = clazz;
-        this.branchPeriods = branchPeriods;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(final String id) {
-        this.id = id;
+        this.branchPeriods = new ArrayList<String>(branchPeriods);
     }
 
     public String getName() {

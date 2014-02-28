@@ -30,7 +30,7 @@ public class YearsRest extends AbstractService {
     }
 
     @Inject
-    public YearsRest(IOntologyService ontologyService) {
+    public YearsRest(final IOntologyService ontologyService) {
         super(ontologyService);
     }
 
@@ -38,7 +38,7 @@ public class YearsRest extends AbstractService {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Map<String, Collection<Year>> getYears() {
-        Map<String, Collection<Year>> yearsToReturn = new HashMap<>();
+        final Map<String, Collection<Year>> yearsToReturn = new HashMap<>();
 
         yearsToReturn.put("years", years.values());
 
@@ -48,35 +48,23 @@ public class YearsRest extends AbstractService {
     @CheckAuthorization
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public void createYear(Map<String, Year> payload) {
-        Year year = payload.get("year");
-        final String id = nextId();
+    public void createYear(final Map<String, Year> payload) {
+        final Year year = payload.get("year");
+        final String id = IdHelper.getNextId(years.keySet());
         year.setId(id);
         years.put(id, year);
-    }
-
-    private String nextId() {
-        int max = 0;
-        for (String id : years.keySet()) {
-            Integer intId = Integer.valueOf(id);
-            if (intId > max) {
-                max = intId;
-            }
-        }
-
-        return "" + (max + 1);
     }
 
     @CheckAuthorization
     @PUT
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public void saveYear(@PathParam("id") final String id, Map<String, Year> payload) {
-        Year year = payload.get("year");
+    public void saveYear(@PathParam("id") final String id, final Map<String, Year> payload) {
+        final Year year = payload.get("year");
         mergeYear(years.get(id), year);
     }
 
-    private void mergeYear(Year base, Year toMerge) {
+    private void mergeYear(final Year base, final Year toMerge) {
         base.setName(toMerge.getName());
         base.setRunning(toMerge.isRunning());
         base.setClasses(toMerge.getClasses());

@@ -49,8 +49,8 @@ Scholagest.Class = DS.Model.extend({
 	year: DS.belongsTo('year', { async: true }),
 	periods: DS.hasMany('period', { async: true }),
 	branches: DS.hasMany('branch', { async: true }),
-	students: DS.hasMany('student', { async: true }),
-	teachers: DS.hasMany('teacher', { async: true })
+	students: DS.hasMany('student', { async: true, embedded: 'always' }),
+	teachers: DS.hasMany('teacher', { async: true, embedded: 'always' })
 });
 
 Scholagest.Period = DS.Model.extend({
@@ -62,7 +62,7 @@ Scholagest.Branch = DS.Model.extend({
 	name: DS.attr(),
 	numerical: DS.attr('boolean'),
 	clazz: DS.belongsTo('class', { async: true }),
-	branchPeriods: DS.hasMany('branchPeriod', { async: true }),
+	branchPeriods: DS.hasMany('branchPeriod'),
 	
 	isNumerical: function() {
 		if (this.get('numerical') == true) {
@@ -75,7 +75,7 @@ Scholagest.Branch = DS.Model.extend({
 Scholagest.BranchPeriod = DS.Model.extend({
 	branch: DS.belongsTo('branch'),
 	period: DS.belongsTo('period', { async: true }),
-	exams: DS.hasMany('exam', { async: true, embedded: 'always' }),
+	exams: DS.hasMany('exam', { embedded: 'always' }),
 	studentResults: DS.hasMany('studentResult', { embedded: 'always' }),
 	
 });
@@ -114,10 +114,13 @@ Scholagest.Mean = DS.Model.extend({
             var count = 0;
             
             studentRes.get('results').forEach(function (result) {
+            	var grade = result.get('grade');
                 var exam = result.get('exam');
                 var coeff = exam.get('coeff');
-                total += coeff * result.get('grade');
-                count += coeff;
+                if (grade != undefined && grade != null) {
+	                total += coeff * grade;
+	                count += coeff;
+                }
             });
             
             return total / count;

@@ -1,7 +1,6 @@
 package net.scholagest.app.rest.ember.objects;
 
-public class Exam {
-    private String id;
+public class Exam extends Base {
     private String name;
     private int coeff;
     private String branch;
@@ -9,18 +8,10 @@ public class Exam {
     public Exam() {}
 
     public Exam(final String id, final String name, final int coeff, final String branch) {
-        this.id = id;
+        super(id);
         this.name = name;
         this.coeff = coeff;
         this.branch = branch;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(final String id) {
-        this.id = id;
     }
 
     public String getName() {

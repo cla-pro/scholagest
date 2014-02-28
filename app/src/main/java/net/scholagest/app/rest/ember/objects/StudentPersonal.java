@@ -1,7 +1,6 @@
 package net.scholagest.app.rest.ember.objects;
 
-public class StudentPersonal {
-    private String id;
+public class StudentPersonal extends Base {
     private String street;
     private String city;
     private String postcode;
@@ -9,27 +8,19 @@ public class StudentPersonal {
 
     public StudentPersonal() {}
 
-    public StudentPersonal(String id, String street, String city, String postcode, String religion) {
-        this.id = id;
+    public StudentPersonal(final String id, final String street, final String city, final String postcode, final String religion) {
+        super(id);
         this.street = street;
         this.city = city;
         this.postcode = postcode;
         this.religion = religion;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getStreet() {
         return street;
     }
 
-    public void setStreet(String street) {
+    public void setStreet(final String street) {
         this.street = street;
     }
 
@@ -37,7 +28,7 @@ public class StudentPersonal {
         return city;
     }
 
-    public void setCity(String city) {
+    public void setCity(final String city) {
         this.city = city;
     }
 
@@ -45,7 +36,7 @@ public class StudentPersonal {
         return postcode;
     }
 
-    public void setPostcode(String postcode) {
+    public void setPostcode(final String postcode) {
         this.postcode = postcode;
     }
 
@@ -53,7 +44,7 @@ public class StudentPersonal {
         return religion;
     }
 
-    public void setReligion(String religion) {
+    public void setReligion(final String religion) {
         this.religion = religion;
     }
 }

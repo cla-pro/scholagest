@@ -1,11 +1,10 @@
 package net.scholagest.app.rest.ember.objects;
 
-
 public class Login {
     private String username;
     private String password;
 
-    public Login(String username, String password) {
+    public Login(final String username, final String password) {
         this.username = username;
         this.password = password;
     }
@@ -14,7 +13,7 @@ public class Login {
         return username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(final String username) {
         this.username = username;
     }
 
@@ -22,7 +21,7 @@ public class Login {
         return password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(final String password) {
         this.password = password;
     }
 }

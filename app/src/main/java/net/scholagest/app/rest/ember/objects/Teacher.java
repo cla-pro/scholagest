@@ -1,35 +1,24 @@
 package net.scholagest.app.rest.ember.objects;
 
-public class Teacher {
-    private String id;
+public class Teacher extends Base {
     private String firstName;
     private String lastName;
     private String detail;
 
-    public Teacher() {
-
-    }
+    public Teacher() {}
 
     public Teacher(final String id, final String firstName, final String lastName, final String detail) {
-        this.id = id;
+        super(id);
         this.firstName = firstName;
         this.lastName = lastName;
         this.detail = detail;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getFirstName() {
         return firstName;
     }
 
-    public void setFirstName(String firstName) {
+    public void setFirstName(final String firstName) {
         this.firstName = firstName;
     }
 
@@ -37,7 +26,7 @@ public class Teacher {
         return lastName;
     }
 
-    public void setLastName(String lastName) {
+    public void setLastName(final String lastName) {
         this.lastName = lastName;
     }
 

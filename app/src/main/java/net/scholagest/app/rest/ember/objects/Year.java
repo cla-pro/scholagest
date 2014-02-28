@@ -3,8 +3,7 @@ package net.scholagest.app.rest.ember.objects;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Year {
-    private String id;
+public class Year extends Base {
     private String name;
     private boolean running;
     private List<String> classes;
@@ -14,25 +13,17 @@ public class Year {
     }
 
     public Year(final String id, final String name, final boolean running, final List<String> classes) {
-        this.id = id;
+        super(id);
         this.name = name;
         this.running = running;
-        this.classes = classes;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+        this.classes = new ArrayList<String>(classes);
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -40,7 +31,7 @@ public class Year {
         return running;
     }
 
-    public void setRunning(boolean running) {
+    public void setRunning(final boolean running) {
         this.running = running;
     }
 
@@ -48,7 +39,7 @@ public class Year {
         return classes;
     }
 
-    public void setClasses(List<String> classes) {
+    public void setClasses(final List<String> classes) {
         this.classes = classes;
     }
 }

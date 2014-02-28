@@ -18,7 +18,7 @@
 	</script>
 <!-- 	 {{action "close"}} -->
 	<script type="text/x-handlebars" id="components/modal-dialog">
-	    <div class="overlay">
+	    <div class="overlay" {{action "close"}}>
 	        <div class="modal" {{action bubbles=false}}>
 	            {{yield}}
 	        </div>
@@ -73,6 +73,10 @@
         </div>
 	</script>
 	<script type='text/x-handlebars' id="students">
+        <h1>Elèves</h1>
+        <div>
+            <button {{action 'openModal' 'newStudent'}}>Nouvel élève</button>
+        </div>
         <ul>
             {{#each student in controller}}
                 <li>
@@ -129,6 +133,22 @@
             </tr>
         </table>
     </script>
+    <script type='text/x-handlebars' id="newStudent">
+        {{#modal-dialog action="close"}}
+            <h2>Nouvel élève</h2>
+            
+            <table>
+                <tr>
+                    <td>Prénom</td><td>{{input value=firstName}}</td>
+                </tr>
+                <tr>
+                    <td>Nom</td><td>{{input value=lastName}}</td>
+                </tr>
+            </table>
+    
+            <button {{action create}} >Enregistrer</button>
+        {{/modal-dialog}}
+    </script>
 	
 	<script type='text/x-handlebars' id="teachers">
         <h1>Professeurs</h1>
@@ -183,17 +203,8 @@
 	            <tr>
 	                <td>Nom</td><td>{{input value=lastName}}</td>
 	            </tr>
-	            <tr>
-	                <td>Email</td><td>{{input value=email}}</td>
-	            </tr>
-	            <tr>
-	                <td>Adresse</td><td>{{input value=address}}</td>
-	            </tr>
-	            <tr>
-	                <td>Téléphone</td><td>{{input value=phone}}</td>
-	            </tr>
 	        </table>
-	
+	       
 	        <button {{action create}} >Enregistrer</button>
 	    {{/modal-dialog}}
     </script>
@@ -207,19 +218,27 @@
                 <button {{action createYear}}>Démarrer!</button>
             </span>
         {{else}}
-            <button {{action startYear}} {{bind-attr disabled=isStarted}}>Démarrer une année</button>
+            <button {{action startYear}} {{bind-attr disabled=isNotStopped}}>Démarrer une année</button>
         {{/if}}
-        <button {{action stopYear}} {{bind-attr disabled=isStopped}}>Arrêter une année</button>
+        <button {{action stopYear}} {{bind-attr disabled=isNotRunning}}>Arrêter une année</button>
         {{#if isRenaming}}
             <span>
-               {{input value=runningYear.name}}
+                {{input value=runningYear.name}}
                 <button {{action renameYear}}>Renommer!</button>
             </span>
         {{else}}
-            <button {{action startRenaming}} {{bind-attr disabled=isStopped}}>Renommer une année</button>
+            <button {{action startRenaming}} {{bind-attr disabled=isNotRunning}}>Renommer une année</button>
         {{/if}}
         
-        <button {{action createClass}} {{bind-attr disabled=isStopped}}>Créer une classe</button>
+        {{#if isClassCreation}}
+            <span>
+                {{input value=newClassName}}
+                <button {{action createClass}}>Créer!</button>
+            </span>
+        {{else}}
+            <button {{action startCreatingClass}} {{bind-attr disabled=isNotRunning}}>Créer une classe</button>
+        {{/if}}
+
         <ul>
             {{#each year in controller}}
                 <li>{{year.name}}</li>
@@ -254,6 +273,7 @@
                         {{else}}
                             <li>Pas d'élève</li>
                         {{/each}}
+                        {{#link-to "class-assign-students" model}}Ajouter/Enlever des élèves{{/link-to}}
                     </ul>
                 </td>
             </tr>
@@ -266,15 +286,62 @@
                         {{else}}
                             <li>Pas de professeur</li>
                         {{/each}}
+                        {{#link-to "class-assign-teachers" model}}Ajouter/Enlever des professeurs{{/link-to}}
                     </ul>
                 </td>
             </tr>
         </table>
+
+        {{outlet}}
+        
+        <button {{action save}}>Enregistrer</button>
     </script>
+<!--     <li><button {{action addRemoveStudents}}>Ajouter/Enlever des élèves</button> -->
+<!--     <li><button {{action addRemoveTeachers}}>Ajouter/Enlever des professeurs</button> -->
+<!--         {{#modal-dialog action="close"}} -->
+    <script type='text/x-handlebars' id="class-assign-students">
+            <h4>Libres</h4>
+            {{checkbox-select model=this propertyPath="selectedUnassigned" elements=unassigned labelPath="fullName"}}
+            <button {{action addToClass}}>--></button>
+            <button {{action removeFromClass}}><--</button>
+            <h4>Assignés</h4>
+            {{checkbox-select model=this propertyPath="selectedAssigned" elements=assigned labelPath="fullName"}}
+            
+            <button {{action close}} >Fermer</button>
+    </script>
+<!--         {{/modal-dialog}} -->
+    <script type='text/x-handlebars' id="class-assign-teachers">
+            <h4>Libres</h4>
+            {{checkbox-select model=this propertyPath="selectedUnassigned" elements=unassigned labelPath="fullName"}}
+            <button {{action addToClass}}>--></button>
+            <button {{action removeFromClass}}><--</button>
+            <h4>Assignés</h4>
+            {{checkbox-select model=this propertyPath="selectedAssigned" elements=assigned labelPath="fullName"}}
+            
+            <button {{action close}} >Fermer</button>
+    </script>
+    <script type="text/x-handlebars" data-template-name="components/checkbox-select">
+        {{#each elements itemController="checkboxItem"}}
+            <label>            
+                {{view Ember.Checkbox checkedBinding="selected"}}
+                {{label}}
+            </label><br />
+        {{/each}}    
+	</script>
+    
     
     <script type='text/x-handlebars' id="periods">
         <h2>Périodes</h2>
         
+        {{#if isBranchCreation}}
+            <span>
+                {{input value=newBranchInfo.name}}
+                <button {{action createBranch}}>Créer</button>
+            </span>
+        {{else}}
+            <button {{action startBranchCreation}}>Créer une branche</button>
+        {{/if}}
+
         <ul>
             {{#each period in periods}}
                 <li>
@@ -286,6 +353,8 @@
                 <li>Pas de période...</li>
             {{/each}}
         </ul>
+
+        <button {{action test}}>test</button>
 
         {{outlet}}
     </script>
@@ -411,15 +480,34 @@
 				    this.resource('teacher', { path: '/:teacher_id' }, function() {});
 				});
 				this.resource('years', function() {
-				    this.resource('class', { path: '/:class_id' }, function() {});
+				    this.resource('class', { path: '/:class_id' }, function() {
+                        this.resource('class-assign-students', { path: 'students/:class_id' }, function() {});
+                        this.resource('class-assign-teachers', { path: 'teachers/:class_id' }, function() {});
+				    });
 				});
 				this.resource('periods', function() {
 				    this.resource('period', { path: '/:period_id' }, function() {
 				        this.resource('branchPeriod', { path: '/:branch_period_id' }, function() {});
 				    });
 				});
-				this.resource('newTeacher', function() {});
 			});
+		});
+		
+		Scholagest.ApplicationRoute = Ember.Route.extend({
+			actions: {
+			    openModal: function(modalName) {
+			        return this.render(modalName, {
+			            into: 'application',
+			            outlet: 'modal'
+			        });
+			    },
+				closeModal: function() {
+				    return this.disconnectOutlet({
+				        outlet: 'modal',
+				        parentView: 'application'
+				    });
+				}
+			}
 		});
     </script>
     <script src='js/index.js'></script>

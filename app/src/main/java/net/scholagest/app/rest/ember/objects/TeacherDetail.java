@@ -1,7 +1,6 @@
 package net.scholagest.app.rest.ember.objects;
 
-public class TeacherDetail {
-    private String id;
+public class TeacherDetail extends Base {
     private String address;
     private String email;
     private String phone;
@@ -9,21 +8,17 @@ public class TeacherDetail {
     public TeacherDetail() {}
 
     public TeacherDetail(final String id, final String address, final String email, final String phone) {
-        this.id = id;
+        super(id);
         this.address = address;
         this.email = email;
         this.phone = phone;
-    }
-
-    public String getId() {
-        return id;
     }
 
     public String getAddress() {
         return address;
     }
 
-    public void setAddress(String address) {
+    public void setAddress(final String address) {
         this.address = address;
     }
 
@@ -31,11 +26,7 @@ public class TeacherDetail {
         return email;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setEmail(String email) {
+    public void setEmail(final String email) {
         this.email = email;
     }
 
@@ -43,7 +34,7 @@ public class TeacherDetail {
         return phone;
     }
 
-    public void setPhone(String phone) {
+    public void setPhone(final String phone) {
         this.phone = phone;
     }
 }
