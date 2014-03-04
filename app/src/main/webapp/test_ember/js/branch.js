@@ -1,4 +1,4 @@
-Scholagest.PeriodsRoute = Ember.Route.extend({
+Scholagest.PeriodsRoute = Scholagest.AuthenticatedRoute.extend({
 	model: function() {
         var user = Scholagest.SessionManager.get('user');
         if (user == null) {
@@ -6,12 +6,14 @@ Scholagest.PeriodsRoute = Ember.Route.extend({
         } else {
             var userClass = user.get('clazz');
             // Force load of periods
-            userClass.get('periods').forEach(function(period) {});
+            userClass.get('periods').forEach(function(period) {
+                period.get('clazz');
+            });
             return userClass;
         }
 	}
 });
-Scholagest.PeriodsController = Ember.ObjectController.extend({
+Scholagest.PeriodsController = Scholagest.RoleObjectController.extend({
 	isBranchCreation: null,
 	newBranchInfo: null,
 	
@@ -22,6 +24,17 @@ Scholagest.PeriodsController = Ember.ObjectController.extend({
 			numerical: true
 		})
 	},
+	
+	isClassTeacher: function() {
+	    var user = Scholagest.SessionManager.get('user');
+        if (user == null || this.get('isHelpTeacher')) {
+            return false;
+        } else {
+            var myClass = user.get('clazz');
+            var thisClass = this.get('model');
+            return myClass != null && thisClass != null && myClass.get('id') === thisClass.get('id');
+        }
+	}.property('model.clazz', 'Scholagest.SessionManager.user.clazz'),
 	
 	actions: {
 		startBranchCreation: function() {
@@ -44,20 +57,20 @@ Scholagest.PeriodsController = Ember.ObjectController.extend({
 	}
 });
 
-Scholagest.PeriodRoute = Ember.Route.extend({
+Scholagest.PeriodRoute = Scholagest.AuthenticatedRoute.extend({
 	model: function(params) {
 		return this.store.find('period', params.period_id);
 	}
 });
-Scholagest.PeriodController = Ember.ObjectController.extend({
+Scholagest.PeriodController = Scholagest.RoleObjectController.extend({
 });
 
-Scholagest.BranchPeriodRoute = Ember.Route.extend({
+Scholagest.BranchPeriodRoute = Scholagest.AuthenticatedRoute.extend({
 	model: function(params) {
 		return this.store.find('branchPeriod', params.branch_period_id);
 	}
 });
-Scholagest.BranchPeriodController = Ember.ObjectController.extend({
+Scholagest.BranchPeriodController = Scholagest.RoleObjectController.extend({
     // values = ['reading', 'branchEdition', 'examEdition', 'examCreation']
     state: null,
     newExamName: null,
@@ -71,6 +84,39 @@ Scholagest.BranchPeriodController = Ember.ObjectController.extend({
 	isExamCreating: function() {
         return this.get('state') === 'examCreation';
     }.property('state'),
+    
+    isBranchNumerical: function() {
+        return this.get('model').get('branch').get('numerical');
+    }.property('model.branch.numerical'),
+    
+    classId: function() {
+        var clazz = this.get('model').get('period').get('clazz');
+        if (clazz == null) {
+            return null;
+        } else {
+            return clazz.get('id');
+        }
+    }.property('model.period.clazz.id'),
+    isClassTeacherTest: function() {
+        var user = Scholagest.SessionManager.get('user');
+        if (user == null || this.get('isHelpTeacher')) {
+            return false;
+        } else {
+            var myClass = user.get('clazz');
+            var classId = this.get('classId');
+            return myClass != null && myClass.get('id') === classId;
+        }
+    }.property('isHelpTeacher', 'model', 'classId', 'Scholagest.SessionManager.user.clazz'),
+    isClassTeacher: function() {
+        var user = Scholagest.SessionManager.get('user');
+        if (user == null || this.get('isHelpTeacher')) {
+            return false;
+        } else {
+            var myClass = user.get('clazz');
+            var thisClass = this.get('model').get('period').get('clazz');
+            return myClass != null && thisClass != null && myClass.get('id') === thisClass.get('id');
+        }
+    }.property('isHelpTeacher', 'model.period.clazz.id', 'Scholagest.SessionManager.user.clazz'),
 	
 	init: function() {
         this._super();

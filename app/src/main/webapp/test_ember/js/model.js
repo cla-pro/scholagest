@@ -1,5 +1,13 @@
+// Valid roles: admin, teacher, helpteacher
+Scholagest.Role = {
+    ADMIN: "admin",
+    TEACHER: "teacher",
+    HELP_TEACHER: "helpteacher"
+};
+
 Scholagest.User = DS.Model.extend({
     sessionId: DS.attr(),
+    role: DS.attr(),
     teacher: DS.belongsTo('teacher'),
     clazz: DS.belongsTo('class')
 });
@@ -106,27 +114,45 @@ Scholagest.Mean = DS.Model.extend({
     grade: DS.attr(),
     studentResult: DS.belongsTo('studentResult'),
     
+    branch: function() {
+        var studentRes = this.get('studentResult');
+        if (studentRes == null) {
+            return null;
+        }
+        
+        var branchPeriod = studentRes.get('branchPeriod');
+        if (branchPeriod == null) {
+            return null;
+        } else {
+            return branchPeriod.get('branch');
+        }
+    }.property('studentResult.branchPeriod.branch'),
     computedMean: function() {
         var studentRes = this.get('studentResult');
-        var branch = studentRes.get('branch');
+        var branch = this.get('branch');
+        
+        if (studentRes == null || branch == null) {
+            return "";
+        }
+        
         if (branch.get('numerical') == true) {
             var total = 0.0;
-            var count = 0;
+            var totalCoeff = 0.0;
             
             studentRes.get('results').forEach(function (result) {
             	var grade = result.get('grade');
                 var exam = result.get('exam');
                 var coeff = exam.get('coeff');
-                if (grade != undefined && grade != null) {
+                //if (grade != undefined && grade != null) {
 	                total += coeff * grade;
-	                count += coeff;
-                }
+	                totalCoeff += coeff;
+                //}
             });
             
-            return total / count;
+            return total / totalCoeff;
         } else {
             return this.get('grade');
         }
         // Invalid @each observer: 'studentResult.results.@each.exam.coeff'
-    }.property('studentResult.results.@each.grade', 'studentResult.results.@each.changeCounter')
+    }.property('branch', 'studentResult.results.@each.grade', 'studentResult.results.@each.changeCounter')
 });

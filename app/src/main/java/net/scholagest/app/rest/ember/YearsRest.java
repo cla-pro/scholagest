@@ -46,27 +46,48 @@ public class YearsRest extends AbstractService {
     }
 
     @CheckAuthorization
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Map<String, Object> getYear(@PathParam("id") final String id) {
+        final Map<String, Object> toReturn = new HashMap<>();
+
+        toReturn.put("year", years.get(id));
+
+        return toReturn;
+    }
+
+    @CheckAuthorization
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public void createYear(final Map<String, Year> payload) {
+    public Map<String, Year> createYear(final Map<String, Year> payload) {
         final Year year = payload.get("year");
         final String id = IdHelper.getNextId(years.keySet());
         year.setId(id);
         years.put(id, year);
+
+        return payload;
     }
 
     @CheckAuthorization
     @PUT
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public void saveYear(@PathParam("id") final String id, final Map<String, Year> payload) {
+    public Map<String, Year> saveYear(@PathParam("id") final String id, final Map<String, Year> payload) {
         final Year year = payload.get("year");
-        mergeYear(years.get(id), year);
+        final Year updated = mergeYear(years.get(id), year);
+
+        final Map<String, Year> response = new HashMap<>();
+        response.put("year", updated);
+
+        return response;
     }
 
-    private void mergeYear(final Year base, final Year toMerge) {
+    private Year mergeYear(final Year base, final Year toMerge) {
         base.setName(toMerge.getName());
         base.setRunning(toMerge.isRunning());
         base.setClasses(toMerge.getClasses());
+
+        return base;
     }
 }

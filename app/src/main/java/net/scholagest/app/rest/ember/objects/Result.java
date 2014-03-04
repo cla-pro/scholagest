@@ -4,6 +4,7 @@ public class Result extends Base {
     private Double grade;
     private String studentResult;
     private String exam;
+    private int resultCounter;
 
     public Result() {}
 
@@ -12,6 +13,7 @@ public class Result extends Base {
         this.grade = grade;
         this.exam = exam;
         this.studentResult = studentResult;
+        this.resultCounter = 0;
     }
 
     public Double getGrade() {
@@ -32,5 +34,9 @@ public class Result extends Base {
 
     public void setStudentResult(final String studentResult) {
         this.studentResult = studentResult;
+    }
+
+    public int getResultCounter() {
+        return resultCounter;
     }
 }

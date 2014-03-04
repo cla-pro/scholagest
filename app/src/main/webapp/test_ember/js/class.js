@@ -125,12 +125,12 @@ Scholagest.ClassAssignTeachersController = Scholagest.ClassAssignController.exte
 	},
 });
 
-Scholagest.ClassRoute = Ember.Route.extend({
+Scholagest.ClassRoute = Scholagest.AuthenticatedRoute.extend({
 	model: function(params) {
 		return this.store.find('class', params.class_id);
 	}
 });
-Scholagest.ClassController = Ember.ObjectController.extend({
+Scholagest.ClassController = Scholagest.RoleObjectController.extend({
 	actions: {
 		save: function() {
 			var clazz = this.get('model');

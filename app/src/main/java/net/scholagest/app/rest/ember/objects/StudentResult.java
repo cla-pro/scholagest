@@ -5,14 +5,14 @@ import java.util.List;
 
 public class StudentResult extends Base {
     private String student;
-    private String branch;
+    private String branchPeriod;
     private List<String> results;
     private String mean;
 
-    public StudentResult(final String id, final String student, final String branch, final List<String> results, final String mean) {
+    public StudentResult(final String id, final String student, final String branchPeriod, final List<String> results, final String mean) {
         super(id);
         this.student = student;
-        this.branch = branch;
+        this.branchPeriod = branchPeriod;
         this.results = new ArrayList<>(results);
         this.mean = mean;
     }
@@ -25,12 +25,12 @@ public class StudentResult extends Base {
         this.student = student;
     }
 
-    public String getBranch() {
-        return branch;
+    public String getBranchPeriod() {
+        return branchPeriod;
     }
 
-    public void setBranch(final String branch) {
-        this.branch = branch;
+    public void setBranchPeriod(final String branchPeriod) {
+        this.branchPeriod = branchPeriod;
     }
 
     public List<String> getResults() {

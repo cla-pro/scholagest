@@ -1,4 +1,4 @@
-Scholagest.YearsRoute = Ember.Route.extend({
+Scholagest.YearsRoute = Scholagest.AuthenticatedRoute.extend({
 	model: function() {
 		var years = this.store.find('year');
 		//var runningYear = this.getRunningYear(years);
@@ -31,7 +31,7 @@ Scholagest.YearsRoute = Ember.Route.extend({
     }
 });
 
-Scholagest.YearsController = Ember.ArrayController.extend({
+Scholagest.YearsController = Scholagest.RoleArrayController.extend({
 	// values = ['starting', 'running', 'stopped', 'stopping', 'renaming', 'classCreation']
 	state: null,
     newYearName: '',
@@ -62,11 +62,14 @@ Scholagest.YearsController = Ember.ArrayController.extend({
             this.set('state', 'starting');
         },
         createYear: function() {
+            var that = this;
             var newYear = this.store.createRecord('year', {
                 running: true,
                 name: this.get('newYearName')
             });
-            newYear.save();
+            newYear.save().then(function() {
+                that.set('runningYear', newYear);
+            }, function() {});
             
             this.set('state', 'running');
             this.set('newYearName', '');
@@ -99,6 +102,7 @@ Scholagest.YearsController = Ember.ArrayController.extend({
         	clazz.save().then(function() {
             	runningYear.get('classes').pushObject(clazz);
             	runningYear.save();
+            	Scholagest.SessionManager.get('user').set('clazz', clazz);
         	}, function() {
         	  // Error callback
         	});

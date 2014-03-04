@@ -1,4 +1,4 @@
-Scholagest.StudentsRoute = Ember.Route.extend({
+Scholagest.StudentsRoute = Scholagest.AuthenticatedRoute.extend({
 	model: function() {
 		return this.store.find('student');
 	},
@@ -11,14 +11,30 @@ Scholagest.StudentsRoute = Ember.Route.extend({
     	}
 	}
 });
-Scholagest.StudentsController = Ember.ArrayController.extend({});
+Scholagest.StudentsController = Scholagest.RoleArrayController.extend({});
 
-Scholagest.StudentRoute = Ember.Route.extend({
+Scholagest.StudentRoute = Scholagest.AuthenticatedRoute.extend({
 	model: function(params) {
 		return this.store.find('student', params.student_id);
 	}
 });
-Scholagest.StudentController = Ember.ObjectController.extend({
+Scholagest.StudentController = Scholagest.RoleObjectController.extend({
+    isStudentInClass: function() {
+        var user = Scholagest.SessionManager.get('user');
+        var studentId = this.get('model').get('id');
+        if (user != null && user.get('clazz') != null) {
+            var clazz = user.get('clazz');
+            var filtered = clazz.get('students').filter(function(item, index, self) {
+                return item.get('id') === studentId;
+            });
+            return filtered.length > 0;
+        }
+        
+        return false;
+    }.property('Scholagest.SessionManager.user.clazz.students.@each', 'model'),
+    isEditionAllowed: function() {
+        return this.get('isAdmin') || (this.get('isTeacher') && this.get('isStudentInClass'));
+    }.property('isAdmin', 'isTeacher', 'isStudentInClass'),
 	actions: {
 //		delete: function() {
 //			this.get('model').deleteRecord();

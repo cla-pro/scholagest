@@ -11,15 +11,26 @@ Scholagest.TeachersRoute = Scholagest.AuthenticatedRoute.extend({
 //    	}
 //	}
 });
-Scholagest.TeachersController = Ember.ArrayController.extend({
+Scholagest.TeachersController = Scholagest.RoleArrayController.extend({
 });
 
-Scholagest.TeacherRoute = Ember.Route.extend({
+Scholagest.TeacherRoute = Scholagest.AuthenticatedRoute.extend({
 	model: function(params) {
 		return this.store.find('teacher', params.teacher_id);
 	}
 });
-Scholagest.TeacherController = Ember.ObjectController.extend({
+Scholagest.TeacherController = Scholagest.RoleObjectController.extend({
+    isEditionAllowed: function() {
+        if (this.get('isAdmin')) {
+            return true;
+        } else {
+            var user = Scholagest.SessionManager.get('user');
+            if (user != null && user.get('teacher').get('id') === this.get('model').get('id')) {
+                return true;
+            }
+        }
+        return false;
+    }.property('model', 'isAdmin'),
 	actions: {
 		delete: function() {
 			this.get('model').deleteRecord();
@@ -63,7 +74,7 @@ Scholagest.NewTeacherController = Ember.ObjectController.extend({
 				firstName: content.firstName,
 				lastName: content.lastName
 			});
-			teacher.save().then(function() {}, function() {});
+			teacher.save();
 			
 //			teacherDetail.save().then(function() {
 //				teacher.set('detail', teacherDetail);

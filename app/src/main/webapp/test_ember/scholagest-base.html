@@ -28,7 +28,7 @@
 	    <table>
             <tr>
                 <td>Nom d'utilisateur</td>
-                <td>{{input value=username}}</td>
+                <td>{{focus-input value=username}}</td>
             </tr>
             <tr>
                 <td>Mot de passe</td>
@@ -59,6 +59,9 @@
         <h1>La session n'est plus valide</h1>
         {{#link-to "login"}}Retour au login{{/link-to}}
     </script>
+    <script type="text/x-handlebars" id="tryCookieAuthentication">
+        <h1>Tentative de réutilisation de la dernière session</h1>
+    </script>
 	<script type="text/x-handlebars" id="base">
         <div>
             <span>{{#link-to "students"}}Etudiants{{/link-to}}</span>
@@ -74,9 +77,11 @@
 	</script>
 	<script type='text/x-handlebars' id="students">
         <h1>Elèves</h1>
-        <div>
-            <button {{action 'openModal' 'newStudent'}}>Nouvel élève</button>
-        </div>
+        {{#if isAdmin}}
+	        <div>
+	            <button {{action 'openModal' 'newStudent'}}>Nouvel élève</button>
+	        </div>
+	    {{/if}}
         <ul>
             {{#each student in controller}}
                 <li>
@@ -95,32 +100,80 @@
         <h2>{{firstName}} {{lastName}}</h2>
         
         {{partial "studentPersonal"}}
-        <button {{action savePersonal}}>Enregistrer</button>
+ 
+        {{#if isEditionAllowed}}
+            <button {{action savePersonal}}>Enregistrer</button>
+        {{/if}}
         
         {{partial "studentMedical"}}
-        <button {{action saveMedical}}>Enregistrer</button>
+ 
+        {{#if isEditionAllowed}}
+            <button {{action saveMedical}}>Enregistrer</button>
+        {{/if}}
     </script>
     <script type='text/x-handlebars' id="studentPersonal">
         <h3>Informations personnelles</h3>
         
         <table>
             <tr>
-                <td>Prénom</td><td>{{input value=firstName}}</td>
+                <td>Prénom</td>
+                <td>
+                    {{#if isEditionAllowed}}
+                        {{input value=firstName}}
+                    {{else}}
+                        {{firstName}}
+                    {{/if}}
+                </td>
             </tr>
             <tr>
-                <td>Nom</td><td>{{input value=lastName}}</td>
+                <td>Nom</td>
+                <td>
+                    {{#if isEditionAllowed}}
+                        {{input value=lastName}}
+                    {{else}}
+                        {{lastName}}
+                    {{/if}}
+                </td>
             </tr>
             <tr>
-                <td>Rue</td><td>{{input value=personal.street}}</td>
+                <td>Rue</td>
+                <td>
+                    {{#if isEditionAllowed}}
+                        {{input value=personal.street}}
+                    {{else}}
+                        {{personal.street}}
+                    {{/if}}
+                </td>
             </tr>
             <tr>
-                <td>Code postal</td><td>{{input value=personal.postcode}}</td>
+                <td>Code postal</td>
+                <td>
+                    {{#if isEditionAllowed}}
+                        {{input value=personal.postcode}}
+                    {{else}}
+                        {{personal.postcode}}
+                    {{/if}}
+                </td>
             </tr>
             <tr>
-                <td>Ville</td><td>{{input value=personal.city}}</td>
+                <td>Ville</td>
+                <td>
+                    {{#if isEditionAllowed}}
+                        {{input value=personal.city}}
+                    {{else}}
+                        {{personal.city}}
+                    {{/if}}
+                </td>
             </tr>
             <tr>
-                <td>Religion</td><td>{{input value=personal.religion}}</td>
+                <td>Religion</td>
+                <td>
+                    {{#if isEditionAllowed}}
+                        {{input value=personal.religion}}
+                    {{else}}
+                        {{personal.religion}}
+                    {{/if}}
+                </td>
             </tr>
         </table>
     </script>
@@ -129,7 +182,14 @@
         
         <table>
             <tr>
-                <td>Docteur</td><td>{{input value=medical.doctor}}</td>
+                <td>Docteur</td>
+                <td>
+                    {{#if isEditionAllowed}}
+                        {{input value=medical.doctor}}
+                    {{else}}
+                        {{medical.doctor}}
+                    {{/if}}
+                </td>
             </tr>
         </table>
     </script>
@@ -139,22 +199,24 @@
             
             <table>
                 <tr>
-                    <td>Prénom</td><td>{{input value=firstName}}</td>
+                    <td>Prénom</td><td>{{focus-input value=firstName}}</td>
                 </tr>
                 <tr>
                     <td>Nom</td><td>{{input value=lastName}}</td>
                 </tr>
             </table>
-    
-            <button {{action create}} >Enregistrer</button>
+            
+            <button {{action create}} >Créer</button>
         {{/modal-dialog}}
     </script>
 	
 	<script type='text/x-handlebars' id="teachers">
         <h1>Professeurs</h1>
-        <div>
-            <button {{action 'openModal' 'newTeacher'}}>Nouveau professeur</button>
-        </div>
+        {{#if isAdmin}}
+	        <div>
+	            <button {{action 'openModal' 'newTeacher'}}>Nouveau professeur</button>
+	        </div>
+	    {{/if}}
         <ul>
             {{#each teacher in controller}}
                 <li>
@@ -174,23 +236,60 @@
         
         <table>
             <tr>
-                <td>Prénom</td><td>{{input value=firstName}}</td>
+                <td>Prénom</td>
+                <td>
+                    {{#if isEditionAllowed}}
+                        {{input value=firstName}}
+                    {{else}}
+                        {{firstName}}
+                    {{/if}}
+                </td>
             </tr>
             <tr>
-                <td>Nom</td><td>{{input value=lastName}}</td>
+                <td>Nom</td>
+                <td>
+                    {{#if isEditionAllowed}}
+                        {{input value=lastName}}
+                    {{else}}
+                        {{lastName}}
+                    {{/if}}
+                </td>
             </tr>
             <tr>
-                <td>Email</td><td>{{input value=detail.email}}</td>
+                <td>Email</td>
+                <td>
+                    {{#if isEditionAllowed}}
+                        {{input value=detail.email}}
+                    {{else}}
+                        {{detail.email}}
+                    {{/if}}
+                </td>
             </tr>
             <tr>
-                <td>Adresse</td><td>{{input value=detail.address}}</td>
+                <td>Adresse</td>
+                <td>
+                    {{#if isEditionAllowed}}
+                        {{input value=detail.address}}
+                    {{else}}
+                        {{detail.address}}
+                    {{/if}}
+                </td>
             </tr>
             <tr>
-                <td>Téléphone</td><td>{{input value=detail.phone}}</td>
+                <td>Téléphone</td>
+                <td>
+                    {{#if isEditionAllowed}}
+                        {{input value=detail.phone}}
+                    {{else}}
+                        {{detail.phone}}
+                    {{/if}}
+                </td>
             </tr>
         </table>
 
-        <button {{action save}}>Enregistrer</button>
+        {{#if isEditionAllowed}}
+            <button {{action save}}>Enregistrer</button>
+        {{/if}}
     </script>
     <script type='text/x-handlebars' id="newTeacher">
         {{#modal-dialog action="close"}}
@@ -198,7 +297,7 @@
 	        
 	        <table>
 	            <tr>
-	                <td>Prénom</td><td>{{input value=firstName}}</td>
+	                <td>Prénom</td><td>{{focus-input value=firstName}}</td>
 	            </tr>
 	            <tr>
 	                <td>Nom</td><td>{{input value=lastName}}</td>
@@ -212,31 +311,33 @@
     <script type='text/x-handlebars' id="years">
         <h2>Volées</h2>
         
-        {{#if isStarting}}
-            <span>
-                {{input value=newYearName}}
-                <button {{action createYear}}>Démarrer!</button>
-            </span>
-        {{else}}
-            <button {{action startYear}} {{bind-attr disabled=isNotStopped}}>Démarrer une année</button>
-        {{/if}}
-        <button {{action stopYear}} {{bind-attr disabled=isNotRunning}}>Arrêter une année</button>
-        {{#if isRenaming}}
-            <span>
-                {{input value=runningYear.name}}
-                <button {{action renameYear}}>Renommer!</button>
-            </span>
-        {{else}}
-            <button {{action startRenaming}} {{bind-attr disabled=isNotRunning}}>Renommer une année</button>
-        {{/if}}
+        {{#if isAdmin}}
+	        {{#if isStarting}}
+	            <span>
+	                {{focus-input value=newYearName}}
+	                <button {{action createYear}}>Démarrer!</button>
+	            </span>
+	        {{else}}
+	            <button {{action startYear}} {{bind-attr disabled=isNotStopped}}>Démarrer une année</button>
+	        {{/if}}
+	        <button {{action stopYear}} {{bind-attr disabled=isNotRunning}}>Arrêter une année</button>
+	        {{#if isRenaming}}
+	            <span>
+	                {{focus-input value=runningYear.name}}
+	                <button {{action renameYear}}>Renommer!</button>
+	            </span>
+	        {{else}}
+	            <button {{action startRenaming}} {{bind-attr disabled=isNotRunning}}>Renommer une année</button>
+	        {{/if}}
         
-        {{#if isClassCreation}}
-            <span>
-                {{input value=newClassName}}
-                <button {{action createClass}}>Créer!</button>
-            </span>
-        {{else}}
-            <button {{action startCreatingClass}} {{bind-attr disabled=isNotRunning}}>Créer une classe</button>
+	        {{#if isClassCreation}}
+	            <span>
+	                {{focus-input value=newClassName}}
+	                <button {{action createClass}}>Créer!</button>
+	            </span>
+	        {{else}}
+	            <button {{action startCreatingClass}} {{bind-attr disabled=isNotRunning}}>Créer une classe</button>
+	        {{/if}}
         {{/if}}
 
         <ul>
@@ -262,7 +363,14 @@
 
         <table>
             <tr>
-                <td>Nom</td><td>{{input value=name}}</td>
+                <td>Nom</td>
+                <td>
+                    {{#if isAdmin}}
+                        {{input value=name}}
+                    {{else}}
+                        {{name}}
+                    {{/if}}
+                </td>
             </tr>
             <tr>
                 <td>Elèves</td>
@@ -273,7 +381,10 @@
                         {{else}}
                             <li>Pas d'élève</li>
                         {{/each}}
-                        {{#link-to "class-assign-students" model}}Ajouter/Enlever des élèves{{/link-to}}
+                        
+                        {{#if isAdmin}}
+                            {{#link-to "class-assign-students" model}}Ajouter/Enlever des élèves{{/link-to}}
+                        {{/if}}
                     </ul>
                 </td>
             </tr>
@@ -286,7 +397,10 @@
                         {{else}}
                             <li>Pas de professeur</li>
                         {{/each}}
-                        {{#link-to "class-assign-teachers" model}}Ajouter/Enlever des professeurs{{/link-to}}
+                        
+                        {{#if isAdmin}}
+                            {{#link-to "class-assign-teachers" model}}Ajouter/Enlever des professeurs{{/link-to}}
+                        {{/if}}
                     </ul>
                 </td>
             </tr>
@@ -294,7 +408,9 @@
 
         {{outlet}}
         
-        <button {{action save}}>Enregistrer</button>
+        {{#if isAdmin}}
+            <button {{action save}}>Enregistrer</button>
+        {{/if}}
     </script>
 <!--     <li><button {{action addRemoveStudents}}>Ajouter/Enlever des élèves</button> -->
 <!--     <li><button {{action addRemoveTeachers}}>Ajouter/Enlever des professeurs</button> -->
@@ -333,14 +449,16 @@
     <script type='text/x-handlebars' id="periods">
         <h2>Périodes</h2>
         
-        {{#if isBranchCreation}}
-            <span>
-                {{input value=newBranchInfo.name}}
-                <button {{action createBranch}}>Créer</button>
-            </span>
-        {{else}}
-            <button {{action startBranchCreation}}>Créer une branche</button>
-        {{/if}}
+        {{#if isClassTeacher}}
+	        {{#if isBranchCreation}}
+	            <span>
+	                {{focus-input value=newBranchInfo.name}}
+	                <button {{action createBranch}}>Créer</button>
+	            </span>
+	        {{else}}
+	            <button {{action startBranchCreation}}>Créer une branche</button>
+	        {{/if}}
+	    {{/if}}
 
         <ul>
             {{#each period in periods}}
@@ -375,29 +493,38 @@
     </script>
     <script type='text/x-handlebars' id="branchPeriod">
         {{#if isBranchEditing}}
-            {{input value=branch.name}} <button {{action saveBranch}}>Enregistrer</button>
+            {{focus-input value=branch.name}} <button {{action saveBranch}}>Enregistrer</button>
         {{else}}
-            <h2>{{branch.name}}</h2> <button {{action editBranch}}>Modifier</button>
+            <h2>{{branch.name}}</h2>
+            {{#if isClassTeacher}}
+                <button {{action editBranch}}>Modifier</button>
+            {{/if}}
         {{/if}}
         
-        {{#if isExamCreating}}
-            <span>
-                {{input value=newExamName}}
-                <button {{action createExam}}>Créer</button>
-            </span>
-        {{else}}
-            <button {{action startExamCreation}}>Créer un examen</button>
-        {{/if}}
+        {{#if isClassTeacher}}
+	        {{#if isExamCreating}}
+	            <span>
+	                {{focus-input value=newExamName}}
+	                <button {{action createExam}}>Créer</button>
+	            </span>
+	        {{else}}
+	            <button {{action startExamCreation}}>Créer un examen</button>
+	        {{/if}}
+	    {{/if}}
         
         <table>
             <tr>
-                <td>
-                    {{#if isExamEditing}}
-                        <button {{action "saveExams"}}>Enregistrer</button>
-                    {{else}}
-                        <button {{action "editExams"}}>Editer les examens</button>
-                    {{/if}}
-                </td>
+                {{#if isClassTeacher}}
+	                <td>
+	                    {{#if isExamEditing}}
+	                        <button {{action "saveExams"}}>Enregistrer</button>
+	                    {{else}}
+	                        <button {{action "editExams"}}>Editer les examens</button>
+	                    {{/if}}
+	                </td>
+	            {{else}}
+	               <td></td>
+	            {{/if}}
                 {{#each exam in exams}}
                     <td>{{partial "exam"}}</td>
                 {{/each}}
@@ -408,19 +535,33 @@
                 <tr>
                     <td>{{studentResult.student.fullName}}</td>
                     {{#each result in studentResult.results}}
-                        <td>{{input value=result.grade}}</td>
+                        <td>
+                            {{#if isClassTeacher}}
+                                {{input value=result.grade}}
+                            {{else}}
+                                {{result.grade}}
+                            {{/if}}
+                        </td>
                     {{/each}}
                     
-                    {{#if isNumerical}}
+                    {{#if isBranchNumerical}}
                         <td>{{studentResult.mean.computedMean}}</td>
                     {{else}}
-                        <td>{{input value=studentResult.mean.grade}}</td>
+                        <td>
+                            {{#if isClassTeacher}}
+                                {{input value=studentResult.mean.grade}}
+                            {{else}}
+                                {{studentResult.mean.grade}}
+                            {{/if}}
+                        </td>
                     {{/if}}
                 </tr>
             {{/each}}
         </table>
 
-        <button {{action saveGrades}} >Enregistrer</button>
+        {{#if isClassTeacher}}
+            <button {{action saveGrades}} >Enregistrer</button>
+        {{/if}}
     </script>
     <script type='text/x-handlebars' id="exam">
         {{#if isExamEditing}}
@@ -440,6 +581,7 @@
         {{! <button {{action "delete"}}>Delete</button> }} -->
     <script src='../jquery-1.10.2.js'></script>
     <script src='../jquery.json-2.4.js'></script>
+    <script src='../jquery.cookie.js'></script>
 	<script src='../handlebars-1.1.2.js'></script>
 	<script src='../ember.js'></script>
 	<script src='../ember-data.js'></script>
@@ -447,6 +589,21 @@
         Scholagest = Ember.Application.create({
 		    LOG_TRANSITIONS: true
 		});
+		
+		// Scholagest.initializer({
+		//     name: 'Inject Store',
+		//     initialize: function(container, application) {
+		//         container.injection('application:main', 'store', 'store:main');
+		//     }
+		// });
+		// Ember.Application.initializer({
+		//   name: "Inject Store",
+		// 
+		//   initialize: function(container, application) {
+		//     container.injection('application:main', 'store', 'store:main');
+		//   }
+		// });
+		
 		Scholagest.ApplicationAdapter = DS.RESTAdapter;
 		
 		DS.RESTAdapter.reopen({
@@ -465,20 +622,11 @@
 			}
 		});
 		
-// 		Scholagest.ResultSerializer = DS.RESTSerializer.extend({
-// 			normalize: function(type, hash, prop) {
-// 				var object = this._super(type, hash, prop);
-// 				object[''] = 0;
-// 				object[] = function() {
-					
-// 				};
-// 			}
-// 		});
-		
 		Scholagest.Router.map(function() {
 			this.resource('login', function() {});
 			this.resource('logout', function() {});
-			this.resource('sessionexpired', function() {});
+            this.resource('sessionexpired', function() {});
+            this.resource('tryCookieAuthentication', function() {});
 			this.resource('base', function() {
 				this.resource('students', function() {
 				    this.resource('student', { path: '/:student_id' }, function() {});
@@ -516,6 +664,14 @@
 				}
 			}
 		});
+		
+		Scholagest.FocusInputView = Ember.TextField.extend({
+		    didInsertElement: function() {
+		        this.$().focus();
+		    }
+		});
+		
+		Ember.Handlebars.helper('focus-input', Scholagest.FocusInputView);
     </script>
     <script src='js/index.js'></script>
     <script src='js/base.js'></script>

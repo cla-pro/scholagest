@@ -18,6 +18,7 @@ import javax.ws.rs.core.MediaType;
 import net.scholagest.app.rest.AbstractService;
 import net.scholagest.app.rest.ember.authorization.CheckAuthorization;
 import net.scholagest.app.rest.ember.objects.Clazz;
+import net.scholagest.app.rest.ember.objects.Period;
 import net.scholagest.services.IOntologyService;
 
 import com.google.inject.Inject;
@@ -82,14 +83,33 @@ public class ClassesRest extends AbstractService {
 
     @CheckAuthorization
     @POST
-    public Map<String, Clazz> createClass(final Map<String, Clazz> payload) {
+    public Map<String, Object> createClass(final Map<String, Clazz> payload) {
         final Clazz clazz = payload.get("class");
 
         final String id = IdHelper.getNextId(classes.keySet());
         clazz.setId(id);
-
         classes.put(id, clazz);
 
-        return payload;
+        final List<Period> periods = createPeriods(clazz);
+
+        final Map<String, Object> response = new HashMap<>();
+        response.put("class", clazz);
+        response.put("periods", periods);
+
+        return response;
+    }
+
+    private List<Period> createPeriods(final Clazz clazz) {
+        final List<Period> periods = new ArrayList<>();
+
+        for (int i = 0; i < 3; i++) {
+            final String periodId = IdHelper.getNextId(PeriodsRest.periods.keySet());
+            final Period period = new Period(periodId, "Trimestre " + (i + 1), clazz.getId(), new ArrayList<String>());
+            PeriodsRest.periods.put(periodId, period);
+            periods.add(period);
+            clazz.getPeriods().add(periodId);
+        }
+
+        return periods;
     }
 }
