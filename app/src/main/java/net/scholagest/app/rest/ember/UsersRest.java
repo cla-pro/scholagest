@@ -17,7 +17,7 @@ public class UsersRest {
     public static Map<String, User> users = new HashMap<>();
 
     static {
-        users.put("1", new User("1", "teacher", "1", "1"));
+        users.put("1", new User("1", "admin", "1", "1"));
         users.put("2", new User("2", "teacher", "2", "2"));
     }
 

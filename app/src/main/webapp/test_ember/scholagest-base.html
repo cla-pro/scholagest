@@ -28,11 +28,11 @@
 	    <table>
             <tr>
                 <td>Nom d'utilisateur</td>
-                <td>{{focus-input value=username}}</td>
+                <td>{{focus-input value=username placeholder="Nom d'utilisateur"}}</td>
             </tr>
             <tr>
                 <td>Mot de passe</td>
-                <td>{{input type="password" value=password}}</td>
+                <td>{{input type="password" value=password placeholder="Mot de passe"}}</td>
             </tr>
             <tr>
                 <td></td>
@@ -119,7 +119,7 @@
                 <td>Prénom</td>
                 <td>
                     {{#if isEditionAllowed}}
-                        {{input value=firstName}}
+                        {{input value=firstName placeholder="Prénom"}}
                     {{else}}
                         {{firstName}}
                     {{/if}}
@@ -129,17 +129,17 @@
                 <td>Nom</td>
                 <td>
                     {{#if isEditionAllowed}}
-                        {{input value=lastName}}
+                        {{input value=lastName placeholder="Nom"}}
                     {{else}}
                         {{lastName}}
                     {{/if}}
                 </td>
             </tr>
             <tr>
-                <td>Rue</td>
+                <td>Adresse</td>
                 <td>
                     {{#if isEditionAllowed}}
-                        {{input value=personal.street}}
+                        {{input value=personal.street placeholder="Adresse"}}
                     {{else}}
                         {{personal.street}}
                     {{/if}}
@@ -149,7 +149,7 @@
                 <td>Code postal</td>
                 <td>
                     {{#if isEditionAllowed}}
-                        {{input value=personal.postcode}}
+                        {{input value=personal.postcode placeholder="Code postal"}}
                     {{else}}
                         {{personal.postcode}}
                     {{/if}}
@@ -159,7 +159,7 @@
                 <td>Ville</td>
                 <td>
                     {{#if isEditionAllowed}}
-                        {{input value=personal.city}}
+                        {{input value=personal.city placeholder="Ville"}}
                     {{else}}
                         {{personal.city}}
                     {{/if}}
@@ -169,7 +169,7 @@
                 <td>Religion</td>
                 <td>
                     {{#if isEditionAllowed}}
-                        {{input value=personal.religion}}
+                        {{input value=personal.religion placeholder="Religion"}}
                     {{else}}
                         {{personal.religion}}
                     {{/if}}
@@ -185,7 +185,7 @@
                 <td>Docteur</td>
                 <td>
                     {{#if isEditionAllowed}}
-                        {{input value=medical.doctor}}
+                        {{input value=medical.doctor placeholder="Docteur"}}
                     {{else}}
                         {{medical.doctor}}
                     {{/if}}
@@ -199,10 +199,10 @@
             
             <table>
                 <tr>
-                    <td>Prénom</td><td>{{focus-input value=firstName}}</td>
+                    <td>Prénom</td><td>{{focus-input value=firstName placeholder="Prénom"}}</td>
                 </tr>
                 <tr>
-                    <td>Nom</td><td>{{input value=lastName}}</td>
+                    <td>Nom</td><td>{{input value=lastName placeholder="Nom"}}</td>
                 </tr>
             </table>
             
@@ -239,7 +239,7 @@
                 <td>Prénom</td>
                 <td>
                     {{#if isEditionAllowed}}
-                        {{input value=firstName}}
+                        {{input value=firstName placeholder="Prénom"}}
                     {{else}}
                         {{firstName}}
                     {{/if}}
@@ -249,7 +249,7 @@
                 <td>Nom</td>
                 <td>
                     {{#if isEditionAllowed}}
-                        {{input value=lastName}}
+                        {{input value=lastName placeholder="Nom"}}
                     {{else}}
                         {{lastName}}
                     {{/if}}
@@ -259,7 +259,7 @@
                 <td>Email</td>
                 <td>
                     {{#if isEditionAllowed}}
-                        {{input value=detail.email}}
+                        {{input value=detail.email placeholder="Email"}}
                     {{else}}
                         {{detail.email}}
                     {{/if}}
@@ -269,7 +269,7 @@
                 <td>Adresse</td>
                 <td>
                     {{#if isEditionAllowed}}
-                        {{input value=detail.address}}
+                        {{input value=detail.address placeholder="Adresse"}}
                     {{else}}
                         {{detail.address}}
                     {{/if}}
@@ -279,7 +279,7 @@
                 <td>Téléphone</td>
                 <td>
                     {{#if isEditionAllowed}}
-                        {{input value=detail.phone}}
+                        {{input value=detail.phone placeholder="Téléphone"}}
                     {{else}}
                         {{detail.phone}}
                     {{/if}}
@@ -297,10 +297,10 @@
 	        
 	        <table>
 	            <tr>
-	                <td>Prénom</td><td>{{focus-input value=firstName}}</td>
+	                <td>Prénom</td><td>{{focus-input value=firstName placeholder="Prénom"}}</td>
 	            </tr>
 	            <tr>
-	                <td>Nom</td><td>{{input value=lastName}}</td>
+	                <td>Nom</td><td>{{input value=lastName placeholder="Nom"}}</td>
 	            </tr>
 	        </table>
 	       
@@ -314,7 +314,7 @@
         {{#if isAdmin}}
 	        {{#if isStarting}}
 	            <span>
-	                {{focus-input value=newYearName}}
+	                {{focus-input value=newYearName placeholder="Nom de l'année"}}
 	                <button {{action createYear}}>Démarrer!</button>
 	            </span>
 	        {{else}}
@@ -323,7 +323,7 @@
 	        <button {{action stopYear}} {{bind-attr disabled=isNotRunning}}>Arrêter une année</button>
 	        {{#if isRenaming}}
 	            <span>
-	                {{focus-input value=runningYear.name}}
+	                {{focus-input value=runningYear.name placeholder="Nouveau nom"}}
 	                <button {{action renameYear}}>Renommer!</button>
 	            </span>
 	        {{else}}
@@ -332,7 +332,7 @@
         
 	        {{#if isClassCreation}}
 	            <span>
-	                {{focus-input value=newClassName}}
+	                {{focus-input value=newClassName placeholder="Nom de la classe"}}
 	                <button {{action createClass}}>Créer!</button>
 	            </span>
 	        {{else}}
@@ -366,7 +366,7 @@
                 <td>Nom</td>
                 <td>
                     {{#if isAdmin}}
-                        {{input value=name}}
+                        {{input value=name placeholder="Nom de la classe"}}
                     {{else}}
                         {{name}}
                     {{/if}}
@@ -452,7 +452,7 @@
         {{#if isClassTeacher}}
 	        {{#if isBranchCreation}}
 	            <span>
-	                {{focus-input value=newBranchInfo.name}}
+	                {{focus-input value=newBranchInfo.name placeholder="Nom de la branche"}}
 	                <button {{action createBranch}}>Créer</button>
 	            </span>
 	        {{else}}
@@ -493,7 +493,8 @@
     </script>
     <script type='text/x-handlebars' id="branchPeriod">
         {{#if isBranchEditing}}
-            {{focus-input value=branch.name}} <button {{action saveBranch}}>Enregistrer</button>
+            {{focus-input value=branch.name placeholder="Nom de la branche"}}
+            <button {{action saveBranch}}>Enregistrer</button>
         {{else}}
             <h2>{{branch.name}}</h2>
             {{#if isClassTeacher}}
@@ -504,7 +505,7 @@
         {{#if isClassTeacher}}
 	        {{#if isExamCreating}}
 	            <span>
-	                {{focus-input value=newExamName}}
+	                {{focus-input value=newExamName placeholder="Nom de l'examen"}}
 	                <button {{action createExam}}>Créer</button>
 	            </span>
 	        {{else}}
@@ -549,7 +550,7 @@
                     {{else}}
                         <td>
                             {{#if isClassTeacher}}
-                                {{input value=studentResult.mean.grade}}
+                                {{input value=studentResult.mean.grade placeholder="Moyenne"}}
                             {{else}}
                                 {{studentResult.mean.grade}}
                             {{/if}}
@@ -565,7 +566,7 @@
     </script>
     <script type='text/x-handlebars' id="exam">
         {{#if isExamEditing}}
-            {{input value=exam.name}} (coeff: {{input value=exam.coeff}})
+            {{input value=exam.name placeholder="Nom de l'examen"}} (coeff: {{input value=exam.coeff placeholder="Coefficient"}})
         {{else}}
             {{exam.name}} (coeff: {{exam.coeff}})
         {{/if}}

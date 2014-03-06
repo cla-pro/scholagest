@@ -100,7 +100,7 @@ Scholagest.StudentResult = DS.Model.extend({
 	mean: DS.belongsTo('mean')
 });
 Scholagest.Result = DS.Model.extend({
-	grade: DS.attr('number'),
+	grade: DS.attr(),
 	exam: DS.belongsTo('exam'),
 	studentResult: DS.belongsTo('studentResult'),
 	
@@ -143,10 +143,10 @@ Scholagest.Mean = DS.Model.extend({
             	var grade = result.get('grade');
                 var exam = result.get('exam');
                 var coeff = exam.get('coeff');
-                //if (grade != undefined && grade != null) {
-	                total += coeff * grade;
-	                totalCoeff += coeff;
-                //}
+                if (!Ember.isEmpty(grade) && !Ember.isEmpty(coeff)) {
+	                total += parseInt(coeff) * parseInt(grade);
+	                totalCoeff += parseInt(coeff);
+                }
             });
             
             return total / totalCoeff;

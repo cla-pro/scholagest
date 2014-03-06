@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -28,15 +29,25 @@ public class PeriodsRest extends AbstractService {
     }
 
     @Inject
-    public PeriodsRest(IOntologyService ontologyService) {
+    public PeriodsRest(final IOntologyService ontologyService) {
         super(ontologyService);
+    }
+
+    @CheckAuthorization
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Map<String, Object> getPeriod(@PathParam("id") final String id) {
+        final Map<String, Object> response = new HashMap<>();
+        response.put("period", periods.get(id));
+        return response;
     }
 
     @CheckAuthorization
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Map<String, Collection<Period>> getPeriods() {
-        Map<String, Collection<Period>> periodsToReturn = new HashMap<>();
+        final Map<String, Collection<Period>> periodsToReturn = new HashMap<>();
 
         periodsToReturn.put("periods", periods.values());
 

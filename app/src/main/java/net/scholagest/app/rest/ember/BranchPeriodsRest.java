@@ -44,9 +44,33 @@ public class BranchPeriodsRest extends AbstractService {
 
     @CheckAuthorization
     @GET
+    @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, List<Object>> getBranches(@QueryParam("ids[]") final List<String> ids) {
-        final Map<String, List<Object>> toReturn = new HashMap<>();
+    public Map<String, Object> getBranch(@PathParam("id") final String id) {
+        final Map<String, Object> toReturn = new HashMap<>();
+
+        final BranchPeriod branchPeriod = branchPeriods.get(id);
+        final Branch branch = BranchesRest.branches.get(branchPeriod.getBranch());
+        final List<Exam> examsForBranchPeriods = examsForBranchPeriods(Arrays.asList(branchPeriod));
+        final List<StudentResult> studentResultsForBranchPeriods = studentResultsForBranchPeriods(Arrays.asList(branchPeriod));
+        final List<Result> resultsForStudentResults = resultsForStudentResults(studentResultsForBranchPeriods);
+        final List<Result> meansForStudentResults = meansForStudentResults(studentResultsForBranchPeriods);
+
+        toReturn.put("branch", branch);
+        toReturn.put("branchPeriod", branchPeriod);
+        toReturn.put("exams", new ArrayList<Object>(examsForBranchPeriods));
+        toReturn.put("studentResults", new ArrayList<Object>(studentResultsForBranchPeriods));
+        toReturn.put("results", new ArrayList<Object>(resultsForStudentResults));
+        toReturn.put("means", new ArrayList<Object>(meansForStudentResults));
+
+        return toReturn;
+    }
+
+    @CheckAuthorization
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Map<String, Object> getBranches(@QueryParam("ids[]") final List<String> ids) {
+        final Map<String, Object> toReturn = new HashMap<>();
 
         final List<BranchPeriod> branchPeriodsWithIds = branchPeriodsWithIds(ids);
         final List<Branch> branchesWithIds = branchesForBranchPeriods(branchPeriodsWithIds);

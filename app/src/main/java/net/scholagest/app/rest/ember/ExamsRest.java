@@ -38,8 +38,8 @@ public class ExamsRest extends AbstractService {
         exams.put("5", new Exam("5", "Récitation 5", 1, "4"));
         exams.put("7", new Exam("7", "Moyenne", 1, "4"));
 
-        studentResults.put("1", new StudentResult("1", "1", "1", Arrays.asList("1", "2"), "3"));
-        studentResults.put("2", new StudentResult("2", "1", "2", Arrays.asList("4", "5", "6"), "7"));
+        studentResults.put("1", new StudentResult("1", "1", "1", Arrays.asList("1", "2"), "3", true));
+        studentResults.put("2", new StudentResult("2", "1", "2", Arrays.asList("4", "5", "6"), "7", true));
     }
 
     @Inject

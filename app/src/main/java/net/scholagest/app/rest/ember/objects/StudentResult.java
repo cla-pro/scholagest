@@ -8,11 +8,14 @@ public class StudentResult extends Base {
     private String branchPeriod;
     private List<String> results;
     private String mean;
+    private boolean active;
 
-    public StudentResult(final String id, final String student, final String branchPeriod, final List<String> results, final String mean) {
+    public StudentResult(final String id, final String student, final String branchPeriod, final List<String> results, final String mean,
+            final boolean active) {
         super(id);
         this.student = student;
         this.branchPeriod = branchPeriod;
+        this.active = active;
         this.results = new ArrayList<>(results);
         this.mean = mean;
     }
@@ -47,5 +50,13 @@ public class StudentResult extends Base {
 
     public void setMean(final String mean) {
         this.mean = mean;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(final boolean active) {
+        this.active = active;
     }
 }
