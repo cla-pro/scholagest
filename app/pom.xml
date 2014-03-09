@@ -38,6 +38,23 @@
                     <warName>scholagest-app</warName>
                 </configuration>
             </plugin>
+			<plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>                    
+                    <execution>
+                        <id>copy-js-deps</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeTypes>js</includeTypes>
+                            <outputDirectory>${basedir}/target/classes/js</outputDirectory>
+                        </configuration>
+                    </execution>
+                    
+                </executions>
+            </plugin>
         </plugins>
     </build>
 

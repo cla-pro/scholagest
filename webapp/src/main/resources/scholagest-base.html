@@ -1,0 +1,692 @@
+<!DOCTYPE html PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN' 'http://www.w3.org/TR/html4/loose.dtd'>
+<html>
+<head>
+	<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+	<script type='text/x-handlebars' id="application">
+        <header>
+            <img src="../html/images/scholagest-logo1-2-small.png" class="app-logo" />
+        </header>
+        
+        <div>
+            {{outlet}}
+            {{outlet modal}}
+        </div>
+        
+        <footer>
+            0.12.0-SNAPSHOT
+        </footer>
+	</script>
+<!-- 	 {{action "close"}} -->
+	<script type="text/x-handlebars" id="components/modal-dialog">
+	    <div class="overlay" {{action "close"}}>
+	        <div class="modal" {{action bubbles=false}}>
+	            {{yield}}
+	        </div>
+	    </div>
+	</script>
+	<script type="text/x-handlebars" id="login">
+	    <table>
+            <tr>
+                <td>Nom d'utilisateur</td>
+                <td>{{focus-input value=username placeholder="Nom d'utilisateur"}}</td>
+            </tr>
+            <tr>
+                <td>Mot de passe</td>
+                <td>{{input type="password" value=password placeholder="Mot de passe"}}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <button type="submit" {{action login}} {{bind-attr disabled="isProcessing"}}>Log in!</button>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    {{#if loginFailed}}
+                        <div style="color: red">
+                            Nom d'utilisateur ou mot passe invalide
+                        </div>
+                    {{/if}}
+                </td>
+            </tr>
+        </table>
+	</script>
+    <script type="text/x-handlebars" id="logout">
+        <h1>Vous avez été déconnecté</h1>
+        {{#link-to "login"}}Retour au login{{/link-to}}
+    </script>
+    <script type="text/x-handlebars" id="sessionexpired">
+        <h1>La session n'est plus valide</h1>
+        {{#link-to "login"}}Retour au login{{/link-to}}
+    </script>
+    <script type="text/x-handlebars" id="tryCookieAuthentication">
+        <h1>Tentative de réutilisation de la dernière session</h1>
+    </script>
+	<script type="text/x-handlebars" id="base">
+        <div>
+            <span>{{#link-to "students"}}Etudiants{{/link-to}}</span>
+            <span>{{#link-to "teachers"}}Professeurs{{/link-to}}</span>
+            <span>{{#link-to "years"}}Volées{{/link-to}}</span>
+            <span>{{#link-to "periods"}}Périodes{{/link-to}}</span>
+            <span>{{#link-to "logout"}}Logout{{/link-to}}</span>
+        </div>
+        
+        <div>
+            {{outlet}}
+        </div>
+	</script>
+	<script type='text/x-handlebars' id="students">
+        <h1>Elèves</h1>
+        {{#if isAdmin}}
+	        <div>
+	            <button {{action 'openModal' 'newStudent'}}>Nouvel élève</button>
+	        </div>
+	    {{/if}}
+        <ul>
+            {{#each student in controller}}
+                <li>
+                    {{#link-to "student" student}}
+                        {{student.fullName}}
+                    {{/link-to}}
+                </li>
+            {{else}}
+                <li>Pas d'élèves...</li>
+            {{/each}}
+        </ul>
+
+        {{outlet}}
+	</script>
+    <script type='text/x-handlebars' id="student">
+        <h2>{{firstName}} {{lastName}}</h2>
+        
+        {{partial "studentPersonal"}}
+ 
+        {{#if isEditionAllowed}}
+            <button {{action savePersonal}}>Enregistrer</button>
+        {{/if}}
+        
+        {{partial "studentMedical"}}
+ 
+        {{#if isEditionAllowed}}
+            <button {{action saveMedical}}>Enregistrer</button>
+        {{/if}}
+    </script>
+    <script type='text/x-handlebars' id="studentPersonal">
+        <h3>Informations personnelles</h3>
+        
+        <table>
+            <tr>
+                <td>Prénom</td>
+                <td>
+                    {{#if isEditionAllowed}}
+                        {{input value=firstName placeholder="Prénom"}}
+                    {{else}}
+                        {{firstName}}
+                    {{/if}}
+                </td>
+            </tr>
+            <tr>
+                <td>Nom</td>
+                <td>
+                    {{#if isEditionAllowed}}
+                        {{input value=lastName placeholder="Nom"}}
+                    {{else}}
+                        {{lastName}}
+                    {{/if}}
+                </td>
+            </tr>
+            <tr>
+                <td>Adresse</td>
+                <td>
+                    {{#if isEditionAllowed}}
+                        {{input value=personal.street placeholder="Adresse"}}
+                    {{else}}
+                        {{personal.street}}
+                    {{/if}}
+                </td>
+            </tr>
+            <tr>
+                <td>Code postal</td>
+                <td>
+                    {{#if isEditionAllowed}}
+                        {{input value=personal.postcode placeholder="Code postal"}}
+                    {{else}}
+                        {{personal.postcode}}
+                    {{/if}}
+                </td>
+            </tr>
+            <tr>
+                <td>Ville</td>
+                <td>
+                    {{#if isEditionAllowed}}
+                        {{input value=personal.city placeholder="Ville"}}
+                    {{else}}
+                        {{personal.city}}
+                    {{/if}}
+                </td>
+            </tr>
+            <tr>
+                <td>Religion</td>
+                <td>
+                    {{#if isEditionAllowed}}
+                        {{input value=personal.religion placeholder="Religion"}}
+                    {{else}}
+                        {{personal.religion}}
+                    {{/if}}
+                </td>
+            </tr>
+        </table>
+    </script>
+    <script type='text/x-handlebars' id="studentMedical">
+        <h3>Informations personnelles</h3>
+        
+        <table>
+            <tr>
+                <td>Docteur</td>
+                <td>
+                    {{#if isEditionAllowed}}
+                        {{input value=medical.doctor placeholder="Docteur"}}
+                    {{else}}
+                        {{medical.doctor}}
+                    {{/if}}
+                </td>
+            </tr>
+        </table>
+    </script>
+    <script type='text/x-handlebars' id="newStudent">
+        {{#modal-dialog action="close"}}
+            <h2>Nouvel élève</h2>
+            
+            <table>
+                <tr>
+                    <td>Prénom</td><td>{{focus-input value=firstName placeholder="Prénom"}}</td>
+                </tr>
+                <tr>
+                    <td>Nom</td><td>{{input value=lastName placeholder="Nom"}}</td>
+                </tr>
+            </table>
+            
+            <button {{action create}} >Créer</button>
+        {{/modal-dialog}}
+    </script>
+	
+	<script type='text/x-handlebars' id="teachers">
+        <h1>Professeurs</h1>
+        {{#if isAdmin}}
+	        <div>
+	            <button {{action 'openModal' 'newTeacher'}}>Nouveau professeur</button>
+	        </div>
+	    {{/if}}
+        <ul>
+            {{#each teacher in controller}}
+                <li>
+                    {{#link-to "teacher" teacher}}
+                        {{teacher.fullName}}
+                    {{/link-to}}
+                </li>
+            {{else}}
+                <li>Pas de professeur...</li>
+            {{/each}}
+        </ul>
+
+        {{outlet}}
+	</script>
+    <script type='text/x-handlebars' id="teacher">
+        <h2>{{fullName}}</h2>
+        
+        <table>
+            <tr>
+                <td>Prénom</td>
+                <td>
+                    {{#if isEditionAllowed}}
+                        {{input value=firstName placeholder="Prénom"}}
+                    {{else}}
+                        {{firstName}}
+                    {{/if}}
+                </td>
+            </tr>
+            <tr>
+                <td>Nom</td>
+                <td>
+                    {{#if isEditionAllowed}}
+                        {{input value=lastName placeholder="Nom"}}
+                    {{else}}
+                        {{lastName}}
+                    {{/if}}
+                </td>
+            </tr>
+            <tr>
+                <td>Email</td>
+                <td>
+                    {{#if isEditionAllowed}}
+                        {{input value=detail.email placeholder="Email"}}
+                    {{else}}
+                        {{detail.email}}
+                    {{/if}}
+                </td>
+            </tr>
+            <tr>
+                <td>Adresse</td>
+                <td>
+                    {{#if isEditionAllowed}}
+                        {{input value=detail.address placeholder="Adresse"}}
+                    {{else}}
+                        {{detail.address}}
+                    {{/if}}
+                </td>
+            </tr>
+            <tr>
+                <td>Téléphone</td>
+                <td>
+                    {{#if isEditionAllowed}}
+                        {{input value=detail.phone placeholder="Téléphone"}}
+                    {{else}}
+                        {{detail.phone}}
+                    {{/if}}
+                </td>
+            </tr>
+        </table>
+
+        {{#if isEditionAllowed}}
+            <button {{action save}}>Enregistrer</button>
+        {{/if}}
+    </script>
+    <script type='text/x-handlebars' id="newTeacher">
+        {{#modal-dialog action="close"}}
+	        <h2>Nouveau professeur</h2>
+	        
+	        <table>
+	            <tr>
+	                <td>Prénom</td><td>{{focus-input value=firstName placeholder="Prénom"}}</td>
+	            </tr>
+	            <tr>
+	                <td>Nom</td><td>{{input value=lastName placeholder="Nom"}}</td>
+	            </tr>
+	        </table>
+	       
+	        <button {{action create}} >Enregistrer</button>
+	    {{/modal-dialog}}
+    </script>
+    
+    <script type='text/x-handlebars' id="years">
+        <h2>Volées</h2>
+        
+        {{#if isAdmin}}
+	        {{#if isStarting}}
+	            <span>
+	                {{focus-input value=newYearName placeholder="Nom de l'année"}}
+	                <button {{action createYear}}>Démarrer!</button>
+	            </span>
+	        {{else}}
+	            <button {{action startYear}} {{bind-attr disabled=isNotStopped}}>Démarrer une année</button>
+	        {{/if}}
+	        <button {{action stopYear}} {{bind-attr disabled=isNotRunning}}>Arrêter une année</button>
+	        {{#if isRenaming}}
+	            <span>
+	                {{focus-input value=runningYear.name placeholder="Nouveau nom"}}
+	                <button {{action renameYear}}>Renommer!</button>
+	            </span>
+	        {{else}}
+	            <button {{action startRenaming}} {{bind-attr disabled=isNotRunning}}>Renommer une année</button>
+	        {{/if}}
+        
+	        {{#if isClassCreation}}
+	            <span>
+	                {{focus-input value=newClassName placeholder="Nom de la classe"}}
+	                <button {{action createClass}}>Créer!</button>
+	            </span>
+	        {{else}}
+	            <button {{action startCreatingClass}} {{bind-attr disabled=isNotRunning}}>Créer une classe</button>
+	        {{/if}}
+        {{/if}}
+
+        <ul>
+            {{#each year in controller}}
+                <li>{{year.name}}</li>
+                {{#each class in year.classes}}
+                    <li>
+                        {{#link-to "class" class}}
+                            {{class.name}}
+                        {{/link-to}}
+                    </li>
+                    {{! <li>{{class.name</li> }}
+                {{/each}}
+            {{else}}
+                <li>Pas de volée...</li>
+            {{/each}}
+        </ul>
+
+        {{outlet}}
+    </script>
+    <script type='text/x-handlebars' id="class">
+        <h1>Classe {{name}}</h1>
+
+        <table>
+            <tr>
+                <td>Nom</td>
+                <td>
+                    {{#if isAdmin}}
+                        {{input value=name placeholder="Nom de la classe"}}
+                    {{else}}
+                        {{name}}
+                    {{/if}}
+                </td>
+            </tr>
+            <tr>
+                <td>Elèves</td>
+                <td>
+                    <ul>
+                        {{#each student in students}}
+                            <li>{{student.fullName}}</li>
+                        {{else}}
+                            <li>Pas d'élève</li>
+                        {{/each}}
+                        
+                        {{#if isAdmin}}
+                            {{#link-to "class-assign-students" model}}Ajouter/Enlever des élèves{{/link-to}}
+                        {{/if}}
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td>Professeurs</td>
+                <td>
+                    <ul>
+                        {{#each teacher in teachers}}
+                            <li>{{teacher.fullName}}</li>
+                        {{else}}
+                            <li>Pas de professeur</li>
+                        {{/each}}
+                        
+                        {{#if isAdmin}}
+                            {{#link-to "class-assign-teachers" model}}Ajouter/Enlever des professeurs{{/link-to}}
+                        {{/if}}
+                    </ul>
+                </td>
+            </tr>
+        </table>
+
+        {{outlet}}
+        
+        {{#if isAdmin}}
+            <button {{action save}}>Enregistrer</button>
+        {{/if}}
+    </script>
+<!--     <li><button {{action addRemoveStudents}}>Ajouter/Enlever des élèves</button> -->
+<!--     <li><button {{action addRemoveTeachers}}>Ajouter/Enlever des professeurs</button> -->
+<!--         {{#modal-dialog action="close"}} -->
+    <script type='text/x-handlebars' id="class-assign-students">
+            <h4>Libres</h4>
+            {{checkbox-select model=this propertyPath="selectedUnassigned" elements=unassigned labelPath="fullName"}}
+            <button {{action addToClass}}>--></button>
+            <button {{action removeFromClass}}><--</button>
+            <h4>Assignés</h4>
+            {{checkbox-select model=this propertyPath="selectedAssigned" elements=assigned labelPath="fullName"}}
+            
+            <button {{action close}} >Fermer</button>
+    </script>
+<!--         {{/modal-dialog}} -->
+    <script type='text/x-handlebars' id="class-assign-teachers">
+            <h4>Libres</h4>
+            {{checkbox-select model=this propertyPath="selectedUnassigned" elements=unassigned labelPath="fullName"}}
+            <button {{action addToClass}}>--></button>
+            <button {{action removeFromClass}}><--</button>
+            <h4>Assignés</h4>
+            {{checkbox-select model=this propertyPath="selectedAssigned" elements=assigned labelPath="fullName"}}
+            
+            <button {{action close}} >Fermer</button>
+    </script>
+    <script type="text/x-handlebars" data-template-name="components/checkbox-select">
+        {{#each elements itemController="checkboxItem"}}
+            <label>            
+                {{view Ember.Checkbox checkedBinding="selected"}}
+                {{label}}
+            </label><br />
+        {{/each}}    
+	</script>
+    
+    
+    <script type='text/x-handlebars' id="periods">
+        <h2>Périodes</h2>
+        
+        {{#if isClassTeacher}}
+	        {{#if isBranchCreation}}
+	            <span>
+	                {{focus-input value=newBranchInfo.name placeholder="Nom de la branche"}}
+	                <button {{action createBranch}}>Créer</button>
+	            </span>
+	        {{else}}
+	            <button {{action startBranchCreation}}>Créer une branche</button>
+	        {{/if}}
+	    {{/if}}
+
+        <ul>
+            {{#each period in periods}}
+                <li>
+                    {{#link-to "period" period}}
+                        {{period.name}}
+                    {{/link-to}}
+                </li>
+            {{else}}
+                <li>Pas de période...</li>
+            {{/each}}
+        </ul>
+
+        {{outlet}}
+    </script>
+    <script type='text/x-handlebars' id="period">
+        <h2>{{name}}</h2>
+        
+        <ul>
+            {{#each branchPeriod in branchPeriods}}
+                <li>
+                    {{#link-to "branchPeriod" branchPeriod}}
+                        {{branchPeriod.branch.name}}
+                    {{/link-to}}
+                </li>
+            {{else}}
+                <li>Pas de branche...</li>
+            {{/each}}
+        </ul>
+
+        {{outlet}}
+    </script>
+    <script type='text/x-handlebars' id="branchPeriod">
+        {{#if isBranchEditing}}
+            {{focus-input value=branch.name placeholder="Nom de la branche"}}
+            <button {{action saveBranch}}>Enregistrer</button>
+        {{else}}
+            <h2>{{branch.name}}</h2>
+            {{#if isClassTeacher}}
+                <button {{action editBranch}}>Modifier</button>
+            {{/if}}
+        {{/if}}
+        
+        {{#if isClassTeacher}}
+	        {{#if isExamCreating}}
+	            <span>
+	                {{focus-input value=newExamName placeholder="Nom de l'examen"}}
+	                <button {{action createExam}}>Créer</button>
+	            </span>
+	        {{else}}
+	            <button {{action startExamCreation}}>Créer un examen</button>
+	        {{/if}}
+	    {{/if}}
+        
+        <table>
+            <tr>
+                {{#if isClassTeacher}}
+	                <td>
+	                    {{#if isExamEditing}}
+	                        <button {{action "saveExams"}}>Enregistrer</button>
+	                    {{else}}
+	                        <button {{action "editExams"}}>Editer les examens</button>
+	                    {{/if}}
+	                </td>
+	            {{else}}
+	               <td></td>
+	            {{/if}}
+                {{#each exam in exams}}
+                    <td>{{partial "exam"}}</td>
+                {{/each}}
+                <td>Moyenne</td>
+            </tr>
+            
+            {{#each studentResult in studentResults}}
+                <tr>
+                    <td>{{studentResult.student.fullName}}</td>
+                    {{#each result in studentResult.results}}
+                        <td>
+                            {{#if isClassTeacher}}
+                                {{input value=result.grade}}
+                            {{else}}
+                                {{result.grade}}
+                            {{/if}}
+                        </td>
+                    {{/each}}
+                    
+                    {{#if isBranchNumerical}}
+                        <td>{{studentResult.mean.computedMean}}</td>
+                    {{else}}
+                        <td>
+                            {{#if isClassTeacher}}
+                                {{input value=studentResult.mean.grade placeholder="Moyenne"}}
+                            {{else}}
+                                {{studentResult.mean.grade}}
+                            {{/if}}
+                        </td>
+                    {{/if}}
+                </tr>
+            {{/each}}
+        </table>
+
+        {{#if isClassTeacher}}
+            <button {{action saveGrades}} >Enregistrer</button>
+        {{/if}}
+    </script>
+    <script type='text/x-handlebars' id="exam">
+        {{#if isExamEditing}}
+            {{input value=exam.name placeholder="Nom de l'examen"}} (coeff: {{input value=exam.coeff placeholder="Coefficient"}})
+        {{else}}
+            {{exam.name}} (coeff: {{exam.coeff}})
+        {{/if}}
+    </script>
+	<!-- 
+        {{! {{#each attribute in metadata }}
+        {{!     {{attribute.name }}
+        {{!     {{! {{input value=attribute.value }}
+        {{!     {{view Scholagest.AutoTextField name=attribute.name }}
+        {{!     <br /> }}
+        {{! {{/each }}
+        
+        {{! <button {{action "delete"}}>Delete</button> }} -->
+    <script src='../jquery-1.10.2.js'></script>
+    <script src='../jquery.json-2.4.js'></script>
+    <script src='../jquery.cookie.js'></script>
+	<script src='../handlebars-1.1.2.js'></script>
+	<script src='../ember.js'></script>
+	<script src='../ember-data.js'></script>
+    <script type="text/javascript">
+        Scholagest = Ember.Application.create({
+		    LOG_TRANSITIONS: true
+		});
+		
+		// Scholagest.initializer({
+		//     name: 'Inject Store',
+		//     initialize: function(container, application) {
+		//         container.injection('application:main', 'store', 'store:main');
+		//     }
+		// });
+		// Ember.Application.initializer({
+		//   name: "Inject Store",
+		// 
+		//   initialize: function(container, application) {
+		//     container.injection('application:main', 'store', 'store:main');
+		//   }
+		// });
+		
+		Scholagest.ApplicationAdapter = DS.RESTAdapter;
+		
+		DS.RESTAdapter.reopen({
+		    host: 'http://localhost:8080',
+		    namespace: 'scholagest-app/services'
+		});
+		
+		DS.RESTSerializer.reopen({
+			serializeHasMany: function(record, json, relationship) {
+				var key = relationship.key;
+				var relationshipType = DS.RelationshipChange.determineRelationshipType(record.constructor, relationship);
+				
+				if (relationshipType === 'manyToNone' || relationshipType === 'manyToMany' || relationshipType === 'manyToOne') {
+				    json[key] = Ember.get(record, key).mapBy('id');
+				}
+			}
+		});
+		
+		Scholagest.Router.map(function() {
+			this.resource('login', function() {});
+			this.resource('logout', function() {});
+            this.resource('sessionexpired', function() {});
+            this.resource('tryCookieAuthentication', function() {});
+			this.resource('base', function() {
+				this.resource('students', function() {
+				    this.resource('student', { path: '/:student_id' }, function() {});
+				});
+				this.resource('teachers', function() {
+				    this.resource('teacher', { path: '/:teacher_id' }, function() {});
+				});
+				this.resource('years', function() {
+				    this.resource('class', { path: '/:class_id' }, function() {
+                        this.resource('class-assign-students', { path: 'students/:class_id' }, function() {});
+                        this.resource('class-assign-teachers', { path: 'teachers/:class_id' }, function() {});
+				    });
+				});
+				this.resource('periods', function() {
+				    this.resource('period', { path: '/:period_id' }, function() {
+				        this.resource('branchPeriod', { path: '/:branch_period_id' }, function() {});
+				    });
+				});
+			});
+		});
+		
+		Scholagest.ApplicationRoute = Ember.Route.extend({
+			actions: {
+			    openModal: function(modalName) {
+			        return this.render(modalName, {
+			            into: 'application',
+			            outlet: 'modal'
+			        });
+			    },
+				closeModal: function() {
+				    return this.disconnectOutlet({
+				        outlet: 'modal',
+				        parentView: 'application'
+				    });
+				}
+			}
+		});
+		
+		Scholagest.FocusInputView = Ember.TextField.extend({
+		    didInsertElement: function() {
+		        this.$().focus();
+		    }
+		});
+		
+		Ember.Handlebars.helper('focus-input', Scholagest.FocusInputView);
+    </script>
+    <script type="text/javascript" src='${scholagest/index.js}'></script>
+    <script type="text/javascript" src='${scholagest/base.js}'></script>
+    <script type="text/javascript" src='${scholagest/model.js}'></script>
+    <script type="text/javascript" src='${scholagest/login.js}'></script>
+    <script type="text/javascript" src='${scholagest/model.js}'></script>
+    <script type="text/javascript" src='${scholagest/year.js}'></script>
+    <script type="text/javascript" src='${scholagest/class.js}'></script>
+    <script type="text/javascript" src='${scholagest/student.js}'></script>
+    <script type="text/javascript" src='${scholagest/teacher.js}'></script>
+    <script type="text/javascript" src='${scholagest/branch.js}'></script>
+	
+	<title>Scholagest</title>
+</head>
+<body>
+</body>
+</html>

@@ -16,6 +16,8 @@ OK --- When edited, the coeff become strings instead of numbers
 OK --- If a result is not set, the grade must be ignored.
 OK -- Save the means if isNumeric=false
 - Handle year means
+-- Add a column in the results
+-- Add a item into the list of period to display the mean(s) (period mean included)?
 - Object creation:
 -- Handle the problem with the new element that has no ID but is displayed in the list. (http://stackoverflow.com/questions/14705124/creating-a-record-with-ember-js-ember-data-rails-and-handling-list-of-record)
 OK -- Student

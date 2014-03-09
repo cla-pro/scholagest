@@ -45,19 +45,20 @@
             <id>application</id>
             <modules>
                 <module>core</module>
+				<!--<module>webapp</module>-->
                 <module>app</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>webapp</id>
+            <modules>
+                <module>webapp</module>
             </modules>
         </profile>
         <profile>
             <id>initializer</id>
             <modules>
                 <module>initializer</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>cassandra</id>
-            <modules>
-                <module>cassandra-explorer</module>
             </modules>
         </profile>
         <profile>
