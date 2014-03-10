@@ -2,9 +2,9 @@ package net.scholagest.migration.updater;
 
 import java.util.Iterator;
 
-import net.scholagest.database.DbRow;
-import net.scholagest.managers.ontology.RDF;
 import net.scholagest.migration.RowsUpdater;
+import net.scholagest.old.database.DbRow;
+import net.scholagest.old.managers.ontology.RDF;
 import net.scholagest.utils.ScholagestThreadLocal;
 
 public abstract class AbstractRowsUpdater implements RowsUpdater {

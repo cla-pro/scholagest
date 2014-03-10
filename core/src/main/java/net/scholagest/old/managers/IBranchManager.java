@@ -1,0 +1,16 @@
+package net.scholagest.old.managers;
+
+import java.util.Map;
+import java.util.Set;
+
+import net.scholagest.old.objects.BranchObject;
+
+public interface IBranchManager {
+    public BranchObject createBranch(String branchName, String classKey, String className, String yearName, Map<String, Object> properties);
+
+    public void setBranchProperties(String branchKey, Map<String, Object> branchProperties);
+
+    public BranchObject getBranchProperties(String branchKey, Set<String> properties);
+
+    public boolean checkWhetherBranchExistsInClass(String branchName, String className, String yearName);
+}

@@ -1,9 +1,9 @@
 package net.scholagest.initializer;
 
-import net.scholagest.database.Database;
-import net.scholagest.database.DefaultDatabaseConfiguration;
-import net.scholagest.database.ITransaction;
-import net.scholagest.namespace.CoreNamespace;
+import net.scholagest.old.database.Database;
+import net.scholagest.old.database.DefaultDatabaseConfiguration;
+import net.scholagest.old.database.ITransaction;
+import net.scholagest.old.namespace.CoreNamespace;
 
 public class UserLister {
 

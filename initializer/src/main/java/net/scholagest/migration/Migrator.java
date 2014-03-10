@@ -7,14 +7,14 @@ import java.util.UUID;
 
 import javax.xml.bind.JAXBException;
 
-import net.scholagest.database.Database;
-import net.scholagest.database.DefaultDatabaseConfiguration;
-import net.scholagest.database.IDatabase;
-import net.scholagest.database.ITransaction;
 import net.scholagest.initializer.jaxb.TChangeSet;
 import net.scholagest.initializer.jaxb.TDbUpdate;
 import net.scholagest.migration.updater.UpdaterFactory;
-import net.scholagest.namespace.CoreNamespace;
+import net.scholagest.old.database.Database;
+import net.scholagest.old.database.DefaultDatabaseConfiguration;
+import net.scholagest.old.database.IDatabase;
+import net.scholagest.old.database.ITransaction;
+import net.scholagest.old.namespace.CoreNamespace;
 import net.scholagest.utils.ConfigurationService;
 import net.scholagest.utils.ScholagestProperty;
 import net.scholagest.utils.ScholagestThreadLocal;

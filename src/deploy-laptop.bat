@@ -1,5 +1,6 @@
 @SET SUBDIR=%~dp0
 
+@cd ..\
 @call mvn install -Papplication -DskipTests
 
 @cd "C:\Program Files\Apache\apache-tomcat-7.0.37"

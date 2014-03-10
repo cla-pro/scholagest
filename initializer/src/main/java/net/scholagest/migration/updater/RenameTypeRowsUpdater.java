@@ -1,8 +1,8 @@
 package net.scholagest.migration.updater;
 
-import net.scholagest.database.DbRow;
 import net.scholagest.initializer.jaxb.TRenameType;
-import net.scholagest.managers.ontology.RDF;
+import net.scholagest.old.database.DbRow;
+import net.scholagest.old.managers.ontology.RDF;
 import net.scholagest.utils.ScholagestThreadLocal;
 
 import org.apache.logging.log4j.LogManager;

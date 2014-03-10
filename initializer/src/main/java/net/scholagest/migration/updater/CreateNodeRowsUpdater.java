@@ -1,9 +1,9 @@
 package net.scholagest.migration.updater;
 
-import net.scholagest.database.ITransaction;
 import net.scholagest.initializer.jaxb.TCreateNode;
-import net.scholagest.managers.ontology.RDF;
 import net.scholagest.migration.RowsUpdater;
+import net.scholagest.old.database.ITransaction;
+import net.scholagest.old.managers.ontology.RDF;
 import net.scholagest.utils.ScholagestThreadLocal;
 
 import org.apache.logging.log4j.LogManager;

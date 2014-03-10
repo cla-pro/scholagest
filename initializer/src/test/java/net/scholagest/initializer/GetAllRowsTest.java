@@ -3,10 +3,10 @@ package net.scholagest.initializer;
 import java.util.Iterator;
 import java.util.UUID;
 
-import net.scholagest.database.Database;
-import net.scholagest.database.DbRow;
-import net.scholagest.database.DefaultDatabaseConfiguration;
-import net.scholagest.database.ITransaction;
+import net.scholagest.old.database.Database;
+import net.scholagest.old.database.DbRow;
+import net.scholagest.old.database.DefaultDatabaseConfiguration;
+import net.scholagest.old.database.ITransaction;
 import net.scholagest.utils.ScholagestThreadLocal;
 
 public class GetAllRowsTest {

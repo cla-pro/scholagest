@@ -6,10 +6,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import net.scholagest.database.DatabaseException;
-import net.scholagest.database.DbRow;
-import net.scholagest.database.IDatabase;
-import net.scholagest.database.ITransaction;
+import net.scholagest.old.database.DatabaseException;
+import net.scholagest.old.database.DbRow;
+import net.scholagest.old.database.IDatabase;
+import net.scholagest.old.database.ITransaction;
 
 public class InMemoryDatabase implements IDatabase {
     public InMemoryDatabase() {

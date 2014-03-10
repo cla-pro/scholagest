@@ -1,7 +1,7 @@
 package net.scholagest.migration.updater;
 
-import net.scholagest.database.DbRow;
 import net.scholagest.initializer.jaxb.TRenameProperty;
+import net.scholagest.old.database.DbRow;
 import net.scholagest.utils.ScholagestThreadLocal;
 
 import org.apache.logging.log4j.LogManager;

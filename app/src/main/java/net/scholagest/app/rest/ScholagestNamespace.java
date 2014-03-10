@@ -1,6 +1,6 @@
 package net.scholagest.app.rest;
 
-import net.scholagest.namespace.CoreNamespace;
+import net.scholagest.old.namespace.CoreNamespace;
 
 public class ScholagestNamespace extends CoreNamespace {
 	public static final String scholagestKeyspace = "scholagestKeyspace";

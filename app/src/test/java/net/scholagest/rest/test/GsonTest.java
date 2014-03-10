@@ -3,8 +3,8 @@ package net.scholagest.rest.test;
 import java.util.Map;
 import java.util.UUID;
 
-import net.scholagest.app.rest.object.RestObject;
-import net.scholagest.app.rest.object.RestProperty;
+import net.scholagest.app.rest.old.object.RestObject;
+import net.scholagest.app.rest.old.object.RestProperty;
 
 import org.junit.Test;
 

@@ -6,10 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.scholagest.database.ITransaction;
-import net.scholagest.services.IStudentService;
-import net.scholagest.services.ITeacherService;
-import net.scholagest.services.IUserService;
+import net.scholagest.old.database.ITransaction;
+import net.scholagest.old.services.IStudentService;
+import net.scholagest.old.services.ITeacherService;
+import net.scholagest.old.services.IUserService;
 import net.scholagest.utils.ConfigurationService;
 import net.scholagest.utils.ScholagestProperty;
 import net.scholagest.utils.ScholagestThreadLocal;

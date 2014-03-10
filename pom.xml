@@ -45,7 +45,7 @@
             <id>application</id>
             <modules>
                 <module>core</module>
-				<!--<module>webapp</module>-->
+<!-- 				<module>webapp</module> -->
                 <module>app</module>
             </modules>
         </profile>

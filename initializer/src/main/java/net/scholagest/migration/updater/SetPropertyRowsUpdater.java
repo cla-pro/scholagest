@@ -1,8 +1,8 @@
 package net.scholagest.migration.updater;
 
-import net.scholagest.database.ITransaction;
 import net.scholagest.initializer.jaxb.TSetProperty;
 import net.scholagest.migration.RowsUpdater;
+import net.scholagest.old.database.ITransaction;
 import net.scholagest.utils.ScholagestThreadLocal;
 
 import org.apache.logging.log4j.LogManager;

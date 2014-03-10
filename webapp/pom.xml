@@ -6,15 +6,14 @@
   
   <modelVersion>4.0.0</modelVersion>
   
-  <!--<parent>
+  <parent>
     <groupId>net</groupId>
     <artifactId>scholagest</artifactId>
     <version>0.8.0-SNAPSHOT</version>
-  </parent>-->
+  </parent>
  
   <groupId>net.scholagest</groupId>
   <artifactId>webapp</artifactId>
-  <version>0.8.0-SNAPSHOT</version>
   <name>Scholagest Web Application</name>
   <packaging>js</packaging>
   
