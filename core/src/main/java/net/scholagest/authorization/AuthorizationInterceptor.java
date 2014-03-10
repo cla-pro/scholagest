@@ -10,7 +10,22 @@ import net.scholagest.utils.ScholagestThreadLocal;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 
+/**
+ * Check the roles (defined in {@link RolesAndPermissions}) and permission
+ * (defined in {@link Permission}) before a method is invoked. This interceptor
+ * must be inserted using AOP injection onto the methods that are annotated with
+ * {@link RolesAndPermissions}. If any of the role and permission is fulfilled,
+ * the method is invoked and the result returned, otherwise a
+ * ScholagestRuntimeException is thrown. If no role or permission is defined,
+ * the method is invoked without any check.
+ * 
+ * @author CLA
+ * @since 0.8.0
+ */
 public class AuthorizationInterceptor implements MethodInterceptor {
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object invoke(final MethodInvocation invocation) throws Throwable {
         // 1. Get the roles and permissions to check
@@ -18,7 +33,7 @@ public class AuthorizationInterceptor implements MethodInterceptor {
         // 3. Either execute the method or throw an exception (405 not allowed)
         final RolesAndPermissions rolesAndPermissions = invocation.getMethod().getAnnotation(RolesAndPermissions.class);
 
-        if (checkRolesAndPermissions(rolesAndPermissions, invocation.getMethod(), invocation.getArguments())) {
+        if (rolesAndPermissions == null && checkRolesAndPermissions(rolesAndPermissions, invocation.getMethod(), invocation.getArguments())) {
             return invocation.proceed();
         } else {
             throw new ScholagestRuntimeException(ScholagestExceptionErrorCode.INSUFFICIENT_PRIVILEGES, "Insufficient privilegies to run the method");
