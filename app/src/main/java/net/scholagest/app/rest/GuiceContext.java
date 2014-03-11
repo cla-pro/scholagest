@@ -20,6 +20,8 @@ import net.scholagest.app.rest.ws.UsersRest;
 import net.scholagest.app.rest.ws.YearsRest;
 import net.scholagest.app.rest.ws.authorization.AuthorizationVerifier;
 import net.scholagest.app.rest.ws.authorization.CheckAuthorization;
+import net.scholagest.authorization.AuthorizationInterceptor;
+import net.scholagest.authorization.RolesAndPermissions;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -37,6 +39,10 @@ public class GuiceContext extends GuiceServletContextListener {
                 final AuthorizationVerifier authorizationVerifier = new AuthorizationVerifier();
                 requestInjection(authorizationVerifier);
                 bindInterceptor(Matchers.any(), Matchers.annotatedWith(CheckAuthorization.class), authorizationVerifier);
+
+                final AuthorizationInterceptor authorizationInterceptor = new AuthorizationInterceptor();
+                requestInjection(authorizationInterceptor);
+                bindInterceptor(Matchers.any(), Matchers.annotatedWith(RolesAndPermissions.class), authorizationInterceptor);
 
                 // bind(IDatabaseConfiguration.class).to(DefaultDatabaseConfiguration.class);
                 // bind(IDatabase.class).to(Database.class);
