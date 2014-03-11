@@ -5,7 +5,7 @@ import static org.mockito.Mockito.spy;
 
 import java.util.Map;
 
-import net.scholagest.database.DatabaseException;
+import net.scholagest.old.database.DatabaseException;
 import net.scholagest.utils.InMemoryDatabase.InMemoryTransaction;
 
 import org.junit.After;

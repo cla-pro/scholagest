@@ -2,7 +2,7 @@ package net.scholagest.initializer;
 
 import me.prettyprint.hector.api.Cluster;
 import me.prettyprint.hector.api.factory.HFactory;
-import net.scholagest.database.IDatabaseConfiguration;
+import net.scholagest.old.database.IDatabaseConfiguration;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

@@ -103,13 +103,11 @@ function extractKeys(list) {
 };
 
 function sendPostRequest(serviceUrl, jsonObject, callback, errorCallback) {
+	jsonObject.token = dojo.cookie("scholagest_token");
 	var xhrArgs = {
 		url: serviceUrl,
 		preventCache: true,
-		postData: dojo.toJson({
-			token: dojo.cookie("scholagest_token"),
-			object: jsonObject
-		}),
+		postData: dojo.toJson(jsonObject),
 		handleAs: "json",
 		load: function(data) {
 			handleResult(data, callback, errorCallback);
@@ -160,12 +158,12 @@ function handleJsonError(errorJson, errorCallback) {
 };
 
 function handleWebServiceError(error) {
-	alert("error = " + error);
+	displayMessageDialog("error = " + error);
 };
 
 function handleServiceError(errorJson) {
     if (errorJson.errorCode == errorCodesMap.INSUFFICIENT_PRIVILEGES) {
-        alert("Droits insuffisants pour effectuer cette action");
+    	displayMessageDialog("Droits insuffisants pour effectuer cette action");
     } else if (errorJson.errorCode == errorCodesMap.SESSION_EXPIRED) {
         clearScholagestCookieAndSwitchPage("html/session_expired.html");
     } //else {
@@ -175,7 +173,7 @@ function handleServiceError(errorJson) {
 
 
 function logout() {
-	sendGetRequest(BASE_URL + 'services/user/logout', { token: dojo.cookie("scholagest_token") }, function(data) {
+	sendPostRequest(BASE_URL + 'services/user/logout', { }, function(data) {
 	    clearScholagestCookieAndSwitchPage("html/logout.html");
 	});
 };

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="changeset" type="t_change_set" />
+	<xs:complexType name="t_change_set">
+		<xs:sequence>
+			<xs:element name="id" type="xs:string" />
+			<xs:element name="updates" type="t_updates" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="t_updates">
+	   <xs:sequence>
+	       <xs:choice maxOccurs="unbounded">
+               <xs:element name="createType" type="t_create_type" />
+               <xs:element name="createProperty" type="t_create_property" />
+               <xs:element name="removeType" type="t_remove_type" />
+               <xs:element name="removeProperty" type="t_remove_property" />
+               <xs:element name="renameType" type="t_rename_type" />
+               <xs:element name="renameProperty" type="t_rename_property" />
+               <xs:element name="changeProperty" type="t_change_property" />
+	       </xs:choice>
+	   </xs:sequence>
+	</xs:complexType>
+	<xs:complexType abstract="true" name="t_db_update">
+		<xs:attribute name="id" type="xs:string" use="required" />
+	</xs:complexType>
+	<xs:complexType name="t_create_type">
+		<xs:complexContent>
+			<xs:extension base="t_db_update">
+				<xs:attribute name="name" type="xs:string" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="t_create_property">
+		<xs:complexContent>
+			<xs:extension base="t_db_update">
+                <xs:attribute name="typeName" type="xs:string" use="required" />
+				<xs:attribute name="name" type="xs:string" use="required" />
+				<xs:attribute name="applyOnType" type="xs:string" use="required" />
+				<xs:attribute name="defaultValue" type="xs:string" use="optional" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="t_remove_type">
+		<xs:complexContent>
+			<xs:extension base="t_db_update">
+				<xs:attribute name="name" type="xs:string" use="required" />
+				<xs:attribute name="cascading" type="xs:boolean" use="optional" />
+				<!-- Add attributes -->
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="t_remove_property">
+		<xs:complexContent>
+			<xs:extension base="t_db_update">
+				<xs:attribute name="typeName" type="xs:string" use="required" />
+				<xs:attribute name="name" type="xs:string" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="t_rename_type">
+		<xs:complexContent>
+			<xs:extension base="t_db_update">
+				<xs:attribute name="name" type="xs:string" use="required" />
+				<xs:attribute name="newName" type="xs:string" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="t_rename_property">
+		<xs:complexContent>
+			<xs:extension base="t_db_update">
+				<xs:attribute name="typeName" type="xs:string" use="required" />
+				<xs:attribute name="name" type="xs:string" use="required" />
+				<xs:attribute name="newName" type="xs:string" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="t_change_property">
+		<xs:complexContent>
+			<xs:extension base="t_db_update">
+				<xs:attribute name="typeName" type="xs:string" use="required" />
+				<xs:attribute name="name" type="xs:string" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+    <xs:complexType name="t_create_node">
+        <xs:complexContent>
+            <xs:extension base="t_db_update">
+                <xs:attribute name="key" type="xs:string" use="required" />
+                <xs:attribute name="type" type="xs:string" use="required" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="t_delete_node">
+        <xs:complexContent>
+            <xs:extension base="t_db_update">
+                <xs:attribute name="key" type="xs:string" use="required" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="t_set_property">
+        <xs:complexContent>
+            <xs:extension base="t_db_update">
+                <xs:attribute name="key" type="xs:string" use="required" />
+                <xs:attribute name="propertyName" type="xs:string" use="required" />
+                <xs:attribute name="value" type="xs:string" use="required" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+</xs:schema>

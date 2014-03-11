@@ -1,4 +1,8 @@
 function createExam(closeId, txtIds) {
+	if (checkRequiredFieldsAndMarkAsMissing(closeId, txtIds)) {
+		return;
+	}
+	
 	var dialog = dijit.byId(closeId);
 	var yearKey = dialog.yearKey;
 	var classKey = dialog.classKey;
@@ -14,16 +18,16 @@ function createExam(closeId, txtIds) {
 			branchKey: branchKey,
 			periodKey: periodKey
 		};
-	sendGetRequest("../exam/create", parameters, function(info) {
+	sendPostRequest("../exam/create", parameters, function(info) {
 		dialog.hide();
 		loadStudents(); 
 	}, function(errorJson) {
 		if (errorJson.errorCode == errorCodesMap.OBJECT_ALREADY_EXISTS) {
-			alert('Un examen avec le même nom existe déjà dans cette période')
+			displayMessageDialog('Un examen avec le même nom existe déjà dans cette période')
 		}
 	});
 };
 
 function getExamsInfo(examList, properties, callback) {
-	sendGetRequest("../exam/getExamsInfo", { exams: examList, properties: properties }, callback);
+	sendPostRequest("../exam/getExamsInfo", { keys: examList, properties: properties }, callback);
 };

@@ -1,6 +1,6 @@
 package net.scholagest.utils;
 
-import net.scholagest.database.ITransaction;
+import net.scholagest.old.database.ITransaction;
 
 import org.apache.shiro.subject.Subject;
 

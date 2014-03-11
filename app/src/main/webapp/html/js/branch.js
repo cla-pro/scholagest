@@ -20,7 +20,7 @@ function displayBranchWrapper(classKey, yearKey) {
 
 function loadBranches() {
 	var base = dojo.byId("branch-search-list");
-	sendGetRequest("../year/getCurrent", {}, function(yearInfo) {
+	sendPostRequest("../year/getCurrent", {}, function(yearInfo) {
 		if (yearInfo == null) {
 			base.innerHTML = 'Aucune classe assignée';
 			dojo.byId('btnNewBranch').style.visibility = 'hidden';
@@ -28,15 +28,15 @@ function loadBranches() {
 			dojo.byId('btnNewBranch').style.visibility = '';
 			gradePageYearKey = yearInfo.key;
 			
-			sendGetRequest("../teacher/getClass", { yearKey: gradePageYearKey, teacherKey: myOwnTeacherKey }, function(classInfo) {
+			sendPostRequest("../teacher/getClass", { teacherKey: myOwnTeacherKey }, function(classInfo) {
 				var classesList = classInfo.properties["pTeacherClasses"].value;
 				
 				clearDOM("branch-search-list");
 				if (classesList.length > 0) {
 					gradePageClassKey = classesList[0];
-					callGetClassInfo(gradePageClassKey, "pClassBranches", function(info) {
-						var parameters = { branchKeys: info.properties["pClassBranches"].value, properties: ["pBranchName"] };
-						sendGetRequest("../branch/getPropertiesForList", parameters, function(branchInfo) {
+					callGetClassInfo(gradePageClassKey, [ "pClassBranches" ], function(info) {
+						var parameters = { keys: info.properties["pClassBranches"].value, properties: ["pBranchName"] };
+						sendPostRequest("../branch/getBranchesInfo", parameters, function(branchInfo) {
 							createHtmlListFromList(branchInfo, "branch-search-list", base,
 									buildListItemTextClosure(["pBranchName"]), selectBranchWrapper(gradePageClassKey, gradePageYearKey), selectedBranchKey);
 						});
@@ -48,29 +48,17 @@ function loadBranches() {
 			});
 		}
 	});
-	
-	
-	
-//	var classKey = "http://scholagest.net/class/2012-2013#1P A";
-//	var yearKey = "http://scholagest.net/year#2012-2013";
-//	
-//	callGetClassInfo(classKey, "pClassBranches", function(info) {
-//		var parameters = { branchKeys: info.properties["pClassBranches"].value, properties: ["pBranchName"] };
-//		sendGetRequest("../branch/getPropertiesForList", parameters, function(branchInfo) {
-//			clearDOM("branch-search-list");
-//
-//			var base = dojo.byId("branch-search-list");
-//			createHtmlListFromList(branchInfo, "branch-search-list", base,
-//					buildListItemTextClosure(["pBranchName"]), selectBranchWrapper(classKey, yearKey));
-//		});
-//	});
 };
 
 function getBranchInfo(branchKey, properties, callback) {
-	sendGetRequest("../branch/getProperties", { branchKey: branchKey, properties: properties }, callback);
+	sendPostRequest("../branch/getProperties", { key: branchKey, properties: properties }, callback);
 }
 
 function createBranch(closeId, txtNameId, gradesFlagChkId) {
+	if (checkRequiredFieldsAndMarkAsMissing(closeId, [txtNameId])) {
+		return;
+	}
+	
 	var branchName = dojo.byId(txtNameId).value;
 	var branchType = "";
 	if (dojo.byId(gradesFlagChkId).checked) {
@@ -79,7 +67,7 @@ function createBranch(closeId, txtNameId, gradesFlagChkId) {
 		branchType = "ALPHA_NUMERICAL";
 	}
 	
-	sendGetRequest("../branch/create", {
+	sendPostRequest("../branch/create", {
 		classKey: gradePageClassKey,
 		keys: ['pBranchName', 'pBranchType'],
 		values: [branchName, branchType]
@@ -88,7 +76,7 @@ function createBranch(closeId, txtNameId, gradesFlagChkId) {
 		loadBranches();
 	}, function(errorJson) {
 		if (errorJson.errorCode == errorCodesMap.OBJECT_ALREADY_EXISTS) {
-			alert('Une branche avec le même nom existe déjà dans cette classe');
+			displayMessageDialog('Une branche avec le même nom existe déjà dans cette classe');
 		}
 	});
 };

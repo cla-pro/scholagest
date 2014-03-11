@@ -1,0 +1,55 @@
+- Handle the modal (close, op. style)
+OK - Text fields with placeholder
+OK - Focus for the text fields
+OK - Login page
+OK -- Login/User information
+OK - Logout page
+OK - Expired session page
+- Display old years of the students
+OK - Set the token or user in cookie
+OK - Assign students/teachers to class
+OK -- Create the studentResults?
+OK - Handle means for the branches
+OK -- Update the model to have isNumeric in branch and display the grade
+OK -- Automatically update them if isNumeric=true and some of the grades have been updated or the coeff (ember)
+OK --- When edited, the coeff become strings instead of numbers
+OK --- If a result is not set, the grade must be ignored.
+OK -- Save the means if isNumeric=false
+- Handle year means
+-- Add a column in the results
+-- Add a item into the list of period to display the mean(s) (period mean included)?
+- Object creation:
+-- Handle the problem with the new element that has no ID but is displayed in the list. (http://stackoverflow.com/questions/14705124/creating-a-record-with-ember-js-ember-data-rails-and-handling-list-of-record)
+OK -- Student
+OK -- Teacher
+OK -- Class
+OK --- On class creation, automatically create X periods
+OK -- Branch
+OK --- On branch creation, automatically create X branchPeriods
+OK -- Exam
+OK - Handle year (start/stop)
+OK - Update of objects:
+OK -- Year (name)
+OK -- Student (values)
+OK -- Teacher (values)
+OK -- Class (name, students, teachers)
+OK -- Branch (name)
+OK -- Exam (name, coeff)
+OK -- Result (grade)
+--- If the student is no more active in this class, do not allow to set values to ungraded exams or at least display it differently
+- Profiles
+OK -- Get profile from the server
+OK -- Create Controllers (Array and Object) that provides method to get the role (isAdmin, isNotAdmin, etc.)
+--- Improve the code to avoid the code duplication
+OK -- Display label if only read access and display text fields if read/write access
+OK --- Student (text fields if in his class)
+OK --- Teacher (text field if its own data)
+OK --- Class
+OK -- Hide unallowed buttons (create ..., etc.)
+OK --- Student (except for student of my class)
+OK --- Teacher (except for myself)
+OK --- Year
+OK --- Class
+OK --- Period (only class teacher can)
+OK --- Branch (only class teacher can)
+OK --- Exams (only class teacher can)

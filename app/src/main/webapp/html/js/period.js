@@ -1,8 +1,8 @@
 function callGetPeriodsInfo(periods, properties, callback) {
-	sendGetRequest("../period/getPropertiesForList", { periodKeys: periods, properties: properties }, callback)
+	sendPostRequest("../period/getPeriodsInfo", { keys: periods, properties: properties }, callback)
 };
 function getPeriodMeans(periodKey, students, callback) {
-	sendGetRequest("../period/getMeans", { studentKeys: students, periodKey: periodKey }, callback);
+	sendPostRequest("../period/getMeans", { studentKeys: students, periodKey: periodKey }, callback);
 };
 function getPeriodsInfo(periods, branchKey, classKey, yearKey, divName, isBranchNumerical) {
 	callGetPeriodsInfo(periods, ["pPeriodName"], function(periods) {
@@ -55,7 +55,7 @@ function getBranchMean(yearMeanDiv, yearKey, classKey, branchKey, isBranchNumeri
         var students = classInfo.properties["pClassStudents"].value;
         
         getStudentsInfo(students, ["pStudentFirstName", "pStudentLastName"], function(studentsInfo) {
-            sendGetRequest("../branch/getMeans", { studentKeys: students, branchKey: branchKey, yearKey: yearKey }, function(means) {
+            sendPostRequest("../branch/getMeans", { studentKeys: students, branchKey: branchKey }, function(means) {
                 var table = dojo.create("table", {
                     style: "border: 1px black solid"
                 }, yearMeanDiv);
@@ -118,7 +118,7 @@ function saveBranchMeans(tableDom, yearKey, classKey, branchKey, isBranchNumeric
         }
         
         if (hasErrors) {
-            alert('Erreurs dans les notes.');
+        	displayMessageDialog('Erreurs dans les notes.');
         } else {
             sendSaveGradesRequest(yearKey, classKey, branchKey, null, grades, {}, branchMeans);
         }
@@ -273,7 +273,7 @@ function saveGrades(tableDom, yearKey, classKey, branchKey, periodKey, students,
 		}
 		
 		if (hasErrors) {
-			alert('Erreurs dans les notes.');
+			displayMessageDialog('Erreurs dans les notes.');
 		} else {
 			sendSaveGradesRequest(yearKey, classKey, branchKey, periodKey, grades, periodMeans, {});
 		}

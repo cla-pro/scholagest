@@ -3,6 +3,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
+<script src="../../jquery-1.10.2.js"></script>
+<script src="../../handlebars-1.1.2.js"></script>
+<!-- <script src="../../ember.js"></script> -->
 <script type="text/javascript">
     var dojoConfig = {
         parseOnLoad: true
@@ -38,6 +41,27 @@
         </span>
     </div>
     
+    <div id="messageDialog" data-dojo-type="dijit.Dialog" title="Information">
+        <table>
+            <tr>
+                <td><label id="lblMessageDialog"></label></td>
+            </tr>
+            <tr>
+                <td align="center"><button onclick="dijit.byId('messageDialog').hide()">Ok</button>
+            </tr>
+        </table>
+    </div>
+    <div id="messageConfirmDialog" data-dojo-type="dijit.Dialog" title="Question">
+        <table>
+            <tr>
+                <td><label id="lblMessageConfirmDialog"></label></td>
+            </tr>
+            <tr>
+                <td align="center"><button id="msgConfirmDialogOk">Oui</button>
+                <td align="center"><button onclick="dijit.byId('messageConfirmDialog').hide()">Non</button>
+            </tr>
+        </table>
+    </div>
     <div id="scholagestContent" style="height: 100%"></div>
 </body>
 </html>

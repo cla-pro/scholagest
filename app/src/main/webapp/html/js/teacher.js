@@ -1,12 +1,12 @@
 var selectedTeacherKey = null;
 
 function getTeacherInfo(teacherKey) {
-	sendGetRequest("../teacher/getProperties", { teacherKey: teacherKey }, function(info) {
+	sendPostRequest("../teacher/getProperties", { key: teacherKey }, function(info) {
 		var domId = "teacher-data";
 		clearDOM(domId);
 
 		var base = dojo.byId(domId);
-		createInfoHtmlTable(base, info.properties);
+		createInfoHtmlTable(base, info.properties, info.writable);
 		
 		selectedTeacherKey = teacherKey;
 
@@ -24,7 +24,7 @@ function getTeacherInfo(teacherKey) {
 };
 function resetPassword(teacherKey) {
 	if (window.confirm('Etes vous sûr de vouloir réinitialiser le mot de passe?')) {
-		sendPostRequest("../user/resetPassword", { teacherKey : teacherKey }, function(info) { alert("Mot de passe réinitialisé"); });
+		sendPostRequest("../user/resetPassword", { teacherKey : teacherKey }, function(info) { displayMessageDialog("Mot de passe réinitialisé"); });
     }
 };
 function openChangePasswordDialog(teacherKey) {
@@ -32,16 +32,22 @@ function openChangePasswordDialog(teacherKey) {
 	changePasswordDialog.teacherKey = teacherKey;
 	changePasswordDialog.show();
 };
-function saveNewPassword(newPassword, repeatedNewPassword) {
+function saveNewPassword(dialogId, newPassword, repeatedNewPassword) {
+	if (checkRequiredFieldsAndMarkAsMissing(dialogId, ["txtNewPassword", "txtNewPasswordRepeat"])) {
+		return;
+	}
+	
 	var changePasswordDialog = dijit.byId("changePasswordDialog");
 	var teacherKey = changePasswordDialog.teacherKey;
 
-	if (newPassword != repeatedNewPassword) {
-		alert("Le mot de passe n'a pas été répété correctement");
+	if (isEmpty(newPassword)) {
+		displayMessageDialog("Le mot de passe ne peut pas être vide");
+	} else if (newPassword != repeatedNewPassword) {
+		displayMessageDialog("Le mot de passe n'a pas été répété correctement");
 	} else {
 		resetDiv(changePasswordDialog.containerNode);
 		changePasswordDialog.hide();
-		sendPostRequest("../user/setPassword", { teacherKey : teacherKey, password: newPassword }, function(info) { alert("Mot de passe modifié"); });
+		sendPostRequest("../user/setPassword", { teacherKey : teacherKey, password: newPassword }, function(info) { displayMessageDialog("Mot de passe modifié"); });
 	}
 };
 function setTeacherInfo(teacherKey) {
@@ -50,19 +56,11 @@ function setTeacherInfo(teacherKey) {
 };
 
 function selectTeacher(teacherKey) {
-//	var list = dojo.byId('teacher-search-list');
-//	var old = list.selectedTeacher;
-//	if (old != null)
-//		old.className = 'search-list-item';
-//
-//	this.className = 'search-list-item-selected';
-//	list.selectedTeacher = this;
-//
 	getTeacherInfo(teacherKey);
 };
 
 function getTeacherList(callback) {
-	sendGetRequest("../teacher/getTeachers", { properties: ["pTeacherLastName", "pTeacherFirstName"] }, callback);
+	sendPostRequest("../teacher/getTeachers", { properties: ["pTeacherLastName", "pTeacherFirstName"] }, callback);
 };
 
 function loadTeachers() {
@@ -76,10 +74,14 @@ function loadTeachers() {
 };
 
 function getTeachersInfo(teacherList, properties, callback) {
-	sendGetRequest("../teacher/getTeachersInfo", { teachers: teacherList, properties: properties }, callback);
+	sendPostRequest("../teacher/getTeachersInfo", { keys: teacherList, properties: properties }, callback);
 };
 
 function createTeacher(closeId, teacherTypeSelectId, txtIds) {
+	if (checkRequiredFieldsAndMarkAsMissing(closeId, txtIds)) {
+		return;
+	}
+	
 	var keys = [];
 	var values = [];
 	for (var id in txtIds) {
@@ -97,7 +99,7 @@ function createTeacher(closeId, teacherTypeSelectId, txtIds) {
 	var teacherTypeSelect = dojo.byId(teacherTypeSelectId);
 	var teacherType = teacherTypeSelect.options[teacherTypeSelect.selectedIndex].value;
 
-	sendGetRequest("../teacher/create", { keys: keys, values: values, teacherType: teacherType }, function(info) { loadTeachers(); })
+	sendPostRequest("../teacher/create", { keys: keys, values: values, teacherType: teacherType }, function(info) { loadTeachers(); })
 
 	if (closeId != null) {
 		var dialog = dijit.byId(closeId);

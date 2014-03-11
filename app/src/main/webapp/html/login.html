@@ -4,9 +4,9 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <script type="text/javascript">
-    var dojoConfig = {
-        parseOnLoad: true
-    };
+	var dojoConfig = {
+		parseOnLoad : true
+	};
 </script>
 <script src="../../dojo/1.8.1/dojo/dojo.js"></script>
 <script type="text/javascript">
@@ -17,53 +17,76 @@
 </head>
 <body>
 	<div class="header">
-        <img src="images/scholagest-logo1-2.png" class="app-logo" />
+		<img src="images/scholagest-logo1-2.png" class="app-logo" />
 	</div>
-	
+
 	<script type="text/javascript">
 		function authenticate() {
 			var username = document.getElementById('txtUsername').value;
 			var password = document.getElementById('txtPassword').value;
-			
+
 			if (username == '') {
-                dojo.byId('lblLoginError').innerHTML = 'Vous devez insérer un nom d\'utilisateur';
-			    return;
+				dojo.byId('lblLoginError').innerHTML = 'Vous devez insérer un nom d\'utilisateur';
+				return;
 			}
-			
+
 			var xhrArgs = {
-			    url: "../services/user/authenticate",
-			    preventCash: true,
-			    content: {username: username, password: password},
-			    handleAs: "json",
-			    load: function(data) {
-			    	if (data.errorCode == null) {
-			    		//dojo.cookie("scholagest_token", data.token);
-			    		window.location = unescape(data.nextpage.replace(/\+/g, " "));
-			    	}
-			    	else {
-			    	    if (data.errorCode == 1) {
-			    	        dojo.byId('lblLoginError').innerHTML = 'Nom d\'utilisateur ou mot de passe incorrect';
-			    	    }
-			    	}
-			    },
-			    error: function(error) {
-			    	alert("error = " + error);
-			    }
+				url : "../services/user/authenticate",
+				preventCache : true,
+				postData : dojo.toJson({
+					username : username,
+					password : password
+				}),
+				handleAs : "json",
+				load : function(data) {
+					if (data.errorCode == null) {
+						//window.location = unescape(data.nextpage.replace(/\+/g,
+						//		" "));
+						getPageWithPost(data.token, unescape(data.nextpage.replace(/\+/g, " ")));
+					} else {
+						if (data.errorCode == 1) {
+							dojo.byId('lblLoginError').innerHTML = 'Nom d\'utilisateur ou mot de passe incorrect';
+						}
+					}
+				},
+				error : function(error) {
+					alert("error = " + error);
+				}
 			}
+
+			var deferred = dojo.xhrPost(xhrArgs);
+		};
+		function getPageWithPost(token, url) {
+			var myForm = document.createElement("form");
+			myForm.method = "post";
+			myForm.action = url;
 			
-			var deferred = dojo.xhrGet(xhrArgs);
-		}
+			var myInput = document.createElement("input");
+			myInput.setAttribute("name", "token");
+			myInput.setAttribute("value", token);
+			myForm.appendChild(myInput);
+			
+			document.body.appendChild(myForm);
+			myForm.submit();
+			document.body.removeChild(myForm);
+		};
 	</script>
 	<div align="center">
 		<table style="border: solid 1px black">
 			<tr>
 				<td>Nom d'utilisateur</td>
-				<td><input id="txtUsername" type="text" onKeyPress="if (event.keyCode == 13) authenticate();" autofocus /></td>
-			</tr><tr>
+				<td><input id="txtUsername" type="text"
+					onKeyPress="if (event.keyCode == 13) authenticate();" autofocus /></td>
+			</tr>
+			<tr>
 				<td>Mot de passe</td>
-				<td><input id="txtPassword" type="password" onKeyPress="if (event.keyCode == 13) authenticate();" /></td>
-			</tr><tr>
-				<td colspan="2"><align="right"><button onclick="authenticate()">Login</button></align></td>
+				<td><input id="txtPassword" type="password"
+					onKeyPress="if (event.keyCode == 13) authenticate();" /></td>
+			</tr>
+			<tr>
+				<td colspan="2"><align="right">
+					<button onclick="authenticate()">Login</button>
+					</align></td>
 			</tr>
 		</table>
 	</div>

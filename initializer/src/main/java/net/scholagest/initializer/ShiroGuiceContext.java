@@ -1,6 +1,6 @@
 package net.scholagest.initializer;
 
-import net.scholagest.shiro.RealmAuthenticationAndAuthorization;
+import net.scholagest.old.shiro.RealmAuthenticationAndAuthorization;
 
 import org.apache.shiro.guice.ShiroModule;
 

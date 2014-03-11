@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<changeset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="file:///d:/programming/eclipse-workspace/scholagest/initializer/src/main/xjb/xsd/db-migration.xsd">
+    <id>change_set_0_7_0_to_0_8_0</id>
+    <updates>
+        <renameProperty id="renameTeacherFirstName"
+            typeName="http://scholagest.net#tTeacher" name="pTeacherFirstName"
+            newName="pTeacherLastName" />
+    </updates>
+</changeset>

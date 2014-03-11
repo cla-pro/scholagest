@@ -2,12 +2,14 @@ package net.scholagest.utils;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import net.scholagest.database.DatabaseException;
-import net.scholagest.database.IDatabase;
-import net.scholagest.database.ITransaction;
+import net.scholagest.old.database.DatabaseException;
+import net.scholagest.old.database.DbRow;
+import net.scholagest.old.database.IDatabase;
+import net.scholagest.old.database.ITransaction;
 
 public class InMemoryDatabase implements IDatabase {
     public InMemoryDatabase() {
@@ -81,12 +83,15 @@ public class InMemoryDatabase implements IDatabase {
         }
 
         @Override
-        public Map<String, Object> getRow(String key) throws DatabaseException {
-            Map<String, Object> columns = values.get(key);
-            if (columns == null) {
-                return new HashMap<>();
-            }
-            return columns;
+        public Iterator<DbRow> getRowsFromKey(String startKey, int size) {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public Iterator<DbRow> getAllRows() throws DatabaseException {
+            // TODO Auto-generated method stub
+            return null;
         }
 
         public String getKeyspace() {

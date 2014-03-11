@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.scholagest.services.kdom.KSet;
+import net.scholagest.old.services.kdom.KSet;
 
 public class JsonObject {
     private Map<String, Object> json = null;

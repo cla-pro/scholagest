@@ -1,11 +1,15 @@
 var selectedStudentKey = null;
 function callGetStudentGrades(students, exams, yearKey, callback) {
-	sendGetRequest("../student/getStudentsGrades", { studentKeys: students, examKeys: exams, yearKey: yearKey }, callback);
+	sendPostRequest("../student/getStudentsGrades", { studentKeys: students, examKeys: exams, yearKey: yearKey }, callback);
 };
 function createStudent(closeId, txtIds) {
+	if (checkRequiredFieldsAndMarkAsMissing(closeId, txtIds)) {
+		return;
+	}
+	
 	var keyValues = getKeysAndValues(txtIds);
 
-	sendGetRequest("../student/create", { keys: keyValues.keys, values: keyValues.values }, function(info) { loadStudents(); });
+	sendPostRequest("../student/create", { keys: keyValues.keys, values: keyValues.values }, function(info) { loadStudents(); });
 
 	if (closeId != null) {
 		var dialog = dijit.byId(closeId);
@@ -14,10 +18,10 @@ function createStudent(closeId, txtIds) {
 	}
 };
 function getStudentList(callback) {
-	sendGetRequest("../student/getStudents", { properties: ["pStudentLastName", "pStudentFirstName"] }, callback);
+	sendPostRequest("../student/getStudents", { properties: ["pStudentLastName", "pStudentFirstName"] }, callback);
 };
 function getStudentsInfo(studentList, properties, callback) {
-	sendGetRequest("../student/getStudentsInfo", { students: studentList, properties: properties }, callback);
+	sendPostRequest("../student/getStudentsInfo", { keys: studentList, properties: properties }, callback);
 };
 function loadStudents() {
 	getStudentList(function(students) {
@@ -29,60 +33,45 @@ function loadStudents() {
 	});
 };
 function selectStudent(studentKey) {
-	var xhrArgs = {
-			url: "../student/getProperties",
-			preventCache: true,
-			content: {token: dojo.cookie("scholagest_token"),
-				studentKey: studentKey},
-			handleAs: "json",
-			load: function(data) {
-				if (data.errorCode == null) {
-					selectedStudentKey = studentKey;
-					
-					var domId = 'student-data';
-					clearDOM(domId);
-					var base = dojo.byId(domId);
+	sendPostRequest("../student/getProperties", { key: studentKey }, function(info) {
+		selectedStudentKey = studentKey;
+		
+		var domId = 'student-data';
+		clearDOM(domId);
+		var base = dojo.byId(domId);
 
-					//Create doms for the groups and request for further info for these groups.
-					var properties = data.info.properties;
-					for (var propertyName in properties) {
-						var property = properties[propertyName];
-						if (property.isHtmlGroup != null && property.isHtmlGroup == true) {
-							if (propertyName == 'pStudentPersonalInfo') {
-								createHtmlBaseGroup(base, property.displayText, "student-personal-info");
-								getStudentPersonalInfo(studentKey);
-							}
-							else {
-								createHtmlBaseGroup(base, property.displayText, "student-medical-info");
-								getStudentMedicalInfo(studentKey);
-							}
-						}
-					}
+		//Create doms for the groups and request for further info for these groups.
+		var properties = info.properties;
+		for (var propertyName in properties) {
+			var property = properties[propertyName];
+			if (property.isHtmlGroup != null && property.isHtmlGroup == true) {
+				if (propertyName == 'pStudentPersonalInfo') {
+					createHtmlBaseGroup(base, property.displayText, "student-personal-info");
+					getStudentPersonalInfo(studentKey, info.writable);
 				}
 				else {
-					handleServiceError(data);
+					createHtmlBaseGroup(base, property.displayText, "student-medical-info");
+					getStudentMedicalInfo(studentKey, info.writable);
 				}
-			},
-			error: function(error) {
-				alert("error = " + error);
 			}
-	}
-
-	var deferred = dojo.xhrGet(xhrArgs);
+		}
+	});
 };
-function getStudentPersonalInfo(studentKey) {
-	getStudentSubInfo(studentKey, "getPersonalProperties", "setPersonalProperties", "student-personal-info");
+function getStudentPersonalInfo(studentKey, writable) {
+	getStudentSubInfo(studentKey, "getPersonalProperties", "setPersonalProperties", "student-personal-info", writable);
 }
-function getStudentMedicalInfo(studentKey) {
-	getStudentSubInfo(studentKey, "getMedicalProperties", "setMedicalProperties", "student-medical-info");
+function getStudentMedicalInfo(studentKey, writable) {
+	getStudentSubInfo(studentKey, "getMedicalProperties", "setMedicalProperties", "student-medical-info", writable);
 }
-function getStudentSubInfo(studentKey, getInfoServiceName, setInfoServiceName, domId) {
-	sendGetRequest("../student/" + getInfoServiceName, { studentKey: studentKey }, function(info) {
+function getStudentSubInfo(studentKey, getInfoServiceName, setInfoServiceName, domId, writable) {
+	sendPostRequest("../student/" + getInfoServiceName, { key: studentKey }, function(info) {
 		var base = dojo.byId(domId + "-content-table");
-		createInfoHtmlTable(base, info.properties);
+		createInfoHtmlTable(base, info.properties, true);
 		
-		var save = dojo.create("button",
-				{type: "button", onclick:setStudentInfo(studentKey, domId + "-content-table", setInfoServiceName), innerHTML: "Enregistrer"}, base);
+		if (writable) {
+			var save = dojo.create("button",
+					{type: "button", onclick:setStudentInfo(studentKey, domId + "-content-table", setInfoServiceName), innerHTML: "Enregistrer"}, base);
+		}
 	});
 }
 function setStudentInfo(studentKey, domId, webServiceName) {

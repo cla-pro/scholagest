@@ -4,8 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Map;
 
-import net.scholagest.managers.ontology.types.DBSet;
-import net.scholagest.namespace.AuthorizationRolesNamespace;
+import net.scholagest.old.managers.ontology.types.DBSet;
+import net.scholagest.old.namespace.AuthorizationRolesNamespace;
 
 import org.apache.shiro.subject.Subject;
 import org.mockito.Mockito;
