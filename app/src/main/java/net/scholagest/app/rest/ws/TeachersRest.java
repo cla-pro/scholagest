@@ -1,11 +1,10 @@
 package net.scholagest.app.rest.ws;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -15,70 +14,85 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import net.scholagest.app.rest.ws.authorization.CheckAuthorization;
-import net.scholagest.app.rest.ws.objects.Teacher;
-import net.scholagest.app.rest.ws.objects.TeacherDetail;
-import net.scholagest.app.rest.ws.objects.Teachers;
+import net.scholagest.app.rest.ws.converter.TeacherJsonConverter;
+import net.scholagest.app.rest.ws.objects.TeacherDetailJson;
+import net.scholagest.app.rest.ws.objects.TeacherJson;
+import net.scholagest.object.Teacher;
+import net.scholagest.service.TeacherServiceLocal;
 
 import com.google.inject.Inject;
 
 @Path("/teachers")
 public class TeachersRest {
-    public static Map<String, Teacher> teachers = new HashMap<>();
-
-    static {
-        teachers.put("1", new Teacher("1", "Cédric", "Lavanchy", "1"));
-        teachers.put("2", new Teacher("2", "Valérie", "Parvex", "2"));
-    }
+    private final TeacherServiceLocal teacherService;
 
     @Inject
-    public TeachersRest() {}
+    public TeachersRest(final TeacherServiceLocal teacherService) {
+        this.teacherService = teacherService;
+    }
 
     @CheckAuthorization
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Teachers getTeachers() {
-        return new Teachers(new ArrayList<Teacher>(teachers.values()));
+    public Map<String, Object> getTeachers() {
+        final TeacherJsonConverter converter = new TeacherJsonConverter();
+
+        final List<Teacher> teachers = teacherService.getTeachers();
+        final List<TeacherJson> teachersJson = converter.convertToTeacherJson(teachers);
+
+        final Map<String, Object> response = new HashMap<>();
+        response.put("teachers", teachersJson);
+
+        return response;
     }
 
     @CheckAuthorization
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void saveTeacher(@PathParam("id") final String id, final Map<String, Teacher> teacher) {
-        mergeTeachers(id, teacher.get("teacher"));
-    }
+    public Map<String, TeacherJson> saveTeacher(@PathParam("id") final String id, final Map<String, TeacherJson> payload) {
+        final TeacherJsonConverter converter = new TeacherJsonConverter();
 
-    private void mergeTeachers(final String id, final Teacher teacher) {
-        final Teacher toBeMerged = teachers.get(id);
+        final TeacherJson teacherJson = payload.get("teacher");
+        final Teacher teacher = converter.convertToTeacher(teacherJson);
 
-        toBeMerged.setFirstName(teacher.getFirstName());
-        toBeMerged.setLastName(teacher.getLastName());
+        teacherService.saveTeacher(id, teacher);
+
+        return payload;
     }
 
     @CheckAuthorization
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Map<String, Object> createTeacher(final Map<String, Teacher> payload) {
-        final Teacher teacher = payload.get("teacher");
-        final String id = IdHelper.getNextId(teachers.keySet());
-        teacher.setId(id);
-        teachers.put(id, teacher);
+    public Map<String, Object> createTeacher(final Map<String, TeacherJson> payload) {
+        final TeacherJsonConverter converter = new TeacherJsonConverter();
 
-        final String detailId = IdHelper.getNextId(TeacherDetailsRest.teacherDetails.keySet());
-        final TeacherDetail teacherDetail = new TeacherDetail(detailId, null, null, null);
-        TeacherDetailsRest.teacherDetails.put(detailId, teacherDetail);
+        final TeacherJson receivedTeacherJson = payload.get("teacher");
+        final Teacher receivedTeacher = converter.convertToTeacher(receivedTeacherJson);
 
-        final Map<String, Object> response = new HashMap<String, Object>();
-        response.put("teacher", teacher);
-        response.put("teacherDetail", teacherDetail);
+        final Teacher createdTeacher = teacherService.createTeacher(receivedTeacher);
+        final TeacherJson createdTeacherJson = converter.convertToTeacherJson(createdTeacher);
+        final TeacherDetailJson createdTeacherDetailJson = converter.convertToTeacherDetailJson(createdTeacher.getDetail());
 
+        final Map<String, Object> response = new HashMap<>();
+        response.put("teacher", createdTeacherJson);
+        response.put("teacherDetail", createdTeacherDetailJson);
         return response;
-    }
-
-    @CheckAuthorization
-    @Path("/{id}")
-    @DELETE
-    public void deleteTeacher(@PathParam("id") final String id) {
-        teachers.remove(id);
+        // final TeacherJson teacher = payload.get("teacher");
+        // final String id = IdHelper.getNextId(teachers.keySet());
+        // teacher.setId(id);
+        // teachers.put(id, teacher);
+        //
+        // final String detailId =
+        // IdHelper.getNextId(TeacherDetailsRest.teacherDetails.keySet());
+        // final TeacherDetailJson teacherDetail = new
+        // TeacherDetailJson(detailId, null, null, null);
+        // TeacherDetailsRest.teacherDetails.put(detailId, teacherDetail);
+        //
+        // final Map<String, Object> response = new HashMap<String, Object>();
+        // response.put("teacher", teacher);
+        // response.put("teacherDetail", teacherDetail);
+        //
+        // return response;
     }
 }

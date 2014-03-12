@@ -1,13 +1,13 @@
 package net.scholagest.app.rest.ws.objects;
 
-public class Teacher extends Base {
+public class TeacherJson extends Base {
     private String firstName;
     private String lastName;
     private String detail;
 
-    public Teacher() {}
+    public TeacherJson() {}
 
-    public Teacher(final String id, final String firstName, final String lastName, final String detail) {
+    public TeacherJson(final String id, final String firstName, final String lastName, final String detail) {
         super(id);
         this.firstName = firstName;
         this.lastName = lastName;
@@ -32,5 +32,9 @@ public class Teacher extends Base {
 
     public String getDetail() {
         return detail;
+    }
+
+    public void setDetail(final String detail) {
+        this.detail = detail;
     }
 }

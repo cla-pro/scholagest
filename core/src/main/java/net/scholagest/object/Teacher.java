@@ -1,0 +1,44 @@
+package net.scholagest.object;
+
+public class Teacher extends Base {
+    private String firstName;
+    private String lastName;
+    private final TeacherDetail detail;
+
+    public Teacher() {
+        this.detail = new TeacherDetail();
+    }
+
+    public Teacher(final Teacher copy) {
+        this.firstName = copy.firstName;
+        this.lastName = copy.lastName;
+        this.detail = new TeacherDetail(copy.detail);
+    }
+
+    public Teacher(final String id, final String firstName, final String lastName, final TeacherDetail detail) {
+        super(id);
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.detail = detail;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(final String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(final String lastName) {
+        this.lastName = lastName;
+    }
+
+    public TeacherDetail getDetail() {
+        return detail;
+    }
+}

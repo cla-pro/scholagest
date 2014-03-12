@@ -11,7 +11,7 @@
     </filter>
     <filter>
         <filter-name>AuthorizationFilter</filter-name>
-        <filter-class>net.scholagest.app.rest.ember.authorization.AuthorizationFilter</filter-class>
+        <filter-class>net.scholagest.app.rest.ws.authorization.AuthorizationFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>AuthorizationFilter</filter-name>

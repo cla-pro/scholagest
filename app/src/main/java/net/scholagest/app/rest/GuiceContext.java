@@ -22,6 +22,8 @@ import net.scholagest.app.rest.ws.authorization.AuthorizationVerifier;
 import net.scholagest.app.rest.ws.authorization.CheckAuthorization;
 import net.scholagest.authorization.AuthorizationInterceptor;
 import net.scholagest.authorization.RolesAndPermissions;
+import net.scholagest.service.TeacherServiceBean;
+import net.scholagest.service.TeacherServiceLocal;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -95,6 +97,7 @@ public class GuiceContext extends GuiceServletContextListener {
                 // bind(RestPeriodService.class);
                 // bind(RestClassService.class);
                 // bind(RestExamService.class);
+                bind(TeacherServiceLocal.class).to(TeacherServiceBean.class);
 
                 bind(LoginRest.class);
                 bind(UsersRest.class);

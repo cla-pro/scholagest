@@ -64,9 +64,7 @@ Scholagest.NewTeacherController = Ember.ObjectController.extend({
                 firstName: content.firstName,
                 lastName: content.lastName
             });
-            teacher.save().then(function() {
-                
-            }, function() {});
+            teacher.save().then(function() {}, function() {});
         }
     }
 });

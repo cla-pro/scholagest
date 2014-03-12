@@ -1,4 +1,4 @@
-package net.scholagest.app.rest.ws.objects;
+package net.scholagest.object;
 
 public class TeacherDetail extends Base {
     private String address;
@@ -6,6 +6,12 @@ public class TeacherDetail extends Base {
     private String phone;
 
     public TeacherDetail() {}
+
+    public TeacherDetail(final TeacherDetail copy) {
+        this.address = copy.address;
+        this.email = copy.email;
+        this.phone = copy.phone;
+    }
 
     public TeacherDetail(final String id, final String address, final String email, final String phone) {
         super(id);
