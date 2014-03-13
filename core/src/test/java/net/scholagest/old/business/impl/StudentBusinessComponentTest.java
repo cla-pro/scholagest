@@ -20,7 +20,6 @@ import java.util.UUID;
 
 import net.scholagest.exception.ScholagestException;
 import net.scholagest.old.business.IStudentBusinessComponent;
-import net.scholagest.old.business.impl.StudentBusinessComponent;
 import net.scholagest.old.managers.IBranchManager;
 import net.scholagest.old.managers.IExamManager;
 import net.scholagest.old.managers.IPeriodManager;
@@ -36,6 +35,7 @@ import net.scholagest.utils.AbstractTestWithTransaction;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -76,12 +76,12 @@ public class StudentBusinessComponentTest extends AbstractTestWithTransaction {
         when(studentManager.getStudents()).thenReturn(
                 new HashSet<>(Arrays.asList(BaseObjectMock.createStudentObject(STUDENT_KEY, new HashMap<String, Object>()))));
 
-        HashMap<String, Object> periodProperties = new HashMap<String, Object>();
+        final HashMap<String, Object> periodProperties = new HashMap<String, Object>();
         periodProperties.put(CoreNamespace.pPeriodExams, new DBSet(transaction, UUID.randomUUID().toString()));
         when(periodManager.getPeriodProperties(anyString(), anySetOf(String.class))).thenReturn(
                 BaseObjectMock.createPeriodObject(UUID.randomUUID().toString(), periodProperties));
 
-        HashMap<String, Object> branchProperties = new HashMap<String, Object>();
+        final HashMap<String, Object> branchProperties = new HashMap<String, Object>();
         branchProperties.put(CoreNamespace.pBranchPeriods, new DBSet(transaction, UUID.randomUUID().toString()));
         when(branchManager.getBranchProperties(anyString(), anySetOf(String.class))).thenReturn(
                 BaseObjectMock.createBranchObject(UUID.randomUUID().toString(), branchProperties));
@@ -93,7 +93,7 @@ public class StudentBusinessComponentTest extends AbstractTestWithTransaction {
     }
 
     private Map<String, Object> createStudentPersonalProperties() {
-        Map<String, Object> personalProperties = new HashMap<String, Object>();
+        final Map<String, Object> personalProperties = new HashMap<String, Object>();
 
         personalProperties.put("pStudentLastName", "Dupont");
         personalProperties.put("pStudentFirstName", "Gilles");
@@ -102,7 +102,7 @@ public class StudentBusinessComponentTest extends AbstractTestWithTransaction {
     }
 
     private Map<String, Object> createStudentMedicalProperties() {
-        Map<String, Object> medicalProperties = new HashMap<String, Object>();
+        final Map<String, Object> medicalProperties = new HashMap<String, Object>();
 
         medicalProperties.put("pStudentAlergy", "RAS");
 
@@ -111,8 +111,8 @@ public class StudentBusinessComponentTest extends AbstractTestWithTransaction {
 
     @Test
     public void testCreateStudent() throws Exception {
-        Map<String, Object> properties = createStudentPersonalProperties();
-        BaseObject studentKey = testee.createStudent(properties);
+        final Map<String, Object> properties = createStudentPersonalProperties();
+        final BaseObject studentKey = testee.createStudent(properties);
 
         assertEquals(STUDENT_KEY, studentKey.getKey());
         verify(studentManager).createStudent(properties);
@@ -120,8 +120,8 @@ public class StudentBusinessComponentTest extends AbstractTestWithTransaction {
 
     @Test
     public void testUpdateStudentProperties() throws Exception {
-        Map<String, Object> personalProperties = createStudentPersonalProperties();
-        Map<String, Object> medicalProperties = createStudentPersonalProperties();
+        final Map<String, Object> personalProperties = createStudentPersonalProperties();
+        final Map<String, Object> medicalProperties = createStudentPersonalProperties();
         testee.updateStudentProperties(STUDENT_KEY, personalProperties, medicalProperties);
 
         verify(studentManager).setMedicalProperties(STUDENT_KEY, medicalProperties);
@@ -130,8 +130,8 @@ public class StudentBusinessComponentTest extends AbstractTestWithTransaction {
 
     @Test
     public void testGetStudentPersonalProperties() throws Exception {
-        Map<String, Object> mockProperties = createStudentPersonalProperties();
-        BaseObject personalProperties = testee.getStudentPersonalProperties(STUDENT_KEY, mockProperties.keySet());
+        final Map<String, Object> mockProperties = createStudentPersonalProperties();
+        final BaseObject personalProperties = testee.getStudentPersonalProperties(STUDENT_KEY, mockProperties.keySet());
 
         verify(studentManager).getPersonalProperties(STUDENT_KEY, mockProperties.keySet());
 
@@ -140,8 +140,8 @@ public class StudentBusinessComponentTest extends AbstractTestWithTransaction {
 
     @Test
     public void testGetStudentMedicalProperties() throws Exception {
-        Map<String, Object> mockProperties = createStudentMedicalProperties();
-        BaseObject medicalProperties = testee.getStudentMedicalProperties(STUDENT_KEY, mockProperties.keySet());
+        final Map<String, Object> mockProperties = createStudentMedicalProperties();
+        final BaseObject medicalProperties = testee.getStudentMedicalProperties(STUDENT_KEY, mockProperties.keySet());
 
         verify(studentManager).getMedicalProperties(STUDENT_KEY, mockProperties.keySet());
 
@@ -150,104 +150,104 @@ public class StudentBusinessComponentTest extends AbstractTestWithTransaction {
 
     @Test
     public void testGetStudentsWithProperties() throws Exception {
-        Map<String, Object> personalProperties = createStudentPersonalProperties();
-        Set<BaseObject> studentsWithProperties = testee.getStudentsWithProperties(personalProperties.keySet());
+        final Map<String, Object> personalProperties = createStudentPersonalProperties();
+        final Set<BaseObject> studentsWithProperties = testee.getStudentsWithProperties(personalProperties.keySet());
 
-        Map<String, Object> studentProperties = studentsWithProperties.iterator().next().getProperties();
+        final Map<String, Object> studentProperties = studentsWithProperties.iterator().next().getProperties();
         assertEquals(1, studentsWithProperties.size());
         assertMapEquals(personalProperties, studentProperties);
     }
 
     @Test
     public void testSetStudentGradesInNumericalBranch() throws Exception {
-        BranchObject branchObject = mock(BranchObject.class);
+        final BranchObject branchObject = mock(BranchObject.class);
         when(branchObject.getBranchType()).thenReturn(BranchType.NUMERICAL);
 
-        Map<String, BaseObject> studentGrades = createNumericalGrades();
+        final Map<String, BaseObject> studentGrades = createNumericalGrades();
         testee.setStudentGrades(STUDENT_KEY, studentGrades, YEAR_KEY, CLASS_KEY, BRANCH_KEY, PERIOD_KEY);
 
         verify(studentManager).persistStudentGrade(eq(STUDENT_KEY), eq(YEAR_KEY), eq(studentGrades.keySet().iterator().next()),
                 argThat(new BaseMatcher<BaseObject>() {
                     @Override
-                    public boolean matches(Object item) {
+                    public boolean matches(final Object item) {
                         return ((BaseObject) item).getType().equals(CoreNamespace.tGrade);
                     }
 
                     @Override
-                    public void describeTo(Description description) {}
+                    public void describeTo(final Description description) {}
                 }));
     }
 
     @Test
     public void testSetStudentGradesNullInNumericalBranch() throws Exception {
-        BranchObject branchObject = mock(BranchObject.class);
+        final BranchObject branchObject = mock(BranchObject.class);
         when(branchObject.getBranchType()).thenReturn(BranchType.NUMERICAL);
 
-        Map<String, BaseObject> studentGrades = createNullGrades();
+        final Map<String, BaseObject> studentGrades = createNullGrades();
         testee.setStudentGrades(STUDENT_KEY, studentGrades, YEAR_KEY, CLASS_KEY, BRANCH_KEY, PERIOD_KEY);
 
         verify(studentManager).persistStudentGrade(eq(STUDENT_KEY), eq(YEAR_KEY), eq(studentGrades.keySet().iterator().next()),
                 argThat(new BaseMatcher<BaseObject>() {
                     @Override
-                    public boolean matches(Object item) {
+                    public boolean matches(final Object item) {
                         return ((BaseObject) item).getType().equals(CoreNamespace.tGrade);
                     }
 
                     @Override
-                    public void describeTo(Description description) {}
+                    public void describeTo(final Description description) {}
                 }));
     }
 
     @Test(expected = ScholagestException.class)
     public void testSetStudentNotNumericalGradesInNumericalBranch() throws Exception {
-        BranchObject branchObject = mock(BranchObject.class);
+        final BranchObject branchObject = mock(BranchObject.class);
         when(branchObject.getBranchType()).thenReturn(BranchType.NUMERICAL);
         Mockito.when(branchManager.getBranchProperties(eq(BRANCH_KEY), anySetOf(String.class))).thenReturn(branchObject);
 
-        Map<String, BaseObject> studentGrades = createAlphaNumericalGrades();
+        final Map<String, BaseObject> studentGrades = createAlphaNumericalGrades();
         testee.setStudentGrades(STUDENT_KEY, studentGrades, YEAR_KEY, CLASS_KEY, BRANCH_KEY, PERIOD_KEY);
         fail("Exception expected");
     }
 
     @Test
     public void testSetStudentGradesInAlphaNumericalBranch() throws Exception {
-        BranchObject branchObject = mock(BranchObject.class);
+        final BranchObject branchObject = mock(BranchObject.class);
         when(branchObject.getBranchType()).thenReturn(BranchType.ALPHA_NUMERICAL);
         Mockito.when(branchManager.getBranchProperties(eq(BRANCH_KEY), anySetOf(String.class))).thenReturn(branchObject);
 
-        Map<String, BaseObject> studentGrades = createAlphaNumericalGrades();
+        final Map<String, BaseObject> studentGrades = createAlphaNumericalGrades();
         testee.setStudentGrades(STUDENT_KEY, studentGrades, YEAR_KEY, CLASS_KEY, BRANCH_KEY, PERIOD_KEY);
 
         verify(studentManager).persistStudentGrade(eq(STUDENT_KEY), eq(YEAR_KEY), eq(studentGrades.keySet().iterator().next()),
                 argThat(new BaseMatcher<BaseObject>() {
                     @Override
-                    public boolean matches(Object item) {
+                    public boolean matches(final Object item) {
                         return ((BaseObject) item).getType().equals(CoreNamespace.tGrade);
                     }
 
                     @Override
-                    public void describeTo(Description description) {}
+                    public void describeTo(final Description description) {}
                 }));
     }
 
     @Test
     public void testSetStudentGradesNullInAlphaNumericalBranch() throws Exception {
-        BranchObject branchObject = mock(BranchObject.class);
+        final BranchObject branchObject = mock(BranchObject.class);
         when(branchObject.getBranchType()).thenReturn(BranchType.ALPHA_NUMERICAL);
         Mockito.when(branchManager.getBranchProperties(eq(BRANCH_KEY), anySetOf(String.class))).thenReturn(branchObject);
 
-        Map<String, BaseObject> studentGrades = createNullGrades();
+        final Map<String, BaseObject> studentGrades = createNullGrades();
         testee.setStudentGrades(STUDENT_KEY, studentGrades, YEAR_KEY, CLASS_KEY, BRANCH_KEY, PERIOD_KEY);
 
         verify(studentManager).persistStudentGrade(eq(STUDENT_KEY), eq(YEAR_KEY), eq(studentGrades.keySet().iterator().next()),
                 argThat(new BaseMatcher<BaseObject>() {
                     @Override
-                    public boolean matches(Object item) {
+                    public boolean matches(final Object item) {
                         return ((BaseObject) item).getType().equals(CoreNamespace.tGrade);
                     }
 
                     @Override
-                    public void describeTo(Description description) {}
+                    public void describeTo(final Description description) {}
                 }));
     }
 
@@ -263,10 +263,10 @@ public class StudentBusinessComponentTest extends AbstractTestWithTransaction {
         return createGrades(null);
     }
 
-    private Map<String, BaseObject> createGrades(String gradeValue) {
-        Map<String, BaseObject> grades = new HashMap<>();
+    private Map<String, BaseObject> createGrades(final String gradeValue) {
+        final Map<String, BaseObject> grades = new HashMap<>();
 
-        Map<String, Object> properties = new HashMap<>();
+        final Map<String, Object> properties = new HashMap<>();
         properties.put(CoreNamespace.pGradeValue, gradeValue);
         grades.put(UUID.randomUUID().toString(), BaseObjectMock.createBaseObject(UUID.randomUUID().toString(), CoreNamespace.tGrade, properties));
 
@@ -274,6 +274,7 @@ public class StudentBusinessComponentTest extends AbstractTestWithTransaction {
     }
 
     @Test
+    @Ignore
     public void testStudentBusinessComponent() throws Exception {
         throw new RuntimeException("not yet implemented");
     }

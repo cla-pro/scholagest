@@ -78,21 +78,5 @@ public class TeachersRest {
         response.put("teacher", createdTeacherJson);
         response.put("teacherDetail", createdTeacherDetailJson);
         return response;
-        // final TeacherJson teacher = payload.get("teacher");
-        // final String id = IdHelper.getNextId(teachers.keySet());
-        // teacher.setId(id);
-        // teachers.put(id, teacher);
-        //
-        // final String detailId =
-        // IdHelper.getNextId(TeacherDetailsRest.teacherDetails.keySet());
-        // final TeacherDetailJson teacherDetail = new
-        // TeacherDetailJson(detailId, null, null, null);
-        // TeacherDetailsRest.teacherDetails.put(detailId, teacherDetail);
-        //
-        // final Map<String, Object> response = new HashMap<String, Object>();
-        // response.put("teacher", teacher);
-        // response.put("teacherDetail", teacherDetail);
-        //
-        // return response;
     }
 }

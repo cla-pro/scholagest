@@ -31,9 +31,10 @@ public class AuthorizationInterceptor implements MethodInterceptor {
         // 1. Get the roles and permissions to check
         // 2. Check the permissions
         // 3. Either execute the method or throw an exception (405 not allowed)
+        System.out.println("Enter interceptor");
         final RolesAndPermissions rolesAndPermissions = invocation.getMethod().getAnnotation(RolesAndPermissions.class);
 
-        if (rolesAndPermissions == null && checkRolesAndPermissions(rolesAndPermissions, invocation.getMethod(), invocation.getArguments())) {
+        if (rolesAndPermissions == null || checkRolesAndPermissions(rolesAndPermissions, invocation.getMethod(), invocation.getArguments())) {
             return invocation.proceed();
         } else {
             throw new ScholagestRuntimeException(ScholagestExceptionErrorCode.INSUFFICIENT_PRIVILEGES, "Insufficient privilegies to run the method");

@@ -1,5 +1,7 @@
 package net.scholagest.object;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+
 public class TeacherDetail extends Base {
     private String address;
     private String email;
@@ -42,5 +44,19 @@ public class TeacherDetail extends Base {
 
     public void setPhone(final String phone) {
         this.phone = phone;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object that) {
+        if (!(that instanceof TeacherDetail)) {
+            return false;
+        }
+
+        final TeacherDetail other = (TeacherDetail) that;
+        return new EqualsBuilder().append(getId(), other.getId()).append(address, other.address).append(email, other.email)
+                .append(phone, other.phone).isEquals();
     }
 }
