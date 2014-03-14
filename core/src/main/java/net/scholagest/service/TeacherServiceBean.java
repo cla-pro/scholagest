@@ -32,6 +32,7 @@ public class TeacherServiceBean implements TeacherServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @RolesAndPermissions(roles = {})
     @Override
     public List<Teacher> getTeachers() {
         // TODO filter fields
@@ -41,6 +42,7 @@ public class TeacherServiceBean implements TeacherServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @RolesAndPermissions(roles = {})
     @Override
     public List<Teacher> getTeacher(final List<String> ids) {
         // TODO filter fields
@@ -62,6 +64,10 @@ public class TeacherServiceBean implements TeacherServiceLocal {
     @RolesAndPermissions(roles = { "ADMIN" })
     @Override
     public Teacher createTeacher(final Teacher teacher) {
+        if (teacher == null) {
+            return null;
+        }
+
         return teacherBusiness.createTeacher(teacher);
     }
 
@@ -71,6 +77,10 @@ public class TeacherServiceBean implements TeacherServiceLocal {
     @RolesAndPermissions(roles = { "ADMIN" })
     @Override
     public Teacher saveTeacher(@Permission final String teacherId, final Teacher teacher) {
+        if (teacherId == null || teacher == null) {
+            return null;
+        }
+
         // TODO filter fields
         teacher.setId(teacherId);
         return teacherBusiness.saveTeacher(teacher);
@@ -79,8 +89,13 @@ public class TeacherServiceBean implements TeacherServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @RolesAndPermissions(roles = {})
     @Override
     public TeacherDetail getTeacherDetail(final String id) {
+        if (id == null) {
+            return null;
+        }
+
         // TODO filter fields
         return teacherBusiness.getTeacherDetail(id);
     }
@@ -91,6 +106,10 @@ public class TeacherServiceBean implements TeacherServiceLocal {
     @RolesAndPermissions(roles = { "ADMIN" })
     @Override
     public TeacherDetail saveTeacherDetail(@Permission final String teacherId, final TeacherDetail teacherDetail) {
+        if (teacherId == null || teacherDetail == null) {
+            return null;
+        }
+
         // TODO filter fields
         return teacherBusiness.saveTeacherDetail(teacherId, teacherDetail);
     }

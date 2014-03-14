@@ -8,7 +8,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -24,7 +23,6 @@ import net.scholagest.object.TeacherDetail;
 import net.scholagest.utils.AbstractGuiceContextTest;
 import net.scholagest.utils.ScholagestThreadLocal;
 
-import org.apache.shiro.subject.Subject;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.Test;
@@ -41,22 +39,6 @@ public class TeacherServiceBeanTest extends AbstractGuiceContextTest {
     protected void configureContext(final TestGuiceContext module) {
         module.bind(TeacherBusinessLocal.class).toInstance(teacherBusiness);
         module.bind(TeacherServiceLocal.class).to(TeacherServiceBean.class);
-    }
-
-    private void setAdminSubject() {
-        final Subject subject = mock(Subject.class);
-        when(subject.hasRole(anyString())).thenReturn(true);
-        when(subject.isPermitted(anyString())).thenReturn(true);
-
-        ScholagestThreadLocal.setSubject(subject);
-    }
-
-    private void setNoRightSubject() {
-        final Subject subject = mock(Subject.class);
-        when(subject.hasRole(anyString())).thenReturn(false);
-        when(subject.isPermitted(anyString())).thenReturn(false);
-
-        ScholagestThreadLocal.setSubject(subject);
     }
 
     @Test
@@ -133,9 +115,10 @@ public class TeacherServiceBeanTest extends AbstractGuiceContextTest {
         final Teacher created = new Teacher("id", "FirstName1", "LastName1", new TeacherDetail("id", null, null, null));
         when(teacherBusiness.createTeacher(any(Teacher.class))).thenReturn(created);
 
-        final Teacher response = testee.createTeacher(teacher);
-        assertEquals(created, response);
+        assertNull(testee.createTeacher(null));
+        verify(teacherBusiness, never()).createTeacher(any(Teacher.class));
 
+        assertEquals(created, testee.createTeacher(teacher));
         verify(teacherBusiness).createTeacher(eq(teacher));
     }
 
@@ -149,9 +132,11 @@ public class TeacherServiceBeanTest extends AbstractGuiceContextTest {
         final Teacher saved = new Teacher(id, "FirstName2", "LastName2", new TeacherDetail(id, null, null, null));
         when(teacherBusiness.saveTeacher(any(Teacher.class))).thenReturn(saved);
 
-        final Teacher response = testee.saveTeacher(id, teacher);
-        assertEquals(saved, response);
+        assertNull(testee.saveTeacher(null, new Teacher()));
+        assertNull(testee.saveTeacher("2", null));
+        verify(teacherBusiness, never()).saveTeacher(any(Teacher.class));
 
+        assertEquals(saved, testee.saveTeacher(id, teacher));
         verify(teacherBusiness).saveTeacher(argThat(new BaseMatcher<Teacher>() {
             @Override
             public boolean matches(final Object item) {
@@ -174,12 +159,14 @@ public class TeacherServiceBeanTest extends AbstractGuiceContextTest {
         final TeacherDetail teacherDetail = new TeacherDetail(id, "address", "email", "phone");
         when(teacherBusiness.getTeacherDetail(eq(id))).thenReturn(teacherDetail);
 
-        final TeacherDetail response = testee.getTeacherDetail("1");
-        assertEquals(teacherDetail, response);
-        verify(teacherBusiness).getTeacherDetail(eq(id));
-
         assertNull(testee.getTeacherDetail(null));
+        verify(teacherBusiness, never()).getTeacherDetail(anyString());
+
         assertNull(testee.getTeacherDetail("2"));
+        verify(teacherBusiness).getTeacherDetail(eq("2"));
+
+        assertEquals(teacherDetail, testee.getTeacherDetail(id));
+        verify(teacherBusiness).getTeacherDetail(eq(id));
     }
 
     @Test
@@ -192,9 +179,11 @@ public class TeacherServiceBeanTest extends AbstractGuiceContextTest {
         final TeacherDetail saved = new TeacherDetail(id, "savedA", "savedE", "savedP");
         when(teacherBusiness.saveTeacherDetail(eq(id), any(TeacherDetail.class))).thenReturn(saved);
 
-        final TeacherDetail response = testee.saveTeacherDetail(id, teacherDetail);
-        assertEquals(saved, response);
+        assertNull(testee.saveTeacherDetail(null, new TeacherDetail()));
+        assertNull(testee.saveTeacherDetail("1", null));
+        verify(teacherBusiness, never()).saveTeacherDetail(anyString(), any(TeacherDetail.class));
 
+        assertEquals(saved, testee.saveTeacherDetail(id, teacherDetail));
         verify(teacherBusiness).saveTeacherDetail(eq(id), eq(teacherDetail));
     }
 

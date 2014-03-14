@@ -1,8 +1,12 @@
 package net.scholagest.utils;
 
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import net.scholagest.authorization.AuthorizationInterceptor;
 import net.scholagest.authorization.RolesAndPermissions;
 
+import org.apache.shiro.subject.Subject;
 import org.junit.Before;
 
 import com.google.inject.AbstractModule;
@@ -26,6 +30,22 @@ public abstract class AbstractGuiceContextTest {
     }
 
     protected abstract void configureContext(TestGuiceContext module);
+
+    protected void setAdminSubject() {
+        final Subject subject = mock(Subject.class);
+        when(subject.hasRole(anyString())).thenReturn(true);
+        when(subject.isPermitted(anyString())).thenReturn(true);
+
+        ScholagestThreadLocal.setSubject(subject);
+    }
+
+    protected void setNoRightSubject() {
+        final Subject subject = mock(Subject.class);
+        when(subject.hasRole(anyString())).thenReturn(false);
+        when(subject.isPermitted(anyString())).thenReturn(false);
+
+        ScholagestThreadLocal.setSubject(subject);
+    }
 
     protected class TestGuiceContext extends AbstractModule {
         @Override

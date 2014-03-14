@@ -20,6 +20,8 @@ public class TeacherDetailTest {
         final TeacherDetail teacherDetail4 = new TeacherDetail("1", "address", "email", "phone");
         final TeacherDetail teacherDetail5 = new TeacherDetail("1", "address", "email", "phone");
 
+        assertFalse(teacherDetail1.equals(null));
+        assertFalse(teacherDetail1.equals(new Object()));
         assertFalse(teacherDetail1.equals(teacherDetail2));
         assertFalse(teacherDetail1.equals(teacherDetail3));
         assertFalse(teacherDetail1.equals(teacherDetail4));

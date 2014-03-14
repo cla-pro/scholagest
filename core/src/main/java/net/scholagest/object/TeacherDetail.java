@@ -51,7 +51,9 @@ public class TeacherDetail extends Base {
      */
     @Override
     public boolean equals(final Object that) {
-        if (!(that instanceof TeacherDetail)) {
+        if (that == null) {
+            return false;
+        } else if (!(that instanceof TeacherDetail)) {
             return false;
         }
 

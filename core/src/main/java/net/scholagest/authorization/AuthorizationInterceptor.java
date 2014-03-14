@@ -31,7 +31,6 @@ public class AuthorizationInterceptor implements MethodInterceptor {
         // 1. Get the roles and permissions to check
         // 2. Check the permissions
         // 3. Either execute the method or throw an exception (405 not allowed)
-        System.out.println("Enter interceptor");
         final RolesAndPermissions rolesAndPermissions = invocation.getMethod().getAnnotation(RolesAndPermissions.class);
 
         if (rolesAndPermissions == null || checkRolesAndPermissions(rolesAndPermissions, invocation.getMethod(), invocation.getArguments())) {
@@ -87,6 +86,7 @@ public class AuthorizationInterceptor implements MethodInterceptor {
     private boolean isPermitted(final Method method, final Object[] arguments) {
         final Annotation[][] parameterAnnotations = method.getParameterAnnotations();
 
+        // TODO What if a parameter is null
         for (int i = 0; i < parameterAnnotations.length; i++) {
             final Annotation[] annotations = parameterAnnotations[i];
             if (hasParameterPermission(annotations) && isParameterPermitted(arguments[i])) {

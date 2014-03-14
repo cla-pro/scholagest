@@ -20,6 +20,8 @@ public class TeacherTest {
         final Teacher teacher4 = new Teacher("1", "firstName", "lastName", new TeacherDetail());
         final Teacher teacher5 = new Teacher("1", "firstName", "lastName", new TeacherDetail());
 
+        assertFalse(teacher1.equals(null));
+        assertFalse(teacher1.equals(new Object()));
         assertFalse(teacher1.equals(teacher2));
         assertFalse(teacher1.equals(teacher3));
         assertFalse(teacher1.equals(teacher4));
