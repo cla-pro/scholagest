@@ -1,6 +1,6 @@
 package net.scholagest.app.rest.ws.objects;
 
-public class TeacherJson extends Base {
+public class TeacherJson extends BaseJson {
     private String firstName;
     private String lastName;
     private String detail;

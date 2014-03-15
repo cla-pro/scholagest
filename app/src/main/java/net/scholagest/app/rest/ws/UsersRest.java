@@ -14,7 +14,7 @@ import javax.ws.rs.core.MediaType;
 import net.scholagest.app.rest.ws.authorization.CheckAuthorization;
 import net.scholagest.app.rest.ws.converter.TeacherJsonConverter;
 import net.scholagest.app.rest.ws.objects.TeacherJson;
-import net.scholagest.app.rest.ws.objects.User;
+import net.scholagest.app.rest.ws.objects.UserJson;
 import net.scholagest.object.Teacher;
 import net.scholagest.service.TeacherServiceLocal;
 
@@ -22,11 +22,11 @@ import com.google.inject.Inject;
 
 @Path("/users")
 public class UsersRest {
-    public static Map<String, User> users = new HashMap<>();
+    public static Map<String, UserJson> users = new HashMap<>();
 
     static {
-        users.put("1", new User("1", "admin", "1", "1"));
-        users.put("2", new User("2", "teacher", "2", "2"));
+        users.put("1", new UserJson("1", "admin", "1", "1"));
+        users.put("2", new UserJson("2", "teacher", "2", "2"));
     }
 
     private final TeacherServiceLocal teacherService;
@@ -44,7 +44,7 @@ public class UsersRest {
         final Map<String, Object> toReturn = new HashMap<>();
 
         if (users.containsKey(id)) {
-            final User user = users.get(id);
+            final UserJson user = users.get(id);
             toReturn.put("user", user);
 
             final List<Teacher> teachers = teacherService.getTeacher(Arrays.asList(id));

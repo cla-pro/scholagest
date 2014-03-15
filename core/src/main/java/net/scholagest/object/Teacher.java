@@ -2,6 +2,12 @@ package net.scholagest.object;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 
+/**
+ * Transfer object that represent a teacher. The details are linked.
+ * 
+ * @author CLA
+ * @since 0.13.0
+ */
 public class Teacher extends Base {
     private String firstName;
     private String lastName;

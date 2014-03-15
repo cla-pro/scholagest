@@ -2,6 +2,12 @@ package net.scholagest.object;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
+/**
+ * Transfer object that represent a student. The medical and personal information are linked.
+ * 
+ * @author CLA
+ * @since 0.13.0
+ */
 public class Student extends Base {
     private String id;
     private String firstName;

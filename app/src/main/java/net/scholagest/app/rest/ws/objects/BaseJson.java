@@ -1,11 +1,11 @@
 package net.scholagest.app.rest.ws.objects;
 
-public abstract class Base {
+public abstract class BaseJson {
     private String id;
 
-    public Base() {}
+    public BaseJson() {}
 
-    public Base(final String id) {
+    public BaseJson(final String id) {
         this.id = id;
     }
 

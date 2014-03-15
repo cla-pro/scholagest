@@ -2,6 +2,12 @@ package net.scholagest.object;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 
+/**
+ * Transfer object that represent the teacher detail.
+ * 
+ * @author CLA
+ * @since 0.13.0
+ */
 public class TeacherDetail extends Base {
     private String address;
     private String email;

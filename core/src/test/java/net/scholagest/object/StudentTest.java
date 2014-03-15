@@ -5,6 +5,12 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+/**
+ * Test class for {@Student}
+ * 
+ * @author CLA
+ * @since 0.13.0
+ */
 public class StudentTest {
     @Test
     public void testEquals() {

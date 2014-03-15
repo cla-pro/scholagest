@@ -16,7 +16,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import net.scholagest.app.rest.ws.authorization.CheckAuthorization;
-import net.scholagest.app.rest.ws.objects.Student;
+import net.scholagest.app.rest.ws.objects.StudentJson;
 import net.scholagest.app.rest.ws.objects.StudentMedical;
 import net.scholagest.app.rest.ws.objects.StudentPersonal;
 import net.scholagest.app.rest.ws.objects.Students;
@@ -25,11 +25,11 @@ import com.google.inject.Inject;
 
 @Path("/students")
 public class StudentsRest {
-    public static Map<String, Student> students = new HashMap<>();
+    public static Map<String, StudentJson> students = new HashMap<>();
 
     static {
-        students.put("1", new Student("1", "Elodie", "Lavanchy", "1", "1", "1"));
-        students.put("2", new Student("2", "Thibaud", "Hottelier", "2", "2", "2"));
+        students.put("1", new StudentJson("1", "Elodie", "Lavanchy", "1", "1", "1"));
+        students.put("2", new StudentJson("2", "Thibaud", "Hottelier", "2", "2", "2"));
     }
 
     @Inject
@@ -40,11 +40,11 @@ public class StudentsRest {
     @Produces(MediaType.APPLICATION_JSON)
     public Students getStudents(@QueryParam("ids[]") final List<String> ids) {
         if (ids.isEmpty()) {
-            return new Students(new ArrayList<Student>(students.values()));
+            return new Students(new ArrayList<StudentJson>(students.values()));
         } else {
-            final List<Student> studentsToReturn = new ArrayList<>();
+            final List<StudentJson> studentsToReturn = new ArrayList<>();
 
-            for (final Student student : students.values()) {
+            for (final StudentJson student : students.values()) {
                 if (ids.contains(student.getId())) {
                     studentsToReturn.add(student);
                 }
@@ -59,7 +59,7 @@ public class StudentsRest {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Students getStudent(@PathParam("id") final String id) {
-        final List<Student> studentsToReturn = new ArrayList<>();
+        final List<StudentJson> studentsToReturn = new ArrayList<>();
 
         if (students.containsKey(id)) {
             studentsToReturn.add(students.get(id));
@@ -72,12 +72,12 @@ public class StudentsRest {
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void saveStudent(@PathParam("id") final String id, final Map<String, Student> payload) {
-        final Student student = payload.get("student");
+    public void saveStudent(@PathParam("id") final String id, final Map<String, StudentJson> payload) {
+        final StudentJson student = payload.get("student");
         mergeStudent(students.get(id), student);
     }
 
-    private void mergeStudent(final Student base, final Student toMerge) {
+    private void mergeStudent(final StudentJson base, final StudentJson toMerge) {
         base.setFirstName(toMerge.getFirstName());
         base.setLastName(toMerge.getLastName());
     }
@@ -85,10 +85,10 @@ public class StudentsRest {
     @CheckAuthorization
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Map<String, Object> createStudent(final Map<String, Student> payload) {
+    public Map<String, Object> createStudent(final Map<String, StudentJson> payload) {
         final Map<String, Object> result = new HashMap<>();
 
-        final Student student = payload.get("student");
+        final StudentJson student = payload.get("student");
         final String id = IdHelper.getNextId(students.keySet());
         student.setId(id);
         students.put(id, student);
