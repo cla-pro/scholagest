@@ -1,5 +1,6 @@
 package net.scholagest.object;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -12,6 +13,17 @@ import org.junit.Test;
  * @since 0.13.0
  */
 public class TeacherDetailTest {
+    @Test
+    public void testConstructorCopy() {
+        final TeacherDetail toCopy = new TeacherDetail("1", "address", "email", "phone");
+        final TeacherDetail copied = new TeacherDetail(toCopy);
+
+        assertEquals(toCopy.getId(), copied.getId());
+        assertEquals(toCopy.getAddress(), copied.getAddress());
+        assertEquals(toCopy.getEmail(), copied.getEmail());
+        assertEquals(toCopy.getPhone(), copied.getPhone());
+    }
+
     @Test
     public void testEquals() {
         final TeacherDetail teacherDetail1 = new TeacherDetail(null, null, null, null);

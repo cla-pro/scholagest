@@ -13,27 +13,25 @@ import javax.ws.rs.core.MediaType;
 
 import net.scholagest.app.rest.ws.authorization.CheckAuthorization;
 import net.scholagest.app.rest.ws.converter.TeacherJsonConverter;
+import net.scholagest.app.rest.ws.converter.UserJsonConverter;
 import net.scholagest.app.rest.ws.objects.TeacherJson;
 import net.scholagest.app.rest.ws.objects.UserJson;
 import net.scholagest.object.Teacher;
+import net.scholagest.object.User;
 import net.scholagest.service.TeacherServiceLocal;
+import net.scholagest.service.UserServiceLocal;
 
 import com.google.inject.Inject;
 
 @Path("/users")
 public class UsersRest {
-    public static Map<String, UserJson> users = new HashMap<>();
-
-    static {
-        users.put("1", new UserJson("1", "admin", "1", "1"));
-        users.put("2", new UserJson("2", "teacher", "2", "2"));
-    }
-
     private final TeacherServiceLocal teacherService;
+    private final UserServiceLocal userService;
 
     @Inject
-    public UsersRest(final TeacherServiceLocal teacherService) {
+    public UsersRest(final TeacherServiceLocal teacherService, final UserServiceLocal userService) {
         this.teacherService = teacherService;
+        this.userService = userService;
     }
 
     @CheckAuthorization
@@ -43,16 +41,18 @@ public class UsersRest {
     public Map<String, Object> getUser(@PathParam("id") final String id) {
         final Map<String, Object> toReturn = new HashMap<>();
 
-        if (users.containsKey(id)) {
-            final UserJson user = users.get(id);
-            toReturn.put("user", user);
+        final User user = userService.getUser(id);
+        if (user != null) {
+            final UserJson userJson = new UserJsonConverter().convertToUserJson(user);
+            toReturn.put("user", userJson);
 
-            final List<Teacher> teachers = teacherService.getTeacher(Arrays.asList(id));
+            final List<Teacher> teachers = teacherService.getTeacher(Arrays.asList(user.getTeacherId()));
             final List<TeacherJson> teachersJson = new TeacherJsonConverter().convertToTeacherJson(teachers);
             toReturn.put("teachers", teachersJson);
-            // toReturn.put("teacher",
-            // TeachersRest.teachers.get(user.getTeacher()));
-            toReturn.put("class", ClassesRest.classes.get(user.getClazz()));
+
+            // TODO class is null -> go get it
+            // toReturn.put("class",
+            // ClassesRest.classes.get(userJson.getClazz()));
         }
 
         return toReturn;

@@ -1,5 +1,6 @@
 package net.scholagest.object;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -13,20 +14,28 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 public class User extends Base {
     private String username;
     private String password;
-    private Teacher teacher;
+    private String teacherId;
     private String role;
     private List<String> permissions;
 
     public User() {}
 
+    public User(final User toCopy) {
+        this.username = toCopy.username;
+        this.password = toCopy.password;
+        this.teacherId = toCopy.teacherId;
+        this.role = toCopy.role;
+        this.permissions = new ArrayList<>(toCopy.permissions);
+    }
+
     public User(final String id, final String username, final String password, final String role, final List<String> permissions,
-            final Teacher teacher) {
+            final String teacherId) {
         super(id);
         this.username = username;
         this.password = password;
+        this.teacherId = teacherId;
         this.role = role;
         this.permissions = permissions;
-        this.teacher = teacher;
     }
 
     public String getUsername() {
@@ -45,12 +54,12 @@ public class User extends Base {
         this.password = password;
     }
 
-    public Teacher getTeacher() {
-        return teacher;
+    public String getTeacherId() {
+        return teacherId;
     }
 
-    public void setTeacher(final Teacher teacher) {
-        this.teacher = teacher;
+    public void setTeacherId(final String teacherId) {
+        this.teacherId = teacherId;
     }
 
     public String getRole() {
@@ -81,6 +90,6 @@ public class User extends Base {
         }
 
         final User other = (User) that;
-        return new EqualsBuilder().append(getId(), other.getId()).append(teacher, other.teacher).isEquals();
+        return new EqualsBuilder().append(getId(), other.getId()).append(teacherId, other.teacherId).isEquals();
     }
 }

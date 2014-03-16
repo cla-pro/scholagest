@@ -15,7 +15,7 @@ import net.scholagest.object.SessionInfo;
  * @author CLA
  * @since
  */
-public interface LoginServiceLocal {
+public interface SessionServiceLocal {
     /**
      * Authenticate the username and the password. If they do not match any existing account, an exception is thrown.
      * 

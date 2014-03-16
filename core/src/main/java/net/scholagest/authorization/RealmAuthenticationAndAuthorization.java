@@ -1,5 +1,7 @@
 package net.scholagest.authorization;
 
+import net.scholagest.business.SessionBusinessLocal;
+import net.scholagest.business.UserBusinessLocal;
 import net.scholagest.exception.ScholagestException;
 import net.scholagest.exception.ScholagestExceptionErrorCode;
 import net.scholagest.exception.ScholagestRuntimeException;
@@ -22,14 +24,34 @@ import org.apache.shiro.util.ByteSource;
 
 import com.google.inject.Inject;
 
+/**
+ * Retrieve the credentials from the db (by username or by session id). Throws an exception if:
+ * 
+ * <ul>
+ *   <li>The user does not exist</li>
+ *   <li>The session does not exist</li>
+ *   <li>The session has expired</li>
+ * </ul>
+ * 
+ * @author CLA
+ * @since 0.13.0
+ */
 public class RealmAuthenticationAndAuthorization extends AuthorizingRealm {
     private static final String ROLES_KEY = "roles";
     private static final String PERMISSIONS_KEY = "permissions";
     public static final String TOKEN_KEY = "token";
+    public static final String USER_KEY = "user";
     public static final int HASH_ITERATIONS = 1000;
 
+    private final UserBusinessLocal userBusiness;
+
+    private final SessionBusinessLocal sessionBusiness;
+
     @Inject
-    public RealmAuthenticationAndAuthorization() {
+    public RealmAuthenticationAndAuthorization(final UserBusinessLocal userBusiness, final SessionBusinessLocal sessionBusiness) {
+        this.userBusiness = userBusiness;
+        this.sessionBusiness = sessionBusiness;
+
         setAuthenticationCachingEnabled(false);
         setAuthorizationCachingEnabled(false);
 
@@ -85,7 +107,7 @@ public class RealmAuthenticationAndAuthorization extends AuthorizingRealm {
     }
 
     private AuthenticationInfo checkUsernameToken(final UsernameToken token) throws ScholagestException {
-        final User user = null;
+        final User user = userBusiness.getUser(token.getUsername());
 
         if (user == null) {
             throw new ScholagestException(ScholagestExceptionErrorCode.USER_NOT_FOUND, "User with name " + token.getUsername() + " not found");
@@ -104,7 +126,7 @@ public class RealmAuthenticationAndAuthorization extends AuthorizingRealm {
     // }
 
     private AuthenticationInfo checkSessionToken(final SessionToken token) throws ScholagestException {
-        final Session session = null; // userManager.getToken(token.getToken());
+        final Session session = sessionBusiness.getSession(token.getToken());
 
         if (isSessionValid(session)) {
             final User user = session.getUser();
@@ -141,6 +163,7 @@ public class RealmAuthenticationAndAuthorization extends AuthorizingRealm {
     private SimplePrincipalCollection readRolesAndPermissions(final User user) throws DatabaseException {
         final SimplePrincipalCollection principals = new SimplePrincipalCollection();
 
+        principals.add(user, USER_KEY);
         principals.add(user.getRole(), ROLES_KEY);
 
         for (final String permission : user.getPermissions()) {

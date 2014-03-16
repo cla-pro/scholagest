@@ -8,7 +8,20 @@ import net.scholagest.app.rest.ws.objects.TeacherJson;
 import net.scholagest.object.Teacher;
 import net.scholagest.object.TeacherDetail;
 
+/**
+ * Method to convert from transfer object {@see Teacher} to json {@see TeacherJson} as well as {@see TeacherDetail} 
+ * to {@see TeacherDetailJson} and reverse.
+ * 
+ * @author CLA
+ * @since 0.13.0
+ */
 public class TeacherJsonConverter {
+    /**
+     * Convenient method to convert a list of {@see Teacher} to a list of {@see TeacherJson}
+     *  
+     * @param teachers The list to convert
+     * @return The converted list
+     */
     public List<TeacherJson> convertToTeacherJson(final List<Teacher> teachers) {
         final List<TeacherJson> teachersJson = new ArrayList<>();
 
@@ -19,6 +32,12 @@ public class TeacherJsonConverter {
         return teachersJson;
     }
 
+    /**
+     * Convert a {@see Teacher} to its json version {@see TeacherJson}
+     * 
+     * @param teacher The teacher to convert
+     * @return The converted teacher json
+     */
     public TeacherJson convertToTeacherJson(final Teacher teacher) {
         final TeacherJson teacherJson = new TeacherJson();
 
@@ -30,6 +49,12 @@ public class TeacherJsonConverter {
         return teacherJson;
     }
 
+    /**
+     * Convert a {@see TeacherDetail} to {@see TeacherDetailJson}.
+     * 
+     * @param teacherDetail The teacher detail to convert
+     * @return The converted json teacher detail
+     */
     public TeacherDetailJson convertToTeacherDetailJson(final TeacherDetail teacherDetail) {
         final TeacherDetailJson teacherDetailJson = new TeacherDetailJson();
 
@@ -41,6 +66,12 @@ public class TeacherJsonConverter {
         return teacherDetailJson;
     }
 
+    /**
+     * Convert a {@see TeacherJson} to a {@see Teacher}
+     * 
+     * @param teacherJson The teacher json to convert
+     * @return The converted teacher
+     */
     public Teacher convertToTeacher(final TeacherJson teacherJson) {
         final Teacher teacher = new Teacher();
 
@@ -51,6 +82,12 @@ public class TeacherJsonConverter {
         return teacher;
     }
 
+    /**
+     * Convert a {@see TeacherDetailJson} to a {@see TeacherDetail}
+     * 
+     * @param teacherJson The teacher detail json to convert
+     * @return The converted teacher detail
+     */
     public TeacherDetail convertToTeacherDetail(final TeacherDetailJson teacherDetailJson) {
         final TeacherDetail teacherDetail = new TeacherDetail();
 

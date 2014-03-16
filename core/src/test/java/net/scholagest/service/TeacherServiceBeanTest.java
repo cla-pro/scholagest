@@ -30,6 +30,12 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+/**
+ * Test class for {@see TeacherServiceBean}
+ * 
+ * @author CLA
+ * @since 0.13.0
+ */
 @RunWith(MockitoJUnitRunner.class)
 public class TeacherServiceBeanTest extends AbstractGuiceContextTest {
     @Mock

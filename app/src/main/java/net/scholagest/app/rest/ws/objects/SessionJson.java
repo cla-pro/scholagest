@@ -1,10 +1,10 @@
 package net.scholagest.app.rest.ws.objects;
 
-public class Session {
+public class SessionJson {
     private String token;
     private String user;
 
-    public Session(String token, String user) {
+    public SessionJson(String token, String user) {
         this.token = token;
         this.user = user;
     }

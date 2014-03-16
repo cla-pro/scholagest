@@ -16,6 +16,7 @@ public class TeacherDetail extends Base {
     public TeacherDetail() {}
 
     public TeacherDetail(final TeacherDetail copy) {
+        super(copy.getId());
         this.address = copy.address;
         this.email = copy.email;
         this.phone = copy.phone;

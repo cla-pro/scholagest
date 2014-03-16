@@ -17,11 +17,11 @@ public class UserTest {
     @Test
     public void testEquals() {
         final User user1 = new User(null, null, null, null, null, null);
-        final User user2 = new User("1", null, null, null, null, new Teacher("1", null, null, null));
-        final User user3 = new User("2", null, null, null, null, new Teacher("1", null, null, null));
-        final User user4 = new User("1", null, null, null, null, new Teacher("2", null, null, null));
-        final User user5 = new User("1", null, null, null, null, new Teacher("1", null, null, null));
-        final User user6 = new User("1", "username", "password", "ADMIN", new ArrayList<String>(), new Teacher("1", null, null, null));
+        final User user2 = new User("1", null, null, null, null, "1");
+        final User user3 = new User("2", null, null, null, null, "1");
+        final User user4 = new User("1", null, null, null, null, "2");
+        final User user5 = new User("1", null, null, null, null, "1");
+        final User user6 = new User("1", "username", "password", "ADMIN", new ArrayList<String>(), "1");
 
         assertFalse(user1.equals(null));
         assertFalse(user1.equals(new Object()));

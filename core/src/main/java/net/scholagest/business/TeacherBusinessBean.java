@@ -16,16 +16,16 @@ import net.scholagest.utils.IdHelper;
  * Implementation of {@see TeacherBusinessLocal}.
  * 
  * @author CLA
- * @since 
+ * @since 0.13.0
  */
 public class TeacherBusinessBean implements TeacherBusinessLocal {
     public static Map<String, Teacher> teachersMap = new HashMap<>();
 
     static {
-        teachersMap.put("1", new Teacher("1", "Cédric", "Lavanchy", new TeacherDetail("1", "Kleefeldstrasse 1, 3018 Bern",
+        teachersMap.put("teacher1", new Teacher("teacher1", "Cédric", "Lavanchy", new TeacherDetail("teacher1", "Kleefeldstrasse 1, 3018 Bern",
                 "cedric.lavanchy@gmail.com", "+41791234567")));
-        teachersMap.put("2", new Teacher("2", "Valérie", "Parvex", new TeacherDetail("2", "Chemin des Merisiers 25, 1870 Monthey",
-                "valerie.parvex@gmail.com", "+41797654321")));
+        teachersMap.put("teacher2", new Teacher("teacher2", "Valérie", "Parvex", new TeacherDetail("teacher2",
+                "Chemin des Merisiers 25, 1870 Monthey", "valerie.parvex@gmail.com", "+41797654321")));
     }
 
     /**
@@ -95,7 +95,7 @@ public class TeacherBusinessBean implements TeacherBusinessLocal {
     public TeacherDetail getTeacherDetail(final String id) {
         if (teachersMap.containsKey(id)) {
             final Teacher teacher = teachersMap.get(id);
-            return teacher.getDetail();
+            return new TeacherDetail(teacher.getDetail());
         } else {
             return null;
         }

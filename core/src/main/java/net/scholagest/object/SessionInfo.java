@@ -11,10 +11,12 @@ import org.apache.shiro.subject.Subject;
 public class SessionInfo {
     private final String token;
     private final Subject subject;
+    private final User user;
 
-    public SessionInfo(final String token, final Subject subject) {
+    public SessionInfo(final String token, final Subject subject, final User user) {
         this.token = token;
         this.subject = subject;
+        this.user = user;
     }
 
     public String getToken() {
@@ -23,5 +25,9 @@ public class SessionInfo {
 
     public Subject getSubject() {
         return subject;
+    }
+
+    public User getUser() {
+        return user;
     }
 }

@@ -5,6 +5,8 @@ public class UserJson extends BaseJson {
     private String teacher;
     private String clazz;
 
+    public UserJson() {}
+
     public UserJson(final String id, final String role, final String teacher, final String clazz) {
         super(id);
         this.role = role;
