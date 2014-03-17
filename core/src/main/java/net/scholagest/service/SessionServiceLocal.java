@@ -4,11 +4,11 @@ import net.scholagest.exception.ScholagestException;
 import net.scholagest.object.SessionInfo;
 
 /**
- * This service will use the {@see SecurityUtils} to authenticate the token or the username/password. It always return a {@see SessionInfo}
+ * This service will use the {@link SecurityUtils} to authenticate the token or the username/password. It always return a {@link SessionInfo}
  * that contains:
  * 
  * <ul>
- *   <li>the {@see Subject} used to check the roles and permission during the request processing.</li>
+ *   <li>the {@link Subject} used to check the roles and permission during the request processing.</li>
  *   <li>the token used by the web-app to authenticate the next request.</li>
  * </ul>
  * 

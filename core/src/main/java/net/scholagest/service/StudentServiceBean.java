@@ -6,11 +6,13 @@ import net.scholagest.authorization.Permission;
 import net.scholagest.authorization.RolesAndPermissions;
 import net.scholagest.business.StudentBusinessLocal;
 import net.scholagest.object.Student;
+import net.scholagest.object.StudentMedical;
+import net.scholagest.object.StudentPersonal;
 
 import com.google.inject.Inject;
 
 /**
- * Implementation of {@see StudentServiceLocal}. This class's responsibility is to removed the fields
+ * Implementation of {@link StudentServiceLocal}. This class's responsibility is to removed the fields
  * the subject does not have access to.
  * 
  * @author CLA
@@ -74,6 +76,56 @@ public class StudentServiceBean implements StudentServiceLocal {
         }
 
         return studentBusiness.saveStudent(studentId, student);
+    }
+
+    @RolesAndPermissions(roles = {})
+    @Override
+    public StudentPersonal getStudentPersonal(final String id) {
+        if (id == null) {
+            return null;
+        }
+
+        final Student student = studentBusiness.getStudent(id);
+        if (student == null) {
+            return null;
+        } else {
+            return student.getStudentPersonal();
+        }
+    }
+
+    @RolesAndPermissions(roles = { "ADMIN" })
+    @Override
+    public StudentPersonal saveStudentPersonal(@Permission final String studentId, final StudentPersonal studentPersonal) {
+        if (studentId == null || studentPersonal == null) {
+            return null;
+        }
+
+        return studentBusiness.saveStudentPersonal(studentId, studentPersonal);
+    }
+
+    @RolesAndPermissions(roles = {})
+    @Override
+    public StudentMedical getStudentMedical(final String id) {
+        if (id == null) {
+            return null;
+        }
+
+        final Student student = studentBusiness.getStudent(id);
+        if (student == null) {
+            return null;
+        } else {
+            return student.getStudentMedical();
+        }
+    }
+
+    @RolesAndPermissions(roles = { "ADMIN" })
+    @Override
+    public StudentMedical saveStudentMedical(@Permission final String studentId, final StudentMedical studentMedical) {
+        if (studentId == null || studentMedical == null) {
+            return null;
+        }
+
+        return studentBusiness.saveStudentMedical(studentId, studentMedical);
     }
 
 }

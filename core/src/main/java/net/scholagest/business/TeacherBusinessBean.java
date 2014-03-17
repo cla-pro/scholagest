@@ -13,7 +13,7 @@ import net.scholagest.object.TeacherDetail;
 import net.scholagest.utils.IdHelper;
 
 /**
- * Implementation of {@see TeacherBusinessLocal}.
+ * Implementation of {@link TeacherBusinessLocal}.
  * 
  * @author CLA
  * @since 0.13.0
@@ -36,8 +36,8 @@ public class TeacherBusinessBean implements TeacherBusinessLocal {
         return copyTeachers();
     }
 
-    private ArrayList<Teacher> copyTeachers() {
-        final ArrayList<Teacher> teachers = new ArrayList<>();
+    private List<Teacher> copyTeachers() {
+        final List<Teacher> teachers = new ArrayList<>();
 
         for (final Teacher teacher : teachersMap.values()) {
             teachers.add(new Teacher(teacher));
@@ -63,7 +63,7 @@ public class TeacherBusinessBean implements TeacherBusinessLocal {
     @Override
     public Teacher createTeacher(final Teacher teacher) {
         // TODO check for existence first?
-        final String id = IdHelper.getNextId(teachersMap.keySet());
+        final String id = IdHelper.getNextId(teachersMap.keySet(), "teacher");
 
         final Teacher toStore = new Teacher(teacher);
         toStore.setId(id);

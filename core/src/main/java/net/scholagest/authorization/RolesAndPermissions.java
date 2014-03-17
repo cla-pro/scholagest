@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 import net.scholagest.exception.ScholagestRuntimeException;
 
 /**
- * Indicate to the {@link AuthorizationInterceptor} that the roles and {@see
+ * Indicate to the {@link AuthorizationInterceptor} that the roles and {@link
  * Permission}s must be checked before this method is actually invoked. If the
  * authorization fails, a {@link ScholagestRuntimeException} is thrown.
  * 

@@ -16,7 +16,7 @@ import net.scholagest.object.TeacherDetail;
 import org.junit.Test;
 
 /**
- * Convert a {@see TeacherJson} to a {@see Teacher}
+ * Convert a {@link TeacherJson} to a {@link Teacher}
  * 
  * @param teacherJson The teacher json to convert
  * @return The converted teacher

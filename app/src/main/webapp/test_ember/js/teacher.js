@@ -25,7 +25,7 @@ Scholagest.TeacherController = Scholagest.RoleObjectController.extend({
             return true;
         } else {
             var user = Scholagest.SessionManager.get('user');
-            if (Ember.isNone(user) && user.get('teacher').get('id') === this.get('model').get('id')) {
+            if (!Ember.isNone(user) && user.get('teacher').get('id') === this.get('model').get('id')) {
                 return true;
             }
         }

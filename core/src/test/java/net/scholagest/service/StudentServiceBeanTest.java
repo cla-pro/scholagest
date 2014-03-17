@@ -16,6 +16,8 @@ import java.util.List;
 import net.scholagest.business.StudentBusinessLocal;
 import net.scholagest.exception.ScholagestRuntimeException;
 import net.scholagest.object.Student;
+import net.scholagest.object.StudentMedical;
+import net.scholagest.object.StudentPersonal;
 import net.scholagest.utils.AbstractGuiceContextTest;
 import net.scholagest.utils.ScholagestThreadLocal;
 
@@ -25,7 +27,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
- * Test class for {@see StudentServiceBean}
+ * Test class for {@link StudentServiceBean}
  * 
  * @author CLA
  * @since 0.13.0
@@ -46,8 +48,8 @@ public class StudentServiceBeanTest extends AbstractGuiceContextTest {
         setAdminSubject();
         final StudentServiceLocal testee = getInstance(StudentServiceLocal.class);
 
-        final Student student1 = new Student("1", "FirstName1", "LastName1");
-        final Student student2 = new Student("2", "FirstName2", "LastName2");
+        final Student student1 = new Student("1", "FirstName1", "LastName1", new StudentPersonal(), new StudentMedical());
+        final Student student2 = new Student("2", "FirstName2", "LastName2", new StudentPersonal(), new StudentMedical());
         final List<Student> expected = Arrays.asList(student1, student2);
         when(studentBusiness.getStudents()).thenReturn(expected);
 
@@ -63,7 +65,7 @@ public class StudentServiceBeanTest extends AbstractGuiceContextTest {
         setAdminSubject();
         final StudentServiceLocal testee = getInstance(StudentServiceLocal.class);
 
-        final Student expected = new Student("1", "firstName", "lastName");
+        final Student expected = new Student("1", "firstName", "lastName", new StudentPersonal(), new StudentMedical());
         when(studentBusiness.getStudent("1")).thenReturn(expected);
 
         assertNull(testee.getStudent(null));
@@ -81,7 +83,7 @@ public class StudentServiceBeanTest extends AbstractGuiceContextTest {
         setAdminSubject();
         final StudentServiceLocal testee = getInstance(StudentServiceLocal.class);
 
-        final Student created = new Student("1", "firstName", "lastName");
+        final Student created = new Student("1", "firstName", "lastName", new StudentPersonal(), new StudentMedical());
         when(studentBusiness.createStudent(any(Student.class))).thenReturn(created);
 
         assertNull(testee.createStudent(null));
@@ -97,7 +99,7 @@ public class StudentServiceBeanTest extends AbstractGuiceContextTest {
         setAdminSubject();
         final StudentServiceLocal testee = getInstance(StudentServiceLocal.class);
 
-        final Student saved = new Student("1", "firstName", "lastName");
+        final Student saved = new Student("1", "firstName", "lastName", new StudentPersonal(), new StudentMedical());
         when(studentBusiness.saveStudent(eq("1"), any(Student.class))).thenReturn(saved);
 
         final Student toSave = new Student();
@@ -106,7 +108,78 @@ public class StudentServiceBeanTest extends AbstractGuiceContextTest {
         verify(studentBusiness, never()).saveStudent(anyString(), any(Student.class));
 
         assertEquals(saved, testee.saveStudent("1", toSave));
-        verify(studentBusiness).saveStudent("1", toSave);
+        verify(studentBusiness).saveStudent(eq("1"), eq(toSave));
+    }
+
+    @Test
+    public void testGetStudentPersonal() {
+        setAdminSubject();
+        final StudentServiceLocal testee = getInstance(StudentServiceLocal.class);
+
+        final Student expected = new Student("1", "firstName", "lastName", new StudentPersonal("1", "street", "city", "postcode", "religion"),
+                new StudentMedical());
+        when(studentBusiness.getStudent("1")).thenReturn(expected);
+
+        assertNull(testee.getStudentPersonal(null));
+        verify(studentBusiness, never()).getStudent(anyString());
+
+        assertNull(testee.getStudentPersonal("2"));
+        verify(studentBusiness).getStudent(eq("2"));
+
+        assertEquals(expected.getStudentPersonal(), testee.getStudentPersonal("1"));
+        verify(studentBusiness).getStudent(eq("1"));
+    }
+
+    @Test
+    public void testSaveStudentPersonal() {
+        setAdminSubject();
+        final StudentServiceLocal testee = getInstance(StudentServiceLocal.class);
+
+        final StudentPersonal saved = new StudentPersonal("1", "street", "city", "postcode", "religion");
+        when(studentBusiness.saveStudentPersonal(eq("1"), any(StudentPersonal.class))).thenReturn(saved);
+
+        final StudentPersonal toSave = new StudentPersonal();
+        assertNull(testee.saveStudentPersonal(null, toSave));
+        assertNull(testee.saveStudentPersonal("1", null));
+        verify(studentBusiness, never()).saveStudentPersonal(anyString(), any(StudentPersonal.class));
+
+        assertEquals(saved, testee.saveStudentPersonal("1", toSave));
+        verify(studentBusiness).saveStudentPersonal(eq("1"), eq(toSave));
+    }
+
+    @Test
+    public void testGetStudentMedical() {
+        setAdminSubject();
+        final StudentServiceLocal testee = getInstance(StudentServiceLocal.class);
+
+        final Student expected = new Student("1", "firstName", "lastName", new StudentPersonal(), new StudentMedical("1", "doctor"));
+        when(studentBusiness.getStudent("1")).thenReturn(expected);
+
+        assertNull(testee.getStudentMedical(null));
+        verify(studentBusiness, never()).getStudent(anyString());
+
+        assertNull(testee.getStudentMedical("2"));
+        verify(studentBusiness).getStudent(eq("2"));
+
+        assertEquals(expected.getStudentMedical(), testee.getStudentMedical("1"));
+        verify(studentBusiness).getStudent(eq("1"));
+    }
+
+    @Test
+    public void testSaveStudentMedical() {
+        setAdminSubject();
+        final StudentServiceLocal testee = getInstance(StudentServiceLocal.class);
+
+        final StudentMedical saved = new StudentMedical("1", "doctor");
+        when(studentBusiness.saveStudentMedical(eq("1"), any(StudentMedical.class))).thenReturn(saved);
+
+        final StudentMedical toSave = new StudentMedical();
+        assertNull(testee.saveStudentMedical(null, toSave));
+        assertNull(testee.saveStudentMedical("1", null));
+        verify(studentBusiness, never()).saveStudentMedical(anyString(), any(StudentMedical.class));
+
+        assertEquals(saved, testee.saveStudentMedical("1", toSave));
+        verify(studentBusiness).saveStudentMedical(eq("1"), eq(toSave));
     }
 
     @Test
@@ -130,6 +203,36 @@ public class StudentServiceBeanTest extends AbstractGuiceContextTest {
         final String id = "id";
         try {
             testee.saveStudent(id, new Student());
+            fail("Expected exception");
+        } catch (final ScholagestRuntimeException e) {
+            verify(ScholagestThreadLocal.getSubject()).hasRole(eq("ADMIN"));
+            verify(ScholagestThreadLocal.getSubject()).isPermitted(id);
+        }
+    }
+
+    @Test
+    public void testSaveStudentPersonalAuthorization() {
+        setNoRightSubject();
+        final StudentServiceLocal testee = getInstance(StudentServiceLocal.class);
+
+        final String id = "id";
+        try {
+            testee.saveStudentPersonal(id, new StudentPersonal());
+            fail("Expected exception");
+        } catch (final ScholagestRuntimeException e) {
+            verify(ScholagestThreadLocal.getSubject()).hasRole(eq("ADMIN"));
+            verify(ScholagestThreadLocal.getSubject()).isPermitted(id);
+        }
+    }
+
+    @Test
+    public void testSaveStudentMedicalAuthorization() {
+        setNoRightSubject();
+        final StudentServiceLocal testee = getInstance(StudentServiceLocal.class);
+
+        final String id = "id";
+        try {
+            testee.saveStudentMedical(id, new StudentMedical());
             fail("Expected exception");
         } catch (final ScholagestRuntimeException e) {
             verify(ScholagestThreadLocal.getSubject()).hasRole(eq("ADMIN"));

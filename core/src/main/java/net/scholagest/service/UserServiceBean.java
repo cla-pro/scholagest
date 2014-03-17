@@ -11,7 +11,7 @@ import net.scholagest.object.User;
 import com.google.inject.Inject;
 
 /**
- * Implementation of {@see UserServiceLocal}. This class's responsibility is to removed the fields
+ * Implementation of {@link UserServiceLocal}. This class's responsibility is to removed the fields
  * the subject does not have access to.
  * 
  * @author CLA

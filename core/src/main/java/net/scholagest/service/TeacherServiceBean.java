@@ -15,7 +15,7 @@ import net.scholagest.object.TeacherDetail;
 import com.google.inject.Inject;
 
 /**
- * Implementation of {@see TeacherServiceLocal}. This class's responsibility is to removed the fields
+ * Implementation of {@link TeacherServiceLocal}. This class's responsibility is to removed the fields
  * the subject does not have access to.
  * 
  * @author CLA

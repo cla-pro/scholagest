@@ -3,9 +3,7 @@ package net.scholagest.app.rest.ws;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -13,31 +11,39 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import net.scholagest.app.rest.ws.authorization.CheckAuthorization;
-import net.scholagest.app.rest.ws.objects.StudentMedical;
+import net.scholagest.app.rest.ws.converter.StudentJsonConverter;
+import net.scholagest.app.rest.ws.objects.StudentMedicalJson;
+import net.scholagest.object.StudentMedical;
+import net.scholagest.service.StudentServiceLocal;
 
 import com.google.inject.Inject;
 
 @Path("/studentMedicals")
 public class StudentMedicalsRest {
-    public static Map<String, StudentMedical> medicals = new HashMap<>();
+    // public static Map<String, StudentMedicalJson> medicals = new HashMap<>();
+    //
+    // static {
+    // medicals.put("1", new StudentMedicalJson("1", null));
+    // medicals.put("2", new StudentMedicalJson("2", null));
+    // }
 
-    static {
-        medicals.put("1", new StudentMedical("1", null));
-        medicals.put("2", new StudentMedical("2", null));
-    }
+    private final StudentServiceLocal studentService;
 
     @Inject
-    public StudentMedicalsRest() {}
+    public StudentMedicalsRest(final StudentServiceLocal studentService) {
+        this.studentService = studentService;
+    }
 
     @CheckAuthorization
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, StudentMedical> getMedical(@PathParam("id") final String id) {
-        final StudentMedical studentMedical = medicals.get(id);
+    public Map<String, StudentMedicalJson> getMedical(@PathParam("id") final String id) {
+        final StudentMedical studentMedical = studentService.getStudentMedical(id);
+        final StudentMedicalJson studentMedicalJson = new StudentJsonConverter().convertToStudentMedicalJson(studentMedical);
 
-        final Map<String, StudentMedical> result = new HashMap<>();
-        result.put("studentMedical", studentMedical);
+        final Map<String, StudentMedicalJson> result = new HashMap<>();
+        result.put("studentMedical", studentMedicalJson);
 
         return result;
     }
@@ -45,25 +51,19 @@ public class StudentMedicalsRest {
     @CheckAuthorization
     @PUT
     @Path("/{id}")
-    public void saveStudentPersonal(@PathParam("id") final String id, final Map<String, StudentMedical> payload) {
-        final StudentMedical studentMedical = payload.get("studentMedical");
-        mergeStudentMedical(medicals.get(id), studentMedical);
-    }
+    @Produces(MediaType.APPLICATION_JSON)
+    public Map<String, StudentMedicalJson> saveStudentPersonal(@PathParam("id") final String id, final Map<String, StudentMedicalJson> payload) {
+        final StudentJsonConverter converter = new StudentJsonConverter();
 
-    private void mergeStudentMedical(final StudentMedical base, final StudentMedical toMerge) {
-        base.setDoctor(toMerge.getDoctor());
-        ;
-    }
+        final StudentMedicalJson studentMedicalJson = payload.get("studentMedical");
+        final StudentMedical studentMedical = converter.convertToStudentMedical(studentMedicalJson);
 
-    @CheckAuthorization
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Map<String, StudentMedical> createStudentPersonals(final Map<String, StudentMedical> payload) {
-        final StudentMedical studentMedical = payload.get("studentMedical");
-        final String id = IdHelper.getNextId(medicals.keySet());
-        studentMedical.setId(id);
-        medicals.put(id, studentMedical);
+        final StudentMedical updated = studentService.saveStudentMedical(id, studentMedical);
+        final StudentMedicalJson updatedJson = converter.convertToStudentMedicalJson(updated);
 
-        return payload;
+        final Map<String, StudentMedicalJson> result = new HashMap<>();
+        result.put("studentMedical", updatedJson);
+
+        return result;
     }
 }

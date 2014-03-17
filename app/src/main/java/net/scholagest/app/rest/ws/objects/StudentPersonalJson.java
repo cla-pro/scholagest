@@ -1,14 +1,14 @@
 package net.scholagest.app.rest.ws.objects;
 
-public class StudentPersonal extends BaseJson {
+public class StudentPersonalJson extends BaseJson {
     private String street;
     private String city;
     private String postcode;
     private String religion;
 
-    public StudentPersonal() {}
+    public StudentPersonalJson() {}
 
-    public StudentPersonal(final String id, final String street, final String city, final String postcode, final String religion) {
+    public StudentPersonalJson(final String id, final String street, final String city, final String postcode, final String religion) {
         super(id);
         this.street = street;
         this.city = city;

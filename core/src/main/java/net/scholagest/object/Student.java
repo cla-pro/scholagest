@@ -9,32 +9,31 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
  * @since 0.13.0
  */
 public class Student extends Base {
-    private String id;
     private String firstName;
     private String lastName;
+    private StudentPersonal studentPersonal;
+    private StudentMedical studentMedical;
 
-    public Student() {}
+    public Student() {
+        this.studentPersonal = new StudentPersonal();
+        this.studentMedical = new StudentMedical();
+    }
 
     public Student(final Student toCopy) {
-        this.id = toCopy.id;
+        super(toCopy.getId());
         this.firstName = toCopy.firstName;
         this.lastName = toCopy.lastName;
+        this.studentPersonal = new StudentPersonal(toCopy.studentPersonal);
+        this.studentMedical = new StudentMedical(toCopy.studentMedical);
     }
 
-    public Student(final String id, final String firstName, final String lastName) {
-        this.id = id;
+    public Student(final String id, final String firstName, final String lastName, final StudentPersonal studentPersonal,
+            final StudentMedical studentMedical) {
+        super(id);
         this.firstName = firstName;
         this.lastName = lastName;
-    }
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(final String id) {
-        this.id = id;
+        this.studentPersonal = studentPersonal;
+        this.studentMedical = studentMedical;
     }
 
     public String getFirstName() {
@@ -53,6 +52,22 @@ public class Student extends Base {
         this.lastName = lastName;
     }
 
+    public StudentPersonal getStudentPersonal() {
+        return studentPersonal;
+    }
+
+    public void setStudentPersonal(final StudentPersonal studentPersonal) {
+        this.studentPersonal = studentPersonal;
+    }
+
+    public StudentMedical getStudentMedical() {
+        return studentMedical;
+    }
+
+    public void setStudentMedical(final StudentMedical studentMedical) {
+        this.studentMedical = studentMedical;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -65,6 +80,6 @@ public class Student extends Base {
         }
 
         final Student other = (Student) that;
-        return new EqualsBuilder().append(id, other.id).append(firstName, other.firstName).append(lastName, other.lastName).isEquals();
+        return new EqualsBuilder().append(getId(), other.getId()).append(firstName, other.firstName).append(lastName, other.lastName).isEquals();
     }
 }

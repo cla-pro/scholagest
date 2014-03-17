@@ -25,12 +25,16 @@ import net.scholagest.authorization.RealmAuthenticationAndAuthorization;
 import net.scholagest.authorization.RolesAndPermissions;
 import net.scholagest.business.SessionBusinessBean;
 import net.scholagest.business.SessionBusinessLocal;
+import net.scholagest.business.StudentBusinessBean;
+import net.scholagest.business.StudentBusinessLocal;
 import net.scholagest.business.TeacherBusinessBean;
 import net.scholagest.business.TeacherBusinessLocal;
 import net.scholagest.business.UserBusinessBean;
 import net.scholagest.business.UserBusinessLocal;
 import net.scholagest.service.SessionServiceBean;
 import net.scholagest.service.SessionServiceLocal;
+import net.scholagest.service.StudentServiceBean;
+import net.scholagest.service.StudentServiceLocal;
 import net.scholagest.service.TeacherServiceBean;
 import net.scholagest.service.TeacherServiceLocal;
 import net.scholagest.service.UserServiceBean;
@@ -61,11 +65,12 @@ public class GuiceContext extends GuiceServletContextListener {
                 bindInterceptor(Matchers.any(), Matchers.annotatedWith(RolesAndPermissions.class), authorizationInterceptor);
 
                 bind(SessionBusinessLocal.class).to(SessionBusinessBean.class);
+                bind(StudentBusinessLocal.class).to(StudentBusinessBean.class);
                 bind(TeacherBusinessLocal.class).to(TeacherBusinessBean.class);
                 bind(UserBusinessLocal.class).to(UserBusinessBean.class);
 
                 bind(SessionServiceLocal.class).to(SessionServiceBean.class);
-                // bind(StudentServiceLocal.class).to(StudentServiceBean.class);
+                bind(StudentServiceLocal.class).to(StudentServiceBean.class);
                 bind(TeacherServiceLocal.class).to(TeacherServiceBean.class);
                 bind(UserServiceLocal.class).to(UserServiceBean.class);
 

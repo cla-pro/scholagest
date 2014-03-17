@@ -7,7 +7,7 @@ import java.util.Map;
 import net.scholagest.object.User;
 
 /**
- * Implementation of {@see UserBusinessLocal}
+ * Implementation of {@link UserBusinessLocal}
  * 
  * @author CLA
  * @since 0.13.0
@@ -17,7 +17,7 @@ public class UserBusinessBean implements UserBusinessLocal {
 
     static {
         users.put("clavanchy", new User("clavanchy", "clavanchy", "1234", "ADMIN", Arrays.asList("clavanchy", "teacher1"), "teacher1"));
-        users.put("vparvex", new User("vparvex", "vparvex", "1234", "TEACHER", Arrays.asList("clavanchy", "teacher2"), "teacher2"));
+        users.put("vparvex", new User("vparvex", "vparvex", "1234", "TEACHER", Arrays.asList("vparvex", "teacher2"), "teacher2"));
     }
 
     /**

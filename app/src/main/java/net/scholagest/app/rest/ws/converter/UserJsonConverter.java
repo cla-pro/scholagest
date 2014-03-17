@@ -4,14 +4,14 @@ import net.scholagest.app.rest.ws.objects.UserJson;
 import net.scholagest.object.User;
 
 /**
- * Method to convert from transfer object {@see User} to json {@see UserJson}
+ * Method to convert from transfer object {@link User} to json {@link UserJson}
  * 
  * @author CLA
  * @since 0.13.0
  */
 public class UserJsonConverter {
     /**
-     * Convert a {@see User} to its json version {@see UserJson}.
+     * Convert a {@link User} to its json version {@link UserJson}.
      * 
      * @param user The user to convert
      * @return The converted json user

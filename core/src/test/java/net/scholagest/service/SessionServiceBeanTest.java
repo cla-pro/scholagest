@@ -39,7 +39,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 /**
- * Test class for {@see LoginServiceBean}
+ * Test class for {@link LoginServiceBean}
  * 
  * @author CLA
  * @since 0.13.0

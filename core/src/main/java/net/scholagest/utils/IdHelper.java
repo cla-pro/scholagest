@@ -7,6 +7,19 @@ import java.util.Set;
 import net.scholagest.object.Base;
 
 public class IdHelper {
+    public static String getNextId(final Set<String> existingIds, final String prefix) {
+        int max = 0;
+        for (final String stringId : existingIds) {
+            final String numId = ((stringId.startsWith(prefix)) ? stringId.substring(prefix.length()) : stringId);
+            final Integer id = Integer.valueOf(numId);
+            if (id > max) {
+                max = id;
+            }
+        }
+        return prefix + (max + 1);
+
+    }
+
     public static String getNextId(final Set<String> existingIds) {
         int max = 0;
         for (final String stringId : existingIds) {

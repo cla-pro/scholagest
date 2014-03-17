@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import org.junit.Test;
 
 /**
- * Test class for {@see User}
+ * Test class for {@link User}
  * 
  * @author CLA
  * @since 0.13.0

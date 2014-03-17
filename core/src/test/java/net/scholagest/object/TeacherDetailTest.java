@@ -7,7 +7,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 /**
- * Test class for {@see TeacherDetail}
+ * Test class for {@link TeacherDetail}
  * 
  * @author CLA
  * @since 0.13.0

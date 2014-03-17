@@ -20,7 +20,7 @@ import org.apache.shiro.subject.Subject;
 import com.google.inject.Inject;
 
 /**
- * Implementation of {@see SessionServiceLocal}. It uses the Shiro Realm and {@see SecurityUtils} to authenticate the
+ * Implementation of {@link SessionServiceLocal}. It uses the Shiro Realm and {@link SecurityUtils} to authenticate the
  * credentials and get the subject which is given back.
  * 
  * @author CLA

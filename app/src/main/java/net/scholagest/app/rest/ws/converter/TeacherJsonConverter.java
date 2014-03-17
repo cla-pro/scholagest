@@ -9,15 +9,15 @@ import net.scholagest.object.Teacher;
 import net.scholagest.object.TeacherDetail;
 
 /**
- * Method to convert from transfer object {@see Teacher} to json {@see TeacherJson} as well as {@see TeacherDetail} 
- * to {@see TeacherDetailJson} and reverse.
+ * Method to convert from transfer object {@link Teacher} to json {@link TeacherJson} as well as {@link TeacherDetail} 
+ * to {@link TeacherDetailJson} and reverse.
  * 
  * @author CLA
  * @since 0.13.0
  */
 public class TeacherJsonConverter {
     /**
-     * Convenient method to convert a list of {@see Teacher} to a list of {@see TeacherJson}
+     * Convenient method to convert a list of {@link Teacher} to a list of {@link TeacherJson}
      *  
      * @param teachers The list to convert
      * @return The converted list
@@ -33,7 +33,7 @@ public class TeacherJsonConverter {
     }
 
     /**
-     * Convert a {@see Teacher} to its json version {@see TeacherJson}
+     * Convert a {@link Teacher} to its json version {@link TeacherJson}
      * 
      * @param teacher The teacher to convert
      * @return The converted teacher json
@@ -50,7 +50,7 @@ public class TeacherJsonConverter {
     }
 
     /**
-     * Convert a {@see TeacherDetail} to {@see TeacherDetailJson}.
+     * Convert a {@link TeacherDetail} to {@link TeacherDetailJson}.
      * 
      * @param teacherDetail The teacher detail to convert
      * @return The converted json teacher detail
@@ -67,7 +67,7 @@ public class TeacherJsonConverter {
     }
 
     /**
-     * Convert a {@see TeacherJson} to a {@see Teacher}
+     * Convert a {@link TeacherJson} to a {@link Teacher}
      * 
      * @param teacherJson The teacher json to convert
      * @return The converted teacher
@@ -83,7 +83,7 @@ public class TeacherJsonConverter {
     }
 
     /**
-     * Convert a {@see TeacherDetailJson} to a {@see TeacherDetail}
+     * Convert a {@link TeacherDetailJson} to a {@link TeacherDetail}
      * 
      * @param teacherJson The teacher detail json to convert
      * @return The converted teacher detail

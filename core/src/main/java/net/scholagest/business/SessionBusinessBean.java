@@ -13,7 +13,7 @@ import net.scholagest.object.User;
 import org.joda.time.DateTime;
 
 /**
- * Implementation of {@see SessionBusinessLocal}.
+ * Implementation of {@link SessionBusinessLocal}.
  * 
  * @author CLA
  * @since 

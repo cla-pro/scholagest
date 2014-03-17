@@ -23,7 +23,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
- * Test class for {@see UserServiceBean}
+ * Test class for {@link UserServiceBean}
  * 
  * @author CLA
  * @since 0.13.0

@@ -3,6 +3,8 @@ package net.scholagest.business;
 import java.util.List;
 
 import net.scholagest.object.Student;
+import net.scholagest.object.StudentMedical;
+import net.scholagest.object.StudentPersonal;
 
 /**
  * Provides the methods to handle the students. This level is responsible to
@@ -36,11 +38,29 @@ public interface StudentBusinessLocal {
     public Student createStudent(final Student student);
 
     /**
-     * Update a student, the personal and medical parts are not updated. The id is also required to verify the permissions
+     * Update a student, the personal and medical parts are not updated.
      * 
      * @param studentId The Id of the student to update
      * @param student The student's information to store
      * @return The updated student
      */
     public Student saveStudent(final String studentId, final Student student);
+
+    /**
+     * Update the student personal information.
+     * 
+     * @param studentId The Id of the student to update
+     * @param student The student's personal information to store
+     * @return The updated student personal information
+     */
+    public StudentPersonal saveStudentPersonal(String studentId, StudentPersonal studentPersonal);
+
+    /**
+     * Update the student medical information.
+     * 
+     * @param studentId The Id of the student to update
+     * @param student The student's medical information to store
+     * @return The updated student medical information
+     */
+    public StudentMedical saveStudentMedical(String studentId, StudentMedical studentMedical);
 }
