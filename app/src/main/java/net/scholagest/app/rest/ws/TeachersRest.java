@@ -22,6 +22,21 @@ import net.scholagest.service.TeacherServiceLocal;
 
 import com.google.inject.Inject;
 
+/**
+ * Set methods available for rest calls (WebService) to handle the teachers. The theacher contains only a link to
+ * the detail information. They must be retrieved by calling the {@link TeacherDetailsRest} and webservices. The 
+ * available methods are:
+ * 
+ * <ul>
+ *   <li>GET - to retrieve the list of all the teachers</li>
+ *   <li>GET /{id} - to retrieve the information of a teacher</li>
+ *   <li>PUT /{id} - to update the information of a teacher</li>
+ *   <li>POST - to create a new teacher. The detail information object is created within the same request</li>
+ * </ul>
+ * 
+ * @author CLA
+ * @since 0.13.0
+ */
 @Path("/teachers")
 public class TeachersRest {
     private final TeacherServiceLocal teacherService;
@@ -31,6 +46,11 @@ public class TeachersRest {
         this.teacherService = teacherService;
     }
 
+    /**
+     * Retrieve a list of all the teachers.
+     * 
+     * @return The list of all the teachers
+     */
     @CheckAuthorization
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -46,6 +66,14 @@ public class TeachersRest {
         return response;
     }
 
+    /**
+     * Save the changes of the teacher into the system. This method saves only the teacher itself and not its detail
+     * information (see {@link TeacherDetailsRest}).
+     * 
+     * @param id Id of the updated teacher
+     * @param payload Teacher's information to save
+     * @return The updated teacher
+     */
     @CheckAuthorization
     @PUT
     @Path("/{id}")
@@ -61,6 +89,12 @@ public class TeachersRest {
         return payload;
     }
 
+    /**
+     * Create a new teacher with its detail container.
+     * 
+     * @param payload The teacher's information to save on creation
+     * @return The newly created teacher with its detail information
+     */
     @CheckAuthorization
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

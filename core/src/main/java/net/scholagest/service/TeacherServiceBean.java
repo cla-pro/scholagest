@@ -68,6 +68,7 @@ public class TeacherServiceBean implements TeacherServiceLocal {
             return null;
         }
 
+        // TODO create user.
         return teacherBusiness.createTeacher(teacher);
     }
 

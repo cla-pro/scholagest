@@ -19,6 +19,20 @@ import net.scholagest.service.TeacherServiceLocal;
 
 import com.google.inject.Inject;
 
+/**
+ * Set methods available for rest calls (WebService) to handle the teacher detail information.
+ * The available methods are:
+ * 
+ * <ul>
+ *   <li>GET /{id} - to retrieve the detail information of a teacher</li>
+ *   <li>PUT /{id} - to update the detail information of a teacher</li>
+ * </ul>
+ * 
+ * The creation is done through the teacher creation in the {@link TeachersRest}
+ * 
+ * @author CLA
+ * @since 0.13.0
+ */
 @Path("/teacherDetails")
 public class TeacherDetailsRest {
 
@@ -29,6 +43,12 @@ public class TeacherDetailsRest {
         this.teacherService = teacherService;
     }
 
+    /**
+     * Retrieve the detail information about a single teacher identified by its id.
+     * 
+     * @param id Id of the teacher detail information to get
+     * @return The teacher detail information identified by id
+     */
     @CheckAuthorization
     @GET
     @Path("/{id}")
@@ -45,6 +65,13 @@ public class TeacherDetailsRest {
         return response;
     }
 
+    /**
+     * Save the changes of the teacher's detail information into the system.
+     * 
+     * @param id Id of the updated teacher's detail information
+     * @param payload teacher's detail information to save
+     * @return The updated teacher detail information
+     */
     @CheckAuthorization
     @PUT
     @Path("/{id}")

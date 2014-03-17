@@ -18,17 +18,21 @@ import net.scholagest.service.StudentServiceLocal;
 
 import com.google.inject.Inject;
 
+/**
+ * Set methods available for rest calls (WebService) to handle the student personal information. The available methods are:
+ * 
+ * <ul>
+ *   <li>GET /{id} - to retrieve the personal information of a student</li>
+ *   <li>PUT /{id} - to update the personal information of a student</li>
+ * </ul>
+ * 
+ * The creation is done through the student creation in the {@link StudentsRest}
+ * 
+ * @author CLA
+ * @since 0.13.0
+ */
 @Path("/studentPersonals")
 public class StudentPersonalsRest {
-    // public static Map<String, StudentPersonalJson> personals = new
-    // HashMap<>();
-    //
-    // static {
-    // personals.put("1", new StudentPersonalJson("1", "Route du Verney 8",
-    // "Perly", "1242", "Protestant"));
-    // personals.put("2", new StudentPersonalJson("2", "Post Street 711",
-    // "San Francisco", "1242", null));
-    // }
 
     private final StudentServiceLocal studentService;
 
@@ -37,6 +41,12 @@ public class StudentPersonalsRest {
         this.studentService = studentService;
     }
 
+    /**
+     * Retrieve the personal information about a single student identified by its id.
+     * 
+     * @param id Id of the student personal information to get
+     * @return The student personal information identified by id
+     */
     @CheckAuthorization
     @GET
     @Path("/{id}")
@@ -51,6 +61,13 @@ public class StudentPersonalsRest {
         return result;
     }
 
+    /**
+     * Save the changes of the student's personal information into the system.
+     * 
+     * @param id Id of the updated student's personal information
+     * @param payload Student's personal information to save
+     * @return The updated student personal information
+     */
     @CheckAuthorization
     @PUT
     @Path("/{id}")

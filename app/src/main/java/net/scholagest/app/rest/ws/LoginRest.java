@@ -15,10 +15,16 @@ import net.scholagest.service.SessionServiceLocal;
 import com.google.gson.Gson;
 import com.google.inject.Inject;
 
+/**
+ * Set methods available for rest calls (WebService) to handle the login action. This action is provided
+ * as a POST method. For the login to succeed, the request's payload must contain either a known and correct
+ * username/password pair or a valid token (existing and not expired).
+ * 
+ * @author CLA
+ * @since 0.13.0
+ */
 @Path("/login")
 public class LoginRest {
-    // private static final Map<String, ServerSession> tokenUserMap = new
-    // HashMap<>();
 
     private final SessionServiceLocal loginService;
 
@@ -27,6 +33,14 @@ public class LoginRest {
         this.loginService = loginService;
     }
 
+    /**
+     * Check the authentication information and in case of success, create a new session. The authentication
+     * information can be either a pair username/password or a session id (stored in the browser's cookies for instance).
+     * 
+     * @param content The authentication information.
+     * @return The session information
+     * @throws AuthenticationException with code 401 (Unauthorized) if the authentication information are incorrect
+     */
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public SessionJson login(final String content) {
@@ -55,40 +69,8 @@ public class LoginRest {
             } catch (final ScholagestException e) {
                 throw new WebApplicationException(e, 401);
             }
-
-            // if (login.getUsername().equals("clavanchy")) {
-            // return createSession("1");
-            // } else if (login.getUsername().equals("vparvex")) {
-            // return createSession("2");
-            // } else {
-            // throw new WebApplicationException(401);
-            // }
         } else {
             throw new WebApplicationException(401);
         }
     }
-
-    // private SessionJson createSession(final String userId) {
-    // final String token = UUID.randomUUID().toString();
-    // tokenUserMap.put(token, new ServerSession(userId, new Date().getTime()));
-    // return new SessionJson(token, userId);
-    // }
-    //
-    // private class ServerSession {
-    // private final String userId;
-    // private final long timestamp;
-    //
-    // public ServerSession(final String userId, final long timestamp) {
-    // this.userId = userId;
-    // this.timestamp = timestamp;
-    // }
-    //
-    // public String getUserId() {
-    // return userId;
-    // }
-    //
-    // public long getTimestamp() {
-    // return timestamp;
-    // }
-    // }
 }

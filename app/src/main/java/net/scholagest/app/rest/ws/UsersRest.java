@@ -23,6 +23,18 @@ import net.scholagest.service.UserServiceLocal;
 
 import com.google.inject.Inject;
 
+/**
+ * Set methods available for rest calls (WebService) to handle the users. The available methods are:
+ * 
+ * <ul>
+ *   <li>GET /{id} - to retrieve the information of a user</li>
+ * </ul>
+ * 
+ * The creation is done through the teacher creation in the {@link TeachersRest}
+ * 
+ * @author CLA
+ * @since 0.13.0
+ */
 @Path("/users")
 public class UsersRest {
     private final TeacherServiceLocal teacherService;

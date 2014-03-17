@@ -18,14 +18,21 @@ import net.scholagest.service.StudentServiceLocal;
 
 import com.google.inject.Inject;
 
+/**
+ * Set methods available for rest calls (WebService) to handle the student medical information. The available methods are:
+ * 
+ * <ul>
+ *   <li>GET /{id} - to retrieve the medical information of a student</li>
+ *   <li>PUT /{id} - to update the medical information of a student</li>
+ * </ul>
+ * 
+ * The creation is done through the student creation in the {@link StudentsRest}
+ * 
+ * @author CLA
+ * @since 0.13.0
+ */
 @Path("/studentMedicals")
 public class StudentMedicalsRest {
-    // public static Map<String, StudentMedicalJson> medicals = new HashMap<>();
-    //
-    // static {
-    // medicals.put("1", new StudentMedicalJson("1", null));
-    // medicals.put("2", new StudentMedicalJson("2", null));
-    // }
 
     private final StudentServiceLocal studentService;
 
@@ -34,6 +41,12 @@ public class StudentMedicalsRest {
         this.studentService = studentService;
     }
 
+    /**
+     * Retrieve the medical information about a single student identified by its id.
+     * 
+     * @param id Id of the student medical information to get
+     * @return The student medical information identified by id
+     */
     @CheckAuthorization
     @GET
     @Path("/{id}")
@@ -48,6 +61,13 @@ public class StudentMedicalsRest {
         return result;
     }
 
+    /**
+     * Save the changes of the student's medical information into the system.
+     * 
+     * @param id Id of the updated student's medical information
+     * @param payload Student's medical information to save
+     * @return The updated student medical information
+     */
     @CheckAuthorization
     @PUT
     @Path("/{id}")
