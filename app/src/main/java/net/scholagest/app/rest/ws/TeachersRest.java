@@ -11,6 +11,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import net.scholagest.app.rest.ws.authorization.CheckAuthorization;
@@ -54,16 +55,36 @@ public class TeachersRest {
     @CheckAuthorization
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, Object> getTeachers() {
-        final TeacherJsonConverter converter = new TeacherJsonConverter();
-
-        final List<Teacher> teachers = teacherService.getTeachers();
-        final List<TeacherJson> teachersJson = converter.convertToTeacherJson(teachers);
+    public Map<String, Object> getTeachers(@QueryParam("ids[]") final List<String> ids) {
+        final List<TeacherJson> teachersJson;
+        if (ids == null || ids.isEmpty()) {
+            teachersJson = getAllTeachers();
+        } else {
+            teachersJson = getTeachersByIds(ids);
+        }
 
         final Map<String, Object> response = new HashMap<>();
         response.put("teachers", teachersJson);
 
         return response;
+    }
+
+    private List<TeacherJson> getAllTeachers() {
+        final TeacherJsonConverter converter = new TeacherJsonConverter();
+
+        final List<Teacher> teachers = teacherService.getTeachers();
+        final List<TeacherJson> teachersJson = converter.convertToTeacherJson(teachers);
+
+        return teachersJson;
+    }
+
+    private List<TeacherJson> getTeachersByIds(final List<String> ids) {
+        final TeacherJsonConverter converter = new TeacherJsonConverter();
+
+        final List<Teacher> teachers = teacherService.getTeacher(ids);
+        final List<TeacherJson> teachersJson = converter.convertToTeacherJson(teachers);
+
+        return teachersJson;
     }
 
     /**

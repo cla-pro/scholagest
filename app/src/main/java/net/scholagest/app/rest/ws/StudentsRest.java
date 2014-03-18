@@ -80,28 +80,40 @@ public class StudentsRest {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Map<String, Object> getStudents(@QueryParam("ids[]") final List<String> ids) {
-        final StudentJsonConverter converter = new StudentJsonConverter();
         final Map<String, Object> response = new HashMap<>();
 
+        final List<StudentJson> studentJsonList;
         if (ids.isEmpty()) {
-            final List<Student> studentList = studentService.getStudents();
-            final List<StudentJson> studentJsonList = converter.convertToStudentJson(studentList);
-
-            response.put("students", studentJsonList);
+            studentJsonList = getAllStudents();
         } else {
-            final List<StudentJson> studentJsonList = new ArrayList<>();
+            studentJsonList = getStudentListByIds(ids);
 
-            for (final String id : ids) {
-                final Student student = studentService.getStudent(id);
-                if (student != null) {
-                    studentJsonList.add(converter.convertToStudentJson(student));
-                }
-            }
-
-            response.put("students", studentJsonList);
         }
+        response.put("students", studentJsonList);
 
         return response;
+    }
+
+    private List<StudentJson> getAllStudents() {
+        final StudentJsonConverter converter = new StudentJsonConverter();
+
+        final List<Student> studentList = studentService.getStudents();
+        final List<StudentJson> studentJsonList = converter.convertToStudentJson(studentList);
+
+        return studentJsonList;
+    }
+
+    private List<StudentJson> getStudentListByIds(final List<String> ids) {
+        final StudentJsonConverter converter = new StudentJsonConverter();
+        final List<StudentJson> studentJsonList = new ArrayList<>();
+
+        for (final String id : ids) {
+            final Student student = studentService.getStudent(id);
+            if (student != null) {
+                studentJsonList.add(converter.convertToStudentJson(student));
+            }
+        }
+        return studentJsonList;
     }
 
     /**
