@@ -3,19 +3,19 @@ package net.scholagest.app.rest.ws.objects;
 import java.util.List;
 
 public class Students {
-    private List<Student> students;
+    private List<StudentJson> students;
 
     public Students() {}
 
-    public Students(List<Student> students) {
+    public Students(List<StudentJson> students) {
         this.students = students;
     }
 
-    public List<Student> getStudents() {
+    public List<StudentJson> getStudents() {
         return students;
     }
 
-    public void setStudents(List<Student> students) {
+    public void setStudents(List<StudentJson> students) {
         this.students = students;
     }
 }

@@ -1,6 +1,6 @@
 package net.scholagest.app.rest.ws.objects;
 
-public class Exam extends Base {
+public class Exam extends BaseJson {
     private String name;
     private int coeff;
     private String branchPeriod;

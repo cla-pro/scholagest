@@ -26,11 +26,18 @@ public class ScholagestThreadLocal {
         }
     };
 
+    private static final ThreadLocal<String> sessionIdLocal = new ThreadLocal<String>() {
+        @Override
+        protected String initialValue() {
+            return null;
+        }
+    };
+
     public static String getRequestId() {
         return requestIdLocal.get();
     }
 
-    public static void setRequestId(String requestId) {
+    public static void setRequestId(final String requestId) {
         requestIdLocal.set(requestId);
     }
 
@@ -38,7 +45,7 @@ public class ScholagestThreadLocal {
         return transactionLocal.get();
     }
 
-    public static void setTransaction(ITransaction transaction) {
+    public static void setTransaction(final ITransaction transaction) {
         transactionLocal.set(transaction);
     }
 
@@ -46,7 +53,15 @@ public class ScholagestThreadLocal {
         return subjectLocal.get();
     }
 
-    public static void setSubject(Subject subject) {
+    public static void setSubject(final Subject subject) {
         subjectLocal.set(subject);
+    }
+
+    public static String getSessionId() {
+        return sessionIdLocal.get();
+    }
+
+    public static void setSessionId(final String sessionId) {
+        sessionIdLocal.set(sessionId);
     }
 }

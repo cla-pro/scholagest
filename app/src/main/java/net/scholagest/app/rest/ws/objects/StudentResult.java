@@ -3,7 +3,7 @@ package net.scholagest.app.rest.ws.objects;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StudentResult extends Base {
+public class StudentResult extends BaseJson {
     private String student;
     private String branchPeriod;
     private List<String> results;

@@ -1,4 +1,4 @@
-package net.scholagest.app.rest.ws.objects;
+package net.scholagest.object;
 
 public abstract class Base {
     private String id;

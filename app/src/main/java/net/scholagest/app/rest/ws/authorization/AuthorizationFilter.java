@@ -10,33 +10,47 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import net.scholagest.utils.ScholagestThreadLocal;
+
+/**
+ * Filter used to extract the authentication's token from the request header. The token
+ * verification cannot take place here because some of the webservice do not requires the
+ * authentication. Therefore it is here not known whether a 401 must be thrown or not.
+ * 
+ * @author CLA
+ * @since 0.12.0
+ */
 public class AuthorizationFilter implements Filter {
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-        System.out.println("Initializing filter");
+    public void init(final FilterConfig filterConfig) throws ServletException {
+        // Do nothing
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
         final HttpServletRequest httpRequest = (HttpServletRequest) request;
-        System.out.println("Entering filter with token: " + httpRequest.getHeader("Authorization"));
-        chain.doFilter(request, response);
-        System.out.println("Leaving filter");
+
+        final String sessionId = httpRequest.getHeader("Authorization");
+        ScholagestThreadLocal.setSessionId(sessionId);
+
+        try {
+            chain.doFilter(request, response);
+        } finally {
+            ScholagestThreadLocal.setSessionId(null);
+        }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void destroy() {
-        System.out.println("Destroying filter");
+        // Do nothing
     }
-
-    // implements ContainerRequestFilter {
-    // @Override
-    // public ContainerRequest filter(ContainerRequest request) {
-    // String authorization = request.getHeaderValue("Authorization");
-    //
-    // System.out.println("Authorization: " + authorization);
-    //
-    // return request;
-    // }
 }

@@ -1,11 +1,13 @@
 package net.scholagest.app.rest.ws.objects;
 
-public class User extends Base {
+public class UserJson extends BaseJson {
     private String role;
     private String teacher;
     private String clazz;
 
-    public User(final String id, final String role, final String teacher, final String clazz) {
+    public UserJson() {}
+
+    public UserJson(final String id, final String role, final String teacher, final String clazz) {
         super(id);
         this.role = role;
         this.teacher = teacher;

@@ -1,11 +1,11 @@
 package net.scholagest.app.rest.ws.objects;
 
-public class StudentMedical extends Base {
+public class StudentMedicalJson extends BaseJson {
     private String doctor;
 
-    public StudentMedical() {}
+    public StudentMedicalJson() {}
 
-    public StudentMedical(final String id, final String doctor) {
+    public StudentMedicalJson(final String id, final String doctor) {
         super(id);
         this.doctor = doctor;
     }

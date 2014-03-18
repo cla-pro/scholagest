@@ -1,6 +1,6 @@
 package net.scholagest.app.rest.ws.objects;
 
-public class Result extends Base {
+public class Result extends BaseJson {
     private Double grade;
     private String studentResult;
     private String exam;

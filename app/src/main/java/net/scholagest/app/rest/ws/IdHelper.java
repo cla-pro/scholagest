@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import net.scholagest.app.rest.ws.objects.Base;
+import net.scholagest.app.rest.ws.objects.BaseJson;
 
 public class IdHelper {
     public static String getNextId(final Set<String> existingIds) {
@@ -18,10 +18,10 @@ public class IdHelper {
         return "" + (max + 1);
     }
 
-    public static List<String> extractIds(final List<? extends Base> baseList) {
+    public static List<String> extractIds(final List<? extends BaseJson> baseList) {
         final List<String> ids = new ArrayList<>();
 
-        for (final Base base : baseList) {
+        for (final BaseJson base : baseList) {
             ids.add(base.getId());
         }
 

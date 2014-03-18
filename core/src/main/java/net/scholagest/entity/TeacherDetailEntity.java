@@ -1,18 +1,11 @@
-package net.scholagest.app.rest.ws.objects;
+package net.scholagest.entity;
 
-public class TeacherDetail extends Base {
+public class TeacherDetailEntity extends BaseEntity {
     private String address;
     private String email;
     private String phone;
 
-    public TeacherDetail() {}
-
-    public TeacherDetail(final String id, final String address, final String email, final String phone) {
-        super(id);
-        this.address = address;
-        this.email = email;
-        this.phone = phone;
-    }
+    public TeacherDetailEntity() {}
 
     public String getAddress() {
         return address;

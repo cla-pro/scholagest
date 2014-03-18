@@ -16,7 +16,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import net.scholagest.app.rest.ws.authorization.CheckAuthorization;
-import net.scholagest.app.rest.ws.objects.Base;
+import net.scholagest.app.rest.ws.objects.BaseJson;
 import net.scholagest.app.rest.ws.objects.BranchPeriod;
 import net.scholagest.app.rest.ws.objects.Clazz;
 import net.scholagest.app.rest.ws.objects.Period;
@@ -160,9 +160,9 @@ public class ClassesRest {
         return response;
     }
 
-    private List<String> extractIds(final List<? extends Base> elements) {
+    private List<String> extractIds(final List<? extends BaseJson> elements) {
         final List<String> ids = new ArrayList<>();
-        for (final Base base : elements) {
+        for (final BaseJson base : elements) {
             ids.add(base.getId());
         }
         return ids;

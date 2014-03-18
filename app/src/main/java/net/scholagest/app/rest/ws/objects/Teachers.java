@@ -3,17 +3,17 @@ package net.scholagest.app.rest.ws.objects;
 import java.util.List;
 
 public class Teachers {
-    private List<Teacher> teachers;
+    private List<TeacherJson> teachers;
 
     public Teachers() {
 
     }
 
-    public Teachers(final List<Teacher> teachers) {
+    public Teachers(final List<TeacherJson> teachers) {
         this.teachers = teachers;
     }
 
-    public List<Teacher> getTeachers() {
+    public List<TeacherJson> getTeachers() {
         return teachers;
     }
 }

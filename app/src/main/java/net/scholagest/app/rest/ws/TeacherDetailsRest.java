@@ -5,7 +5,6 @@ import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -13,61 +12,76 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import net.scholagest.app.rest.ws.authorization.CheckAuthorization;
-import net.scholagest.app.rest.ws.objects.TeacherDetail;
+import net.scholagest.app.rest.ws.converter.TeacherJsonConverter;
+import net.scholagest.app.rest.ws.objects.TeacherDetailJson;
+import net.scholagest.object.TeacherDetail;
+import net.scholagest.service.TeacherServiceLocal;
 
 import com.google.inject.Inject;
 
+/**
+ * Set methods available for rest calls (WebService) to handle the teacher detail information.
+ * The available methods are:
+ * 
+ * <ul>
+ *   <li>GET /{id} - to retrieve the detail information of a teacher</li>
+ *   <li>PUT /{id} - to update the detail information of a teacher</li>
+ * </ul>
+ * 
+ * The creation is done through the teacher creation in the {@link TeachersRest}
+ * 
+ * @author CLA
+ * @since 0.13.0
+ */
 @Path("/teacherDetails")
 public class TeacherDetailsRest {
-    public static Map<String, TeacherDetail> teacherDetails = new HashMap<>();
 
-    static {
-        teacherDetails.put("1", new TeacherDetail("1", "Kleefeldstrasse 1, 3018 Bern", "cedric.lavanchy@gmail.com", "+41791234567"));
-        teacherDetails.put("2", new TeacherDetail("2", "Chemin des Merisiers 25, 1870 Monthey", "valerie.parvex@gmail.com", "+41797654321"));
-    }
+    private final TeacherServiceLocal teacherService;
 
     @Inject
-    public TeacherDetailsRest() {}
+    public TeacherDetailsRest(final TeacherServiceLocal teacherService) {
+        this.teacherService = teacherService;
+    }
 
+    /**
+     * Retrieve the detail information about a single teacher identified by its id.
+     * 
+     * @param id Id of the teacher detail information to get
+     * @return The teacher detail information identified by id
+     */
     @CheckAuthorization
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, TeacherDetail> getTeacherDetail(@PathParam("id") final String id) {
-        final TeacherDetail teacherDetail = teacherDetails.get(id);
+    public Map<String, Object> getTeacherDetail(@PathParam("id") final String id) {
+        final TeacherJsonConverter converter = new TeacherJsonConverter();
 
-        final Map<String, TeacherDetail> result = new HashMap<>();
-        result.put("teacherDetail", teacherDetail);
+        final TeacherDetail teacherDetail = teacherService.getTeacherDetail(id);
+        final TeacherDetailJson teacherDetailJson = converter.convertToTeacherDetailJson(teacherDetail);
 
-        return result;
+        final Map<String, Object> response = new HashMap<>();
+        response.put("teacherDetail", teacherDetailJson);
+
+        return response;
     }
 
+    /**
+     * Save the changes of the teacher's detail information into the system.
+     * 
+     * @param id Id of the updated teacher's detail information
+     * @param payload teacher's detail information to save
+     * @return The updated teacher detail information
+     */
     @CheckAuthorization
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void saveTeacherDetail(@PathParam("id") final String id, final Map<String, TeacherDetail> teacherDetail) {
-        System.out.println("TeacherDetail must be saved " + id);
-        mergeTeacherDetail(id, teacherDetail.get("teacherDetail"));
-    }
+    public void saveTeacherDetail(@PathParam("id") final String id, final Map<String, TeacherDetailJson> payload) {
+        final TeacherJsonConverter converter = new TeacherJsonConverter();
 
-    private void mergeTeacherDetail(final String id, final TeacherDetail teacherDetail) {
-        final TeacherDetail toBeMerged = teacherDetails.get(id);
+        final TeacherDetailJson teacherDetailJson = payload.get("teacherDetail");
+        final TeacherDetail teacherDetail = converter.convertToTeacherDetail(teacherDetailJson);
 
-        toBeMerged.setAddress(teacherDetail.getAddress());
-        toBeMerged.setEmail(teacherDetail.getEmail());
-        toBeMerged.setPhone(teacherDetail.getPhone());
-    }
-
-    @CheckAuthorization
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Map<String, TeacherDetail> createTeacherDetail(final Map<String, TeacherDetail> payload) {
-        final TeacherDetail teacherDetail = payload.get("teacherDetail");
-        final String id = IdHelper.getNextId(teacherDetails.keySet());
-        teacherDetail.setId(id);
-        teacherDetails.put(id, teacherDetail);
-
-        return payload;
+        teacherService.saveTeacherDetail(id, teacherDetail);
     }
 }

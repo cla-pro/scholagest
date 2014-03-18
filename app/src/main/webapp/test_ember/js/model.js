@@ -1,8 +1,8 @@
 // Valid roles: admin, teacher, helpteacher
 Scholagest.Role = {
-    ADMIN: "admin",
-    TEACHER: "teacher",
-    HELP_TEACHER: "helpteacher"
+    ADMIN: "ADMIN",
+    TEACHER: "TEACHER",
+    HELP_TEACHER: "HELPTEACHER"
 };
 
 Scholagest.User = DS.Model.extend({
