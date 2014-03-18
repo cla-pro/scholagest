@@ -48,9 +48,20 @@ public class TeachersRest {
     }
 
     /**
-     * Retrieve a list of all the teachers.
+     * Retrieve a list of teachers. Either filtered by ids or the whole list. The ids
+     * are specified as query parameter with the name "ids[]".
+     * </p>
      * 
-     * @return The list of all the teachers
+     * <p>
+     * Examples:
+     * <ul>
+     *   <li>Filter the teachers by id: GET base_url/teachers?ids[]=1&ids[]=2</li>
+     *   <li>Get all the teachers: GET base_url/teachers
+     * </ul>
+     * </p>
+     * 
+     * @param ids Optional parameter used to filter the list of teachers
+     * @return The list of teachers optionally filtered by ids
      */
     @CheckAuthorization
     @GET
