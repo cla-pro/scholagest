@@ -18,6 +18,7 @@ import net.scholagest.app.rest.ws.TeacherDetailsRest;
 import net.scholagest.app.rest.ws.TeachersRest;
 import net.scholagest.app.rest.ws.UsersRest;
 import net.scholagest.app.rest.ws.YearsRest;
+import net.scholagest.app.rest.ws.authorization.AuthorizationFilter;
 import net.scholagest.app.rest.ws.authorization.AuthorizationVerifier;
 import net.scholagest.app.rest.ws.authorization.CheckAuthorization;
 import net.scholagest.authorization.AuthorizationInterceptor;
@@ -45,6 +46,7 @@ import org.apache.shiro.guice.ShiroModule;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Singleton;
 import com.google.inject.matcher.Matchers;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.sun.jersey.guice.JerseyServletModule;
@@ -56,6 +58,8 @@ public class GuiceContext extends GuiceServletContextListener {
         final Injector injector = Guice.createInjector(new JerseyServletModule() {
             @Override
             protected void configureServlets() {
+                bind(AuthorizationFilter.class).in(Singleton.class);
+
                 final AuthorizationVerifier authorizationVerifier = new AuthorizationVerifier();
                 requestInjection(authorizationVerifier);
                 bindInterceptor(Matchers.any(), Matchers.annotatedWith(CheckAuthorization.class), authorizationVerifier);
@@ -95,6 +99,7 @@ public class GuiceContext extends GuiceServletContextListener {
                 final Map<String, String> params = new HashMap<>();
                 params.put("com.sun.jersey.config.property.packages", "net.scholagest.rest.ws");
                 params.put("com.sun.jersey.api.json.POJOMappingFeature", "true");
+                filter("/services/*").through(AuthorizationFilter.class);
                 serve("/services/*").with(GuiceContainer.class, params);
             }
         }, new ShiroModule() {

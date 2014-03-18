@@ -13,13 +13,14 @@ import javax.servlet.http.HttpServletRequest;
 import net.scholagest.utils.ScholagestThreadLocal;
 
 /**
- * Filter used to extract the authentication's token from the request header.
+ * Filter used to extract the authentication's token from the request header. The token
+ * verification cannot take place here because some of the webservice do not requires the
+ * authentication. Therefore it is here not known whether a 401 must be thrown or not.
  * 
  * @author CLA
  * @since 0.12.0
  */
 public class AuthorizationFilter implements Filter {
-
     /**
      * {@inheritDoc}
      */

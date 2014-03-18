@@ -23,8 +23,6 @@ public class AuthorizationVerifier implements MethodInterceptor {
     @Inject
     private SessionServiceLocal loginService;
 
-    public AuthorizationVerifier() {}
-
     /**
      * {@inheritDoc}
      */
@@ -32,6 +30,11 @@ public class AuthorizationVerifier implements MethodInterceptor {
     public Object invoke(final MethodInvocation invocation) throws Throwable {
         try {
             final String sessionId = ScholagestThreadLocal.getSessionId();
+
+            if (sessionId == null) {
+                throw new WebApplicationException(401);
+            }
+
             final SessionInfo sessionInfo = loginService.authenticateWithSessionId(sessionId);
 
             ScholagestThreadLocal.setSubject(sessionInfo.getSubject());
