@@ -18,7 +18,7 @@ import javax.ws.rs.core.MediaType;
 import net.scholagest.app.rest.ws.authorization.CheckAuthorization;
 import net.scholagest.app.rest.ws.objects.Branch;
 import net.scholagest.app.rest.ws.objects.BranchPeriod;
-import net.scholagest.app.rest.ws.objects.Clazz;
+import net.scholagest.app.rest.ws.objects.ClazzJson;
 import net.scholagest.app.rest.ws.objects.Period;
 
 import com.google.inject.Inject;
@@ -104,7 +104,7 @@ public class BranchesRest {
     }
 
     private List<BranchPeriod> createBranchPeriods(final Branch branch) {
-        final Clazz clazz = ClassesRest.classes.get(branch.getClazz());
+        final ClazzJson clazz = ClassesRest.classes.get(branch.getClazz());
 
         final List<BranchPeriod> newBranchPeriods = new ArrayList<>();
         for (final String periodId : clazz.getPeriods()) {

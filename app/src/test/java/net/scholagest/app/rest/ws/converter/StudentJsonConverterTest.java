@@ -33,7 +33,7 @@ public class StudentJsonConverterTest {
         final List<Student> toConvert = Arrays.asList(student1, student2);
         final StudentJsonConverter testee = spy(new StudentJsonConverter());
 
-        final List<StudentJson> result = testee.convertToStudentJson(toConvert);
+        final List<StudentJson> result = testee.convertToStudentJsonList(toConvert);
 
         assertEquals(toConvert.size(), result.size());
 

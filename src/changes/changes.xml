@@ -1,0 +1,42 @@
+<document xmlns="http://maven.apache.org/changes/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
+  <properties>
+    <title>Changes Scholagest Project</title>
+    <author email="cedric.lavanchy.pro@gmail.com">Cédric Lavanchy</author>
+  </properties>
+  <body>
+	<release version="0.14.0">
+      <action dev="clavanchy" type="add">
+        The year rest webservice now uses the service and business level.
+      </action>
+      <action dev="clavanchy" type="add">
+        The year service checks the roles and permissions for critical methods.
+      </action>
+	</release>
+	
+    <release version="0.13.0" date="2014-03-18" description="First release">
+      <action dev="clavanchy" type="add">
+        During the login, the username is checked against the business layer to ensure its validity.
+      </action>
+      <action dev="clavanchy" type="add">
+        The authentication token is read out of the request.
+      </action>
+      <action dev="clavanchy" type="add">
+        The authentication token is checked against the services to ensure this session is running and not expired.
+      </action>
+      <action dev="clavanchy" type="add">
+        The teacher rest webservice now uses the service and business level.
+      </action>
+      <action dev="clavanchy" type="add">
+        The teacher service checks the roles and permissions for critical methods.
+      </action>
+      <action dev="clavanchy" type="add">
+        The student rest webservice now uses the service and business level.
+      </action>
+      <action dev="clavanchy" type="add">
+        The student service checks the roles and permissions for critical methods.
+      </action>
+    </release>
+  </body>
+</document>

@@ -3,16 +3,16 @@ package net.scholagest.app.rest.ws.objects;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Year extends BaseJson {
+public class YearJson extends BaseJson {
     private String name;
     private boolean running;
     private List<String> classes;
 
-    public Year() {
+    public YearJson() {
         this.classes = new ArrayList<>();
     }
 
-    public Year(final String id, final String name, final boolean running, final List<String> classes) {
+    public YearJson(final String id, final String name, final boolean running, final List<String> classes) {
         super(id);
         this.name = name;
         this.running = running;

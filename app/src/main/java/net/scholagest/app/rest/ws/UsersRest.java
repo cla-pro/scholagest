@@ -59,7 +59,7 @@ public class UsersRest {
             toReturn.put("user", userJson);
 
             final List<Teacher> teachers = teacherService.getTeacher(Arrays.asList(user.getTeacherId()));
-            final List<TeacherJson> teachersJson = new TeacherJsonConverter().convertToTeacherJson(teachers);
+            final List<TeacherJson> teachersJson = new TeacherJsonConverter().convertToTeacherJsonList(teachers);
             toReturn.put("teachers", teachersJson);
 
             // TODO class is null -> go get it

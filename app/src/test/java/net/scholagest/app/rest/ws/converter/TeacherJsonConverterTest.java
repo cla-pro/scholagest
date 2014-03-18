@@ -16,11 +16,10 @@ import net.scholagest.object.TeacherDetail;
 import org.junit.Test;
 
 /**
- * Convert a {@link TeacherJson} to a {@link Teacher}
+ * Test class for {@link TeacherJsonConverter}
  * 
- * @param teacherJson The teacher json to convert
- * @return The converted teacher
- *
+ * @author CLA
+ * @since 0.13.0
  */
 public class TeacherJsonConverterTest {
     @Test
@@ -30,7 +29,7 @@ public class TeacherJsonConverterTest {
         final List<Teacher> teacherList = Arrays.asList(teacher1, teacher2);
 
         final TeacherJsonConverter testee = spy(new TeacherJsonConverter());
-        final List<TeacherJson> teacherJsonList = testee.convertToTeacherJson(teacherList);
+        final List<TeacherJson> teacherJsonList = testee.convertToTeacherJsonList(teacherList);
 
         assertEquals(teacherList.size(), teacherJsonList.size());
         for (final Teacher teacher : teacherList) {

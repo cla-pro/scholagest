@@ -84,7 +84,7 @@ public class TeachersRest {
         final TeacherJsonConverter converter = new TeacherJsonConverter();
 
         final List<Teacher> teachers = teacherService.getTeachers();
-        final List<TeacherJson> teachersJson = converter.convertToTeacherJson(teachers);
+        final List<TeacherJson> teachersJson = converter.convertToTeacherJsonList(teachers);
 
         return teachersJson;
     }
@@ -93,7 +93,7 @@ public class TeachersRest {
         final TeacherJsonConverter converter = new TeacherJsonConverter();
 
         final List<Teacher> teachers = teacherService.getTeacher(ids);
-        final List<TeacherJson> teachersJson = converter.convertToTeacherJson(teachers);
+        final List<TeacherJson> teachersJson = converter.convertToTeacherJsonList(teachers);
 
         return teachersJson;
     }

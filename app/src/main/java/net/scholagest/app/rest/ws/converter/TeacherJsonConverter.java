@@ -19,13 +19,13 @@ public class TeacherJsonConverter {
     /**
      * Convenient method to convert a list of {@link Teacher} to a list of {@link TeacherJson}
      *  
-     * @param teachers The list to convert
+     * @param teacherList The list to convert
      * @return The converted list
      */
-    public List<TeacherJson> convertToTeacherJson(final List<Teacher> teachers) {
+    public List<TeacherJson> convertToTeacherJsonList(final List<Teacher> teacherList) {
         final List<TeacherJson> teachersJson = new ArrayList<>();
 
-        for (final Teacher teacher : teachers) {
+        for (final Teacher teacher : teacherList) {
             teachersJson.add(convertToTeacherJson(teacher));
         }
 
@@ -33,7 +33,7 @@ public class TeacherJsonConverter {
     }
 
     /**
-     * Convert a {@link Teacher} to its json version {@link TeacherJson}
+     * Convert a {@link Teacher} to its json version {@link TeacherJson}. The {@link TeacherDetail} is copied only as reference (id).
      * 
      * @param teacher The teacher to convert
      * @return The converted teacher json

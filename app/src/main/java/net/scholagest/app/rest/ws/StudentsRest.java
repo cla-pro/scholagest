@@ -98,7 +98,7 @@ public class StudentsRest {
         final StudentJsonConverter converter = new StudentJsonConverter();
 
         final List<Student> studentList = studentService.getStudents();
-        final List<StudentJson> studentJsonList = converter.convertToStudentJson(studentList);
+        final List<StudentJson> studentJsonList = converter.convertToStudentJsonList(studentList);
 
         return studentJsonList;
     }

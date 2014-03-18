@@ -32,6 +32,8 @@ import net.scholagest.business.TeacherBusinessBean;
 import net.scholagest.business.TeacherBusinessLocal;
 import net.scholagest.business.UserBusinessBean;
 import net.scholagest.business.UserBusinessLocal;
+import net.scholagest.business.YearBusinessBean;
+import net.scholagest.business.YearBusinessLocal;
 import net.scholagest.service.SessionServiceBean;
 import net.scholagest.service.SessionServiceLocal;
 import net.scholagest.service.StudentServiceBean;
@@ -40,6 +42,8 @@ import net.scholagest.service.TeacherServiceBean;
 import net.scholagest.service.TeacherServiceLocal;
 import net.scholagest.service.UserServiceBean;
 import net.scholagest.service.UserServiceLocal;
+import net.scholagest.service.YearServiceBean;
+import net.scholagest.service.YearServiceLocal;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.guice.ShiroModule;
@@ -72,11 +76,13 @@ public class GuiceContext extends GuiceServletContextListener {
                 bind(StudentBusinessLocal.class).to(StudentBusinessBean.class);
                 bind(TeacherBusinessLocal.class).to(TeacherBusinessBean.class);
                 bind(UserBusinessLocal.class).to(UserBusinessBean.class);
+                bind(YearBusinessLocal.class).to(YearBusinessBean.class);
 
                 bind(SessionServiceLocal.class).to(SessionServiceBean.class);
                 bind(StudentServiceLocal.class).to(StudentServiceBean.class);
                 bind(TeacherServiceLocal.class).to(TeacherServiceBean.class);
                 bind(UserServiceLocal.class).to(UserServiceBean.class);
+                bind(YearServiceLocal.class).to(YearServiceBean.class);
 
                 bind(LoginRest.class);
                 bind(UsersRest.class);

@@ -17,7 +17,13 @@ import net.scholagest.object.StudentPersonal;
  * @since 0.13.0
  */
 public class StudentJsonConverter {
-    public List<StudentJson> convertToStudentJson(final List<Student> studentList) {
+    /**
+     * Convenient method to convert a list of {@link Student} to a list of {@link StudentJson}
+     *  
+     * @param studentList The list to convert
+     * @return The converted list
+     */
+    public List<StudentJson> convertToStudentJsonList(final List<Student> studentList) {
         final List<StudentJson> studentJsonList = new ArrayList<>();
 
         for (final Student student : studentList) {
@@ -27,6 +33,13 @@ public class StudentJsonConverter {
         return studentJsonList;
     }
 
+    /**
+     * Convert a {@link Student} to its json version {@link StudentJson}. The {@link StudentPersonal} and {@link StudentMedical}
+     * are copied only as reference (id).
+     * 
+     * @param student The student to convert
+     * @return The converted student json
+     */
     public StudentJson convertToStudentJson(final Student student) {
         final StudentJson studentJson = new StudentJson();
 
@@ -40,6 +53,13 @@ public class StudentJsonConverter {
         return studentJson;
     }
 
+    /**
+     * Convert a {@link StudentJson} to its version {@link Student}. Empty {@link StudentPersonal} and {@link StudentMedical}
+     * are created with the ids from the json.
+     * 
+     * @param clazzJson The clazz json to convert
+     * @return The converted clazz
+     */
     public Student convertToStudent(final StudentJson studentJson) {
         final Student student = new Student();
 
@@ -52,6 +72,12 @@ public class StudentJsonConverter {
         return student;
     }
 
+    /**
+     * Convert a {@link StudentPersonal} to its json version {@link StudentPersonalJson}
+     * 
+     * @param studentPersonal The student personal to convert
+     * @return The converted student personal json
+     */
     public StudentPersonalJson convertToStudentPersonalJson(final StudentPersonal studentPersonal) {
         final StudentPersonalJson studentPersonalJson = new StudentPersonalJson();
 
@@ -64,6 +90,12 @@ public class StudentJsonConverter {
         return studentPersonalJson;
     }
 
+    /**
+     * Convert a {@link StudentPersonalJson} to its version {@link StudentPersonal}.
+     * 
+     * @param studentPersonalJson The student personal json to convert
+     * @return The converted student personal
+     */
     public StudentPersonal convertToStudentPersonal(final StudentPersonalJson studentPersonalJson) {
         final StudentPersonal studentPersonal = new StudentPersonal();
 
@@ -76,6 +108,12 @@ public class StudentJsonConverter {
         return studentPersonal;
     }
 
+    /**
+     * Convert a {@link StudentMedical} to its json version {@link StudentMedicalJson}
+     * 
+     * @param studentMedical The student medical to convert
+     * @return The converted student medical json
+     */
     public StudentMedicalJson convertToStudentMedicalJson(final StudentMedical studentMedical) {
         final StudentMedicalJson studentMedicalJson = new StudentMedicalJson();
 
@@ -85,6 +123,12 @@ public class StudentJsonConverter {
         return studentMedicalJson;
     }
 
+    /**
+     * Convert a {@link StudentMedicalJson} to its version {@link StudentMedical}.
+     * 
+     * @param studentMedicalJson The student medical json to convert
+     * @return The converted student medical
+     */
     public StudentMedical convertToStudentMedical(final StudentMedicalJson studentMedicalJson) {
         final StudentMedical studentMedical = new StudentMedical();
 

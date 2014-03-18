@@ -18,7 +18,7 @@ import javax.ws.rs.core.MediaType;
 import net.scholagest.app.rest.ws.authorization.CheckAuthorization;
 import net.scholagest.app.rest.ws.objects.BaseJson;
 import net.scholagest.app.rest.ws.objects.BranchPeriod;
-import net.scholagest.app.rest.ws.objects.Clazz;
+import net.scholagest.app.rest.ws.objects.ClazzJson;
 import net.scholagest.app.rest.ws.objects.Period;
 import net.scholagest.app.rest.ws.objects.Result;
 import net.scholagest.app.rest.ws.objects.StudentResult;
@@ -27,12 +27,12 @@ import com.google.inject.Inject;
 
 @Path("/classes")
 public class ClassesRest {
-    public static Map<String, Clazz> classes = new HashMap<>();
+    public static Map<String, ClazzJson> classes = new HashMap<>();
 
     static {
-        classes.put("1", new Clazz("1", "1P A", "1", Arrays.asList("1", "2", "3"), Arrays.asList("1"), Arrays.asList("1"), Arrays.asList("1", "2")));
-        classes.put("2", new Clazz("2", "2P A", "2", new ArrayList<String>(), Arrays.asList("2"), Arrays.asList("2"), new ArrayList<String>()));
-        classes.put("3", new Clazz("3", "5P A", "2", new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(),
+        classes.put("1", new ClazzJson("1", "1P A", "1", Arrays.asList("1", "2", "3"), Arrays.asList("1"), Arrays.asList("1"), Arrays.asList("1", "2")));
+        classes.put("2", new ClazzJson("2", "2P A", "2", new ArrayList<String>(), Arrays.asList("2"), Arrays.asList("2"), new ArrayList<String>()));
+        classes.put("3", new ClazzJson("3", "5P A", "2", new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(),
                 new ArrayList<String>()));
     }
 
@@ -42,9 +42,9 @@ public class ClassesRest {
     @CheckAuthorization
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, List<Clazz>> getClasses(@QueryParam("ids[]") final List<String> ids) {
-        final Map<String, List<Clazz>> toReturn = new HashMap<>();
-        final List<Clazz> classesToReturn = new ArrayList<>();
+    public Map<String, List<ClazzJson>> getClasses(@QueryParam("ids[]") final List<String> ids) {
+        final Map<String, List<ClazzJson>> toReturn = new HashMap<>();
+        final List<ClazzJson> classesToReturn = new ArrayList<>();
 
         for (final String id : ids) {
             classesToReturn.add(classes.get(id));
@@ -58,10 +58,10 @@ public class ClassesRest {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, Clazz> getClass(@PathParam("id") final String id) {
-        final Map<String, Clazz> toReturn = new HashMap<>();
+    public Map<String, ClazzJson> getClass(@PathParam("id") final String id) {
+        final Map<String, ClazzJson> toReturn = new HashMap<>();
 
-        final Clazz clazz = classes.get(id);
+        final ClazzJson clazz = classes.get(id);
         toReturn.put("class", clazz);
 
         return toReturn;
@@ -70,10 +70,10 @@ public class ClassesRest {
     @CheckAuthorization
     @PUT
     @Path("/{id}")
-    public Map<String, Object> saveClass(@PathParam("id") final String id, final Map<String, Clazz> payload) {
-        final Clazz clazz = payload.get("class");
+    public Map<String, Object> saveClass(@PathParam("id") final String id, final Map<String, ClazzJson> payload) {
+        final ClazzJson clazz = payload.get("class");
 
-        final Clazz base = classes.get(id);
+        final ClazzJson base = classes.get(id);
         final Map<String, Object> updated = updateData(base, clazz);
         mergeClazz(base, clazz);
 
@@ -84,13 +84,13 @@ public class ClassesRest {
         return response;
     }
 
-    private void mergeClazz(final Clazz base, final Clazz toMerge) {
+    private void mergeClazz(final ClazzJson base, final ClazzJson toMerge) {
         base.setName(toMerge.getName());
         base.setStudents(toMerge.getStudents());
         base.setTeachers(toMerge.getTeachers());
     }
 
-    private Map<String, Object> updateData(final Clazz base, final Clazz toMerge) {
+    private Map<String, Object> updateData(final ClazzJson base, final ClazzJson toMerge) {
         final List<Object> updatedBranchPeriods = new ArrayList<>();
         final List<Object> updatedStudentResults = new ArrayList<>();
         final List<Object> updatedResults = new ArrayList<>();
@@ -201,8 +201,8 @@ public class ClassesRest {
 
     @CheckAuthorization
     @POST
-    public Map<String, Object> createClass(final Map<String, Clazz> payload) {
-        final Clazz clazz = payload.get("class");
+    public Map<String, Object> createClass(final Map<String, ClazzJson> payload) {
+        final ClazzJson clazz = payload.get("class");
 
         final String id = IdHelper.getNextId(classes.keySet());
         clazz.setId(id);
@@ -217,7 +217,7 @@ public class ClassesRest {
         return response;
     }
 
-    private List<Period> createPeriods(final Clazz clazz) {
+    private List<Period> createPeriods(final ClazzJson clazz) {
         final List<Period> periods = new ArrayList<>();
 
         for (int i = 0; i < 3; i++) {
