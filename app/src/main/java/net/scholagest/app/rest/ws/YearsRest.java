@@ -133,6 +133,7 @@ public class YearsRest {
         final YearJsonConverter converter = new YearJsonConverter();
 
         final YearJson yearJson = payload.get("year");
+        yearJson.setId(id);
         final Year year = converter.convertToYear(yearJson);
 
         final Year updatedYear = yearService.saveYear(year);

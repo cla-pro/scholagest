@@ -24,6 +24,8 @@ import net.scholagest.app.rest.ws.authorization.CheckAuthorization;
 import net.scholagest.authorization.AuthorizationInterceptor;
 import net.scholagest.authorization.RealmAuthenticationAndAuthorization;
 import net.scholagest.authorization.RolesAndPermissions;
+import net.scholagest.business.ClazzBusinessBean;
+import net.scholagest.business.ClazzBusinessLocal;
 import net.scholagest.business.SessionBusinessBean;
 import net.scholagest.business.SessionBusinessLocal;
 import net.scholagest.business.StudentBusinessBean;
@@ -34,6 +36,8 @@ import net.scholagest.business.UserBusinessBean;
 import net.scholagest.business.UserBusinessLocal;
 import net.scholagest.business.YearBusinessBean;
 import net.scholagest.business.YearBusinessLocal;
+import net.scholagest.service.ClazzServiceBean;
+import net.scholagest.service.ClazzServiceLocal;
 import net.scholagest.service.SessionServiceBean;
 import net.scholagest.service.SessionServiceLocal;
 import net.scholagest.service.StudentServiceBean;
@@ -72,12 +76,14 @@ public class GuiceContext extends GuiceServletContextListener {
                 requestInjection(authorizationInterceptor);
                 bindInterceptor(Matchers.any(), Matchers.annotatedWith(RolesAndPermissions.class), authorizationInterceptor);
 
+                bind(ClazzBusinessLocal.class).to(ClazzBusinessBean.class);
                 bind(SessionBusinessLocal.class).to(SessionBusinessBean.class);
                 bind(StudentBusinessLocal.class).to(StudentBusinessBean.class);
                 bind(TeacherBusinessLocal.class).to(TeacherBusinessBean.class);
                 bind(UserBusinessLocal.class).to(UserBusinessBean.class);
                 bind(YearBusinessLocal.class).to(YearBusinessBean.class);
 
+                bind(ClazzServiceLocal.class).to(ClazzServiceBean.class);
                 bind(SessionServiceLocal.class).to(SessionServiceBean.class);
                 bind(StudentServiceLocal.class).to(StudentServiceBean.class);
                 bind(TeacherServiceLocal.class).to(TeacherServiceBean.class);

@@ -1,7 +1,6 @@
 package net.scholagest.app.rest.ws;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,40 +15,50 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import net.scholagest.app.rest.ws.authorization.CheckAuthorization;
+import net.scholagest.app.rest.ws.converter.ClazzJsonConverter;
 import net.scholagest.app.rest.ws.objects.BaseJson;
 import net.scholagest.app.rest.ws.objects.BranchPeriod;
 import net.scholagest.app.rest.ws.objects.ClazzJson;
 import net.scholagest.app.rest.ws.objects.Period;
 import net.scholagest.app.rest.ws.objects.Result;
 import net.scholagest.app.rest.ws.objects.StudentResult;
+import net.scholagest.object.Clazz;
+import net.scholagest.service.ClazzServiceLocal;
 
 import com.google.inject.Inject;
 
 @Path("/classes")
 public class ClassesRest {
-    public static Map<String, ClazzJson> classes = new HashMap<>();
+    // public static Map<String, ClazzJson> classes = new HashMap<>();
+    //
+    // static {
+    // classes.put("1", new ClazzJson("1", "1P A", "1", Arrays.asList("1", "2",
+    // "3"), Arrays.asList("1"), Arrays.asList("1"), Arrays.asList("1", "2")));
+    // classes.put("2", new ClazzJson("2", "2P A", "2", new ArrayList<String>(),
+    // Arrays.asList("2"), Arrays.asList("2"), new ArrayList<String>()));
+    // classes.put("3", new ClazzJson("3", "5P A", "2", new ArrayList<String>(),
+    // new ArrayList<String>(), new ArrayList<String>(),
+    // new ArrayList<String>()));
+    // }
 
-    static {
-        classes.put("1", new ClazzJson("1", "1P A", "1", Arrays.asList("1", "2", "3"), Arrays.asList("1"), Arrays.asList("1"), Arrays.asList("1", "2")));
-        classes.put("2", new ClazzJson("2", "2P A", "2", new ArrayList<String>(), Arrays.asList("2"), Arrays.asList("2"), new ArrayList<String>()));
-        classes.put("3", new ClazzJson("3", "5P A", "2", new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(),
-                new ArrayList<String>()));
-    }
+    private final ClazzServiceLocal clazzService;
 
     @Inject
-    public ClassesRest() {}
+    public ClassesRest(final ClazzServiceLocal clazzService) {
+        this.clazzService = clazzService;
+    }
 
     @CheckAuthorization
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, List<ClazzJson>> getClasses(@QueryParam("ids[]") final List<String> ids) {
-        final Map<String, List<ClazzJson>> toReturn = new HashMap<>();
-        final List<ClazzJson> classesToReturn = new ArrayList<>();
+    public Map<String, Object> getClasses(@QueryParam("ids[]") final List<String> ids) {
+        final ClazzJsonConverter converter = new ClazzJsonConverter();
 
-        for (final String id : ids) {
-            classesToReturn.add(classes.get(id));
-        }
-        toReturn.put("classes", classesToReturn);
+        final List<Clazz> classList = clazzService.getClasses(ids);
+        final List<ClazzJson> clazzJsonList = converter.convertToClazzJsonList(classList);
+
+        final Map<String, Object> toReturn = new HashMap<>();
+        toReturn.put("classes", clazzJsonList);
 
         return toReturn;
     }
@@ -58,11 +67,14 @@ public class ClassesRest {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, ClazzJson> getClass(@PathParam("id") final String id) {
-        final Map<String, ClazzJson> toReturn = new HashMap<>();
+    public Map<String, Object> getClass(@PathParam("id") final String id) {
+        final ClazzJsonConverter converter = new ClazzJsonConverter();
 
-        final ClazzJson clazz = classes.get(id);
-        toReturn.put("class", clazz);
+        final Clazz clazz = clazzService.getClazz(id);
+        final ClazzJson clazzJson = converter.convertToClazzJson(clazz);
+
+        final Map<String, Object> toReturn = new HashMap<>();
+        toReturn.put("class", clazzJson);
 
         return toReturn;
     }
@@ -71,23 +83,22 @@ public class ClassesRest {
     @PUT
     @Path("/{id}")
     public Map<String, Object> saveClass(@PathParam("id") final String id, final Map<String, ClazzJson> payload) {
-        final ClazzJson clazz = payload.get("class");
+        final ClazzJsonConverter converter = new ClazzJsonConverter();
 
-        final ClazzJson base = classes.get(id);
-        final Map<String, Object> updated = updateData(base, clazz);
-        mergeClazz(base, clazz);
+        final ClazzJson clazzJson = payload.get("class");
+        clazzJson.setId(id);
+        final Clazz clazz = converter.convertToClazz(clazzJson);
+
+        final Clazz updated = clazzService.saveClazz(clazz);
+        final ClazzJson updatedJson = converter.convertToClazzJson(updated);
+
+        // final Map<String, Object> updatedObjects = updateData(base, clazz);
 
         final Map<String, Object> response = new HashMap<>();
-        response.put("class", base);
-        response.putAll(updated);
+        response.put("class", updatedJson);
+        // response.putAll(updatedObjects);
 
         return response;
-    }
-
-    private void mergeClazz(final ClazzJson base, final ClazzJson toMerge) {
-        base.setName(toMerge.getName());
-        base.setStudents(toMerge.getStudents());
-        base.setTeachers(toMerge.getTeachers());
     }
 
     private Map<String, Object> updateData(final ClazzJson base, final ClazzJson toMerge) {
@@ -202,16 +213,17 @@ public class ClassesRest {
     @CheckAuthorization
     @POST
     public Map<String, Object> createClass(final Map<String, ClazzJson> payload) {
-        final ClazzJson clazz = payload.get("class");
+        final ClazzJsonConverter converter = new ClazzJsonConverter();
 
-        final String id = IdHelper.getNextId(classes.keySet());
-        clazz.setId(id);
-        classes.put(id, clazz);
+        final ClazzJson clazzJson = payload.get("class");
+        final List<Period> periods = createPeriods(clazzJson);
+        final Clazz clazz = converter.convertToClazz(clazzJson);
 
-        final List<Period> periods = createPeriods(clazz);
+        final Clazz created = clazzService.createClazz(clazz);
+        final ClazzJson createdJson = converter.convertToClazzJson(created);
 
         final Map<String, Object> response = new HashMap<>();
-        response.put("class", clazz);
+        response.put("class", createdJson);
         response.put("periods", periods);
 
         return response;

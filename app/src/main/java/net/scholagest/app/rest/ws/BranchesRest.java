@@ -18,7 +18,6 @@ import javax.ws.rs.core.MediaType;
 import net.scholagest.app.rest.ws.authorization.CheckAuthorization;
 import net.scholagest.app.rest.ws.objects.Branch;
 import net.scholagest.app.rest.ws.objects.BranchPeriod;
-import net.scholagest.app.rest.ws.objects.ClazzJson;
 import net.scholagest.app.rest.ws.objects.Period;
 
 import com.google.inject.Inject;
@@ -80,15 +79,18 @@ public class BranchesRest {
         final String id = IdHelper.getNextId(branches.keySet());
         branch.setId(id);
 
-        final List<BranchPeriod> newBranchPeriods = createBranchPeriods(branch);
-        branch.setBranchPeriods(IdHelper.extractIds(newBranchPeriods));
+        // final List<BranchPeriod> newBranchPeriods =
+        // createBranchPeriods(branch);
+        // branch.setBranchPeriods(IdHelper.extractIds(newBranchPeriods));
 
         branches.put(id, branch);
 
         final Map<String, Object> response = new HashMap<>();
         response.put("branch", branch);
-        response.put("branchPeriods", new ArrayList<Object>(newBranchPeriods));
-        response.put("periods", new ArrayList<Object>(updatePeriods(newBranchPeriods)));
+        // response.put("branchPeriods", new
+        // ArrayList<Object>(newBranchPeriods));
+        // response.put("periods", new
+        // ArrayList<Object>(updatePeriods(newBranchPeriods)));
 
         return response;
     }
@@ -103,17 +105,19 @@ public class BranchesRest {
         return updated;
     }
 
-    private List<BranchPeriod> createBranchPeriods(final Branch branch) {
-        final ClazzJson clazz = ClassesRest.classes.get(branch.getClazz());
-
-        final List<BranchPeriod> newBranchPeriods = new ArrayList<>();
-        for (final String periodId : clazz.getPeriods()) {
-            final String id = IdHelper.getNextId(BranchPeriodsRest.branchPeriods.keySet());
-            final BranchPeriod branchPeriod = new BranchPeriod(id, branch.getId(), periodId, new ArrayList<String>(), new ArrayList<String>());
-            BranchPeriodsRest.branchPeriods.put(id, branchPeriod);
-            newBranchPeriods.add(branchPeriod);
-        }
-
-        return newBranchPeriods;
-    }
+    // private List<BranchPeriod> createBranchPeriods(final Branch branch) {
+    // final ClazzJson clazz = ClassesRest.classes.get(branch.getClazz());
+    //
+    // final List<BranchPeriod> newBranchPeriods = new ArrayList<>();
+    // for (final String periodId : clazz.getPeriods()) {
+    // final String id =
+    // IdHelper.getNextId(BranchPeriodsRest.branchPeriods.keySet());
+    // final BranchPeriod branchPeriod = new BranchPeriod(id, branch.getId(),
+    // periodId, new ArrayList<String>(), new ArrayList<String>());
+    // BranchPeriodsRest.branchPeriods.put(id, branchPeriod);
+    // newBranchPeriods.add(branchPeriod);
+    // }
+    //
+    // return newBranchPeriods;
+    // }
 }

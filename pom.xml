@@ -37,20 +37,20 @@
 					</includes>
 				</configuration>
 			</plugin>
-		    <plugin>
-			    <groupId>org.apache.maven.plugins</groupId>
-			    <artifactId>maven-changes-plugin</artifactId>
-			    <version>2.9</version>
-			    <executions>
-			        <execution>
-				        <id>check-changes</id>
-				        <phase>verify</phase>
-				        <goals>
-				            <goal>changes-check</goal>
-				        </goals>
-			        </execution>
-			    </executions>
-		    </plugin>
+<!-- 		    <plugin> -->
+<!-- 			    <groupId>org.apache.maven.plugins</groupId> -->
+<!-- 			    <artifactId>maven-changes-plugin</artifactId> -->
+<!-- 			    <version>2.9</version> -->
+<!-- 			    <executions> -->
+<!-- 			        <execution> -->
+<!-- 				        <id>check-changes</id> -->
+<!-- 				        <phase>verify</phase> -->
+<!-- 				        <goals> -->
+<!-- 				            <goal>changes-check</goal> -->
+<!-- 				        </goals> -->
+<!-- 			        </execution> -->
+<!-- 			    </executions> -->
+<!-- 		    </plugin> -->
 		</plugins>
 	</build>
 	<reporting>
