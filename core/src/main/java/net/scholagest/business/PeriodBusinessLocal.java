@@ -17,20 +17,4 @@ public interface PeriodBusinessLocal {
      * @return The period
      */
     public Period getPeriod(final String id);
-
-    /**
-     * Create a new period.
-     * 
-     * @param period The information to store with the new period
-     * @return The newly created period
-     */
-    public Period createPeriod(final Period period);
-
-    /**
-     * Update a period.
-     * 
-     * @param period The period's information to store
-     * @return The updated period
-     */
-    public Period savePeriod(final Period period);
 }

@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.scholagest.object.Period;
-import net.scholagest.utils.IdHelper;
 
 /**
  * Implementation of {@link YearBusinessLocal}
@@ -30,24 +29,4 @@ public class PeriodBusinessBean implements PeriodBusinessLocal {
             return null;
         }
     }
-
-    @Override
-    public Period createPeriod(final Period period) {
-        final String id = IdHelper.getNextId(periodsMap.keySet(), "period");
-
-        period.setId(id);
-        periodsMap.put(id, period);
-
-        return new Period(period);
-    }
-
-    @Override
-    public Period savePeriod(final Period period) {
-        final Period stored = periodsMap.get(period.getId());
-
-        stored.setName(period.getName());
-
-        return new Period(stored);
-    }
-
 }
