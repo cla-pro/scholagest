@@ -69,11 +69,12 @@ public class TeacherServiceBeanTest extends AbstractGuiceContextTest {
         setAdminSubject();
         final TeacherServiceLocal testee = getInstance(TeacherServiceLocal.class);
 
-        final List<Teacher> empty1 = testee.getTeacher(new ArrayList<String>());
-        assertTrue(empty1.isEmpty());
+        assertTrue(testee.getTeacher(new ArrayList<String>()).isEmpty());
+        verify(teacherBusiness, never()).getTeacher(anyString());
 
         final List<Teacher> empty2 = testee.getTeacher(Arrays.asList("3"));
         assertTrue(empty2.isEmpty());
+        verify(teacherBusiness).getTeacher(eq("3"));
     }
 
     @Test

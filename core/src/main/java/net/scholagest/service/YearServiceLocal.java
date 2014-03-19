@@ -5,7 +5,7 @@ import java.util.List;
 import net.scholagest.object.Year;
 
 /**
- * Provides the methods to handle the yeras. This level is responsible to
+ * Provides the methods to handle the years. This level is responsible to
  * filter the results (elements and fields) and to return only what the
  * requesting user is allowed to see.
  * 

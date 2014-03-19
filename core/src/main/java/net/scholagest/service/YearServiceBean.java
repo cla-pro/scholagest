@@ -13,7 +13,7 @@ import com.google.inject.Inject;
  * the subject does not have access to.
  * 
  * @author CLA
- * @since
+ * @since 0.14.0
  */
 public class YearServiceBean implements YearServiceLocal {
     private final YearBusinessLocal yearBusiness;

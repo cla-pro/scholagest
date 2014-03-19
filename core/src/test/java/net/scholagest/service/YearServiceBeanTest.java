@@ -25,7 +25,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
- * Test class for {@link StudentServiceBean}
+ * Test class for {@link YearServiceBean}
  * 
  * @author CLA
  * @since 0.14.0
@@ -46,9 +46,9 @@ public class YearServiceBeanTest extends AbstractGuiceContextTest {
         setAdminSubject();
         final YearServiceLocal testee = getInstance(YearServiceLocal.class);
 
-        final Year student1 = new Year("year1", "name1", false, Arrays.asList("class1", "class2"));
-        final Year student2 = new Year("year2", "name2", true, Arrays.asList("class3", "class4"));
-        final List<Year> expected = Arrays.asList(student1, student2);
+        final Year year1 = new Year("year1", "name1", false, Arrays.asList("class1", "class2"));
+        final Year year2 = new Year("year2", "name2", true, Arrays.asList("class3", "class4"));
+        final List<Year> expected = Arrays.asList(year1, year2);
         when(yearBusiness.getYears()).thenReturn(expected);
 
         final List<Year> result = testee.getYears();
