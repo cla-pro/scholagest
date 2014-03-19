@@ -26,6 +26,8 @@ import net.scholagest.authorization.RealmAuthenticationAndAuthorization;
 import net.scholagest.authorization.RolesAndPermissions;
 import net.scholagest.business.ClazzBusinessBean;
 import net.scholagest.business.ClazzBusinessLocal;
+import net.scholagest.business.PeriodBusinessBean;
+import net.scholagest.business.PeriodBusinessLocal;
 import net.scholagest.business.SessionBusinessBean;
 import net.scholagest.business.SessionBusinessLocal;
 import net.scholagest.business.StudentBusinessBean;
@@ -38,6 +40,8 @@ import net.scholagest.business.YearBusinessBean;
 import net.scholagest.business.YearBusinessLocal;
 import net.scholagest.service.ClazzServiceBean;
 import net.scholagest.service.ClazzServiceLocal;
+import net.scholagest.service.PeriodServiceBean;
+import net.scholagest.service.PeriodServiceLocal;
 import net.scholagest.service.SessionServiceBean;
 import net.scholagest.service.SessionServiceLocal;
 import net.scholagest.service.StudentServiceBean;
@@ -77,6 +81,7 @@ public class GuiceContext extends GuiceServletContextListener {
                 bindInterceptor(Matchers.any(), Matchers.annotatedWith(RolesAndPermissions.class), authorizationInterceptor);
 
                 bind(ClazzBusinessLocal.class).to(ClazzBusinessBean.class);
+                bind(PeriodBusinessLocal.class).to(PeriodBusinessBean.class);
                 bind(SessionBusinessLocal.class).to(SessionBusinessBean.class);
                 bind(StudentBusinessLocal.class).to(StudentBusinessBean.class);
                 bind(TeacherBusinessLocal.class).to(TeacherBusinessBean.class);
@@ -84,6 +89,7 @@ public class GuiceContext extends GuiceServletContextListener {
                 bind(YearBusinessLocal.class).to(YearBusinessBean.class);
 
                 bind(ClazzServiceLocal.class).to(ClazzServiceBean.class);
+                bind(PeriodServiceLocal.class).to(PeriodServiceBean.class);
                 bind(SessionServiceLocal.class).to(SessionServiceBean.class);
                 bind(StudentServiceLocal.class).to(StudentServiceBean.class);
                 bind(TeacherServiceLocal.class).to(TeacherServiceBean.class);

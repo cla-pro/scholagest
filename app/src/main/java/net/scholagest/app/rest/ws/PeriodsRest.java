@@ -1,7 +1,5 @@
 package net.scholagest.app.rest.ws;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,41 +10,58 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import net.scholagest.app.rest.ws.authorization.CheckAuthorization;
-import net.scholagest.app.rest.ws.objects.Period;
+import net.scholagest.app.rest.ws.converter.PeriodJsonConverter;
+import net.scholagest.app.rest.ws.objects.PeriodJson;
+import net.scholagest.object.Period;
+import net.scholagest.service.PeriodServiceLocal;
 
 import com.google.inject.Inject;
 
 @Path("/periods")
 public class PeriodsRest {
-    public static Map<String, Period> periods = new HashMap<>();
+    private final PeriodServiceLocal periodService;
 
-    static {
-        periods.put("1", new Period("1", "Trimestre 1", "1", Arrays.asList("1", "2")));
-        periods.put("2", new Period("2", "Trimestre 2", "1", Arrays.asList("3", "4")));
-        periods.put("3", new Period("3", "Trimestre 3", "1", Arrays.asList("5")));
-    }
+    // public static Map<String, PeriodJson> periods = new HashMap<>();
+    //
+    // static {
+    // periods.put("1", new PeriodJson("1", "Trimestre 1", "1",
+    // Arrays.asList("1", "2")));
+    // periods.put("2", new PeriodJson("2", "Trimestre 2", "1",
+    // Arrays.asList("3", "4")));
+    // periods.put("3", new PeriodJson("3", "Trimestre 3", "1",
+    // Arrays.asList("5")));
+    // }
 
     @Inject
-    public PeriodsRest() {}
+    public PeriodsRest(final PeriodServiceLocal periodService) {
+        this.periodService = periodService;
+    }
 
     @CheckAuthorization
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Map<String, Object> getPeriod(@PathParam("id") final String id) {
+        final PeriodJsonConverter converter = new PeriodJsonConverter();
+
+        final Period period = periodService.getPeriod(id);
+        final PeriodJson periodJson = converter.convertToPeriodJson(period);
+
         final Map<String, Object> response = new HashMap<>();
-        response.put("period", periods.get(id));
+        response.put("period", periodJson);
+
         return response;
     }
 
-    @CheckAuthorization
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, Collection<Period>> getPeriods() {
-        final Map<String, Collection<Period>> periodsToReturn = new HashMap<>();
-
-        periodsToReturn.put("periods", periods.values());
-
-        return periodsToReturn;
-    }
+    // @CheckAuthorization
+    // @GET
+    // @Produces(MediaType.APPLICATION_JSON)
+    // public Map<String, Collection<PeriodJson>> getPeriods() {
+    // final Map<String, Collection<PeriodJson>> periodsToReturn = new
+    // HashMap<>();
+    //
+    // periodsToReturn.put("periods", periods.values());
+    //
+    // return periodsToReturn;
+    // }
 }

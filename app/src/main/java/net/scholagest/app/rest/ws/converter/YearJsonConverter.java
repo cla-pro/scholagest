@@ -29,6 +29,12 @@ public class YearJsonConverter {
         return yearJsonList;
     }
 
+    /**
+     * Convert a {@link Year} to its json version {@link YearJson}
+     * 
+     * @param year The year to convert
+     * @return The converted year json
+     */
     public YearJson convertToYearJson(final Year year) {
         final YearJson yearJson = new YearJson();
 
@@ -40,6 +46,12 @@ public class YearJsonConverter {
         return yearJson;
     }
 
+    /**
+     * Convert a {@link YearJson} to its version {@link Year}.
+     * 
+     * @param yearJson The year json to convert
+     * @return The converted year
+     */
     public Year convertToYear(final YearJson yearJson) {
         final Year year = new Year();
 

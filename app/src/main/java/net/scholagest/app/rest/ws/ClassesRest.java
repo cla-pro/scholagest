@@ -16,14 +16,16 @@ import javax.ws.rs.core.MediaType;
 
 import net.scholagest.app.rest.ws.authorization.CheckAuthorization;
 import net.scholagest.app.rest.ws.converter.ClazzJsonConverter;
+import net.scholagest.app.rest.ws.converter.PeriodJsonConverter;
 import net.scholagest.app.rest.ws.objects.BaseJson;
-import net.scholagest.app.rest.ws.objects.BranchPeriod;
 import net.scholagest.app.rest.ws.objects.ClazzJson;
-import net.scholagest.app.rest.ws.objects.Period;
+import net.scholagest.app.rest.ws.objects.PeriodJson;
 import net.scholagest.app.rest.ws.objects.Result;
 import net.scholagest.app.rest.ws.objects.StudentResult;
 import net.scholagest.object.Clazz;
+import net.scholagest.object.Period;
 import net.scholagest.service.ClazzServiceLocal;
+import net.scholagest.service.PeriodServiceLocal;
 
 import com.google.inject.Inject;
 
@@ -43,9 +45,12 @@ public class ClassesRest {
 
     private final ClazzServiceLocal clazzService;
 
+    private final PeriodServiceLocal periodService;
+
     @Inject
-    public ClassesRest(final ClazzServiceLocal clazzService) {
+    public ClassesRest(final ClazzServiceLocal clazzService, final PeriodServiceLocal periodService) {
         this.clazzService = clazzService;
+        this.periodService = periodService;
     }
 
     @CheckAuthorization
@@ -101,75 +106,85 @@ public class ClassesRest {
         return response;
     }
 
-    private Map<String, Object> updateData(final ClazzJson base, final ClazzJson toMerge) {
-        final List<Object> updatedBranchPeriods = new ArrayList<>();
-        final List<Object> updatedStudentResults = new ArrayList<>();
-        final List<Object> updatedResults = new ArrayList<>();
-        final List<Object> updatedMeans = new ArrayList<>();
-
-        for (final String periodId : base.getPeriods()) {
-            final Period period = PeriodsRest.periods.get(periodId);
-            for (final String branchPeriodId : period.getBranchPeriods()) {
-                final BranchPeriod branchPeriod = BranchPeriodsRest.branchPeriods.get(branchPeriodId);
-                final List<String> studentResults = branchPeriod.getStudentResults();
-
-                for (final String studentId : base.getStudents()) {
-                    if (!toMerge.getStudents().contains(studentId)) {
-                        final StudentResult studentResult = findStudentResultWithStudentId(studentResults, studentId);
-                        studentResult.setActive(false);
-                        updatedStudentResults.add(studentResult);
-                    }
-                }
-
-                for (final String studentId : toMerge.getStudents()) {
-                    if (!base.getStudents().contains(studentId)) {
-                        final StudentResult studentResult = findStudentResultWithStudentId(studentResults, studentId);
-                        if (studentResult != null) {
-                            studentResult.setActive(true);
-                            updatedStudentResults.add(studentResult);
-                        } else {
-                            final String studentResultId = IdHelper.getNextId(ExamsRest.studentResults.keySet());
-
-                            // TODO create results and mean
-                            final List<Result> newResults = createResults(studentResultId, branchPeriod.getExams());
-                            final Result mean = createMean(studentResultId);
-
-                            updatedResults.addAll(newResults);
-                            updatedMeans.add(mean);
-
-                            final StudentResult newStudentResult = new StudentResult(studentResultId, studentId, branchPeriodId,
-                                    extractIds(newResults), mean.getId(), true);
-                            ExamsRest.studentResults.put(studentResultId, newStudentResult);
-                            updatedStudentResults.add(newStudentResult);
-
-                            branchPeriod.getStudentResults().add(studentResultId);
-                            if (!updatedBranchPeriods.contains(branchPeriod)) {
-                                updatedBranchPeriods.add(branchPeriod);
-                            }
-                        }
-                    }
-                }
-
-                for (final String studentResultId : branchPeriod.getStudentResults()) {
-                    final StudentResult studentResult = ExamsRest.studentResults.get(studentResultId);
-                    final String studentId = studentResult.getStudent();
-                    if (base.getStudents().contains(studentId) && !toMerge.getStudents().contains(studentId)) {
-                        studentResult.setActive(false);
-                    } else if (!base.getStudents().contains(studentId) && toMerge.getStudents().contains(studentId)) {
-                        studentResult.setActive(true);
-                    }
-                }
-            }
-        }
-
-        final Map<String, Object> response = new HashMap<>();
-        response.put("studentResults", updatedStudentResults);
-        response.put("branchPeriods", updatedBranchPeriods);
-        response.put("results", updatedResults);
-        response.put("means", updatedMeans);
-
-        return response;
-    }
+    // private Map<String, Object> updateData(final ClazzJson base, final
+    // ClazzJson toMerge) {
+    // final List<Object> updatedBranchPeriods = new ArrayList<>();
+    // final List<Object> updatedStudentResults = new ArrayList<>();
+    // final List<Object> updatedResults = new ArrayList<>();
+    // final List<Object> updatedMeans = new ArrayList<>();
+    //
+    // for (final String periodId : base.getPeriods()) {
+    // final PeriodJson period = PeriodsRest.periods.get(periodId);
+    // for (final String branchPeriodId : period.getBranchPeriods()) {
+    // final BranchPeriod branchPeriod =
+    // BranchPeriodsRest.branchPeriods.get(branchPeriodId);
+    // final List<String> studentResults = branchPeriod.getStudentResults();
+    //
+    // for (final String studentId : base.getStudents()) {
+    // if (!toMerge.getStudents().contains(studentId)) {
+    // final StudentResult studentResult =
+    // findStudentResultWithStudentId(studentResults, studentId);
+    // studentResult.setActive(false);
+    // updatedStudentResults.add(studentResult);
+    // }
+    // }
+    //
+    // for (final String studentId : toMerge.getStudents()) {
+    // if (!base.getStudents().contains(studentId)) {
+    // final StudentResult studentResult =
+    // findStudentResultWithStudentId(studentResults, studentId);
+    // if (studentResult != null) {
+    // studentResult.setActive(true);
+    // updatedStudentResults.add(studentResult);
+    // } else {
+    // final String studentResultId =
+    // IdHelper.getNextId(ExamsRest.studentResults.keySet());
+    //
+    // // TODO create results and mean
+    // final List<Result> newResults = createResults(studentResultId,
+    // branchPeriod.getExams());
+    // final Result mean = createMean(studentResultId);
+    //
+    // updatedResults.addAll(newResults);
+    // updatedMeans.add(mean);
+    //
+    // final StudentResult newStudentResult = new StudentResult(studentResultId,
+    // studentId, branchPeriodId,
+    // extractIds(newResults), mean.getId(), true);
+    // ExamsRest.studentResults.put(studentResultId, newStudentResult);
+    // updatedStudentResults.add(newStudentResult);
+    //
+    // branchPeriod.getStudentResults().add(studentResultId);
+    // if (!updatedBranchPeriods.contains(branchPeriod)) {
+    // updatedBranchPeriods.add(branchPeriod);
+    // }
+    // }
+    // }
+    // }
+    //
+    // for (final String studentResultId : branchPeriod.getStudentResults()) {
+    // final StudentResult studentResult =
+    // ExamsRest.studentResults.get(studentResultId);
+    // final String studentId = studentResult.getStudent();
+    // if (base.getStudents().contains(studentId) &&
+    // !toMerge.getStudents().contains(studentId)) {
+    // studentResult.setActive(false);
+    // } else if (!base.getStudents().contains(studentId) &&
+    // toMerge.getStudents().contains(studentId)) {
+    // studentResult.setActive(true);
+    // }
+    // }
+    // }
+    // }
+    //
+    // final Map<String, Object> response = new HashMap<>();
+    // response.put("studentResults", updatedStudentResults);
+    // response.put("branchPeriods", updatedBranchPeriods);
+    // response.put("results", updatedResults);
+    // response.put("means", updatedMeans);
+    //
+    // return response;
+    // }
 
     private List<String> extractIds(final List<? extends BaseJson> elements) {
         final List<String> ids = new ArrayList<>();
@@ -213,33 +228,36 @@ public class ClassesRest {
     @CheckAuthorization
     @POST
     public Map<String, Object> createClass(final Map<String, ClazzJson> payload) {
-        final ClazzJsonConverter converter = new ClazzJsonConverter();
+        final ClazzJsonConverter clazzConverter = new ClazzJsonConverter();
+        final PeriodJsonConverter periodConverter = new PeriodJsonConverter();
 
         final ClazzJson clazzJson = payload.get("class");
-        final List<Period> periods = createPeriods(clazzJson);
-        final Clazz clazz = converter.convertToClazz(clazzJson);
+        final Clazz clazz = clazzConverter.convertToClazz(clazzJson);
 
         final Clazz created = clazzService.createClazz(clazz);
-        final ClazzJson createdJson = converter.convertToClazzJson(created);
+        final ClazzJson createdJson = clazzConverter.convertToClazzJson(created);
+
+        final List<Period> periodList = periodService.getPeriods(created.getPeriods());
+        final List<PeriodJson> periodJsonList = periodConverter.convertToPeriodJsonList(periodList);
 
         final Map<String, Object> response = new HashMap<>();
         response.put("class", createdJson);
-        response.put("periods", periods);
+        response.put("periods", periodJsonList);
 
         return response;
     }
-
-    private List<Period> createPeriods(final ClazzJson clazz) {
-        final List<Period> periods = new ArrayList<>();
-
-        for (int i = 0; i < 3; i++) {
-            final String periodId = IdHelper.getNextId(PeriodsRest.periods.keySet());
-            final Period period = new Period(periodId, "Trimestre " + (i + 1), clazz.getId(), new ArrayList<String>());
-            PeriodsRest.periods.put(periodId, period);
-            periods.add(period);
-            clazz.getPeriods().add(periodId);
-        }
-
-        return periods;
-    }
+    // private List<PeriodJson> createPeriods(final ClazzJson clazz) {
+    // final List<PeriodJson> periods = new ArrayList<>();
+    //
+    // for (int i = 0; i < 3; i++) {
+    // final String periodId = IdHelper.getNextId(PeriodsRest.periods.keySet());
+    // final PeriodJson period = new PeriodJson(periodId, "Trimestre " + (i +
+    // 1), clazz.getId(), new ArrayList<String>());
+    // PeriodsRest.periods.put(periodId, period);
+    // periods.add(period);
+    // clazz.getPeriods().add(periodId);
+    // }
+    //
+    // return periods;
+    // }
 }

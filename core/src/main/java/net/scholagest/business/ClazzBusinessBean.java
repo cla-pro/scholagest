@@ -3,9 +3,11 @@ package net.scholagest.business;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import net.scholagest.object.Clazz;
+import net.scholagest.object.Period;
 import net.scholagest.utils.IdHelper;
 
 /**
@@ -46,13 +48,28 @@ public class ClazzBusinessBean implements ClazzBusinessLocal {
     @Override
     public Clazz createClazz(final Clazz clazz) {
         final String id = IdHelper.getNextId(classesMap.keySet(), "class");
-
         clazz.setId(id);
+
+        final List<String> periodList = createPeriods(clazz);
+        clazz.setPeriods(periodList);
+
         classesMap.put(id, clazz);
 
-        // TODO create the periods
-
         return new Clazz(clazz);
+    }
+
+    private List<String> createPeriods(final Clazz clazz) {
+        final List<String> periodIds = new ArrayList<>();
+
+        for (int i = 0; i < 3; i++) {
+            final String periodId = IdHelper.getNextId(PeriodBusinessBean.periodsMap.keySet(), "period");
+            final Period period = new Period(periodId, "Trimestre " + (i + 1), clazz.getId(), new ArrayList<String>());
+            PeriodBusinessBean.periodsMap.put(periodId, period);
+
+            periodIds.add(periodId);
+        }
+
+        return periodIds;
     }
 
     /**
@@ -65,8 +82,9 @@ public class ClazzBusinessBean implements ClazzBusinessLocal {
         // TODO update the permissions
 
         stored.setName(clazz.getName());
-        stored.setStudents(clazz.getStudents());
-        stored.setTeachers(clazz.getTeachers());
+        stored.setStudents(new ArrayList<String>(clazz.getStudents()));
+        stored.setTeachers(new ArrayList<String>(clazz.getTeachers()));
+        stored.setBranches(new ArrayList<String>(clazz.getBranches()));
 
         return new Clazz(stored);
     }

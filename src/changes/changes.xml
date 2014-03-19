@@ -6,12 +6,24 @@
     <author email="cedric.lavanchy.pro@gmail.com">Cédric Lavanchy</author>
   </properties>
   <body>
-	<release version="0.14.0">
+	<release version="0.14.0" date="in SVN" description="Service layer complete">
       <action dev="clavanchy" type="add">
         The year rest webservice now uses the service and business level.
       </action>
       <action dev="clavanchy" type="add">
         The year service checks the roles and permissions for critical methods.
+      </action>
+      <action dev="clavanchy" type="add">
+        The class rest webservice now uses the service and business level.
+      </action>
+      <action dev="clavanchy" type="add">
+        The class service checks the roles and permissions for critical methods.
+      </action>
+      <action dev="clavanchy" type="add">
+        The period rest webservice now uses the service and business level.
+      </action>
+      <action dev="clavanchy" type="add">
+        The period service checks the roles and permissions for critical methods.
       </action>
 	</release>
 	

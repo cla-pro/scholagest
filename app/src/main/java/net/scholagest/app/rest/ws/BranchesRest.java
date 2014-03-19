@@ -17,8 +17,6 @@ import javax.ws.rs.core.MediaType;
 
 import net.scholagest.app.rest.ws.authorization.CheckAuthorization;
 import net.scholagest.app.rest.ws.objects.Branch;
-import net.scholagest.app.rest.ws.objects.BranchPeriod;
-import net.scholagest.app.rest.ws.objects.Period;
 
 import com.google.inject.Inject;
 
@@ -95,15 +93,17 @@ public class BranchesRest {
         return response;
     }
 
-    private List<Period> updatePeriods(final List<BranchPeriod> newBranchPeriods) {
-        final List<Period> updated = new ArrayList<>();
-        for (final BranchPeriod branchPeriod : newBranchPeriods) {
-            final Period period = PeriodsRest.periods.get(branchPeriod.getPeriod());
-            period.getBranchPeriods().add(branchPeriod.getId());
-            updated.add(period);
-        }
-        return updated;
-    }
+    // private List<PeriodJson> updatePeriods(final List<BranchPeriod>
+    // newBranchPeriods) {
+    // final List<PeriodJson> updated = new ArrayList<>();
+    // for (final BranchPeriod branchPeriod : newBranchPeriods) {
+    // final PeriodJson period =
+    // PeriodsRest.periods.get(branchPeriod.getPeriod());
+    // period.getBranchPeriods().add(branchPeriod.getId());
+    // updated.add(period);
+    // }
+    // return updated;
+    // }
 
     // private List<BranchPeriod> createBranchPeriods(final Branch branch) {
     // final ClazzJson clazz = ClassesRest.classes.get(branch.getClazz());
