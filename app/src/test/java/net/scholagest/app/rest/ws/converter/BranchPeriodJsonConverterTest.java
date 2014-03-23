@@ -22,8 +22,10 @@ import org.junit.Test;
 public class BranchPeriodJsonConverterTest {
     @Test
     public void testConvertToBranchPeriodJsonList() {
-        final BranchPeriod branchPeriod1 = new BranchPeriod("branch1", "branch1", "period1", Arrays.asList("exam1"), Arrays.asList("studentResult1"));
-        final BranchPeriod branchPeriod2 = new BranchPeriod("branch2", "branch2", "period2", Arrays.asList("exam2"), Arrays.asList("studentResult2"));
+        final BranchPeriod branchPeriod1 = new BranchPeriod("branch1", "branch1", "period1", Arrays.asList("exam1"), "exam3",
+                Arrays.asList("studentResult1"));
+        final BranchPeriod branchPeriod2 = new BranchPeriod("branch2", "branch2", "period2", Arrays.asList("exam2"), "exam4",
+                Arrays.asList("studentResult2"));
         final List<BranchPeriod> branchList = Arrays.asList(branchPeriod1, branchPeriod2);
 
         final BranchPeriodJsonConverter testee = spy(new BranchPeriodJsonConverter());
@@ -37,7 +39,8 @@ public class BranchPeriodJsonConverterTest {
 
     @Test
     public void testConvertToBranchPeriodJson() {
-        final BranchPeriod branchPeriod = new BranchPeriod("branch1", "branch1", "period1", Arrays.asList("exam1"), Arrays.asList("studentResult1"));
+        final BranchPeriod branchPeriod = new BranchPeriod("branch1", "branch1", "period1", Arrays.asList("exam1"), "exam3",
+                Arrays.asList("studentResult1"));
         final BranchPeriodJson branchPeriodJson = new BranchPeriodJsonConverter().convertToBranchPeriodJson(branchPeriod);
 
         assertEquals(branchPeriod.getId(), branchPeriodJson.getId());

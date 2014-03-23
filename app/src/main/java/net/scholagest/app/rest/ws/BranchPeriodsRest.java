@@ -124,7 +124,7 @@ public class BranchPeriodsRest {
             studentResultJsonList.addAll(studentResultJsons);
 
             resultJsonList.addAll(getResultJsonList(studentResultJsons));
-            resultJsonList.addAll(getMeanJsonList(studentResultJsons));
+            meanJsonList.addAll(getMeanJsonList(studentResultJsons));
         }
 
         final Map<String, Object> response = new HashMap<>();

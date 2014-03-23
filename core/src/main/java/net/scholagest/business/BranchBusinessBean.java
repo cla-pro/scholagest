@@ -9,7 +9,9 @@ import java.util.Map;
 import net.scholagest.object.Branch;
 import net.scholagest.object.BranchPeriod;
 import net.scholagest.object.Clazz;
+import net.scholagest.object.Exam;
 import net.scholagest.object.Period;
+import net.scholagest.object.Result;
 import net.scholagest.object.StudentResult;
 import net.scholagest.utils.IdHelper;
 
@@ -70,6 +72,11 @@ public class BranchBusinessBean implements BranchBusinessLocal {
 
                 studentResultIdList.add(studentResult.getId());
                 StudentResultBusinessBean.studentResultsMap.put(studentResult.getId(), studentResult);
+
+                final String meanId = IdHelper.getNextId(ResultBusinessBean.resultsMap.keySet(), "result");
+                final Result mean = new Result(meanId, null, branchPeriod.getMeanExam(), studentResult.getId());
+                ResultBusinessBean.resultsMap.put(meanId, mean);
+                studentResult.setMean(meanId);
             }
 
             branchPeriod.setStudentResults(studentResultIdList);
@@ -121,10 +128,17 @@ public class BranchBusinessBean implements BranchBusinessLocal {
 
         for (final Period period : periodList) {
             final String id = IdHelper.getNextId(BranchPeriodBusinessBean.branchPeriodsMap.keySet(), "branchPeriod");
-            final BranchPeriod branchPeriod = new BranchPeriod(id, branch.getId(), period.getId(), new ArrayList<String>(), new ArrayList<String>());
+            final BranchPeriod branchPeriod = new BranchPeriod(id, branch.getId(), period.getId(), new ArrayList<String>(), null,
+                    new ArrayList<String>());
 
             branchPeriodList.add(branchPeriod);
             BranchPeriodBusinessBean.branchPeriodsMap.put(id, branchPeriod);
+
+            final String meanExamId = IdHelper.getNextId(ExamBusinessBean.examsMap.keySet(), "exam");
+            final Exam meanExam = new Exam(meanExamId, "Moyenne", 0, id);
+            ExamBusinessBean.examsMap.put(meanExamId, meanExam);
+
+            branchPeriod.setMeanExam(meanExamId);
         }
 
         return branchPeriodList;

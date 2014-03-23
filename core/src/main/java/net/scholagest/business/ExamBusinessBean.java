@@ -26,6 +26,9 @@ public class ExamBusinessBean implements ExamBusinessLocal {
         examsMap.put("exam4", new Exam("exam4", "Récitation 4", 2, "branchPeriod4"));
         examsMap.put("exam5", new Exam("exam5", "Récitation 5", 1, "branchPeriod4"));
         examsMap.put("exam7", new Exam("exam7", "Moyenne", 1, "branchPeriod4"));
+        examsMap.put("exam7", new Exam("exam8", "Moyenne", 1, "branchPeriod2"));
+        examsMap.put("exam7", new Exam("exam9", "Moyenne", 1, "branchPeriod3"));
+        examsMap.put("exam7", new Exam("exam10", "Moyenne", 1, "branchPeriod5"));
     }
 
     @Override

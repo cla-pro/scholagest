@@ -7,7 +7,7 @@ import java.util.Map;
 import net.scholagest.object.Period;
 
 /**
- * Implementation of {@link YearBusinessLocal}
+ * Implementation of {@link PeriodBusinessLocal}
  * 
  * @author CLA
  * @since 0.14.0

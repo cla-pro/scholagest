@@ -99,7 +99,7 @@ public class ClassesRest {
      * @param id Id of the class to get
      * @return The class identified by id
      */
-
+    @CheckAuthorization
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -129,13 +129,14 @@ public class ClassesRest {
         final ClazzJsonConverter converter = new ClazzJsonConverter();
 
         final ClazzJson clazzJson = payload.get("class");
-        clazzJson.setId(id);
         final Clazz clazz = converter.convertToClazz(clazzJson);
+        clazz.setId(id);
 
         final Clazz updated = clazzService.saveClazz(clazz);
         final ClazzJson updatedJson = converter.convertToClazzJson(updated);
 
-        // final Map<String, Object> updatedObjects = updateData(base, clazz);
+        // TODO load objects such as branchPeriods, studentResults, results and
+        // means
 
         final Map<String, Object> response = new HashMap<>();
         response.put("class", updatedJson);

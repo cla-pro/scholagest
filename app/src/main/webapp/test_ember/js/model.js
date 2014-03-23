@@ -70,7 +70,7 @@ Scholagest.Branch = DS.Model.extend({
     name: DS.attr(),
     numerical: DS.attr('boolean'),
     clazz: DS.belongsTo('class', { async: true }),
-    branchPeriods: DS.hasMany('branchPeriod'),
+    branchPeriods: DS.hasMany('branchPeriod', { async: true }),
     
     isNumerical: function() {
         if (this.get('numerical') === true) {

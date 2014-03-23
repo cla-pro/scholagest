@@ -43,7 +43,7 @@ public class BranchPeriodServiceBeanTest extends AbstractGuiceContextTest {
         setAdminSubject();
         final BranchPeriodServiceLocal testee = getInstance(BranchPeriodServiceLocal.class);
 
-        final BranchPeriod expected = new BranchPeriod("1", "branch", "period", new ArrayList<String>(), new ArrayList<String>());
+        final BranchPeriod expected = new BranchPeriod("1", "branch", "period", new ArrayList<String>(), null, new ArrayList<String>());
         when(branchPeriodBusiness.getBranchPeriod("1")).thenReturn(expected);
 
         assertTrue(testee.getBranchPeriods(new ArrayList<String>()).isEmpty());
@@ -59,7 +59,7 @@ public class BranchPeriodServiceBeanTest extends AbstractGuiceContextTest {
         setAdminSubject();
         final BranchPeriodServiceLocal testee = getInstance(BranchPeriodServiceLocal.class);
 
-        final BranchPeriod expected = new BranchPeriod("1", "branch", "period", new ArrayList<String>(), new ArrayList<String>());
+        final BranchPeriod expected = new BranchPeriod("1", "branch", "period", new ArrayList<String>(), null, new ArrayList<String>());
         when(branchPeriodBusiness.getBranchPeriod("1")).thenReturn(expected);
 
         assertNull(testee.getBranchPeriod(null));

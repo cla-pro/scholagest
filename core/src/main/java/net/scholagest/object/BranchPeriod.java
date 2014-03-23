@@ -15,6 +15,7 @@ public class BranchPeriod extends Base {
     private String branch;
     private String period;
     private List<String> exams;
+    private String meanExam;
     private List<String> studentResults;
 
     public BranchPeriod() {
@@ -23,14 +24,16 @@ public class BranchPeriod extends Base {
     }
 
     public BranchPeriod(final BranchPeriod toCopy) {
-        this(toCopy.getId(), toCopy.branch, toCopy.period, toCopy.exams, toCopy.studentResults);
+        this(toCopy.getId(), toCopy.branch, toCopy.period, toCopy.exams, toCopy.meanExam, toCopy.studentResults);
     }
 
-    public BranchPeriod(final String id, final String branch, final String period, final List<String> exams, final List<String> studentResults) {
+    public BranchPeriod(final String id, final String branch, final String period, final List<String> exams, final String meanExam,
+            final List<String> studentResults) {
         super(id);
         this.branch = branch;
         this.period = period;
         this.exams = new ArrayList<String>(exams);
+        this.meanExam = meanExam;
         this.studentResults = new ArrayList<String>(studentResults);
     }
 
@@ -56,6 +59,14 @@ public class BranchPeriod extends Base {
 
     public void setExams(final List<String> exams) {
         this.exams = exams;
+    }
+
+    public String getMeanExam() {
+        return meanExam;
+    }
+
+    public void setMeanExam(final String meanExam) {
+        this.meanExam = meanExam;
     }
 
     public List<String> getStudentResults() {

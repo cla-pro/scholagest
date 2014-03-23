@@ -19,8 +19,8 @@ public class YearBusinessBean implements YearBusinessLocal {
     public static Map<String, Year> yearsMap = new HashMap<>();
 
     static {
-        yearsMap.put("year1", new Year("year1", "2012-2013", false, Arrays.asList("class1")));
-        yearsMap.put("year2", new Year("year2", "2013-2014", true, Arrays.asList("class2", "class3")));
+        yearsMap.put("year1", new Year("year1", "2012-2013", false, Arrays.asList("clazz1")));
+        yearsMap.put("year2", new Year("year2", "2013-2014", true, Arrays.asList("clazz2", "clazz3")));
     }
 
     /**

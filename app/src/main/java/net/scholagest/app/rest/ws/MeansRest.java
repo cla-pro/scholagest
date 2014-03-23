@@ -79,6 +79,7 @@ public class MeansRest {
 
         final ResultJson meanJson = payload.get("mean");
         final Result mean = converter.convertToResult(meanJson);
+        mean.setId(id);
 
         final Result updated = resultService.saveResult(mean);
         final ResultJson updatedJson = converter.convertToResultJson(updated);

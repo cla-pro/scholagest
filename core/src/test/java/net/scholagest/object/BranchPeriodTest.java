@@ -18,8 +18,8 @@ import org.junit.Test;
 public class BranchPeriodTest {
     @Test
     public void testConstructorCopy() {
-        final BranchPeriod toCopy = new BranchPeriod("id", "branch", "period", Arrays.asList("exam1", "exam2"), Arrays.asList("studentResult1",
-                "studentResult2"));
+        final BranchPeriod toCopy = new BranchPeriod("id", "branch", "period", Arrays.asList("exam1", "exam2"), "exam3", Arrays.asList(
+                "studentResult1", "studentResult2"));
         final BranchPeriod copied = new BranchPeriod(toCopy);
 
         assertEquals(toCopy.getId(), copied.getId());
@@ -31,11 +31,11 @@ public class BranchPeriodTest {
 
     @Test
     public void testEquals() {
-        final BranchPeriod branchPeriod1 = new BranchPeriod(null, null, null, new ArrayList<String>(), new ArrayList<String>());
-        final BranchPeriod branchPeriod2 = new BranchPeriod(null, "branch1", "period1", new ArrayList<String>(), new ArrayList<String>());
-        final BranchPeriod branchPeriod3 = new BranchPeriod("1", "branch2", "period2", new ArrayList<String>(), new ArrayList<String>());
-        final BranchPeriod branchPeriod4 = new BranchPeriod("1", "branch1", "period1", new ArrayList<String>(), new ArrayList<String>());
-        final BranchPeriod branchPeriod5 = new BranchPeriod("1", "branch1", "period1", new ArrayList<String>(), new ArrayList<String>());
+        final BranchPeriod branchPeriod1 = new BranchPeriod(null, null, null, new ArrayList<String>(), null, new ArrayList<String>());
+        final BranchPeriod branchPeriod2 = new BranchPeriod(null, "branch1", "period1", new ArrayList<String>(), null, new ArrayList<String>());
+        final BranchPeriod branchPeriod3 = new BranchPeriod("1", "branch2", "period2", new ArrayList<String>(), null, new ArrayList<String>());
+        final BranchPeriod branchPeriod4 = new BranchPeriod("1", "branch1", "period1", new ArrayList<String>(), null, new ArrayList<String>());
+        final BranchPeriod branchPeriod5 = new BranchPeriod("1", "branch1", "period1", new ArrayList<String>(), null, new ArrayList<String>());
 
         assertFalse(branchPeriod1.equals(null));
         assertFalse(branchPeriod1.equals(new Object()));

@@ -4,7 +4,7 @@ public class ResultJson extends BaseJson {
     private Double grade;
     private String studentResult;
     private String exam;
-    private int resultCounter;
+    private int changeCounter;
 
     public ResultJson() {}
 
@@ -13,7 +13,7 @@ public class ResultJson extends BaseJson {
         this.grade = grade;
         this.exam = exam;
         this.studentResult = studentResult;
-        this.resultCounter = 0;
+        this.changeCounter = 0;
     }
 
     public Double getGrade() {
@@ -40,7 +40,11 @@ public class ResultJson extends BaseJson {
         this.studentResult = studentResult;
     }
 
-    public int getResultCounter() {
-        return resultCounter;
+    public int getChangeCounter() {
+        return changeCounter;
+    }
+
+    public void setChangeCounter(final int changeCounter) {
+        this.changeCounter = changeCounter;
     }
 }

@@ -63,6 +63,7 @@ public class ResultsRest {
 
         final ResultJson resultJson = payload.get("result");
         final Result result = converter.convertToResult(resultJson);
+        result.setId(id);
 
         final Result updated = resultService.saveResult(result);
         final ResultJson updatedJson = converter.convertToResultJson(updated);
