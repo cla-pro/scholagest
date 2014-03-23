@@ -1,6 +1,5 @@
 package net.scholagest.app.rest.ws;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,11 +16,8 @@ import javax.ws.rs.core.MediaType;
 import net.scholagest.app.rest.ws.authorization.CheckAuthorization;
 import net.scholagest.app.rest.ws.converter.ClazzJsonConverter;
 import net.scholagest.app.rest.ws.converter.PeriodJsonConverter;
-import net.scholagest.app.rest.ws.objects.BaseJson;
 import net.scholagest.app.rest.ws.objects.ClazzJson;
 import net.scholagest.app.rest.ws.objects.PeriodJson;
-import net.scholagest.app.rest.ws.objects.Result;
-import net.scholagest.app.rest.ws.objects.StudentResult;
 import net.scholagest.object.Clazz;
 import net.scholagest.object.Period;
 import net.scholagest.service.ClazzServiceLocal;
@@ -29,6 +25,20 @@ import net.scholagest.service.PeriodServiceLocal;
 
 import com.google.inject.Inject;
 
+/**
+ * Set methods available for rest calls (WebService) to handle the classes (see {@link ClazzJson}). The 
+ * available methods are:
+ * 
+ * <ul>
+ *   <li>GET ids[] - to retrieve a list of classes filtered by the ids</li>
+ *   <li>GET /{id} - to retrieve the information of a class</li>
+ *   <li>PUT /{id} - to update the information of a class</li>
+ *   <li>POST - to create a new class. The periods (see {@link PeriodJson}) are created as well</li>
+ * </ul>
+ * 
+ * @author CLA
+ * @since 0.14.0
+ */
 @Path("/classes")
 public class ClassesRest {
     // public static Map<String, ClazzJson> classes = new HashMap<>();
@@ -53,6 +63,21 @@ public class ClassesRest {
         this.periodService = periodService;
     }
 
+    /**
+     * <p>
+     * Retrieve a list of {@link ClazzJson} filtered by ids. The ids are specified as query parameter with the name "ids[]".
+     * </p>
+     * 
+     * <p>
+     * Examples:
+     * <ul>
+     *   <li>Filter the classes by id: GET base_url/classes?ids[]=1&ids[]=2</li>
+     * </ul>
+     * </p>
+     * 
+     * @param ids Parameter used to filter the list of classes
+     * @return The list of classes filtered by ids
+     */
     @CheckAuthorization
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -68,7 +93,13 @@ public class ClassesRest {
         return toReturn;
     }
 
-    @CheckAuthorization
+    /**
+     * Retrieve the information about a single {@link ClazzJson} identified by its id.
+     * 
+     * @param id Id of the class to get
+     * @return The class identified by id
+     */
+
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -84,6 +115,13 @@ public class ClassesRest {
         return toReturn;
     }
 
+    /**
+     * Save the changes of the class into the system.
+     * 
+     * @param id Id of the updated class
+     * @param payload Class's information to save
+     * @return The updated class
+     */
     @CheckAuthorization
     @PUT
     @Path("/{id}")
@@ -186,45 +224,57 @@ public class ClassesRest {
     // return response;
     // }
 
-    private List<String> extractIds(final List<? extends BaseJson> elements) {
-        final List<String> ids = new ArrayList<>();
-        for (final BaseJson base : elements) {
-            ids.add(base.getId());
-        }
-        return ids;
-    }
+    // private List<String> extractIds(final List<? extends BaseJson> elements)
+    // {
+    // final List<String> ids = new ArrayList<>();
+    // for (final BaseJson base : elements) {
+    // ids.add(base.getId());
+    // }
+    // return ids;
+    // }
+    //
+    // private List<ResultJson> createResults(final String studentResultId,
+    // final List<String> exams) {
+    // final List<ResultJson> results = new ArrayList<>();
+    //
+    // for (final String examId : exams) {
+    // final String resultId = IdHelper.getNextId(ResultsRest.results.keySet());
+    // final ResultJson result = new ResultJson(resultId, null, examId,
+    // studentResultId);
+    // results.add(result);
+    // ResultsRest.results.put(resultId, result);
+    // }
+    //
+    // return results;
+    // }
+    //
+    // private ResultJson createMean(final String studentResultId) {
+    // final String meanId = IdHelper.getNextId(ResultsRest.results.keySet());
+    // final ResultJson mean = new ResultJson(meanId, null, null,
+    // studentResultId);
+    // ResultsRest.results.put(meanId, mean);
+    // return mean;
+    // }
+    //
+    // private StudentResultJson findStudentResultWithStudentId(final
+    // List<String> studentResultIds, final String studentId) {
+    // for (final String studentResultId : studentResultIds) {
+    // final StudentResultJson studentResult =
+    // ExamsRest.studentResults.get(studentResultId);
+    // if (studentResult.equals(studentId)) {
+    // return studentResult;
+    // }
+    // }
+    //
+    // return null;
+    // }
 
-    private List<Result> createResults(final String studentResultId, final List<String> exams) {
-        final List<Result> results = new ArrayList<>();
-
-        for (final String examId : exams) {
-            final String resultId = IdHelper.getNextId(ResultsRest.results.keySet());
-            final Result result = new Result(resultId, null, examId, studentResultId);
-            results.add(result);
-            ResultsRest.results.put(resultId, result);
-        }
-
-        return results;
-    }
-
-    private Result createMean(final String studentResultId) {
-        final String meanId = IdHelper.getNextId(ResultsRest.results.keySet());
-        final Result mean = new Result(meanId, null, null, studentResultId);
-        ResultsRest.results.put(meanId, mean);
-        return mean;
-    }
-
-    private StudentResult findStudentResultWithStudentId(final List<String> studentResultIds, final String studentId) {
-        for (final String studentResultId : studentResultIds) {
-            final StudentResult studentResult = ExamsRest.studentResults.get(studentResultId);
-            if (studentResult.equals(studentId)) {
-                return studentResult;
-            }
-        }
-
-        return null;
-    }
-
+    /**
+     * Create a new class. The {@link PeriodJson}s are created within the same operation.
+     * 
+     * @param payload The class's information to save on creation
+     * @return The newly created class with its {@link PeriodJson}
+     */
     @CheckAuthorization
     @POST
     public Map<String, Object> createClass(final Map<String, ClazzJson> payload) {
@@ -246,18 +296,4 @@ public class ClassesRest {
 
         return response;
     }
-    // private List<PeriodJson> createPeriods(final ClazzJson clazz) {
-    // final List<PeriodJson> periods = new ArrayList<>();
-    //
-    // for (int i = 0; i < 3; i++) {
-    // final String periodId = IdHelper.getNextId(PeriodsRest.periods.keySet());
-    // final PeriodJson period = new PeriodJson(periodId, "Trimestre " + (i +
-    // 1), clazz.getId(), new ArrayList<String>());
-    // PeriodsRest.periods.put(periodId, period);
-    // periods.add(period);
-    // clazz.getPeriods().add(periodId);
-    // }
-    //
-    // return periods;
-    // }
 }

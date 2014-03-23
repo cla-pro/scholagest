@@ -17,11 +17,7 @@ public class StudentPersonal extends Base {
     public StudentPersonal() {}
 
     public StudentPersonal(final StudentPersonal toCopy) {
-        super(toCopy.getId());
-        this.street = toCopy.street;
-        this.city = toCopy.city;
-        this.postcode = toCopy.postcode;
-        this.religion = toCopy.religion;
+        this(toCopy.getId(), toCopy.street, toCopy.city, toCopy.postcode, toCopy.religion);
     }
 
     public StudentPersonal(final String id, final String street, final String city, final String postcode, final String religion) {

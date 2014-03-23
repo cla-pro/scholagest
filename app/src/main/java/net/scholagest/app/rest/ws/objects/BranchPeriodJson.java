@@ -3,15 +3,15 @@ package net.scholagest.app.rest.ws.objects;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BranchPeriod extends BaseJson {
+public class BranchPeriodJson extends BaseJson {
     private String branch;
     private String period;
     private List<String> exams;
     private List<String> studentResults;
 
-    public BranchPeriod() {}
+    public BranchPeriodJson() {}
 
-    public BranchPeriod(final String id, final String branch, final String period, final List<String> exams, final List<String> studentResults) {
+    public BranchPeriodJson(final String id, final String branch, final String period, final List<String> exams, final List<String> studentResults) {
         super(id);
         this.branch = branch;
         this.period = period;

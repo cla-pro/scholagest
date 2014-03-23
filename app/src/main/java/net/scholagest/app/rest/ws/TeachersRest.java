@@ -24,7 +24,7 @@ import net.scholagest.service.TeacherServiceLocal;
 import com.google.inject.Inject;
 
 /**
- * Set methods available for rest calls (WebService) to handle the teachers. The theacher contains only a link to
+ * Set methods available for rest calls (WebService) to handle the teachers (see {@link TeacherJson}). The theacher contains only a link to
  * the detail information. They must be retrieved by calling the {@link TeacherDetailsRest} and webservices. The 
  * available methods are:
  * 

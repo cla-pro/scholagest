@@ -11,7 +11,7 @@ import net.scholagest.object.Period;
 import net.scholagest.utils.IdHelper;
 
 /**
- * Implementation of {@link YearBusinessLocal}
+ * Implementation of {@link ClazzBusinessLocal}
  * 
  * @author CLA
  * @since 0.14.0
@@ -20,13 +20,11 @@ public class ClazzBusinessBean implements ClazzBusinessLocal {
     public static Map<String, Clazz> classesMap = new HashMap<>();
 
     static {
-        classesMap.put(
-                "class1",
-                new Clazz("class1", "1P A", "year1", Arrays.asList("1", "2", "3"), Arrays.asList("teacher1"), Arrays.asList("student1"), Arrays
-                        .asList("1", "2")));
-        classesMap.put("class2", new Clazz("class2", "2P A", "year2", new ArrayList<String>(), Arrays.asList("teacher2"), Arrays.asList("student2"),
+        classesMap.put("clazz1", new Clazz("clazz1", "1P A", "year1", Arrays.asList("period1", "period2", "period3"), Arrays.asList("teacher1"),
+                Arrays.asList("student1"), Arrays.asList("branch1", "branch2")));
+        classesMap.put("clazz2", new Clazz("clazz2", "2P A", "year2", new ArrayList<String>(), Arrays.asList("teacher2"), Arrays.asList("student2"),
                 new ArrayList<String>()));
-        classesMap.put("class3", new Clazz("class3", "5P A", "year2", new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(),
+        classesMap.put("clazz3", new Clazz("clazz3", "5P A", "year2", new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(),
                 new ArrayList<String>()));
     }
 

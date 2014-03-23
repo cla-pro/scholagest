@@ -21,10 +21,7 @@ public class Year extends Base {
     }
 
     public Year(final Year toCopy) {
-        super(toCopy.getId());
-        this.name = toCopy.name;
-        this.running = toCopy.running;
-        this.classes = new ArrayList<String>(toCopy.classes);
+        this(toCopy.getId(), toCopy.name, toCopy.running, toCopy.classes);
     }
 
     public Year(final String id, final String name, final boolean running, final List<String> classes) {

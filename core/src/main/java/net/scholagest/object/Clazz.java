@@ -25,13 +25,7 @@ public class Clazz extends Base {
     }
 
     public Clazz(final Clazz toCopy) {
-        super(toCopy.getId());
-        this.name = toCopy.name;
-        this.year = toCopy.year;
-        this.periods = new ArrayList<String>(toCopy.periods);
-        this.teachers = new ArrayList<String>(toCopy.teachers);
-        this.students = new ArrayList<String>(toCopy.students);
-        this.branches = new ArrayList<String>(toCopy.branches);
+        this(toCopy.getId(), toCopy.name, toCopy.year, toCopy.periods, toCopy.teachers, toCopy.students, toCopy.branches);
     }
 
     public Clazz(final String id, final String name, final String year, final List<String> periods, final List<String> teachers,

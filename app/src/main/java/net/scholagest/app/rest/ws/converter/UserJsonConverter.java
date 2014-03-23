@@ -21,7 +21,8 @@ public class UserJsonConverter {
 
         userJson.setId(user.getId());
         userJson.setRole(user.getRole());
-        userJson.setTeacher(user.getTeacherId());
+        userJson.setTeacher(user.getTeacher());
+        userJson.setClazz(user.getClazz());
 
         return userJson;
     }

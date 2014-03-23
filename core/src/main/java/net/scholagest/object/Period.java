@@ -21,10 +21,7 @@ public class Period extends Base {
     }
 
     public Period(final Period toCopy) {
-        super(toCopy.getId());
-        this.name = toCopy.name;
-        this.clazz = toCopy.clazz;
-        this.branchPeriods = new ArrayList<String>(toCopy.branchPeriods);
+        this(toCopy.getId(), toCopy.name, toCopy.clazz, toCopy.branchPeriods);
     }
 
     public Period(final String id, final String name, final String clazz, final List<String> branchPeriods) {

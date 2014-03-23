@@ -1,5 +1,6 @@
 package net.scholagest.object;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -15,13 +16,26 @@ import org.junit.Test;
  */
 public class UserTest {
     @Test
+    public void testConstructorCopy() {
+        final User toCopy = new User("1", "username", "password", "ADMIN", new ArrayList<String>(), "1", "1");
+        final User copied = new User(toCopy);
+
+        assertEquals(toCopy.getId(), copied.getId());
+        assertEquals(toCopy.getUsername(), copied.getUsername());
+        assertEquals(toCopy.getPassword(), copied.getPassword());
+        assertEquals(toCopy.getTeacher(), copied.getTeacher());
+        assertEquals(toCopy.getRole(), copied.getRole());
+        assertEquals(toCopy.getPermissions(), copied.getPermissions());
+    }
+
+    @Test
     public void testEquals() {
-        final User user1 = new User(null, null, null, null, null, null);
-        final User user2 = new User("1", null, null, null, null, "1");
-        final User user3 = new User("2", null, null, null, null, "1");
-        final User user4 = new User("1", null, null, null, null, "2");
-        final User user5 = new User("1", null, null, null, null, "1");
-        final User user6 = new User("1", "username", "password", "ADMIN", new ArrayList<String>(), "1");
+        final User user1 = new User(null, null, null, null, null, null, null);
+        final User user2 = new User("1", null, null, null, null, "1", "1");
+        final User user3 = new User("2", null, null, null, null, "1", "1");
+        final User user4 = new User("1", null, null, null, null, "2", "2");
+        final User user5 = new User("1", null, null, null, null, "1", "1");
+        final User user6 = new User("1", "username", "password", "ADMIN", new ArrayList<String>(), "1", "1");
 
         assertFalse(user1.equals(null));
         assertFalse(user1.equals(new Object()));

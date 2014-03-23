@@ -19,7 +19,8 @@ import net.scholagest.service.StudentServiceLocal;
 import com.google.inject.Inject;
 
 /**
- * Set methods available for rest calls (WebService) to handle the student personal information. The available methods are:
+ * Set methods available for rest calls (WebService) to handle the student personal information (see {@link StudentPersonalJson}).
+ * The available methods are:
  * 
  * <ul>
  *   <li>GET /{id} - to retrieve the personal information of a student</li>

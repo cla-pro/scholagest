@@ -20,11 +20,8 @@ public class Student extends Base {
     }
 
     public Student(final Student toCopy) {
-        super(toCopy.getId());
-        this.firstName = toCopy.firstName;
-        this.lastName = toCopy.lastName;
-        this.studentPersonal = new StudentPersonal(toCopy.studentPersonal);
-        this.studentMedical = new StudentMedical(toCopy.studentMedical);
+        this(toCopy.getId(), toCopy.firstName, toCopy.lastName, new StudentPersonal(toCopy.studentPersonal),
+                new StudentMedical(toCopy.studentMedical));
     }
 
     public Student(final String id, final String firstName, final String lastName, final StudentPersonal studentPersonal,

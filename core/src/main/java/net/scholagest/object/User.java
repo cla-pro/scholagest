@@ -1,6 +1,5 @@
 package net.scholagest.object;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -14,28 +13,26 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 public class User extends Base {
     private String username;
     private String password;
-    private String teacherId;
+    private String teacher;
+    private String clazz;
     private String role;
     private List<String> permissions;
 
     public User() {}
 
     public User(final User toCopy) {
-        this.username = toCopy.username;
-        this.password = toCopy.password;
-        this.teacherId = toCopy.teacherId;
-        this.role = toCopy.role;
-        this.permissions = new ArrayList<>(toCopy.permissions);
+        this(toCopy.getId(), toCopy.username, toCopy.password, toCopy.role, toCopy.permissions, toCopy.teacher, toCopy.clazz);
     }
 
     public User(final String id, final String username, final String password, final String role, final List<String> permissions,
-            final String teacherId) {
+            final String teacher, final String clazz) {
         super(id);
         this.username = username;
         this.password = password;
-        this.teacherId = teacherId;
+        this.teacher = teacher;
         this.role = role;
         this.permissions = permissions;
+        this.clazz = clazz;
     }
 
     public String getUsername() {
@@ -54,12 +51,20 @@ public class User extends Base {
         this.password = password;
     }
 
-    public String getTeacherId() {
-        return teacherId;
+    public String getTeacher() {
+        return teacher;
     }
 
-    public void setTeacherId(final String teacherId) {
-        this.teacherId = teacherId;
+    public void setTeacher(final String teacherId) {
+        this.teacher = teacherId;
+    }
+
+    public String getClazz() {
+        return clazz;
+    }
+
+    public void setClazz(final String clazz) {
+        this.clazz = clazz;
     }
 
     public String getRole() {
@@ -90,6 +95,6 @@ public class User extends Base {
         }
 
         final User other = (User) that;
-        return new EqualsBuilder().append(getId(), other.getId()).append(teacherId, other.teacherId).isEquals();
+        return new EqualsBuilder().append(getId(), other.getId()).append(teacher, other.teacher).isEquals();
     }
 }

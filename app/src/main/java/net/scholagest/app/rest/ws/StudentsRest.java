@@ -26,7 +26,7 @@ import net.scholagest.service.StudentServiceLocal;
 import com.google.inject.Inject;
 
 /**
- * Set methods available for rest calls (WebService) to handle the students. The student contains only links to
+ * Set methods available for rest calls (WebService) to handle the students (see {@link StudendJson}). The student contains only links to
  * the personal and medical information. They must be retrieved by calling the {@link StudentPersonalsRest} and
  * the {@link StudentMedicalRest} webservices. The vailable methods are:
  * 

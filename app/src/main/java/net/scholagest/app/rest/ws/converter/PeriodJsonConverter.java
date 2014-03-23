@@ -7,7 +7,7 @@ import net.scholagest.app.rest.ws.objects.PeriodJson;
 import net.scholagest.object.Period;
 
 /**
- * Method to convert from transfer object {@link Period} to json {@link PeriodJson} and reverse
+ * Method to convert from transfer object {@link Period} to json {@link PeriodJson}.
  * 
  * @author CLA
  * @since 0.14.0
@@ -44,22 +44,5 @@ public class PeriodJsonConverter {
         periodJson.setBranchPeriods(new ArrayList<>(period.getBranchPeriods()));
 
         return periodJson;
-    }
-
-    /**
-     * Convert a {@link PeriodJson} to its version {@link Period}.
-     * 
-     * @param periodJson The period json to convert
-     * @return The converted period
-     */
-    public Period convertToPeriod(final PeriodJson periodJson) {
-        final Period period = new Period();
-
-        period.setId(periodJson.getId());
-        period.setName(periodJson.getName());
-        period.setClazz(periodJson.getClazz());
-        period.setBranchPeriods(new ArrayList<>(periodJson.getBranchPeriods()));
-
-        return period;
     }
 }

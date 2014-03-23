@@ -45,15 +45,4 @@ public class PeriodJsonConverterTest {
         assertEquals(period.getClazz(), periodJson.getClazz());
         assertEquals(period.getBranchPeriods(), periodJson.getBranchPeriods());
     }
-
-    @Test
-    public void testConvertToTeacher() {
-        final PeriodJson periodJson = new PeriodJson("period1", "name1", "clazz1", Arrays.asList("branchPeriod1"));
-        final Period period = new PeriodJsonConverter().convertToPeriod(periodJson);
-
-        assertEquals(periodJson.getId(), period.getId());
-        assertEquals(periodJson.getName(), period.getName());
-        assertEquals(periodJson.getClazz(), period.getClazz());
-        assertEquals(periodJson.getBranchPeriods(), period.getBranchPeriods());
-    }
 }
