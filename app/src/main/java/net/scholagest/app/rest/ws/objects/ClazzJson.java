@@ -3,6 +3,12 @@ package net.scholagest.app.rest.ws.objects;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Json object representing a clazz
+ * 
+ * @author CLA
+ * @since 0.14.0
+ */
 public class ClazzJson extends BaseJson {
     private String name;
     private String year;

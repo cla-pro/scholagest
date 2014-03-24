@@ -1,13 +1,19 @@
 package net.scholagest.app.rest.ws.objects;
 
-public class Login {
+/**
+ * Json object representing a login
+ * 
+ * @author CLA
+ * @since 0.14.0
+ */
+public class LoginJson {
     private String username;
     private String password;
     private String token;
 
-    public Login() {}
+    public LoginJson() {}
 
-    public Login(final String username, final String password, final String token) {
+    public LoginJson(final String username, final String password, final String token) {
         this.username = username;
         this.password = password;
         this.token = token;

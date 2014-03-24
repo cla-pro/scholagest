@@ -1,5 +1,11 @@
 package net.scholagest.app.rest.ws.objects;
 
+/**
+ * Json object representing a result
+ * 
+ * @author CLA
+ * @since 0.14.0
+ */
 public class ResultJson extends BaseJson {
     private Double grade;
     private String studentResult;

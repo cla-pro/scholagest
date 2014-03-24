@@ -6,7 +6,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 
-import net.scholagest.app.rest.ws.objects.Login;
+import net.scholagest.app.rest.ws.objects.LoginJson;
 import net.scholagest.app.rest.ws.objects.SessionJson;
 import net.scholagest.exception.ScholagestException;
 import net.scholagest.object.SessionInfo;
@@ -44,7 +44,7 @@ public class LoginRest {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public SessionJson login(final String content) {
-        final Login login = new Gson().fromJson(content, Login.class);
+        final LoginJson login = new Gson().fromJson(content, LoginJson.class);
 
         if (login.hasToken()) {
             try {

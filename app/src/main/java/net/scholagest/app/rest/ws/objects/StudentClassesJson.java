@@ -3,6 +3,12 @@ package net.scholagest.app.rest.ws.objects;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Json object representing a student classes
+ * 
+ * @author CLA
+ * @since 0.14.0
+ */
 public class StudentClassesJson extends BaseJson {
     private final List<String> currentClasses;
     private final List<String> oldClasses;

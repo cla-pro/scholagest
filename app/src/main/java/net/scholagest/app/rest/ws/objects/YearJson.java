@@ -3,6 +3,12 @@ package net.scholagest.app.rest.ws.objects;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Json object representing a year
+ * 
+ * @author CLA
+ * @since 0.14.0
+ */
 public class YearJson extends BaseJson {
     private String name;
     private boolean running;

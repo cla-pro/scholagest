@@ -1,5 +1,11 @@
 package net.scholagest.object;
 
+/**
+ * Abstract class for all transfer objects
+ * 
+ * @author CLA
+ * @since 0.13.0
+ */
 public abstract class Base {
     private String id;
 
