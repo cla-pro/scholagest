@@ -46,7 +46,7 @@ public class StudentJsonConverter {
         studentJson.setId(student.getId());
         studentJson.setFirstName(student.getFirstName());
         studentJson.setLastName(student.getLastName());
-        studentJson.setClazz(null);
+        studentJson.setClasses(null);
         studentJson.setPersonal(student.getStudentPersonal().getId());
         studentJson.setMedical(student.getStudentMedical().getId());
 

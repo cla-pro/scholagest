@@ -21,11 +21,16 @@ Scholagest.StudentPersonal = DS.Model.extend({
 Scholagest.StudentMedical = DS.Model.extend({
     doctor: DS.attr()
 });
+Scholagest.StudentClasses = DS.Model.extend({
+    currentClasses: DS.hasMany('class'),
+    oldClasses: DS.hasMany('class')
+});
 Scholagest.Student = DS.Model.extend({
     firstName: DS.attr(),
     lastName: DS.attr(),
     personal: DS.belongsTo('studentPersonal', { async: true }),
     medical: DS.belongsTo('studentMedical', { async: true }),
+    classes: DS.belongsTo('studentClasses', { async: true }),
     
     fullName: function() {
         return this.get('firstName') + " " + this.get('lastName');

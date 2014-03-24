@@ -6,6 +6,7 @@ import net.scholagest.authorization.Permission;
 import net.scholagest.authorization.RolesAndPermissions;
 import net.scholagest.business.StudentBusinessLocal;
 import net.scholagest.object.Student;
+import net.scholagest.object.StudentClasses;
 import net.scholagest.object.StudentMedical;
 import net.scholagest.object.StudentPersonal;
 
@@ -78,6 +79,9 @@ public class StudentServiceBean implements StudentServiceLocal {
         return studentBusiness.saveStudent(studentId, student);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @RolesAndPermissions(roles = {})
     @Override
     public StudentPersonal getStudentPersonal(final String id) {
@@ -93,6 +97,9 @@ public class StudentServiceBean implements StudentServiceLocal {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @RolesAndPermissions(roles = { "ADMIN" })
     @Override
     public StudentPersonal saveStudentPersonal(@Permission final String studentId, final StudentPersonal studentPersonal) {
@@ -103,6 +110,9 @@ public class StudentServiceBean implements StudentServiceLocal {
         return studentBusiness.saveStudentPersonal(studentId, studentPersonal);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @RolesAndPermissions(roles = {})
     @Override
     public StudentMedical getStudentMedical(final String id) {
@@ -118,6 +128,9 @@ public class StudentServiceBean implements StudentServiceLocal {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @RolesAndPermissions(roles = { "ADMIN" })
     @Override
     public StudentMedical saveStudentMedical(@Permission final String studentId, final StudentMedical studentMedical) {
@@ -126,6 +139,19 @@ public class StudentServiceBean implements StudentServiceLocal {
         }
 
         return studentBusiness.saveStudentMedical(studentId, studentMedical);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @RolesAndPermissions(roles = { "ADMIN" })
+    @Override
+    public StudentClasses getStudentClasses(@Permission final String studentId) {
+        if (studentId == null) {
+            return null;
+        } else {
+            return studentBusiness.getStudentClasses(studentId);
+        }
     }
 
 }

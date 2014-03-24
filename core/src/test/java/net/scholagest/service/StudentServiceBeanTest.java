@@ -16,6 +16,7 @@ import java.util.List;
 import net.scholagest.business.StudentBusinessLocal;
 import net.scholagest.exception.ScholagestRuntimeException;
 import net.scholagest.object.Student;
+import net.scholagest.object.StudentClasses;
 import net.scholagest.object.StudentMedical;
 import net.scholagest.object.StudentPersonal;
 import net.scholagest.utils.AbstractGuiceContextTest;
@@ -183,6 +184,24 @@ public class StudentServiceBeanTest extends AbstractGuiceContextTest {
     }
 
     @Test
+    public void testGetStudentClasses() {
+        setAdminSubject();
+        final StudentServiceLocal testee = getInstance(StudentServiceLocal.class);
+
+        final StudentClasses studentClasses = new StudentClasses("id", Arrays.asList("clazz1"), Arrays.asList("clazz2"));
+        when(studentBusiness.getStudentClasses(eq("id"))).thenReturn(studentClasses);
+
+        assertNull(testee.getStudentClasses(null));
+        verify(studentBusiness, never()).saveStudentMedical(anyString(), any(StudentMedical.class));
+
+        assertNull(testee.getStudentClasses("wrong"));
+        verify(studentBusiness).getStudentClasses(eq("wrong"));
+
+        assertEquals(studentClasses, testee.getStudentClasses("id"));
+        verify(studentBusiness).getStudentClasses(eq("id"));
+    }
+
+    @Test
     public void testCreateStudentAuthorization() {
         setNoRightSubject();
         final StudentServiceLocal testee = getInstance(StudentServiceLocal.class);
@@ -233,6 +252,21 @@ public class StudentServiceBeanTest extends AbstractGuiceContextTest {
         final String id = "id";
         try {
             testee.saveStudentMedical(id, new StudentMedical());
+            fail("Expected exception");
+        } catch (final ScholagestRuntimeException e) {
+            verify(ScholagestThreadLocal.getSubject()).hasRole(eq("ADMIN"));
+            verify(ScholagestThreadLocal.getSubject()).isPermitted(id);
+        }
+    }
+
+    @Test
+    public void testGetStudentClassesAuthorization() {
+        setNoRightSubject();
+        final StudentServiceLocal testee = getInstance(StudentServiceLocal.class);
+
+        final String id = "id";
+        try {
+            testee.getStudentClasses(id);
             fail("Expected exception");
         } catch (final ScholagestRuntimeException e) {
             verify(ScholagestThreadLocal.getSubject()).hasRole(eq("ADMIN"));

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.scholagest.object.Student;
+import net.scholagest.object.StudentClasses;
 import net.scholagest.object.StudentMedical;
 import net.scholagest.object.StudentPersonal;
 import net.scholagest.utils.IdHelper;
@@ -22,11 +23,16 @@ import net.scholagest.utils.IdHelper;
 public class StudentBusinessBean implements StudentBusinessLocal {
     public static Map<String, Student> studentsMap = new HashMap<>();
 
+    public static Map<String, StudentClasses> studentClassesMap = new HashMap<>();
+
     static {
         studentsMap.put("student1", new Student("student1", "Elodie", "Lavanchy", new StudentPersonal("student1", "Route final du Verney 8", "Perly",
                 "1242", "Protestant"), new StudentMedical("student1", null)));
         studentsMap.put("student2", new Student("student2", "Thibaud", "Hottelier", new StudentPersonal("student2", "Post Street 711",
                 "San Francisco", "1242", null), new StudentMedical("student2", null)));
+
+        studentClassesMap.put("student1", new StudentClasses("student1", new ArrayList<String>(), new ArrayList<String>()));
+        studentClassesMap.put("student2", new StudentClasses("student2", new ArrayList<String>(), new ArrayList<String>()));
     }
 
     /**
@@ -119,5 +125,17 @@ public class StudentBusinessBean implements StudentBusinessLocal {
         storedMedical.setDoctor(studentMedical.getDoctor());
 
         return new StudentMedical(storedMedical);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StudentClasses getStudentClasses(final String studentId) {
+        if (studentClassesMap.containsKey(studentId)) {
+            return new StudentClasses(studentClassesMap.get(studentId));
+        } else {
+            return null;
+        }
     }
 }

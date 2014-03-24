@@ -5,17 +5,18 @@ public class StudentJson extends BaseJson {
     private String lastName;
     private String personal;
     private String medical;
-    private String clazz;
+    private String classes;
 
     public StudentJson() {}
 
-    public StudentJson(final String id, final String firstName, final String lastName, final String personal, final String medical, final String clazz) {
+    public StudentJson(final String id, final String firstName, final String lastName, final String personal, final String medical,
+            final String classes) {
         super(id);
         this.firstName = firstName;
         this.lastName = lastName;
         this.personal = personal;
         this.medical = medical;
-        this.clazz = clazz;
+        this.classes = classes;
     }
 
     public String getFirstName() {
@@ -50,11 +51,11 @@ public class StudentJson extends BaseJson {
         this.medical = medical;
     }
 
-    public String getClazz() {
-        return clazz;
+    public String getClasses() {
+        return classes;
     }
 
-    public void setClazz(final String clazz) {
-        this.clazz = clazz;
+    public void setClasses(final String classes) {
+        this.classes = classes;
     }
 }
