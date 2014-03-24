@@ -34,7 +34,7 @@ public class ExamBusinessBean implements ExamBusinessLocal {
     @Override
     public Exam getExam(final String id) {
         if (examsMap.containsKey(id)) {
-            return examsMap.get(id);
+            return new Exam(examsMap.get(id));
         } else {
             return null;
         }

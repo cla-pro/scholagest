@@ -38,7 +38,7 @@ public class ClazzBusinessBean implements ClazzBusinessLocal {
     @Override
     public Clazz getClazz(final String id) {
         if (classesMap.containsKey(id)) {
-            return classesMap.get(id);
+            return new Clazz(classesMap.get(id));
         } else {
             return null;
         }

@@ -35,7 +35,7 @@ public class BranchBusinessBean implements BranchBusinessLocal {
     @Override
     public Branch getBranch(final String id) {
         if (branchesMap.containsKey(id)) {
-            return branchesMap.get(id);
+            return new Branch(branchesMap.get(id));
         } else {
             return null;
         }
