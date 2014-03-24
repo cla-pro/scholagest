@@ -3,10 +3,12 @@ package net.scholagest.app.rest.ws.converter;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.scholagest.app.rest.ws.objects.StudentClassesJson;
 import net.scholagest.app.rest.ws.objects.StudentJson;
 import net.scholagest.app.rest.ws.objects.StudentMedicalJson;
 import net.scholagest.app.rest.ws.objects.StudentPersonalJson;
 import net.scholagest.object.Student;
+import net.scholagest.object.StudentClasses;
 import net.scholagest.object.StudentMedical;
 import net.scholagest.object.StudentPersonal;
 
@@ -46,7 +48,7 @@ public class StudentJsonConverter {
         studentJson.setId(student.getId());
         studentJson.setFirstName(student.getFirstName());
         studentJson.setLastName(student.getLastName());
-        studentJson.setClasses(null);
+        studentJson.setClasses(student.getStudentClasses().getId());
         studentJson.setPersonal(student.getStudentPersonal().getId());
         studentJson.setMedical(student.getStudentMedical().getId());
 
@@ -136,5 +138,21 @@ public class StudentJsonConverter {
         studentMedical.setDoctor(studentMedicalJson.getDoctor());
 
         return studentMedical;
+    }
+
+    /**
+     * Convert a {@link StudentClasses} to its json version {@link StudentClassesJson}
+     * 
+     * @param studentClasses The student classes to convert
+     * @return The converted student classes json
+     */
+    public StudentClassesJson convertToStudentClassesJson(final StudentClasses studentClasses) {
+        final StudentClassesJson studentClassesJson = new StudentClassesJson();
+
+        studentClassesJson.setId(studentClasses.getId());
+        studentClassesJson.setCurrentClasses(new ArrayList<String>(studentClasses.getCurrentClasses()));
+        studentClassesJson.setOldClasses(new ArrayList<String>(studentClasses.getOldClasses()));
+
+        return studentClassesJson;
     }
 }

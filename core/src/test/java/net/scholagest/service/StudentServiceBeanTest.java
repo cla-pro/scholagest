@@ -49,8 +49,8 @@ public class StudentServiceBeanTest extends AbstractGuiceContextTest {
         setAdminSubject();
         final StudentServiceLocal testee = getInstance(StudentServiceLocal.class);
 
-        final Student student1 = new Student("1", "FirstName1", "LastName1", new StudentPersonal(), new StudentMedical());
-        final Student student2 = new Student("2", "FirstName2", "LastName2", new StudentPersonal(), new StudentMedical());
+        final Student student1 = new Student("1", "FirstName1", "LastName1", new StudentPersonal(), new StudentMedical(), new StudentClasses());
+        final Student student2 = new Student("2", "FirstName2", "LastName2", new StudentPersonal(), new StudentMedical(), new StudentClasses());
         final List<Student> expected = Arrays.asList(student1, student2);
         when(studentBusiness.getStudents()).thenReturn(expected);
 
@@ -66,7 +66,7 @@ public class StudentServiceBeanTest extends AbstractGuiceContextTest {
         setAdminSubject();
         final StudentServiceLocal testee = getInstance(StudentServiceLocal.class);
 
-        final Student expected = new Student("1", "firstName", "lastName", new StudentPersonal(), new StudentMedical());
+        final Student expected = new Student("1", "firstName", "lastName", new StudentPersonal(), new StudentMedical(), new StudentClasses());
         when(studentBusiness.getStudent("1")).thenReturn(expected);
 
         assertNull(testee.getStudent(null));
@@ -84,7 +84,7 @@ public class StudentServiceBeanTest extends AbstractGuiceContextTest {
         setAdminSubject();
         final StudentServiceLocal testee = getInstance(StudentServiceLocal.class);
 
-        final Student created = new Student("1", "firstName", "lastName", new StudentPersonal(), new StudentMedical());
+        final Student created = new Student("1", "firstName", "lastName", new StudentPersonal(), new StudentMedical(), new StudentClasses());
         when(studentBusiness.createStudent(any(Student.class))).thenReturn(created);
 
         assertNull(testee.createStudent(null));
@@ -100,7 +100,7 @@ public class StudentServiceBeanTest extends AbstractGuiceContextTest {
         setAdminSubject();
         final StudentServiceLocal testee = getInstance(StudentServiceLocal.class);
 
-        final Student saved = new Student("1", "firstName", "lastName", new StudentPersonal(), new StudentMedical());
+        final Student saved = new Student("1", "firstName", "lastName", new StudentPersonal(), new StudentMedical(), new StudentClasses());
         when(studentBusiness.saveStudent(eq("1"), any(Student.class))).thenReturn(saved);
 
         final Student toSave = new Student();
@@ -118,7 +118,7 @@ public class StudentServiceBeanTest extends AbstractGuiceContextTest {
         final StudentServiceLocal testee = getInstance(StudentServiceLocal.class);
 
         final Student expected = new Student("1", "firstName", "lastName", new StudentPersonal("1", "street", "city", "postcode", "religion"),
-                new StudentMedical());
+                new StudentMedical(), new StudentClasses());
         when(studentBusiness.getStudent("1")).thenReturn(expected);
 
         assertNull(testee.getStudentPersonal(null));
@@ -153,7 +153,8 @@ public class StudentServiceBeanTest extends AbstractGuiceContextTest {
         setAdminSubject();
         final StudentServiceLocal testee = getInstance(StudentServiceLocal.class);
 
-        final Student expected = new Student("1", "firstName", "lastName", new StudentPersonal(), new StudentMedical("1", "doctor"));
+        final Student expected = new Student("1", "firstName", "lastName", new StudentPersonal(), new StudentMedical("1", "doctor"),
+                new StudentClasses());
         when(studentBusiness.getStudent("1")).thenReturn(expected);
 
         assertNull(testee.getStudentMedical(null));
@@ -188,17 +189,18 @@ public class StudentServiceBeanTest extends AbstractGuiceContextTest {
         setAdminSubject();
         final StudentServiceLocal testee = getInstance(StudentServiceLocal.class);
 
-        final StudentClasses studentClasses = new StudentClasses("id", Arrays.asList("clazz1"), Arrays.asList("clazz2"));
-        when(studentBusiness.getStudentClasses(eq("id"))).thenReturn(studentClasses);
+        final Student expected = new Student("1", "firstName", "lastName", new StudentPersonal(), new StudentMedical(), new StudentClasses("1",
+                Arrays.asList("clazz1"), Arrays.asList("clazz2")));
+        when(studentBusiness.getStudent("1")).thenReturn(expected);
 
         assertNull(testee.getStudentClasses(null));
-        verify(studentBusiness, never()).saveStudentMedical(anyString(), any(StudentMedical.class));
+        verify(studentBusiness, never()).getStudent(anyString());
 
-        assertNull(testee.getStudentClasses("wrong"));
-        verify(studentBusiness).getStudentClasses(eq("wrong"));
+        assertNull(testee.getStudentClasses("2"));
+        verify(studentBusiness).getStudent(eq("2"));
 
-        assertEquals(studentClasses, testee.getStudentClasses("id"));
-        verify(studentBusiness).getStudentClasses(eq("id"));
+        assertEquals(expected.getStudentClasses(), testee.getStudentClasses("1"));
+        verify(studentBusiness).getStudent(eq("1"));
     }
 
     @Test

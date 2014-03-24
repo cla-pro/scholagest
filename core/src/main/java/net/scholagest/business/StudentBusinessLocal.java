@@ -3,7 +3,6 @@ package net.scholagest.business;
 import java.util.List;
 
 import net.scholagest.object.Student;
-import net.scholagest.object.StudentClasses;
 import net.scholagest.object.StudentMedical;
 import net.scholagest.object.StudentPersonal;
 
@@ -64,12 +63,4 @@ public interface StudentBusinessLocal {
      * @return The updated student medical information
      */
     public StudentMedical saveStudentMedical(String studentId, StudentMedical studentMedical);
-
-    /**
-     * Retrieve the class information ({@link StudentClasses}) for a student.
-     * 
-     * @param studentId The student for which the studentClasses information must be retrieved.
-     * @return
-     */
-    public StudentClasses getStudentClasses(String studentId);
 }

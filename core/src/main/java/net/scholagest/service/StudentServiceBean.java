@@ -92,7 +92,7 @@ public class StudentServiceBean implements StudentServiceLocal {
         if (student == null) {
             return null;
         } else {
-            return student.getStudentPersonal();
+            return new StudentPersonal(student.getStudentPersonal());
         }
     }
 
@@ -123,7 +123,7 @@ public class StudentServiceBean implements StudentServiceLocal {
         if (student == null) {
             return null;
         } else {
-            return student.getStudentMedical();
+            return new StudentMedical(student.getStudentMedical());
         }
     }
 
@@ -148,9 +148,13 @@ public class StudentServiceBean implements StudentServiceLocal {
     public StudentClasses getStudentClasses(@Permission final String studentId) {
         if (studentId == null) {
             return null;
+        }
+
+        final Student student = studentBusiness.getStudent(studentId);
+        if (student == null) {
+            return null;
         } else {
-            return studentBusiness.getStudentClasses(studentId);
+            return new StudentClasses(student.getStudentClasses());
         }
     }
-
 }

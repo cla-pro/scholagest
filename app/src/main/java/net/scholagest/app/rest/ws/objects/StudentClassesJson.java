@@ -10,8 +10,8 @@ import java.util.List;
  * @since 0.14.0
  */
 public class StudentClassesJson extends BaseJson {
-    private final List<String> currentClasses;
-    private final List<String> oldClasses;
+    private List<String> currentClasses;
+    private List<String> oldClasses;
 
     public StudentClassesJson() {
         this.currentClasses = new ArrayList<>();
@@ -28,7 +28,15 @@ public class StudentClassesJson extends BaseJson {
         return currentClasses;
     }
 
+    public void setCurrentClasses(final List<String> currentClasses) {
+        this.currentClasses = currentClasses;
+    }
+
     public List<String> getOldClasses() {
         return oldClasses;
+    }
+
+    public void setOldClasses(final List<String> oldClasses) {
+        this.oldClasses = oldClasses;
     }
 }
