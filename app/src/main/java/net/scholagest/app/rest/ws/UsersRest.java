@@ -12,12 +12,16 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import net.scholagest.app.rest.ws.authorization.CheckAuthorization;
+import net.scholagest.app.rest.ws.converter.ClazzJsonConverter;
 import net.scholagest.app.rest.ws.converter.TeacherJsonConverter;
 import net.scholagest.app.rest.ws.converter.UserJsonConverter;
+import net.scholagest.app.rest.ws.objects.ClazzJson;
 import net.scholagest.app.rest.ws.objects.TeacherJson;
 import net.scholagest.app.rest.ws.objects.UserJson;
+import net.scholagest.object.Clazz;
 import net.scholagest.object.Teacher;
 import net.scholagest.object.User;
+import net.scholagest.service.ClazzServiceLocal;
 import net.scholagest.service.TeacherServiceLocal;
 import net.scholagest.service.UserServiceLocal;
 
@@ -38,35 +42,52 @@ import com.google.inject.Inject;
 @Path("/users")
 public class UsersRest {
     private final TeacherServiceLocal teacherService;
+
     private final UserServiceLocal userService;
 
+    private final ClazzServiceLocal clazzService;
+
     @Inject
-    public UsersRest(final TeacherServiceLocal teacherService, final UserServiceLocal userService) {
+    public UsersRest(final TeacherServiceLocal teacherService, final UserServiceLocal userService, final ClazzServiceLocal clazzService) {
         this.teacherService = teacherService;
         this.userService = userService;
+        this.clazzService = clazzService;
     }
 
+    /**
+     * Retrieve the information about a single user identified by its id.
+     * 
+     * @param id Id of the user to get
+     * @return The user identified by id
+     */
     @CheckAuthorization
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Map<String, Object> getUser(@PathParam("id") final String id) {
-        final Map<String, Object> toReturn = new HashMap<>();
+        final Map<String, Object> response = new HashMap<>();
 
         final User user = userService.getUser(id);
         if (user != null) {
             final UserJson userJson = new UserJsonConverter().convertToUserJson(user);
-            toReturn.put("user", userJson);
+            response.put("user", userJson);
 
-            final List<Teacher> teachers = teacherService.getTeacher(Arrays.asList(user.getTeacherId()));
-            final List<TeacherJson> teachersJson = new TeacherJsonConverter().convertToTeacherJson(teachers);
-            toReturn.put("teachers", teachersJson);
-
+            final List<Teacher> teachers = teacherService.getTeacher(Arrays.asList(user.getTeacher()));
+            final List<TeacherJson> teachersJson = new TeacherJsonConverter().convertToTeacherJsonList(teachers);
+            response.put("teachers", teachersJson);
+            response.put("class", getClazzJson("clazz1"));
             // TODO class is null -> go get it
             // toReturn.put("class",
             // ClassesRest.classes.get(userJson.getClazz()));
         }
 
-        return toReturn;
+        return response;
+    }
+
+    private ClazzJson getClazzJson(final String id) {
+        final ClazzJsonConverter converter = new ClazzJsonConverter();
+        final Clazz clazz = clazzService.getClazz(id);
+
+        return converter.convertToClazzJson(clazz);
     }
 }

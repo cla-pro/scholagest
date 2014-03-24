@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -15,152 +14,269 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import net.scholagest.app.rest.ws.authorization.CheckAuthorization;
-import net.scholagest.app.rest.ws.objects.Branch;
-import net.scholagest.app.rest.ws.objects.BranchPeriod;
-import net.scholagest.app.rest.ws.objects.Exam;
-import net.scholagest.app.rest.ws.objects.Result;
-import net.scholagest.app.rest.ws.objects.StudentResult;
+import net.scholagest.app.rest.ws.converter.BranchJsonConverter;
+import net.scholagest.app.rest.ws.converter.BranchPeriodJsonConverter;
+import net.scholagest.app.rest.ws.converter.ExamJsonConverter;
+import net.scholagest.app.rest.ws.converter.ResultJsonConverter;
+import net.scholagest.app.rest.ws.converter.StudentResultJsonConverter;
+import net.scholagest.app.rest.ws.objects.BranchJson;
+import net.scholagest.app.rest.ws.objects.BranchPeriodJson;
+import net.scholagest.app.rest.ws.objects.ExamJson;
+import net.scholagest.app.rest.ws.objects.ResultJson;
+import net.scholagest.app.rest.ws.objects.StudentResultJson;
+import net.scholagest.object.Branch;
+import net.scholagest.object.BranchPeriod;
+import net.scholagest.object.Exam;
+import net.scholagest.object.Result;
+import net.scholagest.object.StudentResult;
+import net.scholagest.service.BranchPeriodServiceLocal;
+import net.scholagest.service.BranchServiceLocal;
+import net.scholagest.service.ExamServiceLocal;
+import net.scholagest.service.ResultServiceLocal;
+import net.scholagest.service.StudentResultServiceLocal;
 
 import com.google.inject.Inject;
 
+/**
+ * Set methods available for rest calls (WebService) to handle the branch periods (see {@link BranchPeriodJson}). The 
+ * available methods are:
+ * 
+ * <ul>
+ *   <li>GET ids[] - to retrieve a list of {@link BranchPeriodJson} filtered by the ids</li>
+ *   <li>GET /{id} - to retrieve the information of a {@link BranchPeriodJson}</li>
+ * </ul>
+ * 
+ * Both methods gives the {@link BranchJson}, {@link ExamJson}s, {@link StudentResultJson}s, {@link ResultJson} and the means 
+ * as {@link ResultJson} back as well.
+ * 
+ * @author CLA
+ * @since 0.14.0
+ */
 @Path("/branchPeriods")
 public class BranchPeriodsRest {
-    public static Map<String, BranchPeriod> branchPeriods = new HashMap<>();
-
-    static {
-        branchPeriods.put("1", new BranchPeriod("1", "1", "1", Arrays.asList("1", "2"), Arrays.asList("1")));
-        branchPeriods.put("2", new BranchPeriod("2", "2", "1", Arrays.asList("3", "4", "5"), Arrays.asList("2")));
-        branchPeriods.put("3", new BranchPeriod("3", "1", "2", new ArrayList<String>(), new ArrayList<String>()));
-        branchPeriods.put("4", new BranchPeriod("4", "2", "2", new ArrayList<String>(), new ArrayList<String>()));
-        branchPeriods.put("5", new BranchPeriod("5", "1", "3", new ArrayList<String>(), new ArrayList<String>()));
-    }
 
     @Inject
+    private BranchPeriodServiceLocal branchPeriodService;
+
+    @Inject
+    private BranchServiceLocal branchService;
+
+    @Inject
+    private ExamServiceLocal examService;
+
+    @Inject
+    private ResultServiceLocal resultService;
+
+    @Inject
+    private StudentResultServiceLocal studentResultService;
+
     public BranchPeriodsRest() {}
 
+    /**
+     * Retrieve the information about a single {@link BranchPeriodJson} identified by its id.
+     * 
+     * @param id Id of the branch period to get
+     * @return The branch period identified by id
+     */
     @CheckAuthorization
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, Object> getBranch(@PathParam("id") final String id) {
-        final Map<String, Object> toReturn = new HashMap<>();
-
-        final BranchPeriod branchPeriod = branchPeriods.get(id);
-        final Branch branch = BranchesRest.branches.get(branchPeriod.getBranch());
-        final List<Exam> examsForBranchPeriods = examsForBranchPeriods(Arrays.asList(branchPeriod));
-        final List<StudentResult> studentResultsForBranchPeriods = studentResultsForBranchPeriods(Arrays.asList(branchPeriod));
-        final List<Result> resultsForStudentResults = resultsForStudentResults(studentResultsForBranchPeriods);
-        final List<Result> meansForStudentResults = meansForStudentResults(studentResultsForBranchPeriods);
-
-        toReturn.put("branch", branch);
-        toReturn.put("branchPeriod", branchPeriod);
-        toReturn.put("exams", new ArrayList<Object>(examsForBranchPeriods));
-        toReturn.put("studentResults", new ArrayList<Object>(studentResultsForBranchPeriods));
-        toReturn.put("results", new ArrayList<Object>(resultsForStudentResults));
-        toReturn.put("means", new ArrayList<Object>(meansForStudentResults));
-
-        return toReturn;
+    public Map<String, Object> getBranchPeriod(@PathParam("id") final String id) {
+        return getBranchPeriodInformation(Arrays.asList(id));
     }
 
+    /**
+     * <p>
+     * Retrieve a list of {@link BranchPeriodJson}s filtered by ids. The ids are specified as query parameter with the name "ids[]".
+     * </p>
+     * 
+     * <p>
+     * Examples:
+     * <ul>
+     *   <li>Filter the branches by id: GET base_url/branchPeriods?ids[]=1&ids[]=2</li>
+     * </ul>
+     * </p>
+     * 
+     * @param ids Parameter used to filter the list of branch periods
+     * @return The list of branch periods filtered by ids
+     */
     @CheckAuthorization
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, Object> getBranches(@QueryParam("ids[]") final List<String> ids) {
-        final Map<String, Object> toReturn = new HashMap<>();
-
-        final List<BranchPeriod> branchPeriodsWithIds = branchPeriodsWithIds(ids);
-        final List<Branch> branchesWithIds = branchesForBranchPeriods(branchPeriodsWithIds);
-        final List<Exam> examsForBranchPeriods = examsForBranchPeriods(branchPeriodsWithIds);
-        final List<StudentResult> studentResultsForBranchPeriods = studentResultsForBranchPeriods(branchPeriodsWithIds);
-        final List<Result> resultsForStudentResults = resultsForStudentResults(studentResultsForBranchPeriods);
-        final List<Result> meansForStudentResults = meansForStudentResults(studentResultsForBranchPeriods);
-
-        toReturn.put("branches", new ArrayList<Object>(branchesWithIds));
-        toReturn.put("branchPeriods", new ArrayList<Object>(branchPeriodsWithIds));
-        toReturn.put("exams", new ArrayList<Object>(examsForBranchPeriods));
-        toReturn.put("studentResults", new ArrayList<Object>(studentResultsForBranchPeriods));
-        toReturn.put("results", new ArrayList<Object>(resultsForStudentResults));
-        toReturn.put("means", new ArrayList<Object>(meansForStudentResults));
-
-        return toReturn;
+    public Map<String, Object> getBranchPeriods(@QueryParam("ids[]") final List<String> ids) {
+        return getBranchPeriodInformation(ids);
     }
 
-    @CheckAuthorization
-    @Path("/{id}")
-    @PUT
-    public void saveBranchPeriod(@PathParam("id") final String id, final Map<String, BranchPeriod> payload) {
-        final BranchPeriod branchPeriod = payload.get("branchPeriod");
-        mergeBranchPeriod(branchPeriods.get(id), branchPeriod);
-    }
+    private Map<String, Object> getBranchPeriodInformation(final List<String> ids) {
+        final List<BranchPeriodJson> branchPeriodJsonList = getBranchPeriodJsonList(ids);
+        final List<BranchJson> branchJsonList = new ArrayList<>();
+        final List<ExamJson> examJsonList = new ArrayList<>();
+        final List<StudentResultJson> studentResultJsonList = new ArrayList<>();
+        final List<ResultJson> resultJsonList = new ArrayList<>();
+        final List<ResultJson> meanJsonList = new ArrayList<>();
 
-    private void mergeBranchPeriod(final BranchPeriod base, final BranchPeriod toMerge) {
-        base.setExams(toMerge.getExams());
-        base.setStudentResults(toMerge.getStudentResults());
-    }
+        for (final BranchPeriodJson branchPeriodJson : branchPeriodJsonList) {
+            branchJsonList.add(getBranchJson(branchPeriodJson));
+            examJsonList.addAll(getExamJsonList(branchPeriodJson.getExams()));
 
-    private List<Result> meansForStudentResults(final List<StudentResult> studentResultsForExams) {
-        final List<Result> means = new ArrayList<>();
+            final List<StudentResultJson> studentResultJsons = getStudentResultJsonList(branchPeriodJson.getStudentResults());
+            studentResultJsonList.addAll(studentResultJsons);
 
-        for (final StudentResult studentResult : studentResultsForExams) {
-            means.add(ResultsRest.results.get(studentResult.getMean()));
+            resultJsonList.addAll(getResultJsonList(studentResultJsons));
+            meanJsonList.addAll(getMeanJsonList(studentResultJsons));
         }
 
-        return means;
+        final Map<String, Object> response = new HashMap<>();
+        response.put("branches", branchJsonList);
+        response.put("branchPeriods", branchPeriodJsonList);
+        response.put("exams", examJsonList);
+        response.put("studentResults", studentResultJsonList);
+        response.put("results", resultJsonList);
+        response.put("means", meanJsonList);
+
+        return response;
     }
 
-    private List<Result> resultsForStudentResults(final List<StudentResult> studentResultsForExams) {
-        final List<Result> results = new ArrayList<>();
+    private List<BranchPeriodJson> getBranchPeriodJsonList(final List<String> ids) {
+        final BranchPeriodJsonConverter converter = new BranchPeriodJsonConverter();
 
-        for (final StudentResult studentResult : studentResultsForExams) {
-            for (final String resultId : studentResult.getResults()) {
-                results.add(ResultsRest.results.get(resultId));
-            }
+        final List<BranchPeriod> branchPeriodList = branchPeriodService.getBranchPeriods(ids);
+        return converter.convertToBranchPeriodJsonList(branchPeriodList);
+    }
+
+    private BranchJson getBranchJson(final BranchPeriodJson branchPeriodJson) {
+        final BranchJsonConverter converter = new BranchJsonConverter();
+
+        final Branch branch = branchService.getBranch(branchPeriodJson.getBranch());
+        final BranchJson branchJson = converter.convertToBranchJson(branch);
+
+        return branchJson;
+    }
+
+    private List<ExamJson> getExamJsonList(final List<String> examIdList) {
+        final ExamJsonConverter converter = new ExamJsonConverter();
+
+        final List<Exam> examList = examService.getExams(examIdList);
+        return converter.convertToExamJsonList(examList);
+    }
+
+    private List<StudentResultJson> getStudentResultJsonList(final List<String> studentResultIdList) {
+        final StudentResultJsonConverter converter = new StudentResultJsonConverter();
+
+        final List<StudentResult> studentResultList = studentResultService.getStudentResults(studentResultIdList);
+        return converter.convertToStudentResultJsonList(studentResultList);
+    }
+
+    private List<ResultJson> getResultJsonList(final List<StudentResultJson> studentResultJsonList) {
+        final ResultJsonConverter converter = new ResultJsonConverter();
+
+        final List<Result> resultList = new ArrayList<>();
+        for (final StudentResultJson studentResultJson : studentResultJsonList) {
+            resultList.addAll(resultService.getResults(studentResultJson.getResults()));
         }
 
-        return results;
+        return converter.convertToResultJsonList(resultList);
     }
 
-    private List<StudentResult> studentResultsForBranchPeriods(final List<BranchPeriod> branchPeriods) {
-        final List<StudentResult> studentResults = new ArrayList<>();
+    private List<ResultJson> getMeanJsonList(final List<StudentResultJson> studentResultJsonList) {
+        final ResultJsonConverter converter = new ResultJsonConverter();
 
-        for (final BranchPeriod branchPeriod : branchPeriods) {
-            for (final String resultId : branchPeriod.getStudentResults()) {
-                studentResults.add(ExamsRest.studentResults.get(resultId));
-            }
+        final List<Result> meanList = new ArrayList<>();
+        for (final StudentResultJson studentResultJson : studentResultJsonList) {
+            meanList.add(resultService.getResult(studentResultJson.getMean()));
         }
 
-        return studentResults;
+        return converter.convertToResultJsonList(meanList);
     }
 
-    private List<Exam> examsForBranchPeriods(final List<BranchPeriod> branchPeriods) {
-        final List<Exam> exams = new ArrayList<>();
+    // @CheckAuthorization
+    // @Path("/{id}")
+    // @PUT
+    // public void saveBranchPeriod(@PathParam("id") final String id, final
+    // Map<String, BranchPeriodJson> payload) {
+    // final BranchPeriodJsonConverter converter = new
+    // BranchPeriodJsonConverter();
+    //
+    // final BranchPeriodJson branchPeriod = payload.get("branchPeriod");
+    // mergeBranchPeriod(branchPeriods.get(id), branchPeriod);
+    // }
+    //
+    // private void mergeBranchPeriod(final BranchPeriodJson base, final
+    // BranchPeriodJson toMerge) {
+    // base.setExams(toMerge.getExams());
+    // base.setStudentResults(toMerge.getStudentResults());
+    // }
 
-        for (final BranchPeriod branchPeriod : branchPeriods) {
-            for (final String examId : branchPeriod.getExams()) {
-                exams.add(ExamsRest.exams.get(examId));
-            }
-        }
-
-        return exams;
-    }
-
-    private List<Branch> branchesForBranchPeriods(final List<BranchPeriod> branchPeriods) {
-        final List<Branch> branches = new ArrayList<>();
-
-        for (final BranchPeriod branchPeriod : branchPeriods) {
-            branches.add(BranchesRest.branches.get(branchPeriod.getBranch()));
-        }
-
-        return branches;
-    }
-
-    private List<BranchPeriod> branchPeriodsWithIds(final List<String> ids) {
-        final ArrayList<BranchPeriod> filtered = new ArrayList<>();
-
-        for (final String id : ids) {
-            filtered.add(branchPeriods.get(id));
-        }
-
-        return filtered;
-    }
+    // private List<ResultJson> meansForStudentResults(final
+    // List<StudentResultJson> studentResultsForExams) {
+    // final List<ResultJson> means = new ArrayList<>();
+    //
+    // for (final StudentResultJson studentResult : studentResultsForExams) {
+    // means.add(ResultsRest.results.get(studentResult.getMean()));
+    // }
+    //
+    // return means;
+    // }
+    //
+    // private List<ResultJson> resultsForStudentResults(final
+    // List<StudentResultJson> studentResultsForExams) {
+    // final List<ResultJson> results = new ArrayList<>();
+    //
+    // for (final StudentResultJson studentResult : studentResultsForExams) {
+    // for (final String resultId : studentResult.getResults()) {
+    // results.add(ResultsRest.results.get(resultId));
+    // }
+    // }
+    //
+    // return results;
+    // }
+    //
+    // private List<StudentResultJson> studentResultsForBranchPeriods(final
+    // List<BranchPeriodJson> branchPeriods) {
+    // final List<StudentResultJson> studentResults = new ArrayList<>();
+    //
+    // for (final BranchPeriodJson branchPeriod : branchPeriods) {
+    // for (final String resultId : branchPeriod.getStudentResults()) {
+    // studentResults.add(ExamsRest.studentResults.get(resultId));
+    // }
+    // }
+    //
+    // return studentResults;
+    // }
+    //
+    // private List<ExamJson> examsForBranchPeriods(final List<BranchPeriodJson>
+    // branchPeriods) {
+    // final List<ExamJson> exams = new ArrayList<>();
+    //
+    // for (final BranchPeriodJson branchPeriod : branchPeriods) {
+    // for (final String examId : branchPeriod.getExams()) {
+    // exams.add(ExamsRest.exams.get(examId));
+    // }
+    // }
+    //
+    // return exams;
+    // }
+    //
+    // private List<BranchJson> branchesForBranchPeriods(final
+    // List<BranchPeriodJson> branchPeriods) {
+    // final List<BranchJson> branches = new ArrayList<>();
+    //
+    // for (final BranchPeriodJson branchPeriod : branchPeriods) {
+    // branches.add(BranchesRest.branches.get(branchPeriod.getBranch()));
+    // }
+    //
+    // return branches;
+    // }
+    //
+    // private List<BranchPeriodJson> branchPeriodsWithIds(final List<String>
+    // ids) {
+    // final ArrayList<BranchPeriodJson> filtered = new ArrayList<>();
+    //
+    // for (final String id : ids) {
+    // filtered.add(branchPeriods.get(id));
+    // }
+    //
+    // return filtered;
+    // }
 }

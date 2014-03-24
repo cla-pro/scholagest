@@ -20,7 +20,7 @@ import net.scholagest.service.TeacherServiceLocal;
 import com.google.inject.Inject;
 
 /**
- * Set methods available for rest calls (WebService) to handle the teacher detail information.
+ * Set methods available for rest calls (WebService) to handle the teacher detail information (see {@link TeacherDetailJson}).
  * The available methods are:
  * 
  * <ul>

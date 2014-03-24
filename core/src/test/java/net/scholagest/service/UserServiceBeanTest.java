@@ -44,7 +44,7 @@ public class UserServiceBeanTest extends AbstractGuiceContextTest {
         setAdminSubject();
         final UserServiceLocal testee = getInstance(UserServiceLocal.class);
 
-        final User expected = new User("pdupont", "pdupont", "1234", "ADMIN", new ArrayList<String>(), "1");
+        final User expected = new User("pdupont", "pdupont", "1234", "ADMIN", new ArrayList<String>(), "1", "1");
         when(userBusiness.getUser("pdupont")).thenReturn(expected);
 
         assertNull(testee.getUser(null));

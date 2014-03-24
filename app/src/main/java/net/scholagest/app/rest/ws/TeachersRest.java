@@ -24,7 +24,7 @@ import net.scholagest.service.TeacherServiceLocal;
 import com.google.inject.Inject;
 
 /**
- * Set methods available for rest calls (WebService) to handle the teachers. The theacher contains only a link to
+ * Set methods available for rest calls (WebService) to handle the teachers (see {@link TeacherJson}). The theacher contains only a link to
  * the detail information. They must be retrieved by calling the {@link TeacherDetailsRest} and webservices. The 
  * available methods are:
  * 
@@ -84,7 +84,7 @@ public class TeachersRest {
         final TeacherJsonConverter converter = new TeacherJsonConverter();
 
         final List<Teacher> teachers = teacherService.getTeachers();
-        final List<TeacherJson> teachersJson = converter.convertToTeacherJson(teachers);
+        final List<TeacherJson> teachersJson = converter.convertToTeacherJsonList(teachers);
 
         return teachersJson;
     }
@@ -93,7 +93,7 @@ public class TeachersRest {
         final TeacherJsonConverter converter = new TeacherJsonConverter();
 
         final List<Teacher> teachers = teacherService.getTeacher(ids);
-        final List<TeacherJson> teachersJson = converter.convertToTeacherJson(teachers);
+        final List<TeacherJson> teachersJson = converter.convertToTeacherJsonList(teachers);
 
         return teachersJson;
     }

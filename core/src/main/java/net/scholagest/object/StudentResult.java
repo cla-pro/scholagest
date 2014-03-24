@@ -1,14 +1,30 @@
-package net.scholagest.app.rest.ws.objects;
+package net.scholagest.object;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class StudentResult extends BaseJson {
+import org.apache.commons.lang3.builder.EqualsBuilder;
+
+/**
+ * Transfer object that represent a branch period.
+ * 
+ * @author CLA
+ * @since 0.14.0
+ */
+public class StudentResult extends Base {
     private String student;
     private String branchPeriod;
     private List<String> results;
     private String mean;
     private boolean active;
+
+    public StudentResult() {
+        this.results = new ArrayList<String>();
+    }
+
+    public StudentResult(final StudentResult toCopy) {
+        this(toCopy.getId(), toCopy.student, toCopy.branchPeriod, toCopy.results, toCopy.mean, toCopy.active);
+    }
 
     public StudentResult(final String id, final String student, final String branchPeriod, final List<String> results, final String mean,
             final boolean active) {
@@ -58,5 +74,20 @@ public class StudentResult extends BaseJson {
 
     public void setActive(final boolean active) {
         this.active = active;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object that) {
+        if (that == null) {
+            return false;
+        } else if (!(that instanceof StudentResult)) {
+            return false;
+        }
+
+        final StudentResult other = (StudentResult) that;
+        return new EqualsBuilder().append(getId(), other.getId()).append(student, other.student).append(branchPeriod, other.branchPeriod).isEquals();
     }
 }

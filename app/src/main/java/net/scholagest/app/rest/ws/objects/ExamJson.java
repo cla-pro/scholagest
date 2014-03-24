@@ -1,13 +1,13 @@
 package net.scholagest.app.rest.ws.objects;
 
-public class Exam extends BaseJson {
+public class ExamJson extends BaseJson {
     private String name;
     private int coeff;
     private String branchPeriod;
 
-    public Exam() {}
+    public ExamJson() {}
 
-    public Exam(final String id, final String name, final int coeff, final String branchPeriod) {
+    public ExamJson(final String id, final String name, final int coeff, final String branchPeriod) {
         super(id);
         this.name = name;
         this.coeff = coeff;
@@ -32,5 +32,9 @@ public class Exam extends BaseJson {
 
     public String getBranchPeriod() {
         return branchPeriod;
+    }
+
+    public void setBranchPeriod(final String branchPeriod) {
+        this.branchPeriod = branchPeriod;
     }
 }

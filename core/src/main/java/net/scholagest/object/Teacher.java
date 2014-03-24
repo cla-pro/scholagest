@@ -18,10 +18,7 @@ public class Teacher extends Base {
     }
 
     public Teacher(final Teacher copy) {
-        super(copy.getId());
-        this.firstName = copy.firstName;
-        this.lastName = copy.lastName;
-        this.detail = new TeacherDetail(copy.detail);
+        this(copy.getId(), copy.firstName, copy.lastName, new TeacherDetail(copy.detail));
     }
 
     public Teacher(final String id, final String firstName, final String lastName, final TeacherDetail detail) {

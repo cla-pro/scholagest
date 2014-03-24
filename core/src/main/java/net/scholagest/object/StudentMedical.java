@@ -14,8 +14,7 @@ public class StudentMedical extends Base {
     public StudentMedical() {}
 
     public StudentMedical(final StudentMedical toCopy) {
-        super(toCopy.getId());
-        this.doctor = toCopy.doctor;
+        this(toCopy.getId(), toCopy.doctor);
     }
 
     public StudentMedical(final String id, final String doctor) {

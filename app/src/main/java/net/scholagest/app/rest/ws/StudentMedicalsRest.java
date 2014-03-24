@@ -19,7 +19,8 @@ import net.scholagest.service.StudentServiceLocal;
 import com.google.inject.Inject;
 
 /**
- * Set methods available for rest calls (WebService) to handle the student medical information. The available methods are:
+ * Set methods available for rest calls (WebService) to handle the student medical information (see {@link StudentMedicalJson}).
+ * The available methods are:
  * 
  * <ul>
  *   <li>GET /{id} - to retrieve the medical information of a student</li>

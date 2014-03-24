@@ -3,14 +3,14 @@ package net.scholagest.app.rest.ws.objects;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Period extends BaseJson {
+public class PeriodJson extends BaseJson {
     private String name;
     private String clazz;
     private List<String> branchPeriods;
 
-    public Period() {}
+    public PeriodJson() {}
 
-    public Period(final String id, final String name, final String clazz, final List<String> branchPeriods) {
+    public PeriodJson(final String id, final String name, final String clazz, final List<String> branchPeriods) {
         super(id);
         this.name = name;
         this.clazz = clazz;
