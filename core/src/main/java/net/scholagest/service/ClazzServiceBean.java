@@ -17,12 +17,11 @@ import com.google.inject.Inject;
  * @since 0.14.0
  */
 public class ClazzServiceBean implements ClazzServiceLocal {
-    private final ClazzBusinessLocal clazzBusiness;
 
     @Inject
-    public ClazzServiceBean(final ClazzBusinessLocal clazzBusiness) {
-        this.clazzBusiness = clazzBusiness;
-    }
+    private ClazzBusinessLocal clazzBusiness;
+
+    ClazzServiceBean() {}
 
     /**
      * {@inheritDoc}

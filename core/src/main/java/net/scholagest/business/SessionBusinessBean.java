@@ -21,6 +21,8 @@ import org.joda.time.DateTime;
 public class SessionBusinessBean implements SessionBusinessLocal {
     private static final Map<String, Session> sessionMap = new HashMap<>();
 
+    SessionBusinessBean() {}
+
     /**
      * {@inheritDoc}
      */

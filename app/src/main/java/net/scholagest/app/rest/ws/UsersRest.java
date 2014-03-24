@@ -41,18 +41,17 @@ import com.google.inject.Inject;
  */
 @Path("/users")
 public class UsersRest {
-    private final TeacherServiceLocal teacherService;
-
-    private final UserServiceLocal userService;
-
-    private final ClazzServiceLocal clazzService;
+    @Inject
+    private TeacherServiceLocal teacherService;
 
     @Inject
-    public UsersRest(final TeacherServiceLocal teacherService, final UserServiceLocal userService, final ClazzServiceLocal clazzService) {
-        this.teacherService = teacherService;
-        this.userService = userService;
-        this.clazzService = clazzService;
-    }
+    private UserServiceLocal userService;
+
+    @Inject
+    private ClazzServiceLocal clazzService;
+
+    @Inject
+    UsersRest() {}
 
     /**
      * Retrieve the information about a single user identified by its id.

@@ -22,6 +22,8 @@ public class StudentResultBusinessBean implements StudentResultBusinessLocal {
                 new StudentResult("studentResult2", "student1", "branchPeriod2", Arrays.asList("result4", "result5", "result6"), "result7", true));
     }
 
+    StudentResultBusinessBean() {}
+
     /**
      * {@inheritDoc}
      */

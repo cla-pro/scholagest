@@ -21,6 +21,8 @@ public class PeriodBusinessBean implements PeriodBusinessLocal {
         periodsMap.put("period3", new Period("period3", "Trimestre 3", "clazz1", Arrays.asList("branchPeriod5")));
     }
 
+    PeriodBusinessBean() {}
+
     @Override
     public Period getPeriod(final String id) {
         if (periodsMap.containsKey(id)) {

@@ -20,6 +20,8 @@ public class UserBusinessBean implements UserBusinessLocal {
         users.put("vparvex", new User("vparvex", "vparvex", "1234", "TEACHER", Arrays.asList("vparvex", "teacher2"), "teacher2", "clazz2"));
     }
 
+    UserBusinessBean() {}
+
     /**
      * {@inheritDoc}
      */

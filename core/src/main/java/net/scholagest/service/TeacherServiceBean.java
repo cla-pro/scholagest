@@ -22,12 +22,11 @@ import com.google.inject.Inject;
  * @since 0.13.0
  */
 public class TeacherServiceBean implements TeacherServiceLocal {
-    private final TeacherBusinessLocal teacherBusiness;
 
     @Inject
-    public TeacherServiceBean(final TeacherBusinessLocal teacherBusiness) {
-        this.teacherBusiness = teacherBusiness;
-    }
+    private TeacherBusinessLocal teacherBusiness;
+
+    TeacherServiceBean() {}
 
     /**
      * {@inheritDoc}

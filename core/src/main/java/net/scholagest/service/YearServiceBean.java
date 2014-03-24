@@ -16,12 +16,11 @@ import com.google.inject.Inject;
  * @since 0.14.0
  */
 public class YearServiceBean implements YearServiceLocal {
-    private final YearBusinessLocal yearBusiness;
 
     @Inject
-    public YearServiceBean(final YearBusinessLocal yearBusiness) {
-        this.yearBusiness = yearBusiness;
-    }
+    private YearBusinessLocal yearBusiness;
+
+    YearServiceBean() {}
 
     /**
      * {@inheritDoc}

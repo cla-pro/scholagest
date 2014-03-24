@@ -20,12 +20,11 @@ import com.google.inject.Inject;
  * @since 0.13.0
  */
 public class StudentServiceBean implements StudentServiceLocal {
-    private final StudentBusinessLocal studentBusiness;
 
     @Inject
-    public StudentServiceBean(final StudentBusinessLocal studentBusiness) {
-        this.studentBusiness = studentBusiness;
-    }
+    private StudentBusinessLocal studentBusiness;
+
+    StudentServiceBean() {}
 
     /**
      * {@inheritDoc}

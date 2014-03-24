@@ -37,7 +37,6 @@ public class MeansRest {
     @Inject
     private ResultServiceLocal resultService;
 
-    @Inject
     public MeansRest() {}
 
     /**

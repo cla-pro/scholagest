@@ -26,12 +26,10 @@ import com.google.inject.Inject;
 @Path("/login")
 public class LoginRest {
 
-    private final SessionServiceLocal loginService;
-
     @Inject
-    public LoginRest(final SessionServiceLocal loginService) {
-        this.loginService = loginService;
-    }
+    private SessionServiceLocal loginService;
+
+    LoginRest() {}
 
     /**
      * Check the authentication information and in case of success, create a new session. The authentication

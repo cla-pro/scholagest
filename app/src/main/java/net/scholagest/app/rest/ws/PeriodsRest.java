@@ -33,12 +33,11 @@ import com.google.inject.Inject;
  */
 @Path("/periods")
 public class PeriodsRest {
-    private final PeriodServiceLocal periodService;
 
     @Inject
-    public PeriodsRest(final PeriodServiceLocal periodService) {
-        this.periodService = periodService;
-    }
+    private PeriodServiceLocal periodService;
+
+    PeriodsRest() {}
 
     /**
      * Retrieve the information about a single period identified by its id.

@@ -35,6 +35,8 @@ public class StudentBusinessBean implements StudentBusinessLocal {
         studentClassesMap.put("student2", new StudentClasses("student2", new ArrayList<String>(), new ArrayList<String>()));
     }
 
+    StudentBusinessBean() {}
+
     /**
      * {@inheritDoc}
      */

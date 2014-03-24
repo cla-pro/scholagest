@@ -28,6 +28,8 @@ public class TeacherBusinessBean implements TeacherBusinessLocal {
                 "Chemin des Merisiers 25, 1870 Monthey", "valerie.parvex@gmail.com", "+41797654321")));
     }
 
+    TeacherBusinessBean() {}
+
     /**
      * {@inheritDoc}
      */
