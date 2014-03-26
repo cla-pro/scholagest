@@ -9,16 +9,16 @@ import java.util.List;
  * @author CLA
  * @since 0.14.0
  */
-public class StudentClassesJson extends BaseJson {
+public class StudentClassJson extends BaseJson {
     private List<String> currentClasses;
     private List<String> oldClasses;
 
-    public StudentClassesJson() {
+    public StudentClassJson() {
         this.currentClasses = new ArrayList<>();
         this.oldClasses = new ArrayList<>();
     }
 
-    public StudentClassesJson(final String id, final List<String> currentClasses, final List<String> oldClasses) {
+    public StudentClassJson(final String id, final List<String> currentClasses, final List<String> oldClasses) {
         super(id);
         this.currentClasses = new ArrayList<>(currentClasses);
         this.oldClasses = new ArrayList<>(oldClasses);

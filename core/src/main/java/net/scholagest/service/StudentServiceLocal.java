@@ -3,7 +3,7 @@ package net.scholagest.service;
 import java.util.List;
 
 import net.scholagest.object.Student;
-import net.scholagest.object.StudentClasses;
+import net.scholagest.object.StudentClass;
 import net.scholagest.object.StudentMedical;
 import net.scholagest.object.StudentPersonal;
 
@@ -83,10 +83,10 @@ public interface StudentServiceLocal {
     public StudentMedical saveStudentMedical(String studentId, StudentMedical studentMedical);
 
     /**
-     * Retrieve the class information ({@link StudentClasses}) for a student.
+     * Retrieve the class information ({@link StudentClass}) for a student.
      * 
      * @param studentId The student for which the studentClasses information must be retrieved.
      * @return
      */
-    public StudentClasses getStudentClasses(String studentId);
+    public StudentClass getStudentClasses(String studentId);
 }

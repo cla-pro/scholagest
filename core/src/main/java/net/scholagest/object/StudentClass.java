@@ -11,20 +11,20 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
  * @author CLA
  * @since 0.15.0
  */
-public class StudentClasses extends Base {
+public class StudentClass extends Base {
     private final List<String> currentClasses;
     private final List<String> oldClasses;
 
-    public StudentClasses() {
+    public StudentClass() {
         this.currentClasses = new ArrayList<>();
         this.oldClasses = new ArrayList<>();
     }
 
-    public StudentClasses(final StudentClasses toCopy) {
+    public StudentClass(final StudentClass toCopy) {
         this(toCopy.getId(), toCopy.currentClasses, toCopy.oldClasses);
     }
 
-    public StudentClasses(final String id, final List<String> currentClasses, final List<String> oldClasses) {
+    public StudentClass(final String id, final List<String> currentClasses, final List<String> oldClasses) {
         super(id);
         this.currentClasses = new ArrayList<>(currentClasses);
         this.oldClasses = new ArrayList<>(oldClasses);
@@ -45,11 +45,11 @@ public class StudentClasses extends Base {
     public boolean equals(final Object that) {
         if (that == null) {
             return false;
-        } else if (!(that instanceof StudentClasses)) {
+        } else if (!(that instanceof StudentClass)) {
             return false;
         }
 
-        final StudentClasses other = (StudentClasses) that;
+        final StudentClass other = (StudentClass) that;
         return new EqualsBuilder().append(getId(), other.getId()).append(currentClasses, other.currentClasses).append(oldClasses, other.oldClasses)
                 .isEquals();
     }

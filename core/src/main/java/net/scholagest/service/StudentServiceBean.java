@@ -6,7 +6,7 @@ import net.scholagest.authorization.Permission;
 import net.scholagest.authorization.RolesAndPermissions;
 import net.scholagest.business.StudentBusinessLocal;
 import net.scholagest.object.Student;
-import net.scholagest.object.StudentClasses;
+import net.scholagest.object.StudentClass;
 import net.scholagest.object.StudentMedical;
 import net.scholagest.object.StudentPersonal;
 
@@ -145,7 +145,7 @@ public class StudentServiceBean implements StudentServiceLocal {
      */
     @RolesAndPermissions(roles = { "ADMIN" })
     @Override
-    public StudentClasses getStudentClasses(@Permission final String studentId) {
+    public StudentClass getStudentClasses(@Permission final String studentId) {
         if (studentId == null) {
             return null;
         }
@@ -154,7 +154,7 @@ public class StudentServiceBean implements StudentServiceLocal {
         if (student == null) {
             return null;
         } else {
-            return new StudentClasses(student.getStudentClasses());
+            return new StudentClass(student.getStudentClasses());
         }
     }
 }

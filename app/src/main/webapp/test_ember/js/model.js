@@ -21,16 +21,16 @@ Scholagest.StudentPersonal = DS.Model.extend({
 Scholagest.StudentMedical = DS.Model.extend({
     doctor: DS.attr()
 });
-Scholagest.StudentClasses = DS.Model.extend({
-    currentClasses: DS.hasMany('class'),
-    oldClasses: DS.hasMany('class')
+Scholagest.StudentClass = DS.Model.extend({
+    currentClasses: DS.hasMany('class', { async: true }),
+    oldClasses: DS.hasMany('class', { async: true })
 });
 Scholagest.Student = DS.Model.extend({
     firstName: DS.attr(),
     lastName: DS.attr(),
     personal: DS.belongsTo('studentPersonal', { async: true }),
     medical: DS.belongsTo('studentMedical', { async: true }),
-    classes: DS.belongsTo('studentClasses', { async: true }),
+    classes: DS.belongsTo('studentClass', { async: true }),
     
     fullName: function() {
         return this.get('firstName') + " " + this.get('lastName');
@@ -102,7 +102,16 @@ Scholagest.StudentResult = DS.Model.extend({
     branchPeriod: DS.belongsTo('branchPeriod'),
     student: DS.belongsTo('student', { async: true }),
     results: DS.hasMany('result'),
-    mean: DS.belongsTo('mean')
+    mean: DS.belongsTo('mean'),
+    
+    changeCounter: DS.attr('number', { defaultValue: 0 }),
+    studentChange: function() {
+        if (this.get('changeCounter') == undefined) {
+            this.set('changeCounter', 0);
+        } else {
+            this.set('changeCounter', this.get('changeCounter') + 1);
+        }
+    }.observes('student.id')
 });
 Scholagest.Result = DS.Model.extend({
     grade: DS.attr(),

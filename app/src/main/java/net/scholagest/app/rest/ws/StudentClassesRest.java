@@ -11,14 +11,14 @@ import javax.ws.rs.core.MediaType;
 
 import net.scholagest.app.rest.ws.authorization.CheckAuthorization;
 import net.scholagest.app.rest.ws.converter.StudentJsonConverter;
-import net.scholagest.app.rest.ws.objects.StudentClassesJson;
-import net.scholagest.object.StudentClasses;
+import net.scholagest.app.rest.ws.objects.StudentClassJson;
+import net.scholagest.object.StudentClass;
 import net.scholagest.service.StudentServiceLocal;
 
 import com.google.inject.Inject;
 
 /**
- * Set methods available for rest calls (WebService) to handle the student class information (see {@link StudentClassesJson}).
+ * Set methods available for rest calls (WebService) to handle the student class information (see {@link StudentClassJson}).
  * The available methods are:
  * 
  * <ul>
@@ -48,12 +48,12 @@ public class StudentClassesRest {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, StudentClassesJson> getStudentClasses(@PathParam("id") final String id) {
-        final StudentClasses studentClasses = studentService.getStudentClasses(id);
-        final StudentClassesJson studentClassesJson = new StudentJsonConverter().convertToStudentClassesJson(studentClasses);
+    public Map<String, StudentClassJson> getStudentClasses(@PathParam("id") final String id) {
+        final StudentClass studentClasses = studentService.getStudentClasses(id);
+        final StudentClassJson studentClassesJson = new StudentJsonConverter().convertToStudentClassJson(studentClasses);
 
-        final Map<String, StudentClassesJson> result = new HashMap<>();
-        result.put("studentPersonal", studentClassesJson);
+        final Map<String, StudentClassJson> result = new HashMap<>();
+        result.put("studentClass", studentClassesJson);
 
         return result;
     }

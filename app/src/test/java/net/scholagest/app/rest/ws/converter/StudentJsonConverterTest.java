@@ -9,12 +9,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import net.scholagest.app.rest.ws.objects.StudentClassesJson;
+import net.scholagest.app.rest.ws.objects.StudentClassJson;
 import net.scholagest.app.rest.ws.objects.StudentJson;
 import net.scholagest.app.rest.ws.objects.StudentMedicalJson;
 import net.scholagest.app.rest.ws.objects.StudentPersonalJson;
 import net.scholagest.object.Student;
-import net.scholagest.object.StudentClasses;
+import net.scholagest.object.StudentClass;
 import net.scholagest.object.StudentMedical;
 import net.scholagest.object.StudentPersonal;
 
@@ -29,8 +29,8 @@ import org.junit.Test;
 public class StudentJsonConverterTest {
     @Test
     public void testConvertToStudentJsonList() {
-        final Student student1 = new Student("student1", "firstName1", "lastName1", new StudentPersonal(), new StudentMedical(), new StudentClasses());
-        final Student student2 = new Student("student2", "firstName2", "lastName2", new StudentPersonal(), new StudentMedical(), new StudentClasses());
+        final Student student1 = new Student("student1", "firstName1", "lastName1", new StudentPersonal(), new StudentMedical(), new StudentClass());
+        final Student student2 = new Student("student2", "firstName2", "lastName2", new StudentPersonal(), new StudentMedical(), new StudentClass());
 
         final List<Student> toConvert = Arrays.asList(student1, student2);
         final StudentJsonConverter testee = spy(new StudentJsonConverter());
@@ -47,7 +47,7 @@ public class StudentJsonConverterTest {
     @Test
     public void testConvertToStudentJson() {
         final Student student = new Student("student", "firstName", "lastName", new StudentPersonal("personal", null, null, null, null),
-                new StudentMedical("medical", null), new StudentClasses("classes", new ArrayList<String>(), new ArrayList<String>()));
+                new StudentMedical("medical", null), new StudentClass("classes", new ArrayList<String>(), new ArrayList<String>()));
         final StudentJson converted = new StudentJsonConverter().convertToStudentJson(student);
 
         assertEquals(student.getId(), converted.getId());
@@ -113,12 +113,12 @@ public class StudentJsonConverterTest {
     }
 
     @Test
-    public void testConvertToStudentClassesJson() {
-        final StudentClasses studentClasses = new StudentClasses("id", Arrays.asList("clazz1", "clazz2"), Arrays.asList("clazz3", "clazz4", "clazz5"));
-        final StudentClassesJson converted = new StudentJsonConverter().convertToStudentClassesJson(studentClasses);
-
-        assertEquals(studentClasses.getId(), converted.getId());
-        assertEquals(studentClasses.getCurrentClasses(), converted.getCurrentClasses());
-        assertEquals(studentClasses.getOldClasses(), converted.getOldClasses());
-    }
+        public void testConvertToStudentClassJson() {
+            final StudentClass studentClasses = new StudentClass("id", Arrays.asList("clazz1", "clazz2"), Arrays.asList("clazz3", "clazz4", "clazz5"));
+            final StudentClassJson converted = new StudentJsonConverter().convertToStudentClassJson(studentClasses);
+    
+            assertEquals(studentClasses.getId(), converted.getId());
+            assertEquals(studentClasses.getCurrentClasses(), converted.getCurrentClasses());
+            assertEquals(studentClasses.getOldClasses(), converted.getOldClasses());
+        }
 }

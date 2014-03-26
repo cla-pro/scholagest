@@ -11,6 +11,7 @@ import net.scholagest.app.rest.ws.LoginRest;
 import net.scholagest.app.rest.ws.MeansRest;
 import net.scholagest.app.rest.ws.PeriodsRest;
 import net.scholagest.app.rest.ws.ResultsRest;
+import net.scholagest.app.rest.ws.StudentClassesRest;
 import net.scholagest.app.rest.ws.StudentMedicalsRest;
 import net.scholagest.app.rest.ws.StudentPersonalsRest;
 import net.scholagest.app.rest.ws.StudentsRest;
@@ -140,6 +141,7 @@ public class GuiceContext extends GuiceServletContextListener {
                 bind(StudentsRest.class);
                 bind(StudentPersonalsRest.class);
                 bind(StudentMedicalsRest.class);
+                bind(StudentClassesRest.class);
                 bind(TeachersRest.class);
                 bind(TeacherDetailsRest.class);
 

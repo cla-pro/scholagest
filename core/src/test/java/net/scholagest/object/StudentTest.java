@@ -18,7 +18,7 @@ public class StudentTest {
     @Test
     public void testConstructorCopy() {
         final Student toCopy = new Student("1", "firstName", "lastName", new StudentPersonal("1", "address", "city", "postcode", "religion"),
-                new StudentMedical("1", "doctor"), new StudentClasses("1", Arrays.asList("clazz1"), Arrays.asList("clazz2")));
+                new StudentMedical("1", "doctor"), new StudentClass("1", Arrays.asList("clazz1"), Arrays.asList("clazz2")));
         final Student copied = new Student(toCopy);
 
         assertEquals(toCopy.getId(), copied.getId());
@@ -36,7 +36,7 @@ public class StudentTest {
         final Student student4 = new Student("1", "firstName", "lastName", null, null, null);
         final Student student5 = new Student("1", "firstName", "lastName", null, null, null);
         final Student student6 = new Student("1", "firstName", "lastName", new StudentPersonal("1", "address", "city", "postcode", "religion"),
-                new StudentMedical("1", "doctor"), new StudentClasses("1", Arrays.asList("clazz1"), Arrays.asList("clazz2")));
+                new StudentMedical("1", "doctor"), new StudentClass("1", Arrays.asList("clazz1"), Arrays.asList("clazz2")));
 
         assertFalse(student1.equals(null));
         assertFalse(student1.equals(new Object()));
