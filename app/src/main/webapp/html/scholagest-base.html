@@ -3,15 +3,15 @@
 <head>
 	<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>
 	<script type='text/x-handlebars' id="application">
-        <header>
+	    <header>
             <img src="../html/images/scholagest-logo1-2-small.png" class="app-logo" />
-        </header>
-        
+	    </header>        
+	        
         <div>
             {{outlet}}
             {{outlet modal}}
         </div>
-        
+	        
         <footer>
             0.15.0-SNAPSHOT
         </footer>
@@ -77,24 +77,37 @@
 	</script>
 	<script type='text/x-handlebars' id="students">
         <h1>Elèves</h1>
-        {{#if isAdmin}}
-	        <div>
-	            <button {{action 'openModal' 'newStudent'}}>Nouvel élève</button>
+		
+		<table>
+		<tr>
+		<td valign="top">
+	        {{#if isAdmin}}
+	            <div>
+	                <button {{action 'openModal' 'newStudent'}}>Nouvel élève</button>
+	            </div>
+	        {{/if}}
+	        
+		    <div class='element-list'>
+	        <ul>
+	            {{#each student in controller}}
+	                <li>
+	                    {{#link-to "student" student}}
+	                        {{student.fullName}}
+	                    {{/link-to}}
+	                </li>
+	            {{else}}
+	                <li>Pas d'élèves...</li>
+	            {{/each}}
+	        </ul>
 	        </div>
-	    {{/if}}
-        <ul>
-            {{#each student in controller}}
-                <li>
-                    {{#link-to "student" student}}
-                        {{student.fullName}}
-                    {{/link-to}}
-                </li>
-            {{else}}
-                <li>Pas d'élèves...</li>
-            {{/each}}
-        </ul>
-
-        {{outlet}}
+        </td>
+        <td valign="top">
+            <div class='element-content'>
+            {{outlet}}
+            </div>
+        </td>
+        </tr>
+        </table>
 	</script>
     <script type='text/x-handlebars' id="student">
         <h2>{{firstName}} {{lastName}}</h2>
@@ -637,30 +650,17 @@
         {{! {{/each }}
         
         {{! <button {{action "delete"}}>Delete</button> }} -->
-    <script src='../jquery-1.10.2.js'></script>
-    <script src='../jquery.json-2.4.js'></script>
-    <script src='../jquery.cookie.js'></script>
-	<script src='../handlebars-1.1.2.js'></script>
-	<script src='../ember.js'></script>
-	<script src='../ember-data.js'></script>
+    <script src='lib/jquery-1.11.0.js'></script>
+    <script src='lib/jquery.json-2.4.js'></script>
+    <script src='lib/jquery.cookie.js'></script>
+    <script src='lib/jquery-ui-1.10.4.custom.js'></script>
+	<script src='lib/handlebars-1.1.2.js'></script>
+	<script src='lib/ember.js'></script>
+	<script src='lib/ember-data.js'></script>
     <script type="text/javascript">
         Scholagest = Ember.Application.create({
 		    LOG_TRANSITIONS: true
 		});
-		
-		// Scholagest.initializer({
-		//     name: 'Inject Store',
-		//     initialize: function(container, application) {
-		//         container.injection('application:main', 'store', 'store:main');
-		//     }
-		// });
-		// Ember.Application.initializer({
-		//   name: "Inject Store",
-		// 
-		//   initialize: function(container, application) {
-		//     container.injection('application:main', 'store', 'store:main');
-		//   }
-		// });
 		
 		Scholagest.ApplicationAdapter = DS.RESTAdapter;
 		
@@ -748,6 +748,8 @@
     <script src='js/teacher.js'></script>
     <script src='js/branch.js'></script>
 	
+    <link href="css/scholagest.css" rel="stylesheet" type="text/css">
+    
 	<title>Scholagest</title>
 </head>
 <body>

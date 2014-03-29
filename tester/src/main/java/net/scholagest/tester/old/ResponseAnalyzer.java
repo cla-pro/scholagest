@@ -1,4 +1,4 @@
-package net.scholagest.tester;
+package net.scholagest.tester.old;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -6,11 +6,11 @@ import java.util.List;
 
 import net.scholagest.tester.jaxb.TCall;
 import net.scholagest.tester.jaxb.TResult;
-import net.scholagest.tester.result.CallResult;
-import net.scholagest.tester.result.CallResultStatus;
-import net.scholagest.tester.result.FieldResult;
-import net.scholagest.tester.result.FieldResultStatus;
-import net.scholagest.tester.result.TestResult;
+import net.scholagest.tester.old.result.CallResult;
+import net.scholagest.tester.old.result.CallResultStatus;
+import net.scholagest.tester.old.result.FieldResult;
+import net.scholagest.tester.old.result.FieldResultStatus;
+import net.scholagest.tester.old.result.TestResult;
 
 import org.mortbay.jetty.HttpStatus;
 import org.mortbay.jetty.client.ContentExchange;

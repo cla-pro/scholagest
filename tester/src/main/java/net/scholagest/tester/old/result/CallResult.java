@@ -1,4 +1,4 @@
-package net.scholagest.tester.result;
+package net.scholagest.tester.old.result;
 
 import java.util.ArrayList;
 import java.util.List;

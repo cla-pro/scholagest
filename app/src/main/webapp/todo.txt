@@ -5,7 +5,7 @@ OK - Login page
 OK -- Login/User information
 OK - Logout page
 OK - Expired session page
-- Display old years of the students
+OK - Display old years of the students
 OK - Set the token or user in cookie
 OK - Assign students/teachers to class
 OK -- Create the studentResults?

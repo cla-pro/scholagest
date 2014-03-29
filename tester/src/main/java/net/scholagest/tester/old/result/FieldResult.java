@@ -1,4 +1,4 @@
-package net.scholagest.tester.result;
+package net.scholagest.tester.old.result;
 
 public class FieldResult {
     private String path;

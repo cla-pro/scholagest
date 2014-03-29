@@ -1,4 +1,4 @@
-package net.scholagest.tester;
+package net.scholagest.tester.old;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -7,10 +7,10 @@ import java.util.List;
 import net.scholagest.initializer.TesterInitializer;
 import net.scholagest.tester.jaxb.TCall;
 import net.scholagest.tester.jaxb.TScenario;
-import net.scholagest.tester.result.CallResult;
-import net.scholagest.tester.result.FieldResult;
-import net.scholagest.tester.result.TestResult;
-import net.scholagest.tester.result.TestResultStatus;
+import net.scholagest.tester.old.result.CallResult;
+import net.scholagest.tester.old.result.FieldResult;
+import net.scholagest.tester.old.result.TestResult;
+import net.scholagest.tester.old.result.TestResultStatus;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

@@ -1,4 +1,4 @@
-package net.scholagest.tester;
+package net.scholagest.tester.old;
 
 import java.util.HashMap;
 import java.util.Map;

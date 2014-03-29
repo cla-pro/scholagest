@@ -31,7 +31,7 @@ Scholagest.SessionManager = Ember.Object.create({
         $.cookie('access_token', token);
         $.ajaxSetup({
             headers: {
-                "Authorization": token
+                'Authorization': token
             }
         });
     },
@@ -54,8 +54,8 @@ Scholagest.LoginController = Ember.Controller.extend({
         this.setProperties({
             loginFailed: false,
             isProcessing: false,
-            username: "",
-            password: ""
+            username: '',
+            password: ''
         });
     },
     actions: {
@@ -66,9 +66,9 @@ Scholagest.LoginController = Ember.Controller.extend({
             });
             
             var self = this;
-            Ember.$.post("/scholagest-app/services/login", $.toJSON({
-                username: this.get("username"),
-                password: this.get("password")
+            Ember.$.post('/scholagest-app/services/login', $.toJSON({
+                username: this.get('username'),
+                password: this.get('password')
             })).then(function(response) {
                 self.reset();
 
@@ -79,8 +79,8 @@ Scholagest.LoginController = Ember.Controller.extend({
                     self.transitionToRoute('teachers');
                 }, function() {});
             }, function() {
-                self.set("isProcessing", false);
-                self.set("loginFailed", true);
+                self.set('isProcessing', false);
+                self.set('loginFailed', true);
             }.bind(this));
         }
     }

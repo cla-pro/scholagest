@@ -1,184 +1,111 @@
-function escapeJson(json) {
-	return handleJson(json, escape);
-};
+Scholagest.RoleObjectController = Ember.ObjectController.extend({
+    role: function() {
+        var user = Scholagest.SessionManager.get('user');
+        if (Ember.isNone(user)) {
+            return null;
+        } else {
+            return user.get('role');
+        }
+    }.property('Scholagest.SessionManager.user'),
 
-function unescapeJson(json) {
-	return handleJson(json, unescape);
-};
+    isAdmin: function() {
+        return this.get('role') === Scholagest.Role.ADMIN;
+    }.property('role'),
+    
+    isTeacher: function() {
+        return this.get('role') === Scholagest.Role.TEACHER;
+    }.property('role'),
+    
+    isHelpTeacher: function() {
+        return this.get('role') === Scholagest.Role.HELP_TEACHER;
+    }.property('role')
+});
+Scholagest.RoleArrayController = Ember.ArrayController.extend({
+    role: function() {
+        var user = Scholagest.SessionManager.get('user');
+        if (Ember.isNone(user)) {
+            return null;
+        } else {
+            return user.get('role');
+        }
+    }.property('Scholagest.SessionManager.user'),
+    
+    isAdmin: function() {
+        return this.get('role') === Scholagest.Role.ADMIN;
+    }.property('role'),
+    
+    isTeacher: function() {
+        return this.get('role') === Scholagest.Role.TEACHER;
+    }.property('role'),
+    
+    isHelpTeacher: function() {
+        return this.get('role') === Scholagest.Role.HELP_TEACHER;
+    }.property('role')
+});
 
-function handleJson(json, handleStringFunction) {
-	var result = {};
-	for (var key in json) {
-		var value = json[key];
-		var typeOfValue = typeof(value);
-		
-		var escaped = value;
-		if (typeOfValue == "string") {
-			escaped = handleStringFunction.call(this, value.replace(/\+/g, " "));
-		}
-		else if (typeOfValue == "object" && typeOfValue.length != null) {
-			escaped = handleArray(value, handleStringFunction);
-		}
-		
-		result[key] = escaped;
-	}
-	
-	return result;
-};
+Scholagest.AuthenticatedRoute = Ember.Route.extend({
+    beforeModel: function(transition) {
+        if (!Scholagest.SessionManager.isAuthenticated()) {
+            var self = this;
+            Ember.$.post("/scholagest-app/services/login", $.toJSON({
+                token: $.cookie('access_token')
+            })).then(function(response) {
+                Scholagest.SessionManager.setToken(response.token);
+                
+                self.store.find('user', response.user).then(function(user) {
+                    Scholagest.SessionManager.setUser(user);
+                    transition.retry();
+                }, function() {});
+                
+            }, function() {
+                Scholagest.SessionManager.reset();
+                self.redirectToLogin(transition);
+            }.bind(this));
+            this.transitionTo('tryCookieAuthentication');
+        }
+    },
+    redirectToLogin: function(transition) {
+        // If want to display login and then go back to the requested page, see http://www.embercasts.com/episodes/client-side-authentication-part-2
+        this.transitionTo('sessionexpired');
+    },
+    events: {
+//        error: function(reason, transition) {
+//            if (reason.status == 401) {
+//                this.redirectToLogin(transition);
+//            } else {
+//                alert('Error: ' + reason.status);
+//            }
+//        }
+    }
+});
 
-function handleArray(array, handleStringFunction) {
-	var result = [];
-	for (var i = 0; i < array.length; i++) {
-		result.push(handleStringFunction.call(this, array[i].replace(/\+/g, " ")));
-	}
-	
-	return result;
-};
-
-function clearDOM(domId) {
-	var base = dojo.byId(domId);
-	while (base.hasChildNodes()) {
-		base.removeChild(base.lastChild);
-	}
-};
-
-function getKeyValues(parentId) {
-	var keyValues = {};
-	
-	var rows = dojo.byId(parentId).childNodes;
-	for (var i = 0; i < rows.length; i++) {
-		var row = rows.item(i);
-		var info = row.info;
-		if (info != null) {
-			keyValues[info.propertyName] = info.infoGetterForSave();
-		}
-	}
-	
-	return keyValues;
-};
-
-function extractText(properties, propertyNames, defaultText) {
-	if (properties == null || propertyNames == null) {
-		return defaultText;
-	}
-	
-	var info = [];
-	for (var i = 0; i < propertyNames.length; i++) {
-		var p = properties[propertyNames[i]];
-		if (p != null) {
-			info.push(p.value);
-		}
-	}
-	return info.join(' ');
-};
-
-function convertList(list, propertyNames) {
-	var resultList = [];
-	
-	for (var i = 0; i < list.length; i++) {
-		var element = list[i];
-		var displayText = extractText(element.properties, propertyNames, element);
-		
-		resultList.push({
-			name: displayText,
-			id: element.key,
-			key: element.key,
-			info: element,
-			parent: 'root'
-		});
-	}
-	
-	return resultList;
-};
-
-function extractKeys(list) {
-	var resultList = [];
-	
-	for (var i = 0; i < list.length; i++) {
-		var element = list[i];
-		resultList.push(element.key);
-	}
-	
-	return resultList;
-};
-
-function sendPostRequest(serviceUrl, jsonObject, callback, errorCallback) {
-	jsonObject.token = dojo.cookie("scholagest_token");
-	var xhrArgs = {
-		url: serviceUrl,
-		preventCache: true,
-		postData: dojo.toJson(jsonObject),
-		handleAs: "json",
-		load: function(data) {
-			handleResult(data, callback, errorCallback);
-		},
-		error: function(error) {
-			handleWebServiceError(error);
-		}
-	}
-
-	var deferred = dojo.xhrPost(xhrArgs);
-};
-
-function sendGetRequest(serviceUrl, parameters, callback, errorCallback) {
-	parameters.token = dojo.cookie("scholagest_token");
-	var xhrArgs = {
-		url: serviceUrl,
-		preventCache: true,
-		content: parameters,
-		handleAs: "json",
-		load: function(data) {
-			handleResult(data, callback, errorCallback);
-		},
-		error: function(error) {
-			handleWebServiceError(error);
-		}
-	}
-
-	var deferred = dojo.xhrGet(xhrArgs);
-};
-
-function handleResult(data, callback, errorCallback) {
-	if (data.errorCode == null) {
-		if (callback != null) {
-			callback(data.info);
-		}
-	}
-	else {
-		handleJsonError(data, errorCallback);
-	}
-};
-
-function handleJsonError(errorJson, errorCallback) {
-	if (!handleServiceError(errorJson)) {
-		if (errorCallback != null) {
-			errorCallback(errorJson);
-		}
-	}
-};
-
-function handleWebServiceError(error) {
-	displayMessageDialog("error = " + error);
-};
-
-function handleServiceError(errorJson) {
-    if (errorJson.errorCode == errorCodesMap.INSUFFICIENT_PRIVILEGES) {
-    	displayMessageDialog("Droits insuffisants pour effectuer cette action");
-    } else if (errorJson.errorCode == errorCodesMap.SESSION_EXPIRED) {
-        clearScholagestCookieAndSwitchPage("html/session_expired.html");
-    } //else {
-		//alert("Error with code: " + errorJson.errorCode + " and message: " + errorJson.msg);
-	//}
-};
+Scholagest.ModalController = Ember.ObjectController.extend({
+    actions: {
+        close: function() {
+            return this.send('closeModal');
+        }
+    }
+});
+Scholagest.ModalDialogComponent = Ember.Component.extend({
+    actions: {
+        close: function() {
+            return this.sendAction();
+        }
+    }
+});
 
 
-function logout() {
-	sendPostRequest(BASE_URL + 'services/user/logout', { }, function(data) {
-	    clearScholagestCookieAndSwitchPage("html/logout.html");
-	});
-};
-
-function clearScholagestCookieAndSwitchPage(url) {
-    dojo.cookie('scholagest_token', null, {expires: -1});
-    window.location = BASE_URL + url;
-}
+//
+//metadata: function() {
+//    var content = this.get('content');
+//    var attributeMap = this.get('content.constructor.attributes');
+//    var vals = [];
+//    attributeMap.forEach(function(name, value) {
+//          vals.push({
+//              object: content,
+//              name: name,
+//              value: content.get(name)   
+//          });          
+//    });
+//    return vals;
+//}.property('content'),

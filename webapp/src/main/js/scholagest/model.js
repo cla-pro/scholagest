@@ -1,8 +1,8 @@
 // Valid roles: admin, teacher, helpteacher
 Scholagest.Role = {
-    ADMIN: "admin",
-    TEACHER: "teacher",
-    HELP_TEACHER: "helpteacher"
+    ADMIN: "ADMIN",
+    TEACHER: "TEACHER",
+    HELP_TEACHER: "HELPTEACHER"
 };
 
 Scholagest.User = DS.Model.extend({
@@ -21,11 +21,16 @@ Scholagest.StudentPersonal = DS.Model.extend({
 Scholagest.StudentMedical = DS.Model.extend({
     doctor: DS.attr()
 });
+Scholagest.StudentClass = DS.Model.extend({
+    currentClasses: DS.hasMany('class', { async: true }),
+    oldClasses: DS.hasMany('class', { async: true })
+});
 Scholagest.Student = DS.Model.extend({
     firstName: DS.attr(),
     lastName: DS.attr(),
     personal: DS.belongsTo('studentPersonal', { async: true }),
     medical: DS.belongsTo('studentMedical', { async: true }),
+    classes: DS.belongsTo('studentClass', { async: true }),
     
     fullName: function() {
         return this.get('firstName') + " " + this.get('lastName');
@@ -70,7 +75,7 @@ Scholagest.Branch = DS.Model.extend({
     name: DS.attr(),
     numerical: DS.attr('boolean'),
     clazz: DS.belongsTo('class', { async: true }),
-    branchPeriods: DS.hasMany('branchPeriod'),
+    branchPeriods: DS.hasMany('branchPeriod', { async: true }),
     
     isNumerical: function() {
         if (this.get('numerical') === true) {
@@ -97,7 +102,16 @@ Scholagest.StudentResult = DS.Model.extend({
     branchPeriod: DS.belongsTo('branchPeriod'),
     student: DS.belongsTo('student', { async: true }),
     results: DS.hasMany('result'),
-    mean: DS.belongsTo('mean')
+    mean: DS.belongsTo('mean'),
+    
+    changeCounter: DS.attr('number', { defaultValue: 0 }),
+    studentChange: function() {
+        if (this.get('changeCounter') == undefined) {
+            this.set('changeCounter', 0);
+        } else {
+            this.set('changeCounter', this.get('changeCounter') + 1);
+        }
+    }.observes('student.id')
 });
 Scholagest.Result = DS.Model.extend({
     grade: DS.attr(),

@@ -1,6 +1,7 @@
-package net.scholagest.tester;
+package net.scholagest.tester.old;
 
 import static org.junit.Assert.assertEquals;
+import net.scholagest.tester.old.Placeholder;
 
 import org.junit.Test;
 
