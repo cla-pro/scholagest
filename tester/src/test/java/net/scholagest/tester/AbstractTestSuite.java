@@ -1,34 +1,54 @@
 package net.scholagest.tester;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.scholagest.app.rest.GuiceContext;
+
+import org.eclipse.jetty.client.HttpClient;
+import org.eclipse.jetty.client.api.ContentResponse;
+import org.eclipse.jetty.client.api.Request;
+import org.eclipse.jetty.client.util.StringContentProvider;
+import org.eclipse.jetty.http.HttpHeader;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.DefaultServlet;
+import org.eclipse.jetty.servlet.FilterHolder;
+import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.mortbay.io.Buffer;
-import org.mortbay.io.ByteArrayBuffer;
-import org.mortbay.jetty.client.ContentExchange;
-import org.mortbay.jetty.client.HttpClient;
+
+import com.google.inject.servlet.GuiceFilter;
 
 public abstract class AbstractTestSuite {
     private static final String URL_QUERY_SEPARATOR = "?";
     private static final String URL_PARAMETER_SEPARATOR = "&";
     private static final String URL_KEY_VALUE_SEPARATOR = "=";
-    private static final int SERVER_PORT = 80;
+    private static final int SERVER_PORT = 8080;
     private static final String SERVER_HOST = "http://localhost";
+
+    private static Server server;
 
     private HttpClient httpClient;
 
     // Called before the implementations' @BeforeClass
     @BeforeClass
-    public void setUpClass() {
+    public static void setUpClass() throws Exception {
         // TODO Start the DB
         // TODO Apply the DB-Schema
         // TODO Start the server
+
+        server = new Server(SERVER_PORT);
+
+        final ServletContextHandler handler = new ServletContextHandler(server, "/");
+        handler.addEventListener(new GuiceContext());
+        handler.addFilter(new FilterHolder(GuiceFilter.class), "/*", null);
+        handler.addServlet(DefaultServlet.class, "/");
+
+        server.setHandler(handler);
+        server.start();
     }
 
     // Called before the implementations' @Before
@@ -46,46 +66,34 @@ public abstract class AbstractTestSuite {
 
     // Called before the implementations' @AfterClass
     @AfterClass
-    public void tearDownClass() {
+    public static void tearDownClass() throws Exception {
         // TODO Stop the server
+        // TODO Stop the DB
+        server.stop();
     }
 
-    protected ContentExchange callGET(final String url, final List<UrlParameter> parameters) throws Exception {
-        return callURL("GET", url, parameters, null);
+    protected ContentResponse callGET(final String url, final List<UrlParameter> parameters) throws Exception {
+        final String fullUrl = createUrlWithParameters(url, parameters);
+        return httpClient.GET(fullUrl);
     }
 
-    protected ContentExchange callPOST(final String url, final String requestContent) throws Exception {
-        return callURL("POST", url, new ArrayList<UrlParameter>(), requestContent);
+    protected ContentResponse callPOST(final String url, final String content) throws Exception {
+        final String fullUrl = createUrl(url);
+        final Request postRequest = httpClient.POST(fullUrl).content(new StringContentProvider(content));
+        postRequest.header(HttpHeader.AUTHORIZATION, "");
+        return postRequest.send();
     }
 
-    protected ContentExchange callPUT(final String url, final List<UrlParameter> parameters, final String requestContent) throws Exception {
-        return callURL("PUT", url, parameters, requestContent);
+    private String createUrl(final String url) throws UnsupportedEncodingException {
+        return createUrlWithParameters(url, new ArrayList<UrlParameter>());
     }
 
-    private ContentExchange callURL(final String httpMethod, final String url, final List<UrlParameter> parameters, final String requestContent)
-            throws IOException, InterruptedException {
-        final ContentExchange contentExchange = new ContentExchange();
-
-        httpClient.setConnectorType(HttpClient.CONNECTOR_SELECT_CHANNEL);
-
-        final String encoded = createUrl(url, parameters);
-        contentExchange.setURL(encoded);
-        contentExchange.setMethod(httpMethod);
-        if (requestContent != null) {
-            contentExchange.setRequestContent(convertToBuffer(requestContent));
-        }
-
-        httpClient.send(contentExchange);
-        contentExchange.waitForDone();
-
-        return contentExchange;
-    }
-
-    private String createUrl(final String url, final List<UrlParameter> parameters) throws UnsupportedEncodingException {
+    private String createUrlWithParameters(final String url, final List<UrlParameter> parameters) throws UnsupportedEncodingException {
         final String encoded = mergeParameters(parameters);
 
         final StringBuilder urlBuilder = new StringBuilder();
         urlBuilder.append(SERVER_HOST);
+        urlBuilder.append(":");
         urlBuilder.append(SERVER_PORT);
         urlBuilder.append(url);
 
@@ -114,9 +122,5 @@ public abstract class AbstractTestSuite {
         }
 
         return parametersBuilder.toString();
-    }
-
-    private Buffer convertToBuffer(final String requestContent) {
-        return new ByteArrayBuffer(requestContent);
     }
 }

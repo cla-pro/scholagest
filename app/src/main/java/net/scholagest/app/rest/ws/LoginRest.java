@@ -2,9 +2,9 @@ package net.scholagest.app.rest.ws;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import net.scholagest.app.rest.ws.objects.LoginJson;
 import net.scholagest.app.rest.ws.objects.SessionJson;
@@ -40,16 +40,18 @@ public class LoginRest {
      * @throws AuthenticationException with code 401 (Unauthorized) if the authentication information are incorrect
      */
     @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    public SessionJson login(final String content) {
+    // @Produces(MediaType.APPLICATION_JSON)
+    public Response login(final String content) {
         final LoginJson login = new Gson().fromJson(content, LoginJson.class);
 
         if (login.hasToken()) {
             try {
                 final SessionInfo sessionInfo = loginService.authenticateWithSessionId(login.getToken());
-                return new SessionJson(sessionInfo.getToken(), sessionInfo.getUser().getId());
+                final SessionJson sessionJson = new SessionJson(sessionInfo.getToken(), sessionInfo.getUser().getId());
+                return buildOk(sessionJson);
             } catch (final ScholagestException e) {
-                throw new WebApplicationException(e, 401);
+                // throw new WebApplicationException(e, 401);
+                return buildUnauthorized();
             }
             // final String token = login.getToken();
             // if (tokenUserMap.containsKey(token)) {
@@ -63,12 +65,24 @@ public class LoginRest {
         } else if (login.hasUsername()) {
             try {
                 final SessionInfo sessionInfo = loginService.authenticateWithUsername(login.getUsername(), login.getPassword());
-                return new SessionJson(sessionInfo.getToken(), sessionInfo.getUser().getId());
+                final SessionJson sessionJson = new SessionJson(sessionInfo.getToken(), sessionInfo.getUser().getId());
+                return buildOk(sessionJson);
             } catch (final ScholagestException e) {
-                throw new WebApplicationException(e, 401);
+                // throw new WebApplicationException(e, 401);
+                return buildUnauthorized();
             }
         } else {
-            throw new WebApplicationException(401);
+            // throw new WebApplicationException(401);
+            return buildUnauthorized();
         }
+    }
+
+    private Response buildOk(final SessionJson sessionJson) {
+        final String json = new Gson().toJson(sessionJson);
+        return Response.ok(json, MediaType.APPLICATION_JSON).build();
+    }
+
+    private Response buildUnauthorized() {
+        return Response.status(Status.UNAUTHORIZED).header("WWW-Authenticate", "Basic realm=\"test\"").build();
     }
 }

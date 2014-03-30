@@ -147,7 +147,8 @@ public class GuiceContext extends GuiceServletContextListener {
 
                 // Route all requests through GuiceContainer
                 final Map<String, String> params = new HashMap<>();
-                params.put("com.sun.jersey.config.property.packages", "net.scholagest.rest.ws");
+                // params.put("com.sun.jersey.config.property.packages",
+                // "net.scholagest.rest.ws");
                 params.put("com.sun.jersey.api.json.POJOMappingFeature", "true");
                 filter("/services/*").through(AuthorizationFilter.class);
                 serve("/services/*").with(GuiceContainer.class, params);

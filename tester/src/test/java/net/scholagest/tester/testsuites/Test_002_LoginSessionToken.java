@@ -3,26 +3,25 @@ package net.scholagest.tester.testsuites;
 import static org.junit.Assert.assertEquals;
 import net.scholagest.tester.AbstractTestSuite;
 
-import org.junit.Before;
+import org.eclipse.jetty.client.api.ContentResponse;
+import org.eclipse.jetty.http.HttpStatus;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mortbay.jetty.HttpStatus;
-import org.mortbay.jetty.client.ContentExchange;
 
 public class Test_002_LoginSessionToken extends AbstractTestSuite {
     private static final String VALID_SESSION_TOKEN = "validSessionToken";
     private static final String EXPIRED_SESSION_TOKEN = "invalidSessionToken";
 
-    @Override
-    @Before
-    public void setUp() {
+    @BeforeClass
+    public static void setUpData() {
         // TODO Create one valid session
         // TODO Create one expired session
     }
 
     @Test
     public void testLoginSuccess() throws Exception {
-        final ContentExchange response = callPOST("/scholagest-app/services/login", buildLoginJson(VALID_SESSION_TOKEN));
-        assertEquals(HttpStatus.ORDINAL_200_OK, response.getResponseStatus());
+        final ContentResponse response = callPOST("/services/login", buildLoginJson(VALID_SESSION_TOKEN));
+        assertEquals(HttpStatus.OK_200, response.getStatus());
 
         // TODO convert the response into a json and check the parameters
         // separately
@@ -30,14 +29,14 @@ public class Test_002_LoginSessionToken extends AbstractTestSuite {
 
     @Test
     public void testLoginUnknownSession() throws Exception {
-        final ContentExchange response = callPOST("/scholagest-app/services/login", buildLoginJson("unknownSession"));
-        assertEquals(HttpStatus.ORDINAL_401_Unauthorized, response.getResponseStatus());
+        final ContentResponse response = callPOST("/services/login", buildLoginJson("unknownSession"));
+        assertEquals(HttpStatus.UNAUTHORIZED_401, response.getStatus());
     }
 
     @Test
     public void testLoginExpiredSession() throws Exception {
-        final ContentExchange response = callPOST("/scholagest-app/services/login", buildLoginJson(EXPIRED_SESSION_TOKEN));
-        assertEquals(HttpStatus.ORDINAL_401_Unauthorized, response.getResponseStatus());
+        final ContentResponse response = callPOST("/services/login", buildLoginJson(EXPIRED_SESSION_TOKEN));
+        assertEquals(HttpStatus.UNAUTHORIZED_401, response.getStatus());
     }
 
     private String buildLoginJson(final String token) {
