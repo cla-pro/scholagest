@@ -4,51 +4,37 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.scholagest.app.rest.GuiceContext;
-
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.ContentResponse;
 import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.client.util.StringContentProvider;
 import org.eclipse.jetty.http.HttpHeader;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.DefaultServlet;
-import org.eclipse.jetty.servlet.FilterHolder;
-import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
-import com.google.inject.servlet.GuiceFilter;
-
 public abstract class AbstractTestSuite {
     private static final String URL_QUERY_SEPARATOR = "?";
     private static final String URL_PARAMETER_SEPARATOR = "&";
     private static final String URL_KEY_VALUE_SEPARATOR = "=";
-    private static final int SERVER_PORT = 8080;
+
     private static final String SERVER_HOST = "http://localhost";
 
-    private static Server server;
+    private static H2Database h2Database;
+    private static JettyServer jettyServer;
 
     private HttpClient httpClient;
 
     // Called before the implementations' @BeforeClass
     @BeforeClass
     public static void setUpClass() throws Exception {
-        // TODO Start the DB
-        // TODO Apply the DB-Schema
-        // TODO Start the server
+        h2Database = new H2Database();
+        h2Database.start();
+        h2Database.initialize();
 
-        server = new Server(SERVER_PORT);
-
-        final ServletContextHandler handler = new ServletContextHandler(server, "/");
-        handler.addEventListener(new GuiceContext());
-        handler.addFilter(new FilterHolder(GuiceFilter.class), "/*", null);
-        handler.addServlet(DefaultServlet.class, "/");
-
-        server.setHandler(handler);
-        server.start();
+        jettyServer = new JettyServer();
+        jettyServer.start();
     }
 
     // Called before the implementations' @Before
@@ -58,18 +44,17 @@ public abstract class AbstractTestSuite {
         httpClient.start();
     }
 
-    // Called before the implementations' @After
+    // Called after the implementations' @After
     @After
     public void tearDown() throws Exception {
         httpClient.stop();
     }
 
-    // Called before the implementations' @AfterClass
+    // Called after the implementations' @AfterClass
     @AfterClass
     public static void tearDownClass() throws Exception {
-        // TODO Stop the server
-        // TODO Stop the DB
-        server.stop();
+        jettyServer.stop();
+        h2Database.stop();
     }
 
     protected ContentResponse callGET(final String url, final List<UrlParameter> parameters) throws Exception {
@@ -94,7 +79,7 @@ public abstract class AbstractTestSuite {
         final StringBuilder urlBuilder = new StringBuilder();
         urlBuilder.append(SERVER_HOST);
         urlBuilder.append(":");
-        urlBuilder.append(SERVER_PORT);
+        urlBuilder.append(JettyServer.SERVER_PORT);
         urlBuilder.append(url);
 
         if (!encoded.isEmpty()) {

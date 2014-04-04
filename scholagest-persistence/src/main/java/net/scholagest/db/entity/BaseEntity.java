@@ -1,4 +1,4 @@
-package net.scholagest.entity;
+package net.scholagest.db.entity;
 
 public abstract class BaseEntity {
     private String id;

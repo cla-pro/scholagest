@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="0.15.0-1-tables" author="cla">
+		<createTable tableName="teacher" schemaName="public">
+			<column name="id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="firstName" type="java.sql.Types.VARCHAR(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="lastName" type="java.sql.Types.VARCHAR(50)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+        <createTable tableName="teacher_detail">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="address" type="java.sql.Types.VARCHAR(50)" />
+            <column name="email" type="java.sql.Types.VARCHAR(50)" />
+            <column name="phone" type="java.sql.Types.VARCHAR(50)" />
+            <column name="teacher_id" type="int">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <createTable tableName="class_teacher">
+            <column name="teacher_id" type="int" />
+            <column name="class_id" type="int" />
+        </createTable>
+
+		<createTable tableName="user">
+			<column name="id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="username" type="java.sql.Types.VARCHAR(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="password" type="java.sql.Types.VARCHAR(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="role" type="java.sql.Types.VARCHAR(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="teacher_id" type="int">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createTable tableName="student">
+			<column name="id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="firstName" type="java.sql.Types.VARCHAR(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="lastName" type="java.sql.Types.VARCHAR(50)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createTable tableName="student_personal">
+			<column name="id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="street" type="java.sql.Types.VARCHAR(50)" />
+			<column name="city" type="java.sql.Types.VARCHAR(50)" />
+			<column name="postcode" type="java.sql.Types.VARCHAR(50)" />
+			<column name="religion" type="java.sql.Types.VARCHAR(50)" />
+			<column name="student_id" type="int">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createTable tableName="student_medical">
+			<column name="id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="doctor" type="java.sql.Types.VARCHAR(50)" />
+			<column name="student_id" type="int">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+        <createTable tableName="class_student">
+            <column name="student_id" type="int" />
+            <column name="class_id" type="int" />
+        </createTable>
+
+		<createTable tableName="year">
+			<column name="id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="name" type="java.sql.Types.VARCHAR(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="running" type="boolean">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createTable tableName="class">
+			<column name="id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="name" type="java.sql.Types.VARCHAR(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="year_id" type="int">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createTable tableName="branch">
+			<column name="id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="name" type="java.sql.Types.VARCHAR(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="numerical" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="class_id" type="int">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createTable tableName="period">
+			<column name="id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="name" type="java.sql.Types.VARCHAR(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="class_id" type="int">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createTable tableName="branch_period">
+			<column name="id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="branch_id" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="period_id" type="int">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createTable tableName="exam">
+			<column name="id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="name" type="java.sql.Types.VARCHAR(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="coeff" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="branch_period_id" type="int">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createTable tableName="student_result">
+			<column name="id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="active" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="student_id" type="int">
+				<constraints nullable="false" />
+			</column>
+            <column name="branch_period_id" type="int">
+                <constraints nullable="false" />
+            </column>
+		</createTable>
+
+        <createTable tableName="result">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="grade" type="java.sql.Types.VARCHAR(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="exam_id" type="int">
+                <constraints nullable="false" />
+            </column>
+            <column name="student_result_id" type="int">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <createTable tableName="mean">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="grade" type="java.sql.Types.VARCHAR(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="student_result_id" type="int">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+	</changeSet>
+
+	<changeSet id="0.15.0-2-foreign_key_constraints" author="cla">
+		<addForeignKeyConstraint constraintName="fk_teacher_detail_teacher"
+			referencedTableName="teacher" referencedColumnNames="id"
+			baseColumnNames="teacher_id" baseTableName="teacher_detail" />
+            
+        <addForeignKeyConstraint constraintName="fk_user_teacher"
+            referencedTableName="teacher" referencedColumnNames="id"
+            baseColumnNames="teacher_id" baseTableName="user" />
+            
+        <addForeignKeyConstraint constraintName="fk_class_teacher_teacher"
+            referencedTableName="teacher" referencedColumnNames="id"
+            baseColumnNames="teacher_id" baseTableName="class_teacher" />
+        <addForeignKeyConstraint constraintName="fk_class_teacher_class"
+            referencedTableName="class" referencedColumnNames="id"
+            baseColumnNames="class_id" baseTableName="class_teacher" />
+			
+        <addForeignKeyConstraint constraintName="fk_student_personal_student"
+            referencedTableName="student" referencedColumnNames="id"
+            baseColumnNames="student_id" baseTableName="student_personal" />
+        <addForeignKeyConstraint constraintName="fk_student_medical_student"
+            referencedTableName="student" referencedColumnNames="id"
+            baseColumnNames="student_id" baseTableName="student_medical" />
+            
+        <addForeignKeyConstraint constraintName="fk_class_student_student"
+            referencedTableName="student" referencedColumnNames="id"
+            baseColumnNames="student_id" baseTableName="class_student" />
+        <addForeignKeyConstraint constraintName="fk_class_student_class"
+            referencedTableName="class" referencedColumnNames="id"
+            baseColumnNames="class_id" baseTableName="class_student" />
+            
+        <addForeignKeyConstraint constraintName="fk_class_year"
+            referencedTableName="year" referencedColumnNames="id"
+            baseColumnNames="year_id" baseTableName="class" />
+            
+        <addForeignKeyConstraint constraintName="fk_branch_class"
+            referencedTableName="class" referencedColumnNames="id"
+            baseColumnNames="class_id" baseTableName="branch" />
+            
+        <addForeignKeyConstraint constraintName="fk_period_class"
+            referencedTableName="class" referencedColumnNames="id"
+            baseColumnNames="class_id" baseTableName="period" />
+            
+        <addForeignKeyConstraint constraintName="fk_branch_period_period"
+            referencedTableName="period" referencedColumnNames="id"
+            baseColumnNames="period_id" baseTableName="branch_period" />
+        <addForeignKeyConstraint constraintName="fk_branch_period_branch"
+            referencedTableName="branch" referencedColumnNames="id"
+            baseColumnNames="branch_id" baseTableName="branch_period" />
+            
+        <addForeignKeyConstraint constraintName="fk_exam_branch_period"
+            referencedTableName="branch_period" referencedColumnNames="id"
+            baseColumnNames="branch_period_id" baseTableName="exam" />
+            
+        <addForeignKeyConstraint constraintName="fk_student_result_student"
+            referencedTableName="student" referencedColumnNames="id"
+            baseColumnNames="student_id" baseTableName="student_result" />
+        <addForeignKeyConstraint constraintName="fk_student_result_branch_period"
+            referencedTableName="branch_period" referencedColumnNames="id"
+            baseColumnNames="branch_period_id" baseTableName="student_result" />
+            
+        <addForeignKeyConstraint constraintName="fk_result_exam"
+            referencedTableName="exam" referencedColumnNames="id"
+            baseColumnNames="exam_id" baseTableName="result" />
+        <addForeignKeyConstraint constraintName="fk_result_student_result"
+            referencedTableName="student_result" referencedColumnNames="id"
+            baseColumnNames="student_result_id" baseTableName="result" />
+            
+        <addForeignKeyConstraint constraintName="fk_mean_student_result"
+            referencedTableName="student_result" referencedColumnNames="id"
+            baseColumnNames="student_result_id" baseTableName="mean" />
+	</changeSet>
+
+    <changeSet id="0.15.0-3-fk-indexes" author="cla">
+        <createIndex tableName="teacher_detail" indexName="idx_teacher_detail_teacher_id">
+            <column name="teacher_id" />
+        </createIndex>
+        
+        <createIndex tableName="class_teacher" indexName="idx_class_teacher_teacher_id">
+            <column name="teacher_id" />
+        </createIndex>
+        <createIndex tableName="class_teacher" indexName="idx_class_teacher_class_id">
+            <column name="class_id" />
+        </createIndex>
+        
+        <createIndex tableName="user" indexName="idx_user_teacher_id">
+            <column name="teacher_id" />
+        </createIndex>
+        
+        <createIndex tableName="student_personal" indexName="idx_student_personal_student_id">
+            <column name="student_id" />
+        </createIndex>
+        <createIndex tableName="student_medical" indexName="idx_student_medical_student_id">
+            <column name="student_id" />
+        </createIndex>
+        
+        <createIndex tableName="class_student" indexName="idx_class_student_student_id">
+            <column name="student_id" />
+        </createIndex>
+        <createIndex tableName="class_student" indexName="idx_class_student_class_id">
+            <column name="class_id" />
+        </createIndex>
+        
+        <createIndex tableName="class" indexName="idx_class_year_id">
+            <column name="year_id" />
+        </createIndex>
+        
+        <createIndex tableName="branch" indexName="idx_branch_class_id">
+            <column name="class_id" />
+        </createIndex>
+        
+        <createIndex tableName="period" indexName="idx_period_class_id">
+            <column name="class_id" />
+        </createIndex>
+        
+        <createIndex tableName="branch_period" indexName="idx_branch_period_branch_id">
+            <column name="branch_id" />
+        </createIndex>
+        <createIndex tableName="branch_period" indexName="idx_branch_period_period_id">
+            <column name="period_id" />
+        </createIndex>
+        
+        <createIndex tableName="student_result" indexName="idx_student_result_student_id">
+            <column name="student_id" />
+        </createIndex>
+        <createIndex tableName="student_result" indexName="idx_student_result_branch_period_id">
+            <column name="branch_period_id" />
+        </createIndex>
+        
+        <createIndex tableName="result" indexName="idx_result_exam_id">
+            <column name="exam_id" />
+        </createIndex>
+        <createIndex tableName="result" indexName="idx_result_student_result_id">
+            <column name="student_result_id" />
+        </createIndex>
+        
+        <createIndex tableName="mean" indexName="idx_mean_student_result_id">
+            <column name="student_result_id" />
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.15.0-4-business-indexes" author="cla">
+        <createIndex tableName="teacher" indexName="idx_teacher_fullname">
+            <column name="firstName" />
+            <column name="lastName" />
+        </createIndex>
+        
+        <createIndex tableName="student" indexName="idx_student_fullname">
+            <column name="firstName" />
+            <column name="lastName" />
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>
