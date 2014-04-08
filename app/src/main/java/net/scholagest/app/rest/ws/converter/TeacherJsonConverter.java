@@ -42,8 +42,8 @@ public class TeacherJsonConverter {
         final TeacherJson teacherJson = new TeacherJson();
 
         teacherJson.setId(teacher.getId());
-        teacherJson.setFirstName(teacher.getFirstName());
-        teacherJson.setLastName(teacher.getLastName());
+        teacherJson.setFirstName(teacher.getFirstname());
+        teacherJson.setLastName(teacher.getLastname());
         teacherJson.setDetail(teacher.getDetail().getId());
 
         return teacherJson;
@@ -76,8 +76,8 @@ public class TeacherJsonConverter {
         final Teacher teacher = new Teacher();
 
         teacher.setId(teacherJson.getId());
-        teacher.setFirstName(teacherJson.getFirstName());
-        teacher.setLastName(teacherJson.getLastName());
+        teacher.setFirstname(teacherJson.getFirstName());
+        teacher.setLastname(teacherJson.getLastName());
 
         return teacher;
     }

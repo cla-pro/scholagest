@@ -70,7 +70,7 @@ public class BranchPeriodsRest {
     @Inject
     private StudentResultServiceLocal studentResultService;
 
-    public BranchPeriodsRest() {}
+    BranchPeriodsRest() {}
 
     /**
      * Retrieve the information about a single {@link BranchPeriodJson} identified by its id.

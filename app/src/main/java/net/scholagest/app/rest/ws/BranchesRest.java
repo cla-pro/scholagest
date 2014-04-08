@@ -51,31 +51,20 @@ import com.google.inject.Inject;
  */
 @Path("/branches")
 public class BranchesRest {
-    // public static Map<String, BranchJson> branches = new HashMap<>();
-    //
-    // static {
-    // branches.put("1", new BranchJson("1", "Math", true, "1",
-    // Arrays.asList("1", "3", "5")));
-    // branches.put("2", new BranchJson("2", "Histoire", false, "1",
-    // Arrays.asList("2", "4")));
-    // }
-
-    private final BranchServiceLocal branchService;
-
-    private final PeriodServiceLocal periodService;
-
-    private final BranchPeriodServiceLocal branchPeriodService;
-
-    private final ClazzServiceLocal clazzService;
 
     @Inject
-    public BranchesRest(final BranchServiceLocal branchService, final PeriodServiceLocal periodService,
-            final BranchPeriodServiceLocal branchPeriodService, final ClazzServiceLocal clazzService) {
-        this.branchService = branchService;
-        this.periodService = periodService;
-        this.branchPeriodService = branchPeriodService;
-        this.clazzService = clazzService;
-    }
+    private BranchServiceLocal branchService;
+
+    @Inject
+    private PeriodServiceLocal periodService;
+
+    @Inject
+    private BranchPeriodServiceLocal branchPeriodService;
+
+    @Inject
+    private ClazzServiceLocal clazzService;
+
+    BranchesRest() {}
 
     /**
      * Retrieve the information about a single branch identified by its id.

@@ -17,8 +17,8 @@ import net.scholagest.old.objects.BaseObjectMock;
 import net.scholagest.old.objects.ExamObject;
 import net.scholagest.old.services.IExamService;
 import net.scholagest.old.services.impl.ExamService;
-import net.scholagest.utils.AbstractTest;
-import net.scholagest.utils.InMemoryDatabase;
+import net.scholagest.utils.old.AbstractTest;
+import net.scholagest.utils.old.InMemoryDatabase;
 
 import org.junit.Before;
 import org.junit.Test;

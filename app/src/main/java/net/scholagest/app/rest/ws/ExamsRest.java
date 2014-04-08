@@ -47,24 +47,6 @@ import com.google.inject.Inject;
  */
 @Path("/exams")
 public class ExamsRest {
-    // public static Map<String, ExamJson> exams = new HashMap<>();
-    // public static Map<String, StudentResultJson> studentResults = new
-    // HashMap<>();
-    //
-    // static {
-    // exams.put("1", new ExamJson("1", "Récitation 1", 5, "1"));
-    // exams.put("2", new ExamJson("2", "Récitation 2", 4, "1"));
-    // exams.put("6", new ExamJson("6", "Moyenne", 1, "1"));
-    // exams.put("3", new ExamJson("3", "Récitation 3", 3, "4"));
-    // exams.put("4", new ExamJson("4", "Récitation 4", 2, "4"));
-    // exams.put("5", new ExamJson("5", "Récitation 5", 1, "4"));
-    // exams.put("7", new ExamJson("7", "Moyenne", 1, "4"));
-    //
-    // studentResults.put("1", new StudentResultJson("1", "1", "1",
-    // Arrays.asList("1", "2"), "3", true));
-    // studentResults.put("2", new StudentResultJson("2", "1", "2",
-    // Arrays.asList("4", "5", "6"), "7", true));
-    // }
 
     @Inject
     private ExamServiceLocal examService;
@@ -78,7 +60,7 @@ public class ExamsRest {
     @Inject
     private ResultServiceLocal resultService;
 
-    public ExamsRest() {}
+    ExamsRest() {}
 
     /**
      * Save the changes of the exam into the system.

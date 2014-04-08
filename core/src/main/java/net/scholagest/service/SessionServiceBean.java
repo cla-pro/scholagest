@@ -27,12 +27,11 @@ import com.google.inject.Inject;
  * @since 0.13.0
  */
 public class SessionServiceBean implements SessionServiceLocal {
-    private final SessionBusinessLocal sessionBusiness;
 
     @Inject
-    public SessionServiceBean(final SessionBusinessLocal sessionBusiness) {
-        this.sessionBusiness = sessionBusiness;
-    }
+    private SessionBusinessLocal sessionBusiness;
+
+    SessionServiceBean() {}
 
     /**
      * {@inheritDoc}

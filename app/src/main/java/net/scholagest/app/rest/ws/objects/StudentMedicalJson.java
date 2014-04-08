@@ -1,5 +1,11 @@
 package net.scholagest.app.rest.ws.objects;
 
+/**
+ * Json object representing a student medical
+ * 
+ * @author CLA
+ * @since 0.13.0
+ */
 public class StudentMedicalJson extends BaseJson {
     private String doctor;
 

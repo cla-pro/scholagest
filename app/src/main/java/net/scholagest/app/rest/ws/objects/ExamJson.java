@@ -1,5 +1,11 @@
 package net.scholagest.app.rest.ws.objects;
 
+/**
+ * Json object representing an exam
+ * 
+ * @author CLA
+ * @since 0.14.0
+ */
 public class ExamJson extends BaseJson {
     private String name;
     private int coeff;

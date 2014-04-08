@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+
 import org.junit.Test;
 
 /**
@@ -16,7 +18,7 @@ public class StudentTest {
     @Test
     public void testConstructorCopy() {
         final Student toCopy = new Student("1", "firstName", "lastName", new StudentPersonal("1", "address", "city", "postcode", "religion"),
-                new StudentMedical("1", "doctor"));
+                new StudentMedical("1", "doctor"), new StudentClass("1", Arrays.asList("clazz1"), Arrays.asList("clazz2")));
         final Student copied = new Student(toCopy);
 
         assertEquals(toCopy.getId(), copied.getId());
@@ -28,13 +30,13 @@ public class StudentTest {
 
     @Test
     public void testEquals() {
-        final Student student1 = new Student(null, null, null, null, null);
-        final Student student2 = new Student(null, "firstName", "lastName", null, null);
-        final Student student3 = new Student(null, "otherFirstName", "otherLastName", null, null);
-        final Student student4 = new Student("1", "firstName", "lastName", null, null);
-        final Student student5 = new Student("1", "firstName", "lastName", null, null);
+        final Student student1 = new Student(null, null, null, null, null, null);
+        final Student student2 = new Student(null, "firstName", "lastName", null, null, null);
+        final Student student3 = new Student(null, "otherFirstName", "otherLastName", null, null, null);
+        final Student student4 = new Student("1", "firstName", "lastName", null, null, null);
+        final Student student5 = new Student("1", "firstName", "lastName", null, null, null);
         final Student student6 = new Student("1", "firstName", "lastName", new StudentPersonal("1", "address", "city", "postcode", "religion"),
-                new StudentMedical("1", "doctor"));
+                new StudentMedical("1", "doctor"), new StudentClass("1", Arrays.asList("clazz1"), Arrays.asList("clazz2")));
 
         assertFalse(student1.equals(null));
         assertFalse(student1.equals(new Object()));

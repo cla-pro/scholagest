@@ -3,6 +3,12 @@ package net.scholagest.app.rest.ws.objects;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Json object representing a branch period
+ * 
+ * @author CLA
+ * @since 0.14.0
+ */
 public class BranchPeriodJson extends BaseJson {
     private String branch;
     private String period;

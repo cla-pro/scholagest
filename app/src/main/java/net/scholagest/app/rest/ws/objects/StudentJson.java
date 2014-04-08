@@ -1,21 +1,28 @@
 package net.scholagest.app.rest.ws.objects;
 
+/**
+ * Json object representing a student
+ * 
+ * @author CLA
+ * @since 0.13.0
+ */
 public class StudentJson extends BaseJson {
     private String firstName;
     private String lastName;
     private String personal;
     private String medical;
-    private String clazz;
+    private String classes;
 
     public StudentJson() {}
 
-    public StudentJson(final String id, final String firstName, final String lastName, final String personal, final String medical, final String clazz) {
+    public StudentJson(final String id, final String firstName, final String lastName, final String personal, final String medical,
+            final String classes) {
         super(id);
         this.firstName = firstName;
         this.lastName = lastName;
         this.personal = personal;
         this.medical = medical;
-        this.clazz = clazz;
+        this.classes = classes;
     }
 
     public String getFirstName() {
@@ -50,11 +57,11 @@ public class StudentJson extends BaseJson {
         this.medical = medical;
     }
 
-    public String getClazz() {
-        return clazz;
+    public String getClasses() {
+        return classes;
     }
 
-    public void setClazz(final String clazz) {
-        this.clazz = clazz;
+    public void setClasses(final String classes) {
+        this.classes = classes;
     }
 }

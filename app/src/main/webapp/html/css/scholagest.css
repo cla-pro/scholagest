@@ -1,0 +1,8 @@
+.element-list {
+    overflow: auto;
+}
+
+.element-content {
+    overflow: auto;
+    margin-left: 30px;
+}

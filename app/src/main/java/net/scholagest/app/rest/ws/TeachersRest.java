@@ -40,12 +40,11 @@ import com.google.inject.Inject;
  */
 @Path("/teachers")
 public class TeachersRest {
-    private final TeacherServiceLocal teacherService;
 
     @Inject
-    public TeachersRest(final TeacherServiceLocal teacherService) {
-        this.teacherService = teacherService;
-    }
+    private TeacherServiceLocal teacherService;
+
+    TeachersRest() {}
 
     /**
      * Retrieve a list of teachers. Either filtered by ids or the whole list. The ids

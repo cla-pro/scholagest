@@ -17,12 +17,11 @@ import com.google.inject.Inject;
  * @since 0.14.0
  */
 public class ResultServiceBean implements ResultServiceLocal {
-    private final ResultBusinessLocal resultBusiness;
 
     @Inject
-    public ResultServiceBean(final ResultBusinessLocal resultBusiness) {
-        this.resultBusiness = resultBusiness;
-    }
+    private ResultBusinessLocal resultBusiness;
+
+    ResultServiceBean() {}
 
     /**
      * {@inheritDoc}

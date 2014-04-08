@@ -35,12 +35,10 @@ import com.google.inject.Inject;
 @Path("/studentMedicals")
 public class StudentMedicalsRest {
 
-    private final StudentServiceLocal studentService;
-
     @Inject
-    public StudentMedicalsRest(final StudentServiceLocal studentService) {
-        this.studentService = studentService;
-    }
+    private StudentServiceLocal studentService;
+
+    StudentMedicalsRest() {}
 
     /**
      * Retrieve the medical information about a single student identified by its id.

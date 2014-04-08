@@ -9,7 +9,7 @@ import java.util.Map;
 import net.scholagest.old.database.DatabaseException;
 import net.scholagest.old.objects.BaseObject;
 import net.scholagest.old.services.kdom.DBToKdomConverter;
-import net.scholagest.utils.AbstractTest;
+import net.scholagest.utils.old.AbstractTest;
 
 import org.junit.Test;
 

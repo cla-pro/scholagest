@@ -29,6 +29,8 @@ public class BranchBusinessBean implements BranchBusinessLocal {
         branchesMap.put("branch2", new Branch("branch2", "Histoire", false, "clazz1", Arrays.asList("branchPeriod2", "branchPeriod4")));
     }
 
+    BranchBusinessBean() {}
+
     /**
      * {@inheritDoc}
      */

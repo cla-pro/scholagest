@@ -11,8 +11,8 @@ import net.scholagest.old.business.IOntologyBusinessComponent;
 import net.scholagest.old.business.IYearBusinessComponent;
 import net.scholagest.old.services.IYearService;
 import net.scholagest.old.services.impl.YearService;
-import net.scholagest.utils.AbstractTest;
-import net.scholagest.utils.InMemoryDatabase;
+import net.scholagest.utils.old.AbstractTest;
+import net.scholagest.utils.old.InMemoryDatabase;
 
 import org.junit.Before;
 import org.junit.Test;

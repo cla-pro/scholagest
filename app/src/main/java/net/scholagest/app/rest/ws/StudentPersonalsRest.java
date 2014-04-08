@@ -35,12 +35,10 @@ import com.google.inject.Inject;
 @Path("/studentPersonals")
 public class StudentPersonalsRest {
 
-    private final StudentServiceLocal studentService;
-
     @Inject
-    public StudentPersonalsRest(final StudentServiceLocal studentService) {
-        this.studentService = studentService;
-    }
+    private StudentServiceLocal studentService;
+
+    StudentPersonalsRest() {}
 
     /**
      * Retrieve the personal information about a single student identified by its id.

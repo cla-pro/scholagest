@@ -20,10 +20,10 @@ import net.scholagest.old.namespace.CoreNamespace;
 import net.scholagest.old.objects.BaseObject;
 import net.scholagest.old.objects.BranchObject;
 import net.scholagest.old.objects.BranchType;
-import net.scholagest.utils.AbstractTestWithTransaction;
-import net.scholagest.utils.DatabaseReaderWriter;
-import net.scholagest.utils.InMemoryDatabase;
-import net.scholagest.utils.InMemoryDatabase.InMemoryTransaction;
+import net.scholagest.utils.old.AbstractTestWithTransaction;
+import net.scholagest.utils.old.DatabaseReaderWriter;
+import net.scholagest.utils.old.InMemoryDatabase;
+import net.scholagest.utils.old.InMemoryDatabase.InMemoryTransaction;
 import net.scholagest.utils.ScholagestThreadLocal;
 
 import org.junit.Test;

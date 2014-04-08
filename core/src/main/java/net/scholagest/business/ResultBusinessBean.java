@@ -24,6 +24,8 @@ public class ResultBusinessBean implements ResultBusinessLocal {
         resultsMap.put("result7", new Result("result7", 4.25, "exam7", "studentResult2"));
     }
 
+    ResultBusinessBean() {}
+
     /**
      * {@inheritDoc}
      */

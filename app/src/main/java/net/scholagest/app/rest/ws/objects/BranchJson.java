@@ -3,6 +3,12 @@ package net.scholagest.app.rest.ws.objects;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Json object representing a branch
+ * 
+ * @author CLA
+ * @since 0.14.0
+ */
 public class BranchJson extends BaseJson {
     private String name;
     private boolean numerical;

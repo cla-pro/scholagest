@@ -61,11 +61,25 @@ Scholagest.StudentController = Scholagest.RoleObjectController.extend({
     }
 });
 
-//Scholagest.NewStudentRoute = Ember.Route.extend({
-//    model: function(params) {
-//        return {};
-//    }
-//});
+Scholagest.OldClassController = Ember.ObjectController.extend({});
+Scholagest.OldPeriodController = Ember.ObjectController.extend({});
+Scholagest.OldBranchPeriodController = Ember.ObjectController.extend({
+    needs: 'student',
+    student: Ember.computed.alias("controllers.student"),
+    
+    studentResultForModel: function() {
+        var modelStudentId = this.get('student').get('id');
+        var studentResult = null;
+        this.get('model').get('studentResults').forEach(function(item) {
+            var studentId = item.get('student').get('id');
+            if (modelStudentId === studentId) {
+                studentResult = item;
+            }
+        });
+        return studentResult;
+    }.property('model.studentResults.@each.changeCounter')
+});
+
 Scholagest.NewStudentController = Ember.ObjectController.extend({
     content: null,
     
@@ -76,24 +90,12 @@ Scholagest.NewStudentController = Ember.ObjectController.extend({
     actions: {
         create: function(router, event) {
             var content = this.get('content');
-//            var studentPersonal = this.store.createRecord('studentPersonal', {
-//                street: "Test street"
-//            });
-//            var studentMedical = this.store.createRecord('studentMedical', {});
             var student = this.store.createRecord('student', {
                 firstName: content.firstName,
                 lastName: content.lastName
             });
             
-//            studentPersonal.save().then(function() {
-                //studentMedical.save().then(function() {
-//                    student.set('personal', studentPersonal);
-                    //student.set('medical', studentMedical);
-                    student.save();
-                //}, function() {});
-//            }, function() {
-              // Error callback
-//            });
+            student.save();
         }
     }
 });

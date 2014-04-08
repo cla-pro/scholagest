@@ -23,6 +23,8 @@ public class YearBusinessBean implements YearBusinessLocal {
         yearsMap.put("year2", new Year("year2", "2013-2014", true, Arrays.asList("clazz2", "clazz3")));
     }
 
+    YearBusinessBean() {}
+
     /**
      * {@inheritDoc}
      */

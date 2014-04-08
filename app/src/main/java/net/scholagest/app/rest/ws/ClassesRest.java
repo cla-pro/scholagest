@@ -51,18 +51,6 @@ import com.google.inject.Inject;
  */
 @Path("/classes")
 public class ClassesRest {
-    // public static Map<String, ClazzJson> classes = new HashMap<>();
-    //
-    // static {
-    // classes.put("1", new ClazzJson("1", "1P A", "1", Arrays.asList("1", "2",
-    // "3"), Arrays.asList("1"), Arrays.asList("1"), Arrays.asList("1", "2")));
-    // classes.put("2", new ClazzJson("2", "2P A", "2", new ArrayList<String>(),
-    // Arrays.asList("2"), Arrays.asList("2"), new ArrayList<String>()));
-    // classes.put("3", new ClazzJson("3", "5P A", "2", new ArrayList<String>(),
-    // new ArrayList<String>(), new ArrayList<String>(),
-    // new ArrayList<String>()));
-    // }
-
     @Inject
     private ClazzServiceLocal clazzService;
 
@@ -78,7 +66,7 @@ public class ClassesRest {
     @Inject
     private ResultServiceLocal resultService;
 
-    public ClassesRest() {}
+    ClassesRest() {}
 
     /**
      * <p>

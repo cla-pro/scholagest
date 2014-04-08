@@ -1,5 +1,11 @@
 package net.scholagest.app.rest.ws.objects;
 
+/**
+ * Json object representing a student personal
+ * 
+ * @author CLA
+ * @since 0.13.0
+ */
 public class StudentPersonalJson extends BaseJson {
     private String street;
     private String city;

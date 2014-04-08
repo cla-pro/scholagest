@@ -18,12 +18,11 @@ import com.google.inject.Inject;
  * @since 0.14.0
  */
 public class ExamServiceBean implements ExamServiceLocal {
-    private final ExamBusinessLocal examBusiness;
 
     @Inject
-    public ExamServiceBean(final ExamBusinessLocal examBusiness) {
-        this.examBusiness = examBusiness;
-    }
+    private ExamBusinessLocal examBusiness;
+
+    ExamServiceBean() {}
 
     /**
      * {@inheritDoc}

@@ -9,8 +9,8 @@ import org.apache.commons.lang.builder.EqualsBuilder;
  * @since 0.13.0
  */
 public class Teacher extends Base {
-    private String firstName;
-    private String lastName;
+    private String firstname;
+    private String lastname;
     private final TeacherDetail detail;
 
     public Teacher() {
@@ -18,30 +18,30 @@ public class Teacher extends Base {
     }
 
     public Teacher(final Teacher copy) {
-        this(copy.getId(), copy.firstName, copy.lastName, new TeacherDetail(copy.detail));
+        this(copy.getId(), copy.firstname, copy.lastname, new TeacherDetail(copy.detail));
     }
 
-    public Teacher(final String id, final String firstName, final String lastName, final TeacherDetail detail) {
+    public Teacher(final String id, final String firstname, final String lastname, final TeacherDetail detail) {
         super(id);
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.firstname = firstname;
+        this.lastname = lastname;
         this.detail = detail;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getFirstname() {
+        return firstname;
     }
 
-    public void setFirstName(final String firstName) {
-        this.firstName = firstName;
+    public void setFirstname(final String firstname) {
+        this.firstname = firstname;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getLastname() {
+        return lastname;
     }
 
-    public void setLastName(final String lastName) {
-        this.lastName = lastName;
+    public void setLastname(final String lastname) {
+        this.lastname = lastname;
     }
 
     public TeacherDetail getDetail() {
@@ -60,7 +60,7 @@ public class Teacher extends Base {
         }
 
         final Teacher other = (Teacher) that;
-        return new EqualsBuilder().append(getId(), other.getId()).append(firstName, other.firstName).append(lastName, other.lastName)
+        return new EqualsBuilder().append(getId(), other.getId()).append(firstname, other.firstname).append(lastname, other.lastname)
                 .append(detail, other.detail).isEquals();
     }
 }

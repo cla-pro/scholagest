@@ -32,6 +32,8 @@ public class ClazzBusinessBean implements ClazzBusinessLocal {
                 new ArrayList<String>()));
     }
 
+    ClazzBusinessBean() {}
+
     /**
      * {@inheritDoc}
      */

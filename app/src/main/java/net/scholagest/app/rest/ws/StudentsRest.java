@@ -43,21 +43,11 @@ import com.google.inject.Inject;
  */
 @Path("/students")
 public class StudentsRest {
-    // public static Map<String, StudentJson> students = new HashMap<>();
-    //
-    // static {
-    // students.put("1", new StudentJson("1", "Elodie", "Lavanchy", "1", "1",
-    // "1"));
-    // students.put("2", new StudentJson("2", "Thibaud", "Hottelier", "2", "2",
-    // "2"));
-    // }
-
-    private final StudentServiceLocal studentService;
 
     @Inject
-    public StudentsRest(final StudentServiceLocal studentService) {
-        this.studentService = studentService;
-    }
+    private StudentServiceLocal studentService;
+
+    StudentsRest() {}
 
     /**
      * <p>

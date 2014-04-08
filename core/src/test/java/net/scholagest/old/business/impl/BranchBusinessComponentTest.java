@@ -30,7 +30,7 @@ import net.scholagest.old.namespace.CoreNamespace;
 import net.scholagest.old.objects.BaseObject;
 import net.scholagest.old.objects.BaseObjectMock;
 import net.scholagest.old.objects.BranchType;
-import net.scholagest.utils.AbstractTestWithTransaction;
+import net.scholagest.utils.old.AbstractTestWithTransaction;
 
 import org.junit.Before;
 import org.junit.Test;

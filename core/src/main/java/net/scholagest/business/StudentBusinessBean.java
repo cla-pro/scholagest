@@ -4,11 +4,13 @@
 package net.scholagest.business;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import net.scholagest.object.Student;
+import net.scholagest.object.StudentClass;
 import net.scholagest.object.StudentMedical;
 import net.scholagest.object.StudentPersonal;
 import net.scholagest.utils.IdHelper;
@@ -23,11 +25,17 @@ public class StudentBusinessBean implements StudentBusinessLocal {
     public static Map<String, Student> studentsMap = new HashMap<>();
 
     static {
-        studentsMap.put("student1", new Student("student1", "Elodie", "Lavanchy", new StudentPersonal("student1", "Route final du Verney 8", "Perly",
-                "1242", "Protestant"), new StudentMedical("student1", null)));
-        studentsMap.put("student2", new Student("student2", "Thibaud", "Hottelier", new StudentPersonal("student2", "Post Street 711",
-                "San Francisco", "1242", null), new StudentMedical("student2", null)));
+        studentsMap.put(
+                "student1",
+                new Student("student1", "Elodie", "Lavanchy", new StudentPersonal("student1", "Route final du Verney 8", "Perly", "1242",
+                        "Protestant"), new StudentMedical("student1", null), new StudentClass("student1", new ArrayList<String>(), Arrays
+                        .asList("clazz1"))));
+        studentsMap.put("student2",
+                new Student("student2", "Thibaud", "Hottelier", new StudentPersonal("student2", "Post Street 711", "San Francisco", "1242", null),
+                        new StudentMedical("student2", null), new StudentClass("student2", new ArrayList<String>(), Arrays.asList("clazz1"))));
     }
+
+    StudentBusinessBean() {}
 
     /**
      * {@inheritDoc}
@@ -70,6 +78,7 @@ public class StudentBusinessBean implements StudentBusinessLocal {
         toStore.setId(id);
         toStore.getStudentPersonal().setId(id);
         toStore.getStudentMedical().setId(id);
+        toStore.getStudentClasses().setId(id);
 
         studentsMap.put(id, toStore);
 
