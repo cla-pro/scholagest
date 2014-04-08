@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -20,6 +20,11 @@
 	</properties>
 
 	<dependencies>
+	    <dependency>
+	        <groupId>net.scholagest</groupId>
+	        <artifactId>scholagest-persistence</artifactId>
+	        <version>${project.version}</version>
+	    </dependency>
 		<dependency>
 			<groupId>me.prettyprint</groupId>
 			<artifactId>hector-core</artifactId>
@@ -30,6 +35,11 @@
 			<artifactId>guice</artifactId>
 			<version>3.0</version>
 		</dependency>
+        <dependency>
+            <groupId>com.google.inject.extensions</groupId>
+            <artifactId>guice-persist</artifactId>
+            <version>3.0</version>
+        </dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-api</artifactId>
@@ -45,6 +55,21 @@
 			<artifactId>commons-lang3</artifactId>
 			<version>3.2.1</version>
 		</dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-core</artifactId>
+            <version>1.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-guice</artifactId>
+            <version>1.2.1</version>
+        </dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
@@ -57,21 +82,18 @@
 			<version>4.10</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-			<version>2.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.shiro</groupId>
-			<artifactId>shiro-core</artifactId>
-			<version>1.2.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.shiro</groupId>
-			<artifactId>shiro-guice</artifactId>
-			<version>1.2.1</version>
-		</dependency>
+        <dependency>
+            <groupId>net.scholagest</groupId>
+            <artifactId>scholagest-db</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.scholagest</groupId>
+            <artifactId>scholagest-test-util</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
 		<!-- Shiro uses SLF4J for logging. We'll use the 'simple' binding in this 
 			example app. See http://www.slf4j.org for more info. -->
 		<dependency>

@@ -31,6 +31,8 @@ public class ExamBusinessBean implements ExamBusinessLocal {
         examsMap.put("exam7", new Exam("exam10", "Moyenne", 1, "branchPeriod5"));
     }
 
+    ExamBusinessBean() {}
+
     @Override
     public Exam getExam(final String id) {
         if (examsMap.containsKey(id)) {

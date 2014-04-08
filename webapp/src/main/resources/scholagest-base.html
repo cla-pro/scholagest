@@ -110,6 +110,8 @@
         {{#if isEditionAllowed}}
             <button {{action saveMedical}}>Enregistrer</button>
         {{/if}}
+        
+        {{partial "studentClasses"}}
     </script>
     <script type='text/x-handlebars' id="studentPersonal">
         <h3>Informations personnelles</h3>
@@ -190,6 +192,61 @@
                         {{medical.doctor}}
                     {{/if}}
                 </td>
+            </tr>
+        </table>
+    </script>
+    <script type='text/x-handlebars' id="studentClasses">
+        <h3>Anciennes classes</h3>
+        
+        <ul>
+	        {{#each clazz in classes.oldClasses}}
+                <li>
+	            {{#link-to "oldClass" clazz}}
+	                {{clazz.name}}
+	            {{/link-to}}
+                </li>
+	        {{/each}}
+        </ul>
+        
+        {{outlet}}
+    </script>
+    <script type='text/x-handlebars' id="oldClass">
+        <ul>
+	        {{#each period in periods}}
+	            <li>
+	            {{#link-to "oldPeriod" period}}
+	                {{period.name}}
+	            {{/link-to}}
+	            </li>
+	        {{/each}}
+	    </ul>
+        
+        {{outlet}}
+    </script>
+    <script type='text/x-handlebars' id="oldPeriod">
+        <table>
+            {{#each branchPeriod in branchPeriods}}
+            <tr>
+                <td>{{render "oldBranchPeriod" branchPeriod}}</td>
+            </tr>
+            {{/each}}
+        </table>
+    </script>
+    <script type='text/x-handlebars' id="oldBranchPeriod">
+        <h4>{{branch.name}}</h4>
+        
+        <table>
+            <tr>
+                {{#each exam in exams}}
+                    <td>{{exam.name}} (Coeff: {{exam.coeff}})</td>
+                {{/each}}
+                <td>Moyenne</td>
+            </tr>
+            <tr>
+                {{#each result in studentResultForModel.results}}
+                    <td>{{result.grade}}</td>
+                {{/each}}
+                <td>{{studentResultForModel.mean.computedMean}}</td>
             </tr>
         </table>
     </script>
@@ -630,7 +687,13 @@
             this.resource('tryCookieAuthentication', function() {});
 			this.resource('base', function() {
 				this.resource('students', function() {
-				    this.resource('student', { path: '/:student_id' }, function() {});
+				    this.resource('student', { path: '/:student_id' }, function() {
+				        this.resource('oldClass', { path: '/:class_id' }, function() {
+				            this.resource('oldPeriod', { path: '/:period_id' }, function() {
+				                this.resource('oldBranchPeriod', { path: '/:branch_period_id' }, function() {});
+				            });
+				        });
+				    });
 				});
 				this.resource('teachers', function() {
 				    this.resource('teacher', { path: '/:teacher_id' }, function() {});

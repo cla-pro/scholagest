@@ -29,6 +29,8 @@ public class BranchPeriodBusinessBean implements BranchPeriodBusinessLocal {
                 new ArrayList<String>()));
     }
 
+    BranchPeriodBusinessBean() {}
+
     /**
      * {@inheritDoc}
      */

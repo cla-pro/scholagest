@@ -36,20 +36,11 @@ import com.google.inject.Inject;
  */
 @Path("/years")
 public class YearsRest {
-    // public static Map<String, YearJson> years = new HashMap<>();
-    //
-    // static {
-    // years.put("1", new YearJson("1", "2012-2013", false,
-    // Arrays.asList("1")));
-    // years.put("2", new YearJson("2", "2013-2014", true, Arrays.asList("2",
-    // "3")));
-    // }
-    private final YearServiceLocal yearService;
 
     @Inject
-    public YearsRest(final YearServiceLocal yearService) {
-        this.yearService = yearService;
-    }
+    private YearServiceLocal yearService;
+
+    YearsRest() {}
 
     /**
      * Retrieve a list of all the years.

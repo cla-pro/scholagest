@@ -36,12 +36,10 @@ import com.google.inject.Inject;
 @Path("/teacherDetails")
 public class TeacherDetailsRest {
 
-    private final TeacherServiceLocal teacherService;
-
     @Inject
-    public TeacherDetailsRest(final TeacherServiceLocal teacherService) {
-        this.teacherService = teacherService;
-    }
+    private TeacherServiceLocal teacherService;
+
+    TeacherDetailsRest() {}
 
     /**
      * Retrieve the detail information about a single teacher identified by its id.
@@ -80,6 +78,7 @@ public class TeacherDetailsRest {
         final TeacherJsonConverter converter = new TeacherJsonConverter();
 
         final TeacherDetailJson teacherDetailJson = payload.get("teacherDetail");
+        teacherDetailJson.setId(id);
         final TeacherDetail teacherDetail = converter.convertToTeacherDetail(teacherDetailJson);
 
         teacherService.saveTeacherDetail(id, teacherDetail);

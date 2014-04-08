@@ -18,12 +18,11 @@ import com.google.inject.Inject;
  * @since 0.14.0
  */
 public class BranchServiceBean implements BranchServiceLocal {
-    private final BranchBusinessLocal branchBusiness;
 
     @Inject
-    public BranchServiceBean(final BranchBusinessLocal branchBusiness) {
-        this.branchBusiness = branchBusiness;
-    }
+    private BranchBusinessLocal branchBusiness;
+
+    BranchServiceBean() {}
 
     /**
      * {@inheritDoc}

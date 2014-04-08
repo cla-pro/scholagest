@@ -30,22 +30,11 @@ import com.google.inject.Inject;
  */
 @Path("/results")
 public class ResultsRest {
-    // public static Map<String, ResultJson> results = new HashMap<>();
-    //
-    // static {
-    // results.put("1", new ResultJson("1", 3.5, "1", "1"));
-    // results.put("2", new ResultJson("2", 5.0, "2", "1"));
-    // results.put("3", new ResultJson("3", 4.25, "6", "1"));
-    // results.put("4", new ResultJson("4", 3.5, "3", "2"));
-    // results.put("5", new ResultJson("5", 5.0, "4", "2"));
-    // results.put("6", new ResultJson("6", 5.0, "5", "2"));
-    // results.put("7", new ResultJson("7", 4.25, "7", "2"));
-    // }
 
     @Inject
     private ResultServiceLocal resultService;
 
-    public ResultsRest() {}
+    ResultsRest() {}
 
     /**
      * Save the changes of the result into the system.

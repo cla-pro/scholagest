@@ -13,12 +13,14 @@ import net.scholagest.object.User;
  * @since 0.13.0
  */
 public class UserBusinessBean implements UserBusinessLocal {
-    private static Map<String, User> users = new HashMap<>();
+    public static Map<String, User> users = new HashMap<>();
 
     static {
-        users.put("clavanchy", new User("clavanchy", "clavanchy", "1234", "ADMIN", Arrays.asList("clavanchy", "teacher1"), "teacher1", "clazz1"));
+        users.put("clavanchy", new User("clavanchy", "clavanchy", "1234", "ADMIN", Arrays.asList("clavanchy", "teacher1"), "1", "clazz1"));
         users.put("vparvex", new User("vparvex", "vparvex", "1234", "TEACHER", Arrays.asList("vparvex", "teacher2"), "teacher2", "clazz2"));
     }
+
+    UserBusinessBean() {}
 
     /**
      * {@inheritDoc}

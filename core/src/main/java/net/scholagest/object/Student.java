@@ -13,24 +13,27 @@ public class Student extends Base {
     private String lastName;
     private StudentPersonal studentPersonal;
     private StudentMedical studentMedical;
+    private StudentClass studentClasses;
 
     public Student() {
         this.studentPersonal = new StudentPersonal();
         this.studentMedical = new StudentMedical();
+        this.studentClasses = new StudentClass();
     }
 
     public Student(final Student toCopy) {
         this(toCopy.getId(), toCopy.firstName, toCopy.lastName, new StudentPersonal(toCopy.studentPersonal),
-                new StudentMedical(toCopy.studentMedical));
+                new StudentMedical(toCopy.studentMedical), new StudentClass(toCopy.studentClasses));
     }
 
     public Student(final String id, final String firstName, final String lastName, final StudentPersonal studentPersonal,
-            final StudentMedical studentMedical) {
+            final StudentMedical studentMedical, final StudentClass studentClasses) {
         super(id);
         this.firstName = firstName;
         this.lastName = lastName;
         this.studentPersonal = studentPersonal;
         this.studentMedical = studentMedical;
+        this.studentClasses = studentClasses;
     }
 
     public String getFirstName() {
@@ -63,6 +66,14 @@ public class Student extends Base {
 
     public void setStudentMedical(final StudentMedical studentMedical) {
         this.studentMedical = studentMedical;
+    }
+
+    public StudentClass getStudentClasses() {
+        return studentClasses;
+    }
+
+    public void setStudentClasses(final StudentClass studentClasses) {
+        this.studentClasses = studentClasses;
     }
 
     /**

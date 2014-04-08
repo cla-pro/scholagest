@@ -23,8 +23,8 @@ import net.scholagest.old.objects.BranchObjectMock;
 import net.scholagest.old.services.IBranchService;
 import net.scholagest.old.services.impl.BranchService;
 import net.scholagest.old.services.kdom.KSet;
-import net.scholagest.utils.AbstractTest;
-import net.scholagest.utils.InMemoryDatabase;
+import net.scholagest.utils.old.AbstractTest;
+import net.scholagest.utils.old.InMemoryDatabase;
 
 import org.junit.Before;
 import org.junit.Test;

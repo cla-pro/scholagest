@@ -6,6 +6,7 @@ import net.scholagest.authorization.Permission;
 import net.scholagest.authorization.RolesAndPermissions;
 import net.scholagest.business.StudentBusinessLocal;
 import net.scholagest.object.Student;
+import net.scholagest.object.StudentClass;
 import net.scholagest.object.StudentMedical;
 import net.scholagest.object.StudentPersonal;
 
@@ -19,12 +20,11 @@ import com.google.inject.Inject;
  * @since 0.13.0
  */
 public class StudentServiceBean implements StudentServiceLocal {
-    private final StudentBusinessLocal studentBusiness;
 
     @Inject
-    public StudentServiceBean(final StudentBusinessLocal studentBusiness) {
-        this.studentBusiness = studentBusiness;
-    }
+    private StudentBusinessLocal studentBusiness;
+
+    StudentServiceBean() {}
 
     /**
      * {@inheritDoc}
@@ -78,6 +78,9 @@ public class StudentServiceBean implements StudentServiceLocal {
         return studentBusiness.saveStudent(studentId, student);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @RolesAndPermissions(roles = {})
     @Override
     public StudentPersonal getStudentPersonal(final String id) {
@@ -89,10 +92,13 @@ public class StudentServiceBean implements StudentServiceLocal {
         if (student == null) {
             return null;
         } else {
-            return student.getStudentPersonal();
+            return new StudentPersonal(student.getStudentPersonal());
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @RolesAndPermissions(roles = { "ADMIN" })
     @Override
     public StudentPersonal saveStudentPersonal(@Permission final String studentId, final StudentPersonal studentPersonal) {
@@ -103,6 +109,9 @@ public class StudentServiceBean implements StudentServiceLocal {
         return studentBusiness.saveStudentPersonal(studentId, studentPersonal);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @RolesAndPermissions(roles = {})
     @Override
     public StudentMedical getStudentMedical(final String id) {
@@ -114,10 +123,13 @@ public class StudentServiceBean implements StudentServiceLocal {
         if (student == null) {
             return null;
         } else {
-            return student.getStudentMedical();
+            return new StudentMedical(student.getStudentMedical());
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @RolesAndPermissions(roles = { "ADMIN" })
     @Override
     public StudentMedical saveStudentMedical(@Permission final String studentId, final StudentMedical studentMedical) {
@@ -128,4 +140,21 @@ public class StudentServiceBean implements StudentServiceLocal {
         return studentBusiness.saveStudentMedical(studentId, studentMedical);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @RolesAndPermissions(roles = { "ADMIN" })
+    @Override
+    public StudentClass getStudentClasses(@Permission final String studentId) {
+        if (studentId == null) {
+            return null;
+        }
+
+        final Student student = studentBusiness.getStudent(studentId);
+        if (student == null) {
+            return null;
+        } else {
+            return new StudentClass(student.getStudentClasses());
+        }
+    }
 }

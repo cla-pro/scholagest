@@ -5,7 +5,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
@@ -70,11 +70,11 @@ public class TeacherServiceBeanTest extends AbstractGuiceContextTest {
         final TeacherServiceLocal testee = getInstance(TeacherServiceLocal.class);
 
         assertTrue(testee.getTeacher(new ArrayList<String>()).isEmpty());
-        verify(teacherBusiness, never()).getTeacher(anyString());
+        verify(teacherBusiness, never()).getTeacher(anyLong());
 
         final List<Teacher> empty2 = testee.getTeacher(Arrays.asList("3"));
         assertTrue(empty2.isEmpty());
-        verify(teacherBusiness).getTeacher(eq("3"));
+        verify(teacherBusiness).getTeacher(eq(3L));
     }
 
     @Test
@@ -84,15 +84,15 @@ public class TeacherServiceBeanTest extends AbstractGuiceContextTest {
 
         final Teacher teacher1 = new Teacher("1", "FirstName1", "LastName1", new TeacherDetail("1", "address1", "email1", "phone1"));
         final Teacher teacher2 = new Teacher("2", "FirstName2", "LastName2", new TeacherDetail("2", "address2", "email2", "phone2"));
-        when(teacherBusiness.getTeacher("1")).thenReturn(teacher1);
-        when(teacherBusiness.getTeacher("2")).thenReturn(teacher2);
+        when(teacherBusiness.getTeacher(1L)).thenReturn(teacher1);
+        when(teacherBusiness.getTeacher(2L)).thenReturn(teacher2);
 
         final List<Teacher> expected = Arrays.asList(teacher1);
         final List<Teacher> result = testee.getTeacher(Arrays.asList("1"));
         assertEquals(expected, result);
 
-        verify(teacherBusiness).getTeacher(eq("1"));
-        verify(teacherBusiness, never()).getTeacher(eq("2"));
+        verify(teacherBusiness).getTeacher(eq(1L));
+        verify(teacherBusiness, never()).getTeacher(eq(2L));
     }
 
     @Test
@@ -102,15 +102,15 @@ public class TeacherServiceBeanTest extends AbstractGuiceContextTest {
 
         final Teacher teacher1 = new Teacher("1", "FirstName1", "LastName1", new TeacherDetail("1", "address1", "email1", "phone1"));
         final Teacher teacher2 = new Teacher("2", "FirstName2", "LastName2", new TeacherDetail("2", "address2", "email2", "phone2"));
-        when(teacherBusiness.getTeacher("1")).thenReturn(teacher1);
-        when(teacherBusiness.getTeacher("2")).thenReturn(teacher2);
+        when(teacherBusiness.getTeacher(1L)).thenReturn(teacher1);
+        when(teacherBusiness.getTeacher(2L)).thenReturn(teacher2);
 
         final List<Teacher> expected = Arrays.asList(teacher1, teacher2);
         final List<Teacher> result = testee.getTeacher(Arrays.asList("1", "2"));
         assertEquals(expected, result);
 
-        verify(teacherBusiness).getTeacher(eq("1"));
-        verify(teacherBusiness).getTeacher(eq("2"));
+        verify(teacherBusiness).getTeacher(eq(1L));
+        verify(teacherBusiness).getTeacher(eq(2L));
     }
 
     @Test
@@ -162,17 +162,17 @@ public class TeacherServiceBeanTest extends AbstractGuiceContextTest {
         setAdminSubject();
         final TeacherServiceLocal testee = getInstance(TeacherServiceLocal.class);
 
-        final String id = "1";
-        final TeacherDetail teacherDetail = new TeacherDetail(id, "address", "email", "phone");
+        final Long id = 1L;
+        final TeacherDetail teacherDetail = new TeacherDetail("" + id, "address", "email", "phone");
         when(teacherBusiness.getTeacherDetail(eq(id))).thenReturn(teacherDetail);
 
         assertNull(testee.getTeacherDetail(null));
-        verify(teacherBusiness, never()).getTeacherDetail(anyString());
+        verify(teacherBusiness, never()).getTeacherDetail(anyLong());
 
         assertNull(testee.getTeacherDetail("2"));
-        verify(teacherBusiness).getTeacherDetail(eq("2"));
+        verify(teacherBusiness).getTeacherDetail(eq(2L));
 
-        assertEquals(teacherDetail, testee.getTeacherDetail(id));
+        assertEquals(teacherDetail, testee.getTeacherDetail("" + id));
         verify(teacherBusiness).getTeacherDetail(eq(id));
     }
 
@@ -184,14 +184,14 @@ public class TeacherServiceBeanTest extends AbstractGuiceContextTest {
         final String id = "1";
         final TeacherDetail teacherDetail = new TeacherDetail(id, "address", "email", "phone");
         final TeacherDetail saved = new TeacherDetail(id, "savedA", "savedE", "savedP");
-        when(teacherBusiness.saveTeacherDetail(eq(id), any(TeacherDetail.class))).thenReturn(saved);
+        when(teacherBusiness.saveTeacherDetail(any(TeacherDetail.class))).thenReturn(saved);
 
         assertNull(testee.saveTeacherDetail(null, new TeacherDetail()));
         assertNull(testee.saveTeacherDetail("1", null));
-        verify(teacherBusiness, never()).saveTeacherDetail(anyString(), any(TeacherDetail.class));
+        verify(teacherBusiness, never()).saveTeacherDetail(any(TeacherDetail.class));
 
         assertEquals(saved, testee.saveTeacherDetail(id, teacherDetail));
-        verify(teacherBusiness).saveTeacherDetail(eq(id), eq(teacherDetail));
+        verify(teacherBusiness).saveTeacherDetail(eq(teacherDetail));
     }
 
     @Test

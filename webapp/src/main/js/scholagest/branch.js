@@ -1,7 +1,7 @@
 Scholagest.PeriodsRoute = Scholagest.AuthenticatedRoute.extend({
     model: function() {
         var user = Scholagest.SessionManager.get('user');
-        if (Ember.isNone(user)) {
+        if (Ember.isNone(user) || Ember.isNone(user.get('clazz'))) {
             return null;
         } else {
             var userClass = user.get('clazz');

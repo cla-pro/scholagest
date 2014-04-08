@@ -1,5 +1,11 @@
 package net.scholagest.app.rest.ws.objects;
 
+/**
+ * Json object representing a user
+ * 
+ * @author CLA
+ * @since 0.13.0
+ */
 public class UserJson extends BaseJson {
     private String role;
     private String teacher;

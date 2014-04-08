@@ -17,12 +17,11 @@ import com.google.inject.Inject;
  * @since 0.14.0
  */
 public class PeriodServiceBean implements PeriodServiceLocal {
-    private final PeriodBusinessLocal periodBusiness;
 
     @Inject
-    public PeriodServiceBean(final PeriodBusinessLocal periodBusiness) {
-        this.periodBusiness = periodBusiness;
-    }
+    private PeriodBusinessLocal periodBusiness;
+
+    PeriodServiceBean() {}
 
     /**
      * {@inheritDoc}

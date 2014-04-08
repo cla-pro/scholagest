@@ -1,82 +1,101 @@
-var selectedStudentKey = null;
-function callGetStudentGrades(students, exams, yearKey, callback) {
-	sendPostRequest("../student/getStudentsGrades", { studentKeys: students, examKeys: exams, yearKey: yearKey }, callback);
-};
-function createStudent(closeId, txtIds) {
-	if (checkRequiredFieldsAndMarkAsMissing(closeId, txtIds)) {
-		return;
-	}
-	
-	var keyValues = getKeysAndValues(txtIds);
+Scholagest.StudentsRoute = Scholagest.AuthenticatedRoute.extend({
+    model: function() {
+        return this.store.find('student');
+    },
+    actions: {
+        openModal: function(modalName) {
+            return this.render(modalName, {
+                into: 'application',
+                outlet: 'modal'
+            });
+        }
+    }
+});
+Scholagest.StudentsController = Scholagest.RoleArrayController.extend({});
 
-	sendPostRequest("../student/create", { keys: keyValues.keys, values: keyValues.values }, function(info) { loadStudents(); });
+Scholagest.StudentRoute = Scholagest.AuthenticatedRoute.extend({
+    model: function(params) {
+        return this.store.find('student', params.student_id);
+    }
+});
+Scholagest.StudentController = Scholagest.RoleObjectController.extend({
+    isStudentInClass: function() {
+        var user = Scholagest.SessionManager.get('user');
+        var studentId = this.get('model').get('id');
+        if (!Ember.isNone(user) && !Ember.isNone(user.get('clazz'))) {
+            var clazz = user.get('clazz');
+            var filtered = clazz.get('students').filter(function(item, index, self) {
+                return item.get('id') === studentId;
+            });
+            return filtered.length > 0;
+        }
+        
+        return false;
+    }.property('Scholagest.SessionManager.user.clazz.students.@each', 'model'),
+    isEditionAllowed: function() {
+        return this.get('isAdmin') || (this.get('isTeacher') && this.get('isStudentInClass'));
+    }.property('isAdmin', 'isTeacher', 'isStudentInClass'),
+    actions: {
+//        delete: function() {
+//            this.get('model').deleteRecord();
+//            this.get('model').save();
+//            this.transitionToRoute('students');
+//        },
+        savePersonal: function() {
+            var student = this.get('model');
+            if (student.get('isDirty')) {
+                student.save();
+            }
+            var studentPersonal = student.get('personal');
+            if (studentPersonal.get('isDirty')) {
+                studentPersonal.get('content').save();
+            }
+        },
+        saveMedical: function() {
+            var student = this.get('model');
+            var studentMedical = student.get('medical');
+            if (studentMedical.get('isDirty')) {
+                studentMedical.get('content').save();
+            }
+        }
+    }
+});
 
-	if (closeId != null) {
-		var dialog = dijit.byId(closeId);
-		resetDiv(dialog.containerNode);
-		dialog.hide();
-	}
-};
-function getStudentList(callback) {
-	sendPostRequest("../student/getStudents", { properties: ["pStudentLastName", "pStudentFirstName"] }, callback);
-};
-function getStudentsInfo(studentList, properties, callback) {
-	sendPostRequest("../student/getStudentsInfo", { keys: studentList, properties: properties }, callback);
-};
-function loadStudents() {
-	getStudentList(function(students) {
-		clearDOM("student-search-list");
+Scholagest.OldClassController = Ember.ObjectController.extend({});
+Scholagest.OldPeriodController = Ember.ObjectController.extend({});
+Scholagest.OldBranchPeriodController = Ember.ObjectController.extend({
+    needs: 'student',
+    student: Ember.computed.alias("controllers.student"),
+    
+    studentResultForModel: function() {
+        var modelStudentId = this.get('student').get('id');
+        var studentResult = null;
+        this.get('model').get('studentResults').forEach(function(item) {
+            var studentId = item.get('student').get('id');
+            if (modelStudentId === studentId) {
+                studentResult = item;
+            }
+        });
+        return studentResult;
+    }.property('model.studentResults.@each.changeCounter')
+});
 
-		var base = dojo.byId("student-search-list");
-		createHtmlListFromList(students, "student-search-list", base,
-				buildListItemTextClosure(["pStudentLastName", "pStudentFirstName"]), selectStudent, selectedStudentKey);
-	});
-};
-function selectStudent(studentKey) {
-	sendPostRequest("../student/getProperties", { key: studentKey }, function(info) {
-		selectedStudentKey = studentKey;
-		
-		var domId = 'student-data';
-		clearDOM(domId);
-		var base = dojo.byId(domId);
-
-		//Create doms for the groups and request for further info for these groups.
-		var properties = info.properties;
-		for (var propertyName in properties) {
-			var property = properties[propertyName];
-			if (property.isHtmlGroup != null && property.isHtmlGroup == true) {
-				if (propertyName == 'pStudentPersonalInfo') {
-					createHtmlBaseGroup(base, property.displayText, "student-personal-info");
-					getStudentPersonalInfo(studentKey, info.writable);
-				}
-				else {
-					createHtmlBaseGroup(base, property.displayText, "student-medical-info");
-					getStudentMedicalInfo(studentKey, info.writable);
-				}
-			}
-		}
-	});
-};
-function getStudentPersonalInfo(studentKey, writable) {
-	getStudentSubInfo(studentKey, "getPersonalProperties", "setPersonalProperties", "student-personal-info", writable);
-}
-function getStudentMedicalInfo(studentKey, writable) {
-	getStudentSubInfo(studentKey, "getMedicalProperties", "setMedicalProperties", "student-medical-info", writable);
-}
-function getStudentSubInfo(studentKey, getInfoServiceName, setInfoServiceName, domId, writable) {
-	sendPostRequest("../student/" + getInfoServiceName, { key: studentKey }, function(info) {
-		var base = dojo.byId(domId + "-content-table");
-		createInfoHtmlTable(base, info.properties, true);
-		
-		if (writable) {
-			var save = dojo.create("button",
-					{type: "button", onclick:setStudentInfo(studentKey, domId + "-content-table", setInfoServiceName), innerHTML: "Enregistrer"}, base);
-		}
-	});
-}
-function setStudentInfo(studentKey, domId, webServiceName) {
-	return function() {
-		var keyValues = getKeyValues(domId);
-		sendPostRequest("../student/" + webServiceName, { key: studentKey, properties: keyValues }, function(info) {});
-	}
-}
+Scholagest.NewStudentController = Ember.ObjectController.extend({
+    content: null,
+    
+    init: function() {
+        this._super();
+        this.set('content', Ember.Object.create({}));
+    },
+    actions: {
+        create: function(router, event) {
+            var content = this.get('content');
+            var student = this.store.createRecord('student', {
+                firstName: content.firstName,
+                lastName: content.lastName
+            });
+            
+            student.save();
+        }
+    }
+});

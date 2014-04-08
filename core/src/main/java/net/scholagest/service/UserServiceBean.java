@@ -18,12 +18,11 @@ import com.google.inject.Inject;
  * @since 0.13.0
  */
 public class UserServiceBean implements UserServiceLocal {
-    private final UserBusinessLocal userBusiness;
 
     @Inject
-    public UserServiceBean(final UserBusinessLocal userBusiness) {
-        this.userBusiness = userBusiness;
-    }
+    private UserBusinessLocal userBusiness;
+
+    UserServiceBean() {}
 
     /**
      * {@inheritDoc}
