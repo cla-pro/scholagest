@@ -11,7 +11,7 @@
 	</parent>
 
 	<groupId>net.scholagest</groupId>
-	<artifactId>tester</artifactId>
+	<artifactId>scholagest-tester</artifactId>
 	<name>Scholagest Tester</name>
 	<packaging>jar</packaging>
 
@@ -50,6 +50,11 @@
 	        <version>${project.version}</version>
 	        <scope>test</scope>
 	    </dependency>
+		<dependency>
+			<groupId>net.scholagest</groupId>
+			<artifactId>scholagest-app</artifactId>
+			<version>${version}</version>
+		</dependency>
 	    
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
@@ -112,11 +117,6 @@
 			<artifactId>junit</artifactId>
 			<version>4.10</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>net.scholagest</groupId>
-			<artifactId>app</artifactId>
-			<version>${version}</version>
 		</dependency>
 	</dependencies>
 </project>

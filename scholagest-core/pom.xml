@@ -11,7 +11,7 @@
 	</parent>
 
 	<groupId>net.scholagest</groupId>
-	<artifactId>core</artifactId>
+	<artifactId>scholagest-core</artifactId>
 	<name>Scholagest Core</name>
 	<packaging>jar</packaging>
 
