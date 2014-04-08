@@ -355,56 +355,56 @@
     
     <changeSet id="0.15.0-4-sequences" author="cla">
         <createSequence incrementBy="1" cycle="true"
-                minValue="0" maxValue="10000000"
                 sequenceName="seq_teacher_id"/>
+<!--                 minValue="0" maxValue="10000000" -->
         <createSequence incrementBy="1" cycle="true"
-                minValue="0" maxValue="10000000"
                 sequenceName="seq_teacher_detail_id"/>
+<!--                 minValue="0" maxValue="10000000" -->
         <createSequence incrementBy="1" cycle="true"
-                minValue="0" maxValue="10000000"
                 sequenceName="seq_class_teacher_id"/>
+<!--                 minValue="0" maxValue="10000000" -->
         <createSequence incrementBy="1" cycle="true"
-                minValue="0" maxValue="10000000"
                 sequenceName="seq_user_id"/>
+<!--                 minValue="0" maxValue="10000000" -->
         <createSequence incrementBy="1" cycle="true"
-                minValue="0" maxValue="10000000"
                 sequenceName="seq_student_id"/>
+<!--                 minValue="0" maxValue="10000000" -->
         <createSequence incrementBy="1" cycle="true"
-                minValue="0" maxValue="10000000"
                 sequenceName="seq_student_personal_id"/>
+<!--                 minValue="0" maxValue="10000000" -->
         <createSequence incrementBy="1" cycle="true"
-                minValue="0" maxValue="10000000"
                 sequenceName="seq_student_medical_id"/>
+<!--                 minValue="0" maxValue="10000000" -->
         <createSequence incrementBy="1" cycle="true"
-                minValue="0" maxValue="10000000"
                 sequenceName="seq_class_student_id"/>
+<!--                 minValue="0" maxValue="10000000" -->
         <createSequence incrementBy="1" cycle="true"
-                minValue="0" maxValue="10000000"
                 sequenceName="seq_year_id"/>
+<!--                 minValue="0" maxValue="10000000" -->
         <createSequence incrementBy="1" cycle="true"
-                minValue="0" maxValue="10000000"
                 sequenceName="seq_class_id"/>
+<!--                 minValue="0" maxValue="10000000" -->
         <createSequence incrementBy="1" cycle="true"
-                minValue="0" maxValue="10000000"
                 sequenceName="seq_branch_id"/>
+<!--                 minValue="0" maxValue="10000000" -->
         <createSequence incrementBy="1" cycle="true"
-                minValue="0" maxValue="10000000"
                 sequenceName="seq_period_id"/>
+<!--                 minValue="0" maxValue="10000000" -->
         <createSequence incrementBy="1" cycle="true"
-                minValue="0" maxValue="10000000"
                 sequenceName="seq_branch_period_id"/>
+<!--                 minValue="0" maxValue="10000000" -->
         <createSequence incrementBy="1" cycle="true"
-                minValue="0" maxValue="10000000"
                 sequenceName="seq_exam_id"/>
+<!--                 minValue="0" maxValue="10000000" -->
         <createSequence incrementBy="1" cycle="true"
-                minValue="0" maxValue="10000000"
                 sequenceName="seq_student_result_id"/>
+<!--                 minValue="0" maxValue="10000000" -->
         <createSequence incrementBy="1" cycle="true"
-                minValue="0" maxValue="10000000"
                 sequenceName="seq_result_id"/>
+<!--                 minValue="0" maxValue="10000000" -->
         <createSequence incrementBy="1" cycle="true"
-                minValue="0" maxValue="10000000"
                 sequenceName="seq_mean_id"/>
+<!--                 minValue="0" maxValue="10000000" -->
     </changeSet>
 
     <changeSet id="0.15.0-5-business-indexes" author="cla">

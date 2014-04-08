@@ -19,8 +19,8 @@ import net.scholagest.old.namespace.CoreNamespace;
 import net.scholagest.old.objects.ClassObject;
 import net.scholagest.old.services.IClassService;
 import net.scholagest.old.services.impl.ClassService;
-import net.scholagest.utils.AbstractTestWithTransaction;
-import net.scholagest.utils.InMemoryDatabase;
+import net.scholagest.utils.old.AbstractTestWithTransaction;
+import net.scholagest.utils.old.InMemoryDatabase;
 
 import org.junit.Before;
 import org.junit.Test;

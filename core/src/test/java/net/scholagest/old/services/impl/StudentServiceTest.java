@@ -19,8 +19,8 @@ import net.scholagest.old.objects.BaseObject;
 import net.scholagest.old.objects.StudentObject;
 import net.scholagest.old.services.IStudentService;
 import net.scholagest.old.services.impl.StudentService;
-import net.scholagest.utils.AbstractTest;
-import net.scholagest.utils.InMemoryDatabase;
+import net.scholagest.utils.old.AbstractTest;
+import net.scholagest.utils.old.InMemoryDatabase;
 
 import org.junit.Before;
 import org.junit.Test;

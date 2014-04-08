@@ -80,6 +80,7 @@
 		<profile>
 			<id>application</id>
 			<modules>
+				<module>scholagest-test-util</module>
 				<module>scholagest-persistence</module>
 				<module>core</module>
 				<!-- <module>webapp</module> -->

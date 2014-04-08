@@ -10,7 +10,7 @@ import net.scholagest.old.database.DatabaseException;
 import net.scholagest.old.managers.ontology.RDF;
 import net.scholagest.old.managers.ontology.types.DBSet;
 import net.scholagest.old.namespace.CoreNamespace;
-import net.scholagest.utils.AbstractTestWithTransaction;
+import net.scholagest.utils.old.AbstractTestWithTransaction;
 
 import org.junit.Test;
 import org.mockito.Mockito;

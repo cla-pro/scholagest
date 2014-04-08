@@ -1,4 +1,4 @@
-package net.scholagest.utils;
+package net.scholagest.utils.old;
 
 import static org.junit.Assert.assertEquals;
 
@@ -6,6 +6,9 @@ import java.util.Map;
 
 import net.scholagest.old.managers.ontology.types.DBSet;
 import net.scholagest.old.namespace.AuthorizationRolesNamespace;
+import net.scholagest.utils.ConfigurationService;
+import net.scholagest.utils.ScholagestProperty;
+import net.scholagest.utils.ScholagestThreadLocal;
 
 import org.apache.shiro.subject.Subject;
 import org.mockito.Mockito;

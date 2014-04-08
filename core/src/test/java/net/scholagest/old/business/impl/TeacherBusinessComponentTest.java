@@ -22,7 +22,7 @@ import net.scholagest.old.managers.ITeacherManager;
 import net.scholagest.old.objects.BaseObject;
 import net.scholagest.old.objects.BaseObjectMock;
 import net.scholagest.old.objects.TeacherObject;
-import net.scholagest.utils.AbstractTestWithTransaction;
+import net.scholagest.utils.old.AbstractTestWithTransaction;
 
 import org.junit.Before;
 import org.junit.Test;

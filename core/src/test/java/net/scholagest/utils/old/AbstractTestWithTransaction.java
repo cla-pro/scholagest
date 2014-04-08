@@ -1,4 +1,4 @@
-package net.scholagest.utils;
+package net.scholagest.utils.old;
 
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.spy;
@@ -6,7 +6,8 @@ import static org.mockito.Mockito.spy;
 import java.util.Map;
 
 import net.scholagest.old.database.DatabaseException;
-import net.scholagest.utils.InMemoryDatabase.InMemoryTransaction;
+import net.scholagest.utils.ScholagestThreadLocal;
+import net.scholagest.utils.old.InMemoryDatabase.InMemoryTransaction;
 
 import org.junit.After;
 import org.junit.Before;

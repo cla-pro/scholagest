@@ -30,7 +30,7 @@ import net.scholagest.old.objects.BaseObject;
 import net.scholagest.old.objects.BaseObjectMock;
 import net.scholagest.old.objects.BranchObject;
 import net.scholagest.old.objects.BranchType;
-import net.scholagest.utils.AbstractTestWithTransaction;
+import net.scholagest.utils.old.AbstractTestWithTransaction;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;

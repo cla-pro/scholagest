@@ -13,7 +13,7 @@ import net.scholagest.old.managers.ontology.OntologyElement;
 import net.scholagest.old.managers.ontology.OntologyManager;
 import net.scholagest.old.managers.ontology.RDFS;
 import net.scholagest.old.namespace.CoreNamespace;
-import net.scholagest.utils.AbstractTestWithTransaction;
+import net.scholagest.utils.old.AbstractTestWithTransaction;
 
 import org.junit.Test;
 

@@ -18,8 +18,8 @@ import net.scholagest.old.namespace.AuthorizationRolesNamespace;
 import net.scholagest.old.objects.PageObject;
 import net.scholagest.old.services.IUserService;
 import net.scholagest.old.services.impl.UserService;
-import net.scholagest.utils.AbstractTest;
-import net.scholagest.utils.InMemoryDatabase;
+import net.scholagest.utils.old.AbstractTest;
+import net.scholagest.utils.old.InMemoryDatabase;
 
 import org.apache.shiro.ShiroException;
 import org.apache.shiro.subject.Subject;

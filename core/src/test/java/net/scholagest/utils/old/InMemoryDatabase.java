@@ -1,4 +1,4 @@
-package net.scholagest.utils;
+package net.scholagest.utils.old;
 
 import java.util.HashMap;
 import java.util.HashSet;
