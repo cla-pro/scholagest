@@ -13,7 +13,7 @@
   </parent>
  
   <groupId>net.scholagest</groupId>
-  <artifactId>webapp</artifactId>
+  <artifactId>scholagest-webapp</artifactId>
   <name>Scholagest Web Application</name>
   <packaging>js</packaging>
   

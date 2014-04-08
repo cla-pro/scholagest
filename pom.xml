@@ -81,28 +81,29 @@
 			<id>application</id>
 			<modules>
 				<module>scholagest-test-util</module>
+				<module>scholagest-db</module>
 				<module>scholagest-persistence</module>
-				<module>core</module>
+				<module>scholagest-core</module>
 				<!-- <module>webapp</module> -->
-				<module>app</module>
+				<module>scholagest-app</module>
 			</modules>
 		</profile>
 		<profile>
 			<id>webapp</id>
 			<modules>
-				<module>webapp</module>
+				<module>scholagest-webapp</module>
 			</modules>
 		</profile>
 		<profile>
 			<id>initializer</id>
 			<modules>
-				<module>initializer</module>
+				<module>scholagest-initializer</module>
 			</modules>
 		</profile>
 		<profile>
 			<id>tester</id>
 			<modules>
-				<module>tester</module>
+				<module>scholagest-tester</module>
 			</modules>
 		</profile>
 	</profiles>
