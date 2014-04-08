@@ -48,7 +48,7 @@ public class TeacherServiceBean implements TeacherServiceLocal {
         final List<Teacher> teachers = new ArrayList<>();
 
         for (final String id : ids) {
-            final Teacher teacher = teacherBusiness.getTeacher(id);
+            final Teacher teacher = teacherBusiness.getTeacher(Long.valueOf(id));
             if (teacher != null) {
                 teachers.add(teacher);
             }
@@ -97,7 +97,7 @@ public class TeacherServiceBean implements TeacherServiceLocal {
         }
 
         // TODO filter fields
-        return teacherBusiness.getTeacherDetail(id);
+        return teacherBusiness.getTeacherDetail(Long.valueOf(id));
     }
 
     /**
@@ -111,6 +111,6 @@ public class TeacherServiceBean implements TeacherServiceLocal {
         }
 
         // TODO filter fields
-        return teacherBusiness.saveTeacherDetail(teacherId, teacherDetail);
+        return teacherBusiness.saveTeacherDetail(teacherDetail);
     }
 }

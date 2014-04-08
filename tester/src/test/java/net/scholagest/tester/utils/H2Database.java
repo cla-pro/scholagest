@@ -1,8 +1,9 @@
-package net.scholagest.tester;
+package net.scholagest.tester.utils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import liquibase.Contexts;
 import liquibase.Liquibase;
@@ -40,7 +41,8 @@ public class H2Database {
     }
 
     /**
-     * Initialize the database schema
+     * Initialize the database schema. Everything is cleared away before the liquibase
+     * part takes place to set up the schema.
      * 
      * @throws LiquibaseException Exception forwarded
      * @throws ClassNotFoundException Exception forwarded
@@ -50,10 +52,15 @@ public class H2Database {
         Class.forName("org.h2.Driver");
         final Connection connection = DriverManager.getConnection("jdbc:h2:mem:~test", "admin", "admin");
 
+        final Statement statement = connection.createStatement();
+        statement.execute("drop all objects");
+
         final Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
 
         liquibase = new Liquibase("liquibase/database.xml", new ClassLoaderResourceAccessor(), database);
         liquibase.update((Contexts) null);
+
+        database.close();
     }
 
     /**

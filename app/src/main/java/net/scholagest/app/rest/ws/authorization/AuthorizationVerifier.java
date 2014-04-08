@@ -12,6 +12,7 @@ import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 
 import com.google.inject.Inject;
+import com.google.inject.persist.Transactional;
 
 /**
  * Interceptor used to verify that the authentication token is valid (exists and not expired).
@@ -27,6 +28,7 @@ public class AuthorizationVerifier implements MethodInterceptor {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public Object invoke(final MethodInvocation invocation) throws Throwable {
         try {
             final String sessionId = ScholagestThreadLocal.getSessionId();

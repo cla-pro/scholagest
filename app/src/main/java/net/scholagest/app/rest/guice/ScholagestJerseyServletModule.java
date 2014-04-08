@@ -17,6 +17,7 @@ import net.scholagest.app.rest.ws.StudentPersonalsRest;
 import net.scholagest.app.rest.ws.StudentsRest;
 import net.scholagest.app.rest.ws.TeacherDetailsRest;
 import net.scholagest.app.rest.ws.TeachersRest;
+import net.scholagest.app.rest.ws.TransactionFilter;
 import net.scholagest.app.rest.ws.UsersRest;
 import net.scholagest.app.rest.ws.YearsRest;
 import net.scholagest.app.rest.ws.authorization.AuthorizationFilter;
@@ -48,6 +49,8 @@ import net.scholagest.business.UserBusinessBean;
 import net.scholagest.business.UserBusinessLocal;
 import net.scholagest.business.YearBusinessBean;
 import net.scholagest.business.YearBusinessLocal;
+import net.scholagest.dao.TeacherDaoBean;
+import net.scholagest.dao.TeacherDaoLocal;
 import net.scholagest.service.BranchPeriodServiceBean;
 import net.scholagest.service.BranchPeriodServiceLocal;
 import net.scholagest.service.BranchServiceBean;
@@ -89,6 +92,7 @@ public class ScholagestJerseyServletModule extends JerseyServletModule {
     @Override
     protected void configureServlets() {
         bind(AuthorizationFilter.class).in(Singleton.class);
+        bind(TransactionFilter.class).in(Singleton.class);
 
         final AuthorizationVerifier authorizationVerifier = new AuthorizationVerifier();
         requestInjection(authorizationVerifier);
@@ -97,6 +101,8 @@ public class ScholagestJerseyServletModule extends JerseyServletModule {
         final AuthorizationInterceptor authorizationInterceptor = new AuthorizationInterceptor();
         requestInjection(authorizationInterceptor);
         bindInterceptor(Matchers.any(), Matchers.annotatedWith(RolesAndPermissions.class), authorizationInterceptor);
+
+        bind(TeacherDaoLocal.class).to(TeacherDaoBean.class);
 
         bind(BranchPeriodBusinessLocal.class).to(BranchPeriodBusinessBean.class);
         bind(BranchBusinessLocal.class).to(BranchBusinessBean.class);
@@ -149,6 +155,7 @@ public class ScholagestJerseyServletModule extends JerseyServletModule {
         params.put("com.sun.jersey.api.json.POJOMappingFeature", "true");
         filter("/services/*").through(AuthorizationFilter.class);
         filter("/services/*").through(PersistFilter.class);
+        filter("/services/*").through(TransactionFilter.class);
         serve("/services/*").with(GuiceContainer.class, params);
     }
 }

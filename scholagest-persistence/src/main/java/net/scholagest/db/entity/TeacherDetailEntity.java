@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 
 /**
  * Entity that model a teacher detail in the DB
@@ -15,10 +16,13 @@ import javax.persistence.OneToOne;
  * @since 0.15.0
  */
 @Entity(name = "teacher_detail")
-public class TeacherDetailEntity extends BaseEntity {
+public class TeacherDetailEntity {
+    private final static String TOSTRING_FORMAT = "TeacherDetail [id=%d, address=%s, email=%s, phone=%s]";
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @SequenceGenerator(name = "seq_teacher_detail", sequenceName = "seq_teacher_detail_id")
+    @GeneratedValue(generator = "seq_teacher_detail", strategy = GenerationType.SEQUENCE)
+    private Long id;
 
     @Column(name = "address")
     private String address;
@@ -34,6 +38,10 @@ public class TeacherDetailEntity extends BaseEntity {
     private TeacherEntity teacher;
 
     public TeacherDetailEntity() {}
+
+    public Long getId() {
+        return id;
+    }
 
     public String getAddress() {
         return address;
@@ -57,5 +65,21 @@ public class TeacherDetailEntity extends BaseEntity {
 
     public void setPhone(final String phone) {
         this.phone = phone;
+    }
+
+    public TeacherEntity getTeacher() {
+        return teacher;
+    }
+
+    void setTeacher(final TeacherEntity teacher) {
+        this.teacher = teacher;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return String.format(TOSTRING_FORMAT, id, address, email, phone);
     }
 }

@@ -3,14 +3,16 @@
  */
 package net.scholagest.business;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import net.scholagest.converter.TeacherEntityConverter;
+import net.scholagest.dao.TeacherDaoLocal;
+import net.scholagest.db.entity.TeacherDetailEntity;
+import net.scholagest.db.entity.TeacherEntity;
 import net.scholagest.object.Teacher;
 import net.scholagest.object.TeacherDetail;
-import net.scholagest.utils.IdHelper;
+
+import com.google.inject.Inject;
 
 /**
  * Implementation of {@link TeacherBusinessLocal}.
@@ -19,14 +21,20 @@ import net.scholagest.utils.IdHelper;
  * @since 0.13.0
  */
 public class TeacherBusinessBean implements TeacherBusinessLocal {
-    public static Map<String, Teacher> teachersMap = new HashMap<>();
+    // public static Map<String, Teacher> teachersMap = new HashMap<>();
+    //
+    // static {
+    // teachersMap.put("teacher1", new Teacher("teacher1", "Cédric", "Lavanchy",
+    // new TeacherDetail("teacher1", "Kleefeldstrasse 1, 3018 Bern",
+    // "cedric.lavanchy@gmail.com", "+41791234567")));
+    // teachersMap.put("teacher2", new Teacher("teacher2", "Valérie", "Parvex",
+    // new TeacherDetail("teacher2",
+    // "Chemin des Merisiers 25, 1870 Monthey", "valerie.parvex@gmail.com",
+    // "+41797654321")));
+    // }
 
-    static {
-        teachersMap.put("teacher1", new Teacher("teacher1", "Cédric", "Lavanchy", new TeacherDetail("teacher1", "Kleefeldstrasse 1, 3018 Bern",
-                "cedric.lavanchy@gmail.com", "+41791234567")));
-        teachersMap.put("teacher2", new Teacher("teacher2", "Valérie", "Parvex", new TeacherDetail("teacher2",
-                "Chemin des Merisiers 25, 1870 Monthey", "valerie.parvex@gmail.com", "+41797654321")));
-    }
+    @Inject
+    private TeacherDaoLocal teacherDao;
 
     TeacherBusinessBean() {}
 
@@ -35,27 +43,25 @@ public class TeacherBusinessBean implements TeacherBusinessLocal {
      */
     @Override
     public List<Teacher> getTeachers() {
-        return copyTeachers();
-    }
+        final TeacherEntityConverter converter = new TeacherEntityConverter();
 
-    private List<Teacher> copyTeachers() {
-        final List<Teacher> teachers = new ArrayList<>();
+        final List<TeacherEntity> teacherEntityList = teacherDao.getAllTeacherEntity();
 
-        for (final Teacher teacher : teachersMap.values()) {
-            teachers.add(new Teacher(teacher));
-        }
-        return teachers;
+        return converter.convertToTeacherList(teacherEntityList);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Teacher getTeacher(final String id) {
-        if (teachersMap.containsKey(id)) {
-            return new Teacher(teachersMap.get(id));
-        } else {
+    public Teacher getTeacher(final Long id) {
+        final TeacherEntity teacherEntity = teacherDao.getTeacherEntityById(id);
+
+        if (teacherEntity == null) {
             return null;
+        } else {
+            final TeacherEntityConverter converter = new TeacherEntityConverter();
+            return converter.convertToTeacher(teacherEntity);
         }
     }
 
@@ -64,16 +70,12 @@ public class TeacherBusinessBean implements TeacherBusinessLocal {
      */
     @Override
     public Teacher createTeacher(final Teacher teacher) {
-        // TODO check for existence first?
-        final String id = IdHelper.getNextId(teachersMap.keySet(), "teacher");
+        final TeacherEntityConverter converter = new TeacherEntityConverter();
 
-        final Teacher toStore = new Teacher(teacher);
-        toStore.setId(id);
-        toStore.getDetail().setId(id);
+        final TeacherEntity teacherEntity = converter.convertToTeacherEntity(teacher);
+        final TeacherEntity persistedTeacherEntity = teacherDao.persistTeacherEntity(teacherEntity);
 
-        teachersMap.put(id, toStore);
-
-        return new Teacher(toStore);
+        return converter.convertToTeacher(persistedTeacherEntity);
     }
 
     /**
@@ -81,25 +83,16 @@ public class TeacherBusinessBean implements TeacherBusinessLocal {
      */
     @Override
     public Teacher saveTeacher(final Teacher teacher) {
-        // TODO check for existence first?
-        final Teacher stored = teachersMap.get(teacher.getId());
+        final TeacherEntity teacherEntity = teacherDao.getTeacherEntityById(Long.valueOf(teacher.getId()));
 
-        stored.setFirstName(teacher.getFirstName());
-        stored.setLastName(teacher.getLastName());
-
-        return new Teacher(stored);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public TeacherDetail getTeacherDetail(final String id) {
-        if (teachersMap.containsKey(id)) {
-            final Teacher teacher = teachersMap.get(id);
-            return new TeacherDetail(teacher.getDetail());
-        } else {
+        if (teacherEntity == null) {
             return null;
+        } else {
+            final TeacherEntityConverter converter = new TeacherEntityConverter();
+            teacherEntity.setFirstname(teacher.getFirstname());
+            teacherEntity.setLastname(teacher.getLastname());
+
+            return converter.convertToTeacher(teacherEntity);
         }
     }
 
@@ -107,16 +100,36 @@ public class TeacherBusinessBean implements TeacherBusinessLocal {
      * {@inheritDoc}
      */
     @Override
-    public TeacherDetail saveTeacherDetail(final String teacherId, final TeacherDetail teacherDetail) {
-        // TODO check for existence first?
-        final Teacher stored = teachersMap.get(teacherId);
-        final TeacherDetail storedDetail = stored.getDetail();
+    public TeacherDetail getTeacherDetail(final Long id) {
+        final TeacherDetailEntity teacherDetailEntity = teacherDao.getTeacherDetailEntityById(id);
 
-        storedDetail.setAddress(teacherDetail.getAddress());
-        storedDetail.setEmail(teacherDetail.getEmail());
-        storedDetail.setPhone(teacherDetail.getPhone());
-
-        return new TeacherDetail(storedDetail);
+        if (teacherDetailEntity == null) {
+            return null;
+        } else {
+            final TeacherEntityConverter converter = new TeacherEntityConverter();
+            final Teacher teacher = converter.convertToTeacher(teacherDetailEntity.getTeacher());
+            return teacher.getDetail();
+        }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TeacherDetail saveTeacherDetail(final TeacherDetail teacherDetail) {
+        final TeacherDetailEntity teacherDetailEntity = teacherDao.getTeacherDetailEntityById(Long.valueOf(teacherDetail.getId()));
+
+        if (teacherDetailEntity == null) {
+            return null;
+        } else {
+            teacherDetailEntity.setAddress(teacherDetail.getAddress());
+            teacherDetailEntity.setEmail(teacherDetail.getEmail());
+            teacherDetailEntity.setPhone(teacherDetail.getPhone());
+
+            final TeacherEntityConverter converter = new TeacherEntityConverter();
+            final Teacher teacher = converter.convertToTeacher(teacherDetailEntity.getTeacher());
+
+            return teacher.getDetail();
+        }
+    }
 }

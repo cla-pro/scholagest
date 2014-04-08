@@ -1,7 +1,7 @@
 package net.scholagest.tester.testsuites;
 
 import static org.junit.Assert.assertEquals;
-import net.scholagest.tester.AbstractTestSuite;
+import net.scholagest.tester.utils.AbstractTestSuite;
 
 import org.eclipse.jetty.client.api.ContentResponse;
 import org.eclipse.jetty.http.HttpStatus;

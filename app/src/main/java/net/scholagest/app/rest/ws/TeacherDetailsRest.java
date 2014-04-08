@@ -78,6 +78,7 @@ public class TeacherDetailsRest {
         final TeacherJsonConverter converter = new TeacherJsonConverter();
 
         final TeacherDetailJson teacherDetailJson = payload.get("teacherDetail");
+        teacherDetailJson.setId(id);
         final TeacherDetail teacherDetail = converter.convertToTeacherDetail(teacherDetailJson);
 
         teacherService.saveTeacherDetail(id, teacherDetail);

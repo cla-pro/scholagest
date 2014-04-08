@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 
 /**
  * Entity that model a teacher in the DB
@@ -15,36 +16,43 @@ import javax.persistence.OneToOne;
  * @since 0.15.0
  */
 @Entity(name = "teacher")
-public class TeacherEntity extends BaseEntity {
+public class TeacherEntity {
+    private final static String TOSTRING_FORMAT = "Teacher [id=%d, firstname=%s, lastname=%s, detail=%s]";
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @SequenceGenerator(name = "seq_teacher", sequenceName = "seq_teacher_id")
+    @GeneratedValue(generator = "seq_teacher", strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-    @Column(name = "firstName")
-    private String firstName;
+    @Column(name = "firstname")
+    private String firstname;
 
-    @Column(name = "lastName")
-    private String lastName;
+    @Column(name = "lastname")
+    private String lastname;
 
     @OneToOne(mappedBy = "teacher", fetch = FetchType.EAGER)
     private TeacherDetailEntity teacherDetail;
 
     public TeacherEntity() {}
 
-    public String getFirstName() {
-        return firstName;
+    public Long getId() {
+        return id;
     }
 
-    public void setFirstName(final String firstName) {
-        this.firstName = firstName;
+    public String getFirstname() {
+        return firstname;
     }
 
-    public String getLastName() {
-        return lastName;
+    public void setFirstname(final String firstname) {
+        this.firstname = firstname;
     }
 
-    public void setLastName(final String lastName) {
-        this.lastName = lastName;
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(final String lastname) {
+        this.lastname = lastname;
     }
 
     public TeacherDetailEntity getTeacherDetail() {
@@ -53,5 +61,14 @@ public class TeacherEntity extends BaseEntity {
 
     public void setTeacherDetail(final TeacherDetailEntity teacherDetail) {
         this.teacherDetail = teacherDetail;
+        teacherDetail.setTeacher(this);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return String.format(TOSTRING_FORMAT, id, firstname, lastname, teacherDetail);
     }
 }

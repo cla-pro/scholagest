@@ -19,8 +19,8 @@ public class TeacherTest {
         final Teacher copied = new Teacher(toCopy);
 
         assertEquals(toCopy.getId(), copied.getId());
-        assertEquals(toCopy.getFirstName(), copied.getFirstName());
-        assertEquals(toCopy.getLastName(), copied.getLastName());
+        assertEquals(toCopy.getFirstname(), copied.getFirstname());
+        assertEquals(toCopy.getLastname(), copied.getLastname());
         assertEquals(toCopy.getDetail().getId(), copied.getDetail().getId());
     }
 

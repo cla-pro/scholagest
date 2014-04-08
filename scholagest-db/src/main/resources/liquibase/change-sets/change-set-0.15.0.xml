@@ -6,19 +6,19 @@
 
 	<changeSet id="0.15.0-1-tables" author="cla">
 		<createTable tableName="teacher" schemaName="public">
-			<column name="id" type="int" autoIncrement="true">
+			<column name="id" type="int">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-			<column name="firstName" type="java.sql.Types.VARCHAR(50)">
+			<column name="firstname" type="java.sql.Types.VARCHAR(50)">
 				<constraints nullable="false" />
 			</column>
-			<column name="lastName" type="java.sql.Types.VARCHAR(50)">
+			<column name="lastname" type="java.sql.Types.VARCHAR(50)">
 				<constraints nullable="false" />
 			</column>
 		</createTable>
 
         <createTable tableName="teacher_detail">
-            <column name="id" type="int" autoIncrement="true">
+            <column name="id" type="int">
                 <constraints primaryKey="true" nullable="false" />
             </column>
             <column name="address" type="java.sql.Types.VARCHAR(50)" />
@@ -35,7 +35,7 @@
         </createTable>
 
 		<createTable tableName="user">
-			<column name="id" type="int" autoIncrement="true">
+			<column name="id" type="int">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="username" type="java.sql.Types.VARCHAR(50)">
@@ -53,19 +53,19 @@
 		</createTable>
 
 		<createTable tableName="student">
-			<column name="id" type="int" autoIncrement="true">
+			<column name="id" type="int">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-			<column name="firstName" type="java.sql.Types.VARCHAR(50)">
+			<column name="firstname" type="java.sql.Types.VARCHAR(50)">
 				<constraints nullable="false" />
 			</column>
-			<column name="lastName" type="java.sql.Types.VARCHAR(50)">
+			<column name="lastname" type="java.sql.Types.VARCHAR(50)">
 				<constraints nullable="false" />
 			</column>
 		</createTable>
 
 		<createTable tableName="student_personal">
-			<column name="id" type="int" autoIncrement="true">
+			<column name="id" type="int">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="street" type="java.sql.Types.VARCHAR(50)" />
@@ -78,7 +78,7 @@
 		</createTable>
 
 		<createTable tableName="student_medical">
-			<column name="id" type="int" autoIncrement="true">
+			<column name="id" type="int">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="doctor" type="java.sql.Types.VARCHAR(50)" />
@@ -93,7 +93,7 @@
         </createTable>
 
 		<createTable tableName="year">
-			<column name="id" type="int" autoIncrement="true">
+			<column name="id" type="int">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="name" type="java.sql.Types.VARCHAR(50)">
@@ -105,7 +105,7 @@
 		</createTable>
 
 		<createTable tableName="class">
-			<column name="id" type="int" autoIncrement="true">
+			<column name="id" type="int">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="name" type="java.sql.Types.VARCHAR(50)">
@@ -117,7 +117,7 @@
 		</createTable>
 
 		<createTable tableName="branch">
-			<column name="id" type="int" autoIncrement="true">
+			<column name="id" type="int">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="name" type="java.sql.Types.VARCHAR(50)">
@@ -132,7 +132,7 @@
 		</createTable>
 
 		<createTable tableName="period">
-			<column name="id" type="int" autoIncrement="true">
+			<column name="id" type="int">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="name" type="java.sql.Types.VARCHAR(50)">
@@ -144,7 +144,7 @@
 		</createTable>
 
 		<createTable tableName="branch_period">
-			<column name="id" type="int" autoIncrement="true">
+			<column name="id" type="int">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="branch_id" type="int">
@@ -156,7 +156,7 @@
 		</createTable>
 
 		<createTable tableName="exam">
-			<column name="id" type="int" autoIncrement="true">
+			<column name="id" type="int">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="name" type="java.sql.Types.VARCHAR(50)">
@@ -171,7 +171,7 @@
 		</createTable>
 
 		<createTable tableName="student_result">
-			<column name="id" type="int" autoIncrement="true">
+			<column name="id" type="int">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="active" type="boolean">
@@ -186,7 +186,7 @@
 		</createTable>
 
         <createTable tableName="result">
-            <column name="id" type="int" autoIncrement="true">
+            <column name="id" type="int">
                 <constraints primaryKey="true" nullable="false" />
             </column>
             <column name="grade" type="java.sql.Types.VARCHAR(50)">
@@ -201,7 +201,7 @@
         </createTable>
 
         <createTable tableName="mean">
-            <column name="id" type="int" autoIncrement="true">
+            <column name="id" type="int">
                 <constraints primaryKey="true" nullable="false" />
             </column>
             <column name="grade" type="java.sql.Types.VARCHAR(50)">
@@ -352,8 +352,62 @@
             <column name="student_result_id" />
         </createIndex>
     </changeSet>
+    
+    <changeSet id="0.15.0-4-sequences" author="cla">
+        <createSequence incrementBy="1" cycle="true"
+                minValue="0" maxValue="10000000"
+                sequenceName="seq_teacher_id"/>
+        <createSequence incrementBy="1" cycle="true"
+                minValue="0" maxValue="10000000"
+                sequenceName="seq_teacher_detail_id"/>
+        <createSequence incrementBy="1" cycle="true"
+                minValue="0" maxValue="10000000"
+                sequenceName="seq_class_teacher_id"/>
+        <createSequence incrementBy="1" cycle="true"
+                minValue="0" maxValue="10000000"
+                sequenceName="seq_user_id"/>
+        <createSequence incrementBy="1" cycle="true"
+                minValue="0" maxValue="10000000"
+                sequenceName="seq_student_id"/>
+        <createSequence incrementBy="1" cycle="true"
+                minValue="0" maxValue="10000000"
+                sequenceName="seq_student_personal_id"/>
+        <createSequence incrementBy="1" cycle="true"
+                minValue="0" maxValue="10000000"
+                sequenceName="seq_student_medical_id"/>
+        <createSequence incrementBy="1" cycle="true"
+                minValue="0" maxValue="10000000"
+                sequenceName="seq_class_student_id"/>
+        <createSequence incrementBy="1" cycle="true"
+                minValue="0" maxValue="10000000"
+                sequenceName="seq_year_id"/>
+        <createSequence incrementBy="1" cycle="true"
+                minValue="0" maxValue="10000000"
+                sequenceName="seq_class_id"/>
+        <createSequence incrementBy="1" cycle="true"
+                minValue="0" maxValue="10000000"
+                sequenceName="seq_branch_id"/>
+        <createSequence incrementBy="1" cycle="true"
+                minValue="0" maxValue="10000000"
+                sequenceName="seq_period_id"/>
+        <createSequence incrementBy="1" cycle="true"
+                minValue="0" maxValue="10000000"
+                sequenceName="seq_branch_period_id"/>
+        <createSequence incrementBy="1" cycle="true"
+                minValue="0" maxValue="10000000"
+                sequenceName="seq_exam_id"/>
+        <createSequence incrementBy="1" cycle="true"
+                minValue="0" maxValue="10000000"
+                sequenceName="seq_student_result_id"/>
+        <createSequence incrementBy="1" cycle="true"
+                minValue="0" maxValue="10000000"
+                sequenceName="seq_result_id"/>
+        <createSequence incrementBy="1" cycle="true"
+                minValue="0" maxValue="10000000"
+                sequenceName="seq_mean_id"/>
+    </changeSet>
 
-    <changeSet id="0.15.0-4-business-indexes" author="cla">
+    <changeSet id="0.15.0-5-business-indexes" author="cla">
         <createIndex tableName="teacher" indexName="idx_teacher_fullname">
             <column name="firstName" />
             <column name="lastName" />

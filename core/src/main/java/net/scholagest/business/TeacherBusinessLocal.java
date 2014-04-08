@@ -27,7 +27,7 @@ public interface TeacherBusinessLocal {
      * @param ids Used to filter the teachers list
      * @return The teachers
      */
-    public Teacher getTeacher(final String id);
+    public Teacher getTeacher(final Long id);
 
     /**
      * Create a new teacher.
@@ -51,7 +51,7 @@ public interface TeacherBusinessLocal {
      * @param id The teacher detail's id
      * @return The teacher detail
      */
-    public TeacherDetail getTeacherDetail(final String id);
+    public TeacherDetail getTeacherDetail(final Long id);
 
     /**
      * Update the teacher detail.
@@ -60,5 +60,5 @@ public interface TeacherBusinessLocal {
      * @param teacherDetail The new detail information
      * @return The updated detail
      */
-    public TeacherDetail saveTeacherDetail(final String teacherId, final TeacherDetail teacherDetail);
+    public TeacherDetail saveTeacherDetail(final TeacherDetail teacherDetail);
 }

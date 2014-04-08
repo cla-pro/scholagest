@@ -1,4 +1,4 @@
-package net.scholagest.tester;
+package net.scholagest.tester.utils;
 
 import net.scholagest.app.rest.GuiceContext;
 
