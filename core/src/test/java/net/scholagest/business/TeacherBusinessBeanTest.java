@@ -122,6 +122,13 @@ public class TeacherBusinessBeanTest {
     }
 
     @Test
+    public void testSaveTeacherNonExisting() {
+        final Teacher nonExistingTeacher = new Teacher("3", "firstname2", "lastname2", new TeacherDetail("3", "shouldNotBeSaved", "shouldNotBeSaved",
+                "shouldNotBeSaved"));
+        assertNull(testee.saveTeacher(nonExistingTeacher));
+    }
+
+    @Test
     public void testGetTeacherDetail() {
         final TeacherDetail expected = new TeacherDetail("3", "address", "email", "phone");
 
@@ -143,6 +150,11 @@ public class TeacherBusinessBeanTest {
     }
 
     @Test
+    public void testGetTeacherDetailNonExisting() {
+        assertNull(testee.getTeacherDetail(4L));
+    }
+
+    @Test
     public void saveTeacherDetail() {
         final TeacherDetail teacherDetail = new TeacherDetail("3", "address2", "phone2", "email2");
         final Teacher teacher = new Teacher("2", "shouldNotBeSaved", "shouldNotBeSaved", teacherDetail);
@@ -161,6 +173,12 @@ public class TeacherBusinessBeanTest {
         assertEquals(teacherDetail.getAddress(), result.getAddress());
         assertEquals(teacherDetail.getEmail(), result.getEmail());
         assertEquals(teacherDetail.getPhone(), result.getPhone());
+    }
+
+    @Test
+    public void testSaveTeacherDetailNonExisting() {
+        final TeacherDetail nonExistingTeacherDetail = new TeacherDetail("3", "address2", "phone2", "email2");
+        assertNull(testee.saveTeacherDetail(nonExistingTeacherDetail));
     }
 
     private TeacherEntity createTeacherEntity(final Long id, final String firstname, final String lastname) {
