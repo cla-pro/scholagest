@@ -34,7 +34,7 @@
             <column name="class_id" type="int" />
         </createTable>
 
-		<createTable tableName="user">
+		<createTable tableName="scholagest_user">
 			<column name="id" type="int">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
@@ -220,7 +220,7 @@
             
         <addForeignKeyConstraint constraintName="fk_user_teacher"
             referencedTableName="teacher" referencedColumnNames="id"
-            baseColumnNames="teacher_id" baseTableName="user" />
+            baseColumnNames="teacher_id" baseTableName="scholagest_user" />
             
         <addForeignKeyConstraint constraintName="fk_class_teacher_teacher"
             referencedTableName="teacher" referencedColumnNames="id"
@@ -297,7 +297,7 @@
             <column name="class_id" />
         </createIndex>
         
-        <createIndex tableName="user" indexName="idx_user_teacher_id">
+        <createIndex tableName="scholagest_user" indexName="idx_user_teacher_id">
             <column name="teacher_id" />
         </createIndex>
         

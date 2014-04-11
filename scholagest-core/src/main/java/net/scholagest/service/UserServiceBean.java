@@ -34,6 +34,6 @@ public class UserServiceBean implements UserServiceLocal {
             return null;
         }
 
-        return userBusiness.getUser(id);
+        return userBusiness.getUser(Long.valueOf(id));
     }
 }

@@ -43,15 +43,13 @@ public class RealmAuthenticationAndAuthorization extends AuthorizingRealm {
     public static final String USER_KEY = "user";
     public static final int HASH_ITERATIONS = 1000;
 
-    private final UserBusinessLocal userBusiness;
-
-    private final SessionBusinessLocal sessionBusiness;
+    @Inject
+    private UserBusinessLocal userBusiness;
 
     @Inject
-    public RealmAuthenticationAndAuthorization(final UserBusinessLocal userBusiness, final SessionBusinessLocal sessionBusiness) {
-        this.userBusiness = userBusiness;
-        this.sessionBusiness = sessionBusiness;
+    private SessionBusinessLocal sessionBusiness;
 
+    public RealmAuthenticationAndAuthorization() {
         setAuthenticationCachingEnabled(false);
         setAuthorizationCachingEnabled(false);
 
@@ -107,7 +105,7 @@ public class RealmAuthenticationAndAuthorization extends AuthorizingRealm {
     }
 
     private AuthenticationInfo checkUsernameToken(final UsernameToken token) throws ScholagestException {
-        final User user = userBusiness.getUser(token.getUsername());
+        final User user = userBusiness.getUserByUsername(token.getUsername());
 
         if (user == null) {
             throw new ScholagestException(ScholagestExceptionErrorCode.USER_NOT_FOUND, "User with name " + token.getUsername() + " not found");

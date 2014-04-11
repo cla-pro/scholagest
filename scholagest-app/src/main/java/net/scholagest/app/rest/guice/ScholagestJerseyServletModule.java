@@ -51,6 +51,8 @@ import net.scholagest.business.YearBusinessBean;
 import net.scholagest.business.YearBusinessLocal;
 import net.scholagest.dao.TeacherDaoBean;
 import net.scholagest.dao.TeacherDaoLocal;
+import net.scholagest.dao.UserDaoBean;
+import net.scholagest.dao.UserDaoLocal;
 import net.scholagest.service.BranchPeriodServiceBean;
 import net.scholagest.service.BranchPeriodServiceLocal;
 import net.scholagest.service.BranchServiceBean;
@@ -102,7 +104,10 @@ public class ScholagestJerseyServletModule extends JerseyServletModule {
         requestInjection(authorizationInterceptor);
         bindInterceptor(Matchers.any(), Matchers.annotatedWith(RolesAndPermissions.class), authorizationInterceptor);
 
+        // bind(PersistInitializer.class);
+
         bind(TeacherDaoLocal.class).to(TeacherDaoBean.class);
+        bind(UserDaoLocal.class).to(UserDaoBean.class);
 
         bind(BranchPeriodBusinessLocal.class).to(BranchPeriodBusinessBean.class);
         bind(BranchBusinessLocal.class).to(BranchBusinessBean.class);

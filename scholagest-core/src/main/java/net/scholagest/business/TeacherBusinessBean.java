@@ -7,8 +7,10 @@ import java.util.List;
 
 import net.scholagest.converter.TeacherEntityConverter;
 import net.scholagest.dao.TeacherDaoLocal;
+import net.scholagest.dao.UserDaoLocal;
 import net.scholagest.db.entity.TeacherDetailEntity;
 import net.scholagest.db.entity.TeacherEntity;
+import net.scholagest.db.entity.UserEntity;
 import net.scholagest.object.Teacher;
 import net.scholagest.object.TeacherDetail;
 
@@ -35,6 +37,9 @@ public class TeacherBusinessBean implements TeacherBusinessLocal {
 
     @Inject
     private TeacherDaoLocal teacherDao;
+
+    @Inject
+    private UserDaoLocal userDao;
 
     TeacherBusinessBean() {}
 
@@ -75,7 +80,27 @@ public class TeacherBusinessBean implements TeacherBusinessLocal {
         final TeacherEntity teacherEntity = converter.convertToTeacherEntity(teacher);
         final TeacherEntity persistedTeacherEntity = teacherDao.persistTeacherEntity(teacherEntity);
 
+        final UserEntity userEntity = createUserEntity(teacherEntity);
+        userDao.persistUserEntity(userEntity);
+
         return converter.convertToTeacher(persistedTeacherEntity);
+    }
+
+    private UserEntity createUserEntity(final TeacherEntity teacherEntity) {
+        final UserEntity userEntity = new UserEntity();
+        userEntity.setUsername(generateUsername(teacherEntity));
+        userEntity.setPassword("");
+        userEntity.setRole("ADMIN");
+        userEntity.setTeacher(teacherEntity);
+
+        return userEntity;
+    }
+
+    private String generateUsername(final TeacherEntity teacherEntity) {
+        final String initialFirstname = teacherEntity.getFirstname().substring(0, 1).toLowerCase();
+        final String lastname = teacherEntity.getLastname().toLowerCase();
+
+        return initialFirstname + lastname;
     }
 
     /**

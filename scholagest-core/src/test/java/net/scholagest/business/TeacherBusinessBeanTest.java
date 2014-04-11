@@ -15,8 +15,10 @@ import java.util.List;
 
 import net.scholagest.ReflectionUtils;
 import net.scholagest.dao.TeacherDaoLocal;
+import net.scholagest.dao.UserDaoLocal;
 import net.scholagest.db.entity.TeacherDetailEntity;
 import net.scholagest.db.entity.TeacherEntity;
+import net.scholagest.db.entity.UserEntity;
 import net.scholagest.object.Teacher;
 import net.scholagest.object.TeacherDetail;
 
@@ -37,6 +39,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class TeacherBusinessBeanTest {
     @Mock
     private TeacherDaoLocal teacherDao;
+
+    @Mock
+    private UserDaoLocal userDao;
 
     @InjectMocks
     private final TeacherBusinessLocal testee = new TeacherBusinessBean();
@@ -92,10 +97,18 @@ public class TeacherBusinessBeanTest {
         final Teacher result = testee.createTeacher(teacher);
 
         assertEquals(teacher, result);
-        final ArgumentCaptor<TeacherEntity> argumentCaptor = ArgumentCaptor.forClass(TeacherEntity.class);
-        verify(teacherDao).persistTeacherEntity(argumentCaptor.capture());
-        assertNull(argumentCaptor.getValue().getId());
-        assertNull(argumentCaptor.getValue().getTeacherDetail().getId());
+        final ArgumentCaptor<TeacherEntity> teacherCaptor = ArgumentCaptor.forClass(TeacherEntity.class);
+        verify(teacherDao).persistTeacherEntity(teacherCaptor.capture());
+        assertNull(teacherCaptor.getValue().getId());
+        assertNull(teacherCaptor.getValue().getTeacherDetail().getId());
+
+        final String expectedUsername = teacher.getFirstname().substring(0, 1) + teacher.getLastname();
+        final String expectedPassword = "";
+        final ArgumentCaptor<UserEntity> userCaptor = ArgumentCaptor.forClass(UserEntity.class);
+        verify(userDao).persistUserEntity(userCaptor.capture());
+        assertNull(userCaptor.getValue().getId());
+        assertEquals(expectedUsername, userCaptor.getValue().getUsername());
+        assertEquals(expectedPassword, userCaptor.getValue().getPassword());
     }
 
     @Test
