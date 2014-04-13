@@ -40,6 +40,10 @@ public class UserEntity {
 
     public UserEntity() {}
 
+    public Long getId() {
+        return id;
+    }
+
     public String getUsername() {
         return username;
     }
@@ -70,10 +74,6 @@ public class UserEntity {
 
     public void setTeacher(final TeacherEntity teacher) {
         this.teacher = teacher;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     /**

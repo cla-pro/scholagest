@@ -47,7 +47,7 @@ public class StudentServiceBean implements StudentServiceLocal {
             return null;
         }
 
-        return studentBusiness.getStudent(id);
+        return studentBusiness.getStudent(Long.valueOf(id));
     }
 
     /**
@@ -75,7 +75,7 @@ public class StudentServiceBean implements StudentServiceLocal {
             return null;
         }
 
-        return studentBusiness.saveStudent(studentId, student);
+        return studentBusiness.saveStudent(student);
     }
 
     /**
@@ -88,7 +88,7 @@ public class StudentServiceBean implements StudentServiceLocal {
             return null;
         }
 
-        final Student student = studentBusiness.getStudent(id);
+        final Student student = studentBusiness.getStudent(Long.valueOf(id));
         if (student == null) {
             return null;
         } else {
@@ -106,7 +106,7 @@ public class StudentServiceBean implements StudentServiceLocal {
             return null;
         }
 
-        return studentBusiness.saveStudentPersonal(studentId, studentPersonal);
+        return studentBusiness.saveStudentPersonal(studentPersonal);
     }
 
     /**
@@ -119,7 +119,7 @@ public class StudentServiceBean implements StudentServiceLocal {
             return null;
         }
 
-        final Student student = studentBusiness.getStudent(id);
+        final Student student = studentBusiness.getStudent(Long.valueOf(id));
         if (student == null) {
             return null;
         } else {
@@ -137,7 +137,7 @@ public class StudentServiceBean implements StudentServiceLocal {
             return null;
         }
 
-        return studentBusiness.saveStudentMedical(studentId, studentMedical);
+        return studentBusiness.saveStudentMedical(studentMedical);
     }
 
     /**
@@ -150,7 +150,7 @@ public class StudentServiceBean implements StudentServiceLocal {
             return null;
         }
 
-        final Student student = studentBusiness.getStudent(studentId);
+        final Student student = studentBusiness.getStudent(Long.valueOf(studentId));
         if (student == null) {
             return null;
         } else {

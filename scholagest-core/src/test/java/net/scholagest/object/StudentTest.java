@@ -22,8 +22,8 @@ public class StudentTest {
         final Student copied = new Student(toCopy);
 
         assertEquals(toCopy.getId(), copied.getId());
-        assertEquals(toCopy.getFirstName(), copied.getFirstName());
-        assertEquals(toCopy.getLastName(), copied.getLastName());
+        assertEquals(toCopy.getFirstname(), copied.getFirstname());
+        assertEquals(toCopy.getLastname(), copied.getLastname());
         assertEquals(toCopy.getStudentPersonal(), copied.getStudentPersonal());
         assertEquals(toCopy.getStudentMedical(), copied.getStudentMedical());
     }

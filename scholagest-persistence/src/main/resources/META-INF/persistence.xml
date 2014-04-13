@@ -8,8 +8,13 @@
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		<!-- <mapping-file>hibernate-mapping.xml</mapping-file> -->
 
+        <class>net.scholagest.db.entity.SessionEntity</class>
+        <class>net.scholagest.db.entity.StudentEntity</class>
+        <class>net.scholagest.db.entity.StudentMedicalEntity</class>
+        <class>net.scholagest.db.entity.StudentPersonalEntity</class>
 		<class>net.scholagest.db.entity.TeacherEntity</class>
 		<class>net.scholagest.db.entity.TeacherDetailEntity</class>
+		<class>net.scholagest.db.entity.UserEntity</class>
 
 		<properties>
 			<property name="hibernate.connection.driver_class" value="org.postgresql.Driver" />
@@ -25,8 +30,13 @@
 <!-- 		<provider>org.hibernate.ejb.HibernatePersistence</provider> -->
 		<!-- <mapping-file>hibernate-mapping.xml</mapping-file> -->
 
-		<class>net.scholagest.db.entity.TeacherEntity</class>
-		<class>net.scholagest.db.entity.TeacherDetailEntity</class>
+        <class>net.scholagest.db.entity.SessionEntity</class>
+        <class>net.scholagest.db.entity.StudentEntity</class>
+        <class>net.scholagest.db.entity.StudentMedicalEntity</class>
+        <class>net.scholagest.db.entity.StudentPersonalEntity</class>
+        <class>net.scholagest.db.entity.TeacherEntity</class>
+        <class>net.scholagest.db.entity.TeacherDetailEntity</class>
+        <class>net.scholagest.db.entity.UserEntity</class>
 
 		<properties>
 			<property name="hibernate.connection.url" value="jdbc:h2:mem:~test" />

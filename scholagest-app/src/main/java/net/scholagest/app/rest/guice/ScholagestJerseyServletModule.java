@@ -49,6 +49,10 @@ import net.scholagest.business.UserBusinessBean;
 import net.scholagest.business.UserBusinessLocal;
 import net.scholagest.business.YearBusinessBean;
 import net.scholagest.business.YearBusinessLocal;
+import net.scholagest.dao.SessionDaoBean;
+import net.scholagest.dao.SessionDaoLocal;
+import net.scholagest.dao.StudentDaoBean;
+import net.scholagest.dao.StudentDaoLocal;
 import net.scholagest.dao.TeacherDaoBean;
 import net.scholagest.dao.TeacherDaoLocal;
 import net.scholagest.dao.UserDaoBean;
@@ -106,6 +110,8 @@ public class ScholagestJerseyServletModule extends JerseyServletModule {
 
         // bind(PersistInitializer.class);
 
+        bind(SessionDaoLocal.class).to(SessionDaoBean.class);
+        bind(StudentDaoLocal.class).to(StudentDaoBean.class);
         bind(TeacherDaoLocal.class).to(TeacherDaoBean.class);
         bind(UserDaoLocal.class).to(UserDaoBean.class);
 
