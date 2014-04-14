@@ -7,14 +7,14 @@ package net.scholagest.app.rest.ws.objects;
  * @since 0.14.0
  */
 public class ResultJson extends BaseJson {
-    private Double grade;
+    private String grade;
     private String studentResult;
     private String exam;
     private int changeCounter;
 
     public ResultJson() {}
 
-    public ResultJson(final String id, final Double grade, final String exam, final String studentResult) {
+    public ResultJson(final String id, final String grade, final String exam, final String studentResult) {
         super(id);
         this.grade = grade;
         this.exam = exam;
@@ -22,11 +22,11 @@ public class ResultJson extends BaseJson {
         this.changeCounter = 0;
     }
 
-    public Double getGrade() {
+    public String getGrade() {
         return grade;
     }
 
-    public void setGrade(final Double grade) {
+    public void setGrade(final String grade) {
         this.grade = grade;
     }
 

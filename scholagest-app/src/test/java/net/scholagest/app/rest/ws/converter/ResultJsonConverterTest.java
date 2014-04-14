@@ -22,8 +22,8 @@ import org.junit.Test;
 public class ResultJsonConverterTest {
     @Test
     public void testConvertToResultJsonList() {
-        final Result result1 = new Result("result1", 2.5, "exam1", "studentResult1");
-        final Result result2 = new Result("result2", 4.5, "exam2", "studentResult2");
+        final Result result1 = new Result("result1", "2.5", "exam1", "studentResult1");
+        final Result result2 = new Result("result2", "4.5", "exam2", "studentResult2");
         final List<Result> resultList = Arrays.asList(result1, result2);
 
         final ResultJsonConverter testee = spy(new ResultJsonConverter());
@@ -37,7 +37,7 @@ public class ResultJsonConverterTest {
 
     @Test
     public void testConvertToResultJson() {
-        final Result result = new Result("result1", 2.5, "exam1", "studentResult1");
+        final Result result = new Result("result1", "2.5", "exam1", "studentResult1");
         final ResultJson resultJson = new ResultJsonConverter().convertToResultJson(result);
 
         assertEquals(result.getId(), resultJson.getId());
@@ -48,7 +48,7 @@ public class ResultJsonConverterTest {
 
     @Test
     public void testConvertToResult() {
-        final ResultJson resultJson = new ResultJson("result1", 2.5, "exam1", "studentResult1");
+        final ResultJson resultJson = new ResultJson("result1", "2.5", "exam1", "studentResult1");
         final Result result = new ResultJsonConverter().convertToResult(resultJson);
 
         assertEquals(resultJson.getId(), result.getId());

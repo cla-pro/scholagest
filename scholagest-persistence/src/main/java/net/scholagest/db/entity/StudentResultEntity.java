@@ -75,6 +75,22 @@ public class StudentResultEntity {
         this.branchPeriod = branchPeriod;
     }
 
+    public List<ResultEntity> getResults() {
+        return results;
+    }
+
+    public void setResults(final List<ResultEntity> results) {
+        this.results = results;
+    }
+
+    public MeanEntity getMean() {
+        return mean;
+    }
+
+    public void setMean(final MeanEntity mean) {
+        this.mean = mean;
+    }
+
     /**
      * {@inheritDoc}
      */
