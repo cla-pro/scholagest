@@ -3,7 +3,9 @@ package net.scholagest.converter;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.scholagest.db.entity.BranchEntity;
 import net.scholagest.db.entity.ClazzEntity;
+import net.scholagest.db.entity.PeriodEntity;
 import net.scholagest.object.Clazz;
 
 /**
@@ -41,6 +43,18 @@ public class ClazzEntityConverter {
         clazz.setName(clazzEntity.getName());
         clazz.setYear("" + clazzEntity.getYear().getId());
 
+        final List<String> branches = new ArrayList<>();
+        for (final BranchEntity branchEntity : clazzEntity.getBranches()) {
+            branches.add("" + branchEntity.getId());
+        }
+        clazz.setBranches(branches);
+
+        final List<String> periods = new ArrayList<>();
+        for (final PeriodEntity periodEntity : clazzEntity.getPeriods()) {
+            periods.add("" + periodEntity.getId());
+        }
+        clazz.setPeriods(periods);
+
         return clazz;
     }
 
@@ -53,6 +67,8 @@ public class ClazzEntityConverter {
     public ClazzEntity convertToClazzEntity(final Clazz clazz) {
         final ClazzEntity clazzEntity = new ClazzEntity();
         clazzEntity.setName(clazz.getName());
+        clazzEntity.setBranches(new ArrayList<BranchEntity>());
+        clazzEntity.setPeriods(new ArrayList<PeriodEntity>());
 
         return clazzEntity;
     }

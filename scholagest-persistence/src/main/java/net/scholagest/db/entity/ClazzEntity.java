@@ -1,5 +1,7 @@
 package net.scholagest.db.entity;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -7,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
 /**
@@ -31,6 +34,12 @@ public class ClazzEntity {
     @ManyToOne
     private YearEntity year;
 
+    @OneToMany(mappedBy = "clazz")
+    private List<BranchEntity> branches;
+
+    @OneToMany(mappedBy = "clazz")
+    private List<PeriodEntity> periods;
+
     public ClazzEntity() {}
 
     public Long getId() {
@@ -51,6 +60,22 @@ public class ClazzEntity {
 
     public void setYear(final YearEntity year) {
         this.year = year;
+    }
+
+    public List<BranchEntity> getBranches() {
+        return branches;
+    }
+
+    public void setBranches(final List<BranchEntity> branches) {
+        this.branches = branches;
+    }
+
+    public List<PeriodEntity> getPeriods() {
+        return periods;
+    }
+
+    public void setPeriods(final List<PeriodEntity> periods) {
+        this.periods = periods;
     }
 
     /**

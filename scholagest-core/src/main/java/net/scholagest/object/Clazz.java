@@ -22,6 +22,8 @@ public class Clazz extends Base {
     public Clazz() {
         this.teachers = new ArrayList<>();
         this.students = new ArrayList<>();
+        this.periods = new ArrayList<>();
+        this.branches = new ArrayList<>();
     }
 
     public Clazz(final Clazz toCopy) {
