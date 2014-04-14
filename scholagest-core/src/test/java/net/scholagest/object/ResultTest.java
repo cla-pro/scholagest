@@ -15,7 +15,7 @@ import org.junit.Test;
 public class ResultTest {
     @Test
     public void testConstructorCopy() {
-        final Result toCopy = new Result("id", 3.5, "exam", "studentResult");
+        final Result toCopy = new Result("id", "3.5", "exam", "studentResult");
         final Result copied = new Result(toCopy);
 
         assertEquals(toCopy.getId(), copied.getId());
@@ -27,10 +27,10 @@ public class ResultTest {
     @Test
     public void testEquals() {
         final Result result1 = new Result(null, null, null, null);
-        final Result result2 = new Result(null, 3.5, "exam1", "studentResutl1");
-        final Result result3 = new Result("1", 4.5, "exam2", "studentResult2");
-        final Result result4 = new Result("1", 3.5, "exam1", "studentResult1");
-        final Result result5 = new Result("1", 3.5, "exam1", "studentResult1");
+        final Result result2 = new Result(null, "3.5", "exam1", "studentResutl1");
+        final Result result3 = new Result("1", "4.5", "exam2", "studentResult2");
+        final Result result4 = new Result("1", "3.5", "exam1", "studentResult1");
+        final Result result5 = new Result("1", "3.5", "exam1", "studentResult1");
 
         assertFalse(result1.equals(null));
         assertFalse(result1.equals(new Object()));

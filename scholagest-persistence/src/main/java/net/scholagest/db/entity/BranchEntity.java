@@ -35,7 +35,7 @@ public class BranchEntity {
     private ClazzEntity clazz;
 
     @OneToMany(mappedBy = "branch")
-    private List<BranchPeriodEntity> branchPeriodEntities;
+    private List<BranchPeriodEntity> branchPeriods;
 
     public BranchEntity() {}
 
@@ -59,12 +59,12 @@ public class BranchEntity {
         this.clazz = clazz;
     }
 
-    public List<BranchPeriodEntity> getBranchPeriodEntities() {
-        return branchPeriodEntities;
+    public List<BranchPeriodEntity> getBranchPeriods() {
+        return branchPeriods;
     }
 
-    public void setBranchPeriodEntities(final List<BranchPeriodEntity> branchPeriodEntities) {
-        this.branchPeriodEntities = branchPeriodEntities;
+    public void setBranchPeriods(final List<BranchPeriodEntity> branchPeriods) {
+        this.branchPeriods = branchPeriods;
     }
 
     /**

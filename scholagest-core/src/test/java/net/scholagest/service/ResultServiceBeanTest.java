@@ -48,8 +48,8 @@ public class ResultServiceBeanTest extends AbstractGuiceContextTest {
         setAdminSubject();
         final ResultServiceLocal testee = getInstance(ResultServiceLocal.class);
 
-        final Result result1 = new Result("result1", 2.5, "exam1", "studentResult1");
-        final Result result2 = new Result("result2", 4.5, "exam2", "studentResult2");
+        final Result result1 = new Result("result1", "2.5", "exam1", "studentResult1");
+        final Result result2 = new Result("result2", "4.5", "exam2", "studentResult2");
         final List<Result> expected = Arrays.asList(result1, result2);
         when(resultBusiness.getResult("result1")).thenReturn(result1);
         when(resultBusiness.getResult("result2")).thenReturn(result2);
@@ -72,7 +72,7 @@ public class ResultServiceBeanTest extends AbstractGuiceContextTest {
         setAdminSubject();
         final ResultServiceLocal testee = getInstance(ResultServiceLocal.class);
 
-        final Result expected = new Result("result1", 2.5, "exam1", "studentResult1");
+        final Result expected = new Result("result1", "2.5", "exam1", "studentResult1");
         when(resultBusiness.getResult("result1")).thenReturn(expected);
 
         assertNull(testee.getResult(null));
@@ -90,7 +90,7 @@ public class ResultServiceBeanTest extends AbstractGuiceContextTest {
         setAdminSubject();
         final ResultServiceLocal testee = getInstance(ResultServiceLocal.class);
 
-        final Result saved = new Result("result1", 2.5, "exam1", "studentResult1");
+        final Result saved = new Result("result1", "2.5", "exam1", "studentResult1");
         when(resultBusiness.saveResult(any(Result.class))).thenReturn(saved);
 
         final Result toSave = new Result();

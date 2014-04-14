@@ -38,7 +38,7 @@ public class BranchPeriodEntity {
     private List<ExamEntity> exams;
 
     @OneToMany(mappedBy = "branchPeriod")
-    private List<StudentResultEntity> studentResult;
+    private List<StudentResultEntity> studentResults;
 
     public BranchPeriodEntity() {}
 
@@ -70,12 +70,12 @@ public class BranchPeriodEntity {
         this.exams = exams;
     }
 
-    public List<StudentResultEntity> getStudentResult() {
-        return studentResult;
+    public List<StudentResultEntity> getStudentResults() {
+        return studentResults;
     }
 
-    public void setStudentResult(final List<StudentResultEntity> studentResult) {
-        this.studentResult = studentResult;
+    public void setStudentResults(final List<StudentResultEntity> studentResults) {
+        this.studentResults = studentResults;
     }
 
     /**
