@@ -101,6 +101,6 @@ public class Clazz extends Base {
         }
 
         final Clazz other = (Clazz) that;
-        return new EqualsBuilder().append(getId(), other.getId()).append(name, other.name).append(year, other.year).isEquals();
+        return new EqualsBuilder().append(getId(), other.getId()).append(name, other.name).isEquals();
     }
 }

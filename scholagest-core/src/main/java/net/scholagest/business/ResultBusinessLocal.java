@@ -16,7 +16,7 @@ public interface ResultBusinessLocal {
      * @param id Used to find the result
      * @return The result
      */
-    public Result getResult(final String id);
+    public Result getResult(final Long id);
 
     /**
      * Update a result.

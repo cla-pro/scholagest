@@ -16,7 +16,7 @@ public interface ClazzBusinessLocal {
      * @param id Used to find the class
      * @return The class
      */
-    public Clazz getClazz(final String id);
+    public Clazz getClazz(final Long id);
 
     /**
      * Create a new class.

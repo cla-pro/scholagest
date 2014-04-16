@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -64,16 +64,16 @@ public class YearServiceBeanTest extends AbstractGuiceContextTest {
         final YearServiceLocal testee = getInstance(YearServiceLocal.class);
 
         final Year expected = new Year("1", "name", true, Arrays.asList("class1", "class2"));
-        when(yearBusiness.getYear("1")).thenReturn(expected);
+        when(yearBusiness.getYear(1L)).thenReturn(expected);
 
         assertNull(testee.getYear(null));
-        verify(yearBusiness, never()).getYear(anyString());
+        verify(yearBusiness, never()).getYear(anyLong());
 
         assertNull(testee.getYear("2"));
-        verify(yearBusiness).getYear(eq("2"));
+        verify(yearBusiness).getYear(eq(2L));
 
         assertEquals(expected, testee.getYear("1"));
-        verify(yearBusiness).getYear(eq("1"));
+        verify(yearBusiness).getYear(eq(1L));
     }
 
     @Test

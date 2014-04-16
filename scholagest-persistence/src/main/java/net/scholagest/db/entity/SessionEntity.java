@@ -41,7 +41,11 @@ public class SessionEntity {
     }
 
     public DateTime getExpirationDate() {
-        return new DateTime(expirationDate.getTime());
+        if (expirationDate == null) {
+            return null;
+        } else {
+            return new DateTime(expirationDate.getTime());
+        }
     }
 
     public void setExpirationDate(final DateTime expirationDate) {

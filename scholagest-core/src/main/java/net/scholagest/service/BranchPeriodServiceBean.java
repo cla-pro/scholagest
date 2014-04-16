@@ -32,7 +32,7 @@ public class BranchPeriodServiceBean implements BranchPeriodServiceLocal {
         final List<BranchPeriod> branchPeriodList = new ArrayList<BranchPeriod>();
 
         for (final String id : ids) {
-            final BranchPeriod branchPeriod = branchPeriodBusiness.getBranchPeriod(id);
+            final BranchPeriod branchPeriod = branchPeriodBusiness.getBranchPeriod(Long.valueOf(id));
             if (branchPeriod != null) {
                 branchPeriodList.add(branchPeriod);
             }
@@ -50,7 +50,7 @@ public class BranchPeriodServiceBean implements BranchPeriodServiceLocal {
         if (id == null) {
             return null;
         } else {
-            return branchPeriodBusiness.getBranchPeriod(id);
+            return branchPeriodBusiness.getBranchPeriod(Long.valueOf(id));
         }
     }
 }

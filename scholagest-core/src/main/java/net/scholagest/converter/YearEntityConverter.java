@@ -61,6 +61,7 @@ public class YearEntityConverter {
         final YearEntity yearEntity = new YearEntity();
         yearEntity.setName(year.getName());
         yearEntity.setRunning(year.isRunning());
+        yearEntity.setClasses(new ArrayList<ClazzEntity>());
 
         return yearEntity;
     }

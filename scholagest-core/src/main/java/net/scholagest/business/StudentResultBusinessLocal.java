@@ -16,5 +16,5 @@ public interface StudentResultBusinessLocal {
      * @param id Used to find the student result
      * @return The student
      */
-    public StudentResult getStudentResult(final String id);
+    public StudentResult getStudentResult(final Long id);
 }

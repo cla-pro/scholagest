@@ -32,7 +32,7 @@ public class ExamServiceBean implements ExamServiceLocal {
         final List<Exam> examList = new ArrayList<>();
 
         for (final String id : ids) {
-            final Exam exam = examBusiness.getExam(id);
+            final Exam exam = examBusiness.getExam(Long.valueOf(id));
             if (exam != null) {
                 examList.add(exam);
             }
@@ -49,7 +49,7 @@ public class ExamServiceBean implements ExamServiceLocal {
         if (id == null) {
             return null;
         } else {
-            return examBusiness.getExam(id);
+            return examBusiness.getExam(Long.valueOf(id));
         }
     }
 

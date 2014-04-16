@@ -3,7 +3,7 @@ package net.scholagest.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -44,14 +44,14 @@ public class StudentResultServiceBeanTest extends AbstractGuiceContextTest {
         final StudentResultServiceLocal testee = getInstance(StudentResultServiceLocal.class);
 
         final StudentResult expected = new StudentResult("1", "student", "branchPeriod", new ArrayList<String>(), null, true);
-        when(studentResultBusiness.getStudentResult("1")).thenReturn(expected);
+        when(studentResultBusiness.getStudentResult(1L)).thenReturn(expected);
 
         assertTrue(testee.getStudentResults(new ArrayList<String>()).isEmpty());
-        verify(studentResultBusiness, never()).getStudentResult(anyString());
+        verify(studentResultBusiness, never()).getStudentResult(anyLong());
 
         assertEquals(Arrays.asList(expected), testee.getStudentResults(Arrays.asList("1", "2")));
-        verify(studentResultBusiness).getStudentResult(eq("1"));
-        verify(studentResultBusiness).getStudentResult(eq("2"));
+        verify(studentResultBusiness).getStudentResult(eq(1L));
+        verify(studentResultBusiness).getStudentResult(eq(2L));
     }
 
     @Test
@@ -60,15 +60,15 @@ public class StudentResultServiceBeanTest extends AbstractGuiceContextTest {
         final StudentResultServiceLocal testee = getInstance(StudentResultServiceLocal.class);
 
         final StudentResult expected = new StudentResult("1", "student", "branchPeriod", new ArrayList<String>(), null, true);
-        when(studentResultBusiness.getStudentResult("1")).thenReturn(expected);
+        when(studentResultBusiness.getStudentResult(1L)).thenReturn(expected);
 
         assertNull(testee.getStudentResult(null));
-        verify(studentResultBusiness, never()).getStudentResult(anyString());
+        verify(studentResultBusiness, never()).getStudentResult(anyLong());
 
         assertNull(testee.getStudentResult("2"));
-        verify(studentResultBusiness).getStudentResult(eq("2"));
+        verify(studentResultBusiness).getStudentResult(eq(2L));
 
         assertEquals(expected, testee.getStudentResult("1"));
-        verify(studentResultBusiness).getStudentResult(eq("1"));
+        verify(studentResultBusiness).getStudentResult(eq(1L));
     }
 }

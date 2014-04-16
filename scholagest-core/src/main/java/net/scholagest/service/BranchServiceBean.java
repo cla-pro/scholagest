@@ -33,7 +33,7 @@ public class BranchServiceBean implements BranchServiceLocal {
         final List<Branch> branches = new ArrayList<>();
 
         for (final String id : ids) {
-            final Branch branch = branchBusiness.getBranch(id);
+            final Branch branch = branchBusiness.getBranch(Long.valueOf(id));
             if (branch != null) {
                 branches.add(branch);
             }
@@ -51,7 +51,7 @@ public class BranchServiceBean implements BranchServiceLocal {
         if (id == null) {
             return null;
         } else {
-            return branchBusiness.getBranch(id);
+            return branchBusiness.getBranch(Long.valueOf(id));
         }
     }
 

@@ -3,7 +3,7 @@ package net.scholagest.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -44,14 +44,14 @@ public class BranchPeriodServiceBeanTest extends AbstractGuiceContextTest {
         final BranchPeriodServiceLocal testee = getInstance(BranchPeriodServiceLocal.class);
 
         final BranchPeriod expected = new BranchPeriod("1", "branch", "period", new ArrayList<String>(), null, new ArrayList<String>());
-        when(branchPeriodBusiness.getBranchPeriod("1")).thenReturn(expected);
+        when(branchPeriodBusiness.getBranchPeriod(1L)).thenReturn(expected);
 
         assertTrue(testee.getBranchPeriods(new ArrayList<String>()).isEmpty());
-        verify(branchPeriodBusiness, never()).getBranchPeriod(anyString());
+        verify(branchPeriodBusiness, never()).getBranchPeriod(anyLong());
 
         assertEquals(Arrays.asList(expected), testee.getBranchPeriods(Arrays.asList("1", "2")));
-        verify(branchPeriodBusiness).getBranchPeriod(eq("1"));
-        verify(branchPeriodBusiness).getBranchPeriod(eq("2"));
+        verify(branchPeriodBusiness).getBranchPeriod(eq(1L));
+        verify(branchPeriodBusiness).getBranchPeriod(eq(2L));
     }
 
     @Test
@@ -60,15 +60,15 @@ public class BranchPeriodServiceBeanTest extends AbstractGuiceContextTest {
         final BranchPeriodServiceLocal testee = getInstance(BranchPeriodServiceLocal.class);
 
         final BranchPeriod expected = new BranchPeriod("1", "branch", "period", new ArrayList<String>(), null, new ArrayList<String>());
-        when(branchPeriodBusiness.getBranchPeriod("1")).thenReturn(expected);
+        when(branchPeriodBusiness.getBranchPeriod(1L)).thenReturn(expected);
 
         assertNull(testee.getBranchPeriod(null));
-        verify(branchPeriodBusiness, never()).getBranchPeriod(anyString());
+        verify(branchPeriodBusiness, never()).getBranchPeriod(anyLong());
 
         assertNull(testee.getBranchPeriod("2"));
-        verify(branchPeriodBusiness).getBranchPeriod(eq("2"));
+        verify(branchPeriodBusiness).getBranchPeriod(eq(2L));
 
         assertEquals(expected, testee.getBranchPeriod("1"));
-        verify(branchPeriodBusiness).getBranchPeriod(eq("1"));
+        verify(branchPeriodBusiness).getBranchPeriod(eq(1L));
     }
 }

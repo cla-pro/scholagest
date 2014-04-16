@@ -5,7 +5,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -48,14 +48,14 @@ public class ExamServiceBeanTest extends AbstractGuiceContextTest {
         final ExamServiceLocal testee = getInstance(ExamServiceLocal.class);
 
         final Exam expected = new Exam("1", "name", 2, "branchPeriod");
-        when(examBusiness.getExam("1")).thenReturn(expected);
+        when(examBusiness.getExam(1L)).thenReturn(expected);
 
         assertTrue(testee.getExams(new ArrayList<String>()).isEmpty());
-        verify(examBusiness, never()).getExam(anyString());
+        verify(examBusiness, never()).getExam(anyLong());
 
         assertEquals(Arrays.asList(expected), testee.getExams(Arrays.asList("1", "2")));
-        verify(examBusiness).getExam(eq("1"));
-        verify(examBusiness).getExam(eq("2"));
+        verify(examBusiness).getExam(eq(1L));
+        verify(examBusiness).getExam(eq(2L));
     }
 
     @Test
@@ -64,16 +64,16 @@ public class ExamServiceBeanTest extends AbstractGuiceContextTest {
         final ExamServiceLocal testee = getInstance(ExamServiceLocal.class);
 
         final Exam expected = new Exam("1", "name", 2, "branchPeriod");
-        when(examBusiness.getExam("1")).thenReturn(expected);
+        when(examBusiness.getExam(1L)).thenReturn(expected);
 
         assertNull(testee.getExam(null));
-        verify(examBusiness, never()).getExam(anyString());
+        verify(examBusiness, never()).getExam(anyLong());
 
         assertNull(testee.getExam("2"));
-        verify(examBusiness).getExam(eq("2"));
+        verify(examBusiness).getExam(eq(2L));
 
         assertEquals(expected, testee.getExam("1"));
-        verify(examBusiness).getExam(eq("1"));
+        verify(examBusiness).getExam(eq(1L));
     }
 
     @Test

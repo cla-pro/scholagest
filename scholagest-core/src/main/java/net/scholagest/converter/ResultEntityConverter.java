@@ -16,14 +16,14 @@ public class ResultEntityConverter {
     /**
      * Convenient method to convert a list of {@link ResultEntity} to a list of {@link Result}
      *  
-     * @param examEntityList The list to convert
+     * @param resultEntityList The list to convert
      * @return The converted list
      */
-    public List<Result> convertToResultList(final List<ResultEntity> examEntityList) {
+    public List<Result> convertToResultList(final List<ResultEntity> resultEntityList) {
         final List<Result> examList = new ArrayList<>();
 
-        for (final ResultEntity examEntity : examEntityList) {
-            examList.add(convertToResult(examEntity));
+        for (final ResultEntity resultEntity : resultEntityList) {
+            examList.add(convertToResult(resultEntity));
         }
 
         return examList;
@@ -32,15 +32,15 @@ public class ResultEntityConverter {
     /**
      * Convert a {@link ResultEntity} to its transfer version {@link Result}.
      * 
-     * @param examEntity The exam entity to convert
-     * @return The converted exam
+     * @param resultEntity The result entity to convert
+     * @return The converted result
      */
-    public Result convertToResult(final ResultEntity examEntity) {
+    public Result convertToResult(final ResultEntity resultEntity) {
         final Result exam = new Result();
-        exam.setId("" + examEntity.getId());
-        exam.setGrade(examEntity.getGrade());
-        exam.setStudentResult("" + examEntity.getStudentResult().getId());
-        exam.setExam("" + examEntity.getExam().getId());
+        exam.setId("" + resultEntity.getId());
+        exam.setGrade(resultEntity.getGrade());
+        exam.setStudentResult("" + resultEntity.getStudentResult().getId());
+        exam.setExam("" + resultEntity.getExam().getId());
 
         return exam;
     }
@@ -48,15 +48,15 @@ public class ResultEntityConverter {
     /**
      * Convert a {@link Result} to the entity {@link ResultEntity}.
      * 
-     * @param exam The exam to convert
-     * @return The converted exam entity
+     * @param result The result to convert
+     * @return The converted result entity
      */
-    public ResultEntity convertToResultEntity(final Result exam) {
-        final ResultEntity examEntity = new ResultEntity();
-        examEntity.setGrade(exam.getGrade());
-        examEntity.setExam(null);
-        examEntity.setStudentResult(null);
+    public ResultEntity convertToResultEntity(final Result result) {
+        final ResultEntity resultEntity = new ResultEntity();
+        resultEntity.setGrade(result.getGrade());
+        resultEntity.setExam(null);
+        resultEntity.setStudentResult(null);
 
-        return examEntity;
+        return resultEntity;
     }
 }

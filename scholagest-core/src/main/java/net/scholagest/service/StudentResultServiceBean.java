@@ -32,7 +32,7 @@ public class StudentResultServiceBean implements StudentResultServiceLocal {
         final List<StudentResult> studentResultList = new ArrayList<>();
 
         for (final String id : ids) {
-            final StudentResult studentResult = studentResultBusiness.getStudentResult(id);
+            final StudentResult studentResult = studentResultBusiness.getStudentResult(Long.valueOf(id));
             if (studentResult != null) {
                 studentResultList.add(studentResult);
             }
@@ -50,7 +50,7 @@ public class StudentResultServiceBean implements StudentResultServiceLocal {
         if (id == null) {
             return null;
         } else {
-            return studentResultBusiness.getStudentResult(id);
+            return studentResultBusiness.getStudentResult(Long.valueOf(id));
         }
     }
 

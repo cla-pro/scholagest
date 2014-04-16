@@ -33,7 +33,7 @@ public class PeriodServiceBean implements PeriodServiceLocal {
         final List<Period> periods = new ArrayList<>();
 
         for (final String id : ids) {
-            final Period period = periodBusiness.getPeriod(id);
+            final Period period = periodBusiness.getPeriod(Long.valueOf(id));
             if (period != null) {
                 periods.add(period);
             }
@@ -51,7 +51,7 @@ public class PeriodServiceBean implements PeriodServiceLocal {
         if (id == null) {
             return null;
         } else {
-            return periodBusiness.getPeriod(id);
+            return periodBusiness.getPeriod(Long.valueOf(id));
         }
     }
 

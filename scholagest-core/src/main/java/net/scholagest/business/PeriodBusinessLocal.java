@@ -16,5 +16,5 @@ public interface PeriodBusinessLocal {
      * @param id Used to find the period
      * @return The period
      */
-    public Period getPeriod(final String id);
+    public Period getPeriod(final Long id);
 }

@@ -5,7 +5,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -48,25 +48,25 @@ public class ClazzServiceBeanTest extends AbstractGuiceContextTest {
         setAdminSubject();
         final ClazzServiceLocal testee = getInstance(ClazzServiceLocal.class);
 
-        final Clazz clazz1 = new Clazz("clazz1", "name1", "year1", new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(),
+        final Clazz clazz1 = new Clazz("1", "name1", "year1", new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(),
                 new ArrayList<String>());
-        final Clazz clazz2 = new Clazz("clazz2", "name2", "year2", new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(),
+        final Clazz clazz2 = new Clazz("2", "name2", "year2", new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(),
                 new ArrayList<String>());
         final List<Clazz> expected = Arrays.asList(clazz1, clazz2);
-        when(clazzBusiness.getClazz("clazz1")).thenReturn(clazz1);
-        when(clazzBusiness.getClazz("clazz2")).thenReturn(clazz2);
+        when(clazzBusiness.getClazz(1L)).thenReturn(clazz1);
+        when(clazzBusiness.getClazz(2L)).thenReturn(clazz2);
 
         assertTrue(testee.getClasses(new ArrayList<String>()).isEmpty());
-        verify(clazzBusiness, never()).getClazz(anyString());
+        verify(clazzBusiness, never()).getClazz(anyLong());
 
-        assertTrue(testee.getClasses(Arrays.asList("clazz3")).isEmpty());
-        verify(clazzBusiness).getClazz(eq("clazz3"));
+        assertTrue(testee.getClasses(Arrays.asList("3")).isEmpty());
+        verify(clazzBusiness).getClazz(eq(3L));
 
-        final List<Clazz> result = testee.getClasses(Arrays.asList("clazz1", "clazz2"));
+        final List<Clazz> result = testee.getClasses(Arrays.asList("1", "2"));
 
         assertEquals(expected, result);
-        verify(clazzBusiness).getClazz(eq("clazz1"));
-        verify(clazzBusiness).getClazz(eq("clazz2"));
+        verify(clazzBusiness).getClazz(eq(1L));
+        verify(clazzBusiness).getClazz(eq(2L));
     }
 
     @Test
@@ -74,18 +74,18 @@ public class ClazzServiceBeanTest extends AbstractGuiceContextTest {
         setAdminSubject();
         final ClazzServiceLocal testee = getInstance(ClazzServiceLocal.class);
 
-        final Clazz expected = new Clazz("clazz1", "name", "year", new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(),
+        final Clazz expected = new Clazz("1", "name", "year", new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(),
                 new ArrayList<String>());
-        when(clazzBusiness.getClazz("clazz1")).thenReturn(expected);
+        when(clazzBusiness.getClazz(1L)).thenReturn(expected);
 
         assertNull(testee.getClazz(null));
-        verify(clazzBusiness, never()).getClazz(anyString());
+        verify(clazzBusiness, never()).getClazz(anyLong());
 
-        assertNull(testee.getClazz("clazz2"));
-        verify(clazzBusiness).getClazz(eq("clazz2"));
+        assertNull(testee.getClazz("2"));
+        verify(clazzBusiness).getClazz(eq(2L));
 
-        assertEquals(expected, testee.getClazz("clazz1"));
-        verify(clazzBusiness).getClazz(eq("clazz1"));
+        assertEquals(expected, testee.getClazz("1"));
+        verify(clazzBusiness).getClazz(eq(1L));
     }
 
     @Test
@@ -93,7 +93,7 @@ public class ClazzServiceBeanTest extends AbstractGuiceContextTest {
         setAdminSubject();
         final ClazzServiceLocal testee = getInstance(ClazzServiceLocal.class);
 
-        final Clazz created = new Clazz("clazz1", "name", "year", new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(),
+        final Clazz created = new Clazz("1", "name", "year", new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(),
                 new ArrayList<String>());
         when(clazzBusiness.createClazz(any(Clazz.class))).thenReturn(created);
 
@@ -110,7 +110,7 @@ public class ClazzServiceBeanTest extends AbstractGuiceContextTest {
         setAdminSubject();
         final ClazzServiceLocal testee = getInstance(ClazzServiceLocal.class);
 
-        final Clazz saved = new Clazz("clazz1", "name", "year", new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(),
+        final Clazz saved = new Clazz("1", "name", "year", new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(),
                 new ArrayList<String>());
         when(clazzBusiness.saveClazz(any(Clazz.class))).thenReturn(saved);
 

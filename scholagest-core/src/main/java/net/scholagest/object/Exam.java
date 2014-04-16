@@ -62,7 +62,6 @@ public class Exam extends Base {
         }
 
         final Exam other = (Exam) that;
-        return new EqualsBuilder().append(getId(), other.getId()).append(name, other.name).append(coeff, other.coeff)
-                .append(branchPeriod, other.branchPeriod).isEquals();
+        return new EqualsBuilder().append(getId(), other.getId()).append(name, other.name).append(coeff, other.coeff).isEquals();
     }
 }

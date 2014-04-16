@@ -25,7 +25,7 @@ public interface YearBusinessLocal {
      * @param id Used to find the year
      * @return The year
      */
-    public Year getYear(final String id);
+    public Year getYear(final Long id);
 
     /**
      * Create a new year.
