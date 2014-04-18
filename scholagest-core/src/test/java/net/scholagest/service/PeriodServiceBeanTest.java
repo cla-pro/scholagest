@@ -3,7 +3,7 @@ package net.scholagest.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -44,23 +44,23 @@ public class PeriodServiceBeanTest extends AbstractGuiceContextTest {
         setAdminSubject();
         final PeriodServiceLocal testee = getInstance(PeriodServiceLocal.class);
 
-        final Period period1 = new Period("period1", "name1", "clazz1", Arrays.asList("branchPeriod1"));
-        final Period period2 = new Period("period2", "name2", "clazz2", Arrays.asList("branchPeriod2"));
+        final Period period1 = new Period("1", "name1", "clazz1", Arrays.asList("branchPeriod1"));
+        final Period period2 = new Period("", "name2", "clazz2", Arrays.asList("branchPeriod2"));
         final List<Period> expected = Arrays.asList(period1, period2);
-        when(periodBusiness.getPeriod("period1")).thenReturn(period1);
-        when(periodBusiness.getPeriod("period2")).thenReturn(period2);
+        when(periodBusiness.getPeriod(1L)).thenReturn(period1);
+        when(periodBusiness.getPeriod(2L)).thenReturn(period2);
 
         assertTrue(testee.getPeriods(new ArrayList<String>()).isEmpty());
-        verify(periodBusiness, never()).getPeriod(anyString());
+        verify(periodBusiness, never()).getPeriod(anyLong());
 
-        assertTrue(testee.getPeriods(Arrays.asList("period3")).isEmpty());
-        verify(periodBusiness).getPeriod(eq("period3"));
+        assertTrue(testee.getPeriods(Arrays.asList("3")).isEmpty());
+        verify(periodBusiness).getPeriod(eq(3L));
 
-        final List<Period> result = testee.getPeriods(Arrays.asList("period1", "period2"));
+        final List<Period> result = testee.getPeriods(Arrays.asList("1", "2"));
 
         assertEquals(expected, result);
-        verify(periodBusiness).getPeriod(eq("period1"));
-        verify(periodBusiness).getPeriod(eq("period2"));
+        verify(periodBusiness).getPeriod(eq(1L));
+        verify(periodBusiness).getPeriod(eq(2L));
     }
 
     @Test
@@ -69,15 +69,15 @@ public class PeriodServiceBeanTest extends AbstractGuiceContextTest {
         final PeriodServiceLocal testee = getInstance(PeriodServiceLocal.class);
 
         final Period expected = new Period("1", "name", "clazz", Arrays.asList("branchPeriod1", "periodPeriod2"));
-        when(periodBusiness.getPeriod("1")).thenReturn(expected);
+        when(periodBusiness.getPeriod(1L)).thenReturn(expected);
 
         assertNull(testee.getPeriod(null));
-        verify(periodBusiness, never()).getPeriod(anyString());
+        verify(periodBusiness, never()).getPeriod(anyLong());
 
         assertNull(testee.getPeriod("2"));
-        verify(periodBusiness).getPeriod(eq("2"));
+        verify(periodBusiness).getPeriod(eq(2L));
 
         assertEquals(expected, testee.getPeriod("1"));
-        verify(periodBusiness).getPeriod(eq("1"));
+        verify(periodBusiness).getPeriod(eq(1L));
     }
 }

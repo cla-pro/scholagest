@@ -5,7 +5,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -48,14 +48,14 @@ public class BranchServiceBeanTest extends AbstractGuiceContextTest {
         final BranchServiceLocal testee = getInstance(BranchServiceLocal.class);
 
         final Branch expected = new Branch("1", "name", true, "clazz", new ArrayList<String>());
-        when(branchBusiness.getBranch("1")).thenReturn(expected);
+        when(branchBusiness.getBranch(1L)).thenReturn(expected);
 
         assertTrue(testee.getBranches(new ArrayList<String>()).isEmpty());
-        verify(branchBusiness, never()).getBranch(anyString());
+        verify(branchBusiness, never()).getBranch(anyLong());
 
         assertEquals(Arrays.asList(expected), testee.getBranches(Arrays.asList("1", "2")));
-        verify(branchBusiness).getBranch(eq("1"));
-        verify(branchBusiness).getBranch(eq("2"));
+        verify(branchBusiness).getBranch(eq(1L));
+        verify(branchBusiness).getBranch(eq(2L));
     }
 
     @Test
@@ -64,16 +64,16 @@ public class BranchServiceBeanTest extends AbstractGuiceContextTest {
         final BranchServiceLocal testee = getInstance(BranchServiceLocal.class);
 
         final Branch expected = new Branch("1", "name", true, "clazz", new ArrayList<String>());
-        when(branchBusiness.getBranch("1")).thenReturn(expected);
+        when(branchBusiness.getBranch(1L)).thenReturn(expected);
 
         assertNull(testee.getBranch(null));
-        verify(branchBusiness, never()).getBranch(anyString());
+        verify(branchBusiness, never()).getBranch(anyLong());
 
         assertNull(testee.getBranch("2"));
-        verify(branchBusiness).getBranch(eq("2"));
+        verify(branchBusiness).getBranch(eq(2L));
 
         assertEquals(expected, testee.getBranch("1"));
-        verify(branchBusiness).getBranch(eq("1"));
+        verify(branchBusiness).getBranch(eq(1L));
     }
 
     @Test

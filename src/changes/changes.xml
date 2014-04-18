@@ -6,7 +6,16 @@
     <author email="cedric.lavanchy.pro@gmail.com">Cédric Lavanchy</author>
   </properties>
   <body>
-    <release version="0.15.0">
+    <release version="0.16.0">
+      <action dev="clavanchy" type="add">
+        Connection to the DB through DAO
+      </action>
+      <action dev="clavanchy" type="update">
+        Business layer covered by unit-tests
+      </action>
+    </release>
+    
+    <release version="0.15.0" date="2014-04-10">
       <action dev="clavanchy" type="update">
         Javadoc for the json objects
       </action>

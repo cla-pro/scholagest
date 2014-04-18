@@ -16,5 +16,5 @@ public interface BranchPeriodBusinessLocal {
      * @param id Used to find the branch period
      * @return The branch period
      */
-    public BranchPeriod getBranchPeriod(final String id);
+    public BranchPeriod getBranchPeriod(final Long id);
 }

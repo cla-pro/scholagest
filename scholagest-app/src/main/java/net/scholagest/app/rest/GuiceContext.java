@@ -28,6 +28,8 @@ public class GuiceContext extends GuiceServletContextListener {
         final Injector injector = Guice.createInjector(new JpaPersistModule(persistenceUnitName), new ScholagestJerseyServletModule(),
                 new ScholagestShiroModule());
 
+        // injector.getInstance(PersistInitializer.class);
+
         final org.apache.shiro.mgt.SecurityManager securityManager = injector.getInstance(org.apache.shiro.mgt.SecurityManager.class);
         SecurityUtils.setSecurityManager(securityManager);
 

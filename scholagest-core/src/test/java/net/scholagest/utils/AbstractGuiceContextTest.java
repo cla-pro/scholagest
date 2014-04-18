@@ -10,7 +10,6 @@ import liquibase.exception.LiquibaseException;
 import net.scholagest.authorization.AuthorizationInterceptor;
 import net.scholagest.authorization.RolesAndPermissions;
 import net.scholagest.test.util.H2Database;
-import net.scholagest.test.util.PersistInitializer;
 
 import org.apache.shiro.subject.Subject;
 import org.junit.AfterClass;

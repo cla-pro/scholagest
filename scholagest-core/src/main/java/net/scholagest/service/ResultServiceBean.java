@@ -32,7 +32,7 @@ public class ResultServiceBean implements ResultServiceLocal {
         final List<Result> resultList = new ArrayList<>();
 
         for (final String id : ids) {
-            final Result result = resultBusiness.getResult(id);
+            final Result result = resultBusiness.getResult(Long.valueOf(id));
             if (result != null) {
                 resultList.add(result);
             }
@@ -50,7 +50,7 @@ public class ResultServiceBean implements ResultServiceLocal {
         if (id == null) {
             return null;
         } else {
-            return resultBusiness.getResult(id);
+            return resultBusiness.getResult(Long.valueOf(id));
         }
     }
 

@@ -16,7 +16,7 @@ public interface BranchBusinessLocal {
      * @param id Used to find the branch
      * @return The branch
      */
-    public Branch getBranch(final String id);
+    public Branch getBranch(final Long id);
 
     /**
      * Create a new branch.

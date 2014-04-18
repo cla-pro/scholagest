@@ -22,6 +22,8 @@ public class Clazz extends Base {
     public Clazz() {
         this.teachers = new ArrayList<>();
         this.students = new ArrayList<>();
+        this.periods = new ArrayList<>();
+        this.branches = new ArrayList<>();
     }
 
     public Clazz(final Clazz toCopy) {
@@ -99,6 +101,6 @@ public class Clazz extends Base {
         }
 
         final Clazz other = (Clazz) that;
-        return new EqualsBuilder().append(getId(), other.getId()).append(name, other.name).append(year, other.year).isEquals();
+        return new EqualsBuilder().append(getId(), other.getId()).append(name, other.name).isEquals();
     }
 }

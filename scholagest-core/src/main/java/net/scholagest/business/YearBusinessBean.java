@@ -1,13 +1,13 @@
 package net.scholagest.business;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import net.scholagest.converter.YearEntityConverter;
+import net.scholagest.dao.YearDaoLocal;
+import net.scholagest.db.entity.YearEntity;
 import net.scholagest.object.Year;
-import net.scholagest.utils.IdHelper;
+
+import com.google.inject.Inject;
 
 /**
  * Implementation of {@link YearBusinessLocal}
@@ -16,12 +16,17 @@ import net.scholagest.utils.IdHelper;
  * @since 0.14.0
  */
 public class YearBusinessBean implements YearBusinessLocal {
-    public static Map<String, Year> yearsMap = new HashMap<>();
+    // public static Map<String, Year> yearsMap = new HashMap<>();
+    //
+    // static {
+    // yearsMap.put("year1", new Year("year1", "2012-2013", false,
+    // Arrays.asList("clazz1")));
+    // yearsMap.put("year2", new Year("year2", "2013-2014", true,
+    // Arrays.asList("clazz2", "clazz3")));
+    // }
 
-    static {
-        yearsMap.put("year1", new Year("year1", "2012-2013", false, Arrays.asList("clazz1")));
-        yearsMap.put("year2", new Year("year2", "2013-2014", true, Arrays.asList("clazz2", "clazz3")));
-    }
+    @Inject
+    private YearDaoLocal yearDao;
 
     YearBusinessBean() {}
 
@@ -30,28 +35,25 @@ public class YearBusinessBean implements YearBusinessLocal {
      */
     @Override
     public List<Year> getYears() {
-        return copyYears();
-    }
+        final YearEntityConverter yearEntityConverter = new YearEntityConverter();
 
-    private List<Year> copyYears() {
-        final List<Year> years = new ArrayList<>();
+        final List<YearEntity> yearEntityList = yearDao.getAllYearEntity();
 
-        for (final Year year : yearsMap.values()) {
-            years.add(new Year(year));
-        }
-
-        return years;
+        return yearEntityConverter.convertToYearList(yearEntityList);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Year getYear(final String id) {
-        if (yearsMap.containsKey(id)) {
-            return new Year(yearsMap.get(id));
-        } else {
+    public Year getYear(final Long id) {
+        final YearEntity yearEntity = yearDao.getYearEntityById(id);
+
+        if (yearEntity == null) {
             return null;
+        } else {
+            final YearEntityConverter yearEntityConverter = new YearEntityConverter();
+            return yearEntityConverter.convertToYear(yearEntity);
         }
     }
 
@@ -60,12 +62,12 @@ public class YearBusinessBean implements YearBusinessLocal {
      */
     @Override
     public Year createYear(final Year year) {
-        final String id = IdHelper.getNextId(yearsMap.keySet(), "year");
-        year.setId(id);
+        final YearEntityConverter yearEntityConverter = new YearEntityConverter();
 
-        yearsMap.put(id, year);
+        final YearEntity yearEntity = yearEntityConverter.convertToYearEntity(year);
+        final YearEntity persistedYearEntity = yearDao.persistYearEntity(yearEntity);
 
-        return new Year(year);
+        return yearEntityConverter.convertToYear(persistedYearEntity);
     }
 
     /**
@@ -73,12 +75,17 @@ public class YearBusinessBean implements YearBusinessLocal {
      */
     @Override
     public Year saveYear(final Year year) {
-        final Year stored = yearsMap.get(year.getId());
+        final YearEntityConverter yearEntityConverter = new YearEntityConverter();
+        final YearEntity yearEntity = yearDao.getYearEntityById(Long.valueOf(year.getId()));
 
-        stored.setName(year.getName());
-        stored.setRunning(year.isRunning());
-        stored.setClasses(new ArrayList<String>(year.getClasses()));
+        if (yearEntity == null) {
+            return null;
+        } else {
+            yearEntity.setName(year.getName());
+            yearEntity.setRunning(year.isRunning());
+            // The class list is updated when the class is created.
 
-        return stored;
+            return yearEntityConverter.convertToYear(yearEntity);
+        }
     }
 }

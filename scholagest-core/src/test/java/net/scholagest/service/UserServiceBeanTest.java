@@ -3,6 +3,7 @@ package net.scholagest.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
@@ -44,17 +45,17 @@ public class UserServiceBeanTest extends AbstractGuiceContextTest {
         setAdminSubject();
         final UserServiceLocal testee = getInstance(UserServiceLocal.class);
 
-        final User expected = new User("pdupont", "pdupont", "1234", "ADMIN", new ArrayList<String>(), "1", "1");
-        when(userBusiness.getUser("pdupont")).thenReturn(expected);
+        final User expected = new User("1", "pdupont", "1234", "ADMIN", new ArrayList<String>(), "1", "1");
+        when(userBusiness.getUser(1L)).thenReturn(expected);
 
         assertNull(testee.getUser(null));
-        verify(userBusiness, never()).getUser(anyString());
+        verify(userBusiness, never()).getUser(anyLong());
 
-        assertNull(testee.getUser("pberger"));
-        verify(userBusiness).getUser(eq("pberger"));
+        assertNull(testee.getUser("2"));
+        verify(userBusiness).getUser(eq(2L));
 
-        assertEquals(expected, testee.getUser("pdupont"));
-        verify(userBusiness).getUser(eq("pdupont"));
+        assertEquals(expected, testee.getUser("1"));
+        verify(userBusiness).getUser(eq(1L));
     }
 
     @Test

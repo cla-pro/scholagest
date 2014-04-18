@@ -5,7 +5,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -48,23 +48,23 @@ public class ResultServiceBeanTest extends AbstractGuiceContextTest {
         setAdminSubject();
         final ResultServiceLocal testee = getInstance(ResultServiceLocal.class);
 
-        final Result result1 = new Result("result1", 2.5, "exam1", "studentResult1");
-        final Result result2 = new Result("result2", 4.5, "exam2", "studentResult2");
+        final Result result1 = new Result("1", "2.5", "exam1", "studentResult1");
+        final Result result2 = new Result("2", "4.5", "exam2", "studentResult2");
         final List<Result> expected = Arrays.asList(result1, result2);
-        when(resultBusiness.getResult("result1")).thenReturn(result1);
-        when(resultBusiness.getResult("result2")).thenReturn(result2);
+        when(resultBusiness.getResult(1L)).thenReturn(result1);
+        when(resultBusiness.getResult(2L)).thenReturn(result2);
 
         assertTrue(testee.getResults(new ArrayList<String>()).isEmpty());
-        verify(resultBusiness, never()).getResult(anyString());
+        verify(resultBusiness, never()).getResult(anyLong());
 
-        assertTrue(testee.getResults(Arrays.asList("result3")).isEmpty());
-        verify(resultBusiness).getResult(eq("result3"));
+        assertTrue(testee.getResults(Arrays.asList("3")).isEmpty());
+        verify(resultBusiness).getResult(eq(3L));
 
-        final List<Result> result = testee.getResults(Arrays.asList("result1", "result2"));
+        final List<Result> result = testee.getResults(Arrays.asList("1", "2"));
 
         assertEquals(expected, result);
-        verify(resultBusiness).getResult(eq("result1"));
-        verify(resultBusiness).getResult(eq("result2"));
+        verify(resultBusiness).getResult(eq(1L));
+        verify(resultBusiness).getResult(eq(2L));
     }
 
     @Test
@@ -72,17 +72,17 @@ public class ResultServiceBeanTest extends AbstractGuiceContextTest {
         setAdminSubject();
         final ResultServiceLocal testee = getInstance(ResultServiceLocal.class);
 
-        final Result expected = new Result("result1", 2.5, "exam1", "studentResult1");
-        when(resultBusiness.getResult("result1")).thenReturn(expected);
+        final Result expected = new Result("1", "2.5", "exam1", "studentResult1");
+        when(resultBusiness.getResult(1L)).thenReturn(expected);
 
         assertNull(testee.getResult(null));
-        verify(resultBusiness, never()).getResult(anyString());
+        verify(resultBusiness, never()).getResult(anyLong());
 
-        assertNull(testee.getResult("result2"));
-        verify(resultBusiness).getResult(eq("result2"));
+        assertNull(testee.getResult("2"));
+        verify(resultBusiness).getResult(eq(2L));
 
-        assertEquals(expected, testee.getResult("result1"));
-        verify(resultBusiness).getResult(eq("result1"));
+        assertEquals(expected, testee.getResult("1"));
+        verify(resultBusiness).getResult(eq(1L));
     }
 
     @Test
@@ -90,7 +90,7 @@ public class ResultServiceBeanTest extends AbstractGuiceContextTest {
         setAdminSubject();
         final ResultServiceLocal testee = getInstance(ResultServiceLocal.class);
 
-        final Result saved = new Result("result1", 2.5, "exam1", "studentResult1");
+        final Result saved = new Result("1", "2.5", "exam1", "studentResult1");
         when(resultBusiness.saveResult(any(Result.class))).thenReturn(saved);
 
         final Result toSave = new Result();

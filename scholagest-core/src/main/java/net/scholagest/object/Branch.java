@@ -77,7 +77,6 @@ public class Branch extends Base {
         }
 
         final Branch other = (Branch) that;
-        return new EqualsBuilder().append(getId(), other.getId()).append(name, other.name).append(numerical, other.numerical)
-                .append(clazz, other.clazz).isEquals();
+        return new EqualsBuilder().append(getId(), other.getId()).append(name, other.name).append(numerical, other.numerical).isEquals();
     }
 }

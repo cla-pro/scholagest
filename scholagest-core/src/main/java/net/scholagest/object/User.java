@@ -1,5 +1,6 @@
 package net.scholagest.object;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -18,7 +19,9 @@ public class User extends Base {
     private String role;
     private List<String> permissions;
 
-    public User() {}
+    public User() {
+        this.permissions = new ArrayList<>();
+    }
 
     public User(final User toCopy) {
         this(toCopy.getId(), toCopy.username, toCopy.password, toCopy.role, toCopy.permissions, toCopy.teacher, toCopy.clazz);

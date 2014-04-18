@@ -1,11 +1,6 @@
 package net.scholagest.tester.testsuites;
 
 import static org.junit.Assert.assertEquals;
-
-import java.util.ArrayList;
-
-import net.scholagest.business.UserBusinessBean;
-import net.scholagest.object.User;
 import net.scholagest.tester.utils.AbstractTestSuite;
 
 import org.eclipse.jetty.client.api.ContentResponse;
@@ -20,7 +15,9 @@ public class Test_001_LoginUsernameTest extends AbstractTestSuite {
     @BeforeClass
     public static void setUpData() {
         // TODO insert one valid user
-        UserBusinessBean.users.put(VALID_USERNAME, new User(VALID_USERNAME, VALID_USERNAME, VALID_PASSWORD, "", new ArrayList<String>(), null, null));
+        // UserBusinessBean.users.put(VALID_USERNAME, new User(VALID_USERNAME,
+        // VALID_USERNAME, VALID_PASSWORD, "", new ArrayList<String>(), null,
+        // null));
     }
 
     @Test

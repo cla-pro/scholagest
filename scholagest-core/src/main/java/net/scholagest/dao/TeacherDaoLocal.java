@@ -6,8 +6,8 @@ import net.scholagest.db.entity.TeacherDetailEntity;
 import net.scholagest.db.entity.TeacherEntity;
 
 /**
- * Provides the methods to handle interaction with the DB for the {@link TeacherEntity}. This level is responsible to
- * interacts with the DB
+ * Provides the methods to handle interaction with the DB for the {@link TeacherEntity} and {@link TeacherDetailEntity}.
+ * This level is responsible to interacts with the DB
  * 
  * @author CLA
  * @since 0.15.0

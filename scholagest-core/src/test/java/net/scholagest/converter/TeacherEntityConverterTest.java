@@ -42,7 +42,7 @@ public class TeacherEntityConverterTest {
     @Test
     public void testConvertToTeacher() {
         final TeacherDetailEntity teacherDetailEntity = createTeacherDetailEntity(11L, "address", "email", "phone");
-        final TeacherEntity teacherEntity = createTeacherEntity(1L, "firstname1", "lastname1", teacherDetailEntity);
+        final TeacherEntity teacherEntity = createTeacherEntity(1L, "firstname", "lastname", teacherDetailEntity);
 
         final TeacherEntityConverter testee = spy(new TeacherEntityConverter());
         final Teacher converted = testee.convertToTeacher(teacherEntity);
@@ -75,6 +75,7 @@ public class TeacherEntityConverterTest {
         assertEquals(teacherDetail.getAddress(), convertedDetail.getAddress());
         assertEquals(teacherDetail.getEmail(), convertedDetail.getEmail());
         assertEquals(teacherDetail.getPhone(), convertedDetail.getPhone());
+        assertEquals(converted, convertedDetail.getTeacher());
     }
 
     private TeacherEntity createTeacherEntity(final Long id, final String firstname, final String lastname,

@@ -33,7 +33,7 @@ public class ClazzServiceBean implements ClazzServiceLocal {
         final List<Clazz> classes = new ArrayList<>();
 
         for (final String id : ids) {
-            final Clazz clazz = clazzBusiness.getClazz(id);
+            final Clazz clazz = clazzBusiness.getClazz(Long.valueOf(id));
             if (clazz != null) {
                 classes.add(clazz);
             }
@@ -53,7 +53,7 @@ public class ClazzServiceBean implements ClazzServiceLocal {
             return null;
         }
 
-        return clazzBusiness.getClazz(id);
+        return clazzBusiness.getClazz(Long.valueOf(id));
     }
 
     /**

@@ -1,6 +1,5 @@
 package net.scholagest.app.rest.ws;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,11 +17,7 @@ import net.scholagest.app.rest.ws.converter.UserJsonConverter;
 import net.scholagest.app.rest.ws.objects.ClazzJson;
 import net.scholagest.app.rest.ws.objects.TeacherJson;
 import net.scholagest.app.rest.ws.objects.UserJson;
-import net.scholagest.object.Clazz;
-import net.scholagest.object.Teacher;
-import net.scholagest.object.User;
-import net.scholagest.service.ClazzServiceLocal;
-import net.scholagest.service.TeacherServiceLocal;
+import net.scholagest.object.UserBlock;
 import net.scholagest.service.UserServiceLocal;
 
 import com.google.inject.Inject;
@@ -41,14 +36,14 @@ import com.google.inject.Inject;
  */
 @Path("/users")
 public class UsersRest {
-    @Inject
-    private TeacherServiceLocal teacherService;
+    // @Inject
+    // private TeacherServiceLocal teacherService;
 
     @Inject
     private UserServiceLocal userService;
 
-    @Inject
-    private ClazzServiceLocal clazzService;
+    // @Inject
+    // private ClazzServiceLocal clazzService;
 
     @Inject
     UsersRest() {}
@@ -66,27 +61,37 @@ public class UsersRest {
     public Map<String, Object> getUser(@PathParam("id") final String id) {
         final Map<String, Object> response = new HashMap<>();
 
-        final User user = userService.getUser(id);
-        if (user != null) {
-            final UserJson userJson = new UserJsonConverter().convertToUserJson(user);
-            response.put("user", userJson);
+        final UserBlock userBlock = userService.getUserBlock(id);
+        if (userBlock != null) {
+            final UserJson userJson = new UserJsonConverter().convertToUserJson(userBlock.getUser());
+            final TeacherJson teacherJson = new TeacherJsonConverter().convertToTeacherJson(userBlock.getTeacher());
+            final List<ClazzJson> clazzJsonList = new ClazzJsonConverter().convertToClazzJsonList(userBlock.getClazzes());
 
-            final List<Teacher> teachers = teacherService.getTeacher(Arrays.asList(user.getTeacher()));
-            final List<TeacherJson> teachersJson = new TeacherJsonConverter().convertToTeacherJsonList(teachers);
-            response.put("teachers", teachersJson);
-            response.put("class", getClazzJson("clazz1"));
-            // TODO class is null -> go get it
-            // toReturn.put("class",
-            // ClassesRest.classes.get(userJson.getClazz()));
+            response.put("user", userJson);
+            response.put("teacher", teacherJson);
+            response.put("classes", clazzJsonList);
         }
+
+        // final User user = userService.getUser(id);
+        // if (user != null) {
+        // final UserJson userJson = new
+        // UserJsonConverter().convertToUserJson(user);
+        // response.put("user", userJson);
+        //
+        // final List<Teacher> teachers =
+        // teacherService.getTeacher(Arrays.asList(user.getTeacher()));
+        // final List<TeacherJson> teachersJson = new
+        // TeacherJsonConverter().convertToTeacherJsonList(teachers);
+        // response.put("teachers", teachersJson);
+        // }
 
         return response;
     }
 
-    private ClazzJson getClazzJson(final String id) {
-        final ClazzJsonConverter converter = new ClazzJsonConverter();
-        final Clazz clazz = clazzService.getClazz(id);
-
-        return converter.convertToClazzJson(clazz);
-    }
+    // private ClazzJson getClazzJson(final String id) {
+    // final ClazzJsonConverter converter = new ClazzJsonConverter();
+    // final Clazz clazz = clazzService.getClazz(id);
+    //
+    // return converter.convertToClazzJson(clazz);
+    // }
 }

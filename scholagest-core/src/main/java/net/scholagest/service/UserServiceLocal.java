@@ -4,6 +4,7 @@
 package net.scholagest.service;
 
 import net.scholagest.object.User;
+import net.scholagest.object.UserBlock;
 
 /**
  * Provides the methods to handle the users. This level is responsible to
@@ -21,4 +22,12 @@ public interface UserServiceLocal {
      * @return The user
      */
     public User getUser(final String id);
+
+    /**
+     * Retrieve the user block information (user, teacher and classes) by user id.
+     * 
+     * @param id User's id
+     * @return The user block information
+     */
+    public UserBlock getUserBlock(final String id);
 }

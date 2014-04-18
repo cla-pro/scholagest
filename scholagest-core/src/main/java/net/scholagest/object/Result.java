@@ -9,7 +9,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
  * @since 0.14.0
  */
 public class Result extends Base {
-    private Double grade;
+    private String grade;
     private String studentResult;
     private String exam;
 
@@ -19,18 +19,18 @@ public class Result extends Base {
         this(toCopy.getId(), toCopy.grade, toCopy.exam, toCopy.studentResult);
     }
 
-    public Result(final String id, final Double grade, final String exam, final String studentResult) {
+    public Result(final String id, final String grade, final String exam, final String studentResult) {
         super(id);
         this.grade = grade;
         this.exam = exam;
         this.studentResult = studentResult;
     }
 
-    public Double getGrade() {
+    public String getGrade() {
         return grade;
     }
 
-    public void setGrade(final Double grade) {
+    public void setGrade(final String grade) {
         this.grade = grade;
     }
 

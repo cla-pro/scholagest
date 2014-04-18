@@ -34,23 +34,35 @@
             <column name="class_id" type="int" />
         </createTable>
 
-		<createTable tableName="user">
-			<column name="id" type="int">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="username" type="java.sql.Types.VARCHAR(50)">
-				<constraints nullable="false" />
-			</column>
-			<column name="password" type="java.sql.Types.VARCHAR(50)">
-				<constraints nullable="false" />
-			</column>
-			<column name="role" type="java.sql.Types.VARCHAR(50)">
-				<constraints nullable="false" />
-			</column>
-			<column name="teacher_id" type="int">
-				<constraints nullable="false" />
-			</column>
-		</createTable>
+        <createTable tableName="scholagest_user">
+            <column name="id" type="int">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="username" type="java.sql.Types.VARCHAR(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="password" type="java.sql.Types.VARCHAR(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="role" type="java.sql.Types.VARCHAR(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="teacher_id" type="int">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        
+        <createTable tableName="session">
+            <column name="id" type="java.sql.Types.VARCHAR(50)">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="expiration_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
 
 		<createTable tableName="student">
 			<column name="id" type="int">
@@ -220,7 +232,11 @@
             
         <addForeignKeyConstraint constraintName="fk_user_teacher"
             referencedTableName="teacher" referencedColumnNames="id"
-            baseColumnNames="teacher_id" baseTableName="user" />
+            baseColumnNames="teacher_id" baseTableName="scholagest_user" />
+            
+        <addForeignKeyConstraint constraintName="fk_session_user"
+            referencedTableName="scholagest_user" referencedColumnNames="id"
+            baseColumnNames="user_id" baseTableName="session" />
             
         <addForeignKeyConstraint constraintName="fk_class_teacher_teacher"
             referencedTableName="teacher" referencedColumnNames="id"
@@ -297,8 +313,12 @@
             <column name="class_id" />
         </createIndex>
         
-        <createIndex tableName="user" indexName="idx_user_teacher_id">
+        <createIndex tableName="scholagest_user" indexName="idx_user_teacher_id">
             <column name="teacher_id" />
+        </createIndex>
+        
+        <createIndex tableName="session" indexName="idx_session_user_id">
+            <column name="user_id" />
         </createIndex>
         
         <createIndex tableName="student_personal" indexName="idx_student_personal_student_id">
@@ -409,13 +429,13 @@
 
     <changeSet id="0.15.0-5-business-indexes" author="cla">
         <createIndex tableName="teacher" indexName="idx_teacher_fullname">
-            <column name="firstName" />
-            <column name="lastName" />
+            <column name="firstname" />
+            <column name="lastname" />
         </createIndex>
         
         <createIndex tableName="student" indexName="idx_student_fullname">
-            <column name="firstName" />
-            <column name="lastName" />
+            <column name="firstname" />
+            <column name="lastname" />
         </createIndex>
     </changeSet>
 

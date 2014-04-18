@@ -16,7 +16,7 @@ public interface ExamBusinessLocal {
      * @param id Used to find the exam
      * @return The exam
      */
-    public Exam getExam(final String id);
+    public Exam getExam(final Long id);
 
     /**
      * Create a new exam.

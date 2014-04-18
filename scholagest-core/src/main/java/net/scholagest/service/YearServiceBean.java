@@ -42,7 +42,7 @@ public class YearServiceBean implements YearServiceLocal {
         if (id == null) {
             return null;
         } else {
-            return yearBusiness.getYear(id);
+            return yearBusiness.getYear(Long.valueOf(id));
         }
     }
 

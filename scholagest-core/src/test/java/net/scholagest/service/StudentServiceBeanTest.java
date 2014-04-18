@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -67,16 +67,16 @@ public class StudentServiceBeanTest extends AbstractGuiceContextTest {
         final StudentServiceLocal testee = getInstance(StudentServiceLocal.class);
 
         final Student expected = new Student("1", "firstName", "lastName", new StudentPersonal(), new StudentMedical(), new StudentClass());
-        when(studentBusiness.getStudent("1")).thenReturn(expected);
+        when(studentBusiness.getStudent(eq(1L))).thenReturn(expected);
 
         assertNull(testee.getStudent(null));
-        verify(studentBusiness, never()).getStudent(anyString());
+        verify(studentBusiness, never()).getStudent(anyLong());
 
         assertNull(testee.getStudent("2"));
-        verify(studentBusiness).getStudent(eq("2"));
+        verify(studentBusiness).getStudent(eq(2L));
 
         assertEquals(expected, testee.getStudent("1"));
-        verify(studentBusiness).getStudent(eq("1"));
+        verify(studentBusiness).getStudent(eq(1L));
     }
 
     @Test
@@ -101,15 +101,15 @@ public class StudentServiceBeanTest extends AbstractGuiceContextTest {
         final StudentServiceLocal testee = getInstance(StudentServiceLocal.class);
 
         final Student saved = new Student("1", "firstName", "lastName", new StudentPersonal(), new StudentMedical(), new StudentClass());
-        when(studentBusiness.saveStudent(eq("1"), any(Student.class))).thenReturn(saved);
+        when(studentBusiness.saveStudent(any(Student.class))).thenReturn(saved);
 
         final Student toSave = new Student();
         assertNull(testee.saveStudent(null, toSave));
         assertNull(testee.saveStudent("1", null));
-        verify(studentBusiness, never()).saveStudent(anyString(), any(Student.class));
+        verify(studentBusiness, never()).saveStudent(any(Student.class));
 
         assertEquals(saved, testee.saveStudent("1", toSave));
-        verify(studentBusiness).saveStudent(eq("1"), eq(toSave));
+        verify(studentBusiness).saveStudent(eq(toSave));
     }
 
     @Test
@@ -119,16 +119,16 @@ public class StudentServiceBeanTest extends AbstractGuiceContextTest {
 
         final Student expected = new Student("1", "firstName", "lastName", new StudentPersonal("1", "street", "city", "postcode", "religion"),
                 new StudentMedical(), new StudentClass());
-        when(studentBusiness.getStudent("1")).thenReturn(expected);
+        when(studentBusiness.getStudent(eq(1L))).thenReturn(expected);
 
         assertNull(testee.getStudentPersonal(null));
-        verify(studentBusiness, never()).getStudent(anyString());
+        verify(studentBusiness, never()).getStudent(anyLong());
 
         assertNull(testee.getStudentPersonal("2"));
-        verify(studentBusiness).getStudent(eq("2"));
+        verify(studentBusiness).getStudent(eq(2L));
 
         assertEquals(expected.getStudentPersonal(), testee.getStudentPersonal("1"));
-        verify(studentBusiness).getStudent(eq("1"));
+        verify(studentBusiness).getStudent(eq(1L));
     }
 
     @Test
@@ -137,15 +137,15 @@ public class StudentServiceBeanTest extends AbstractGuiceContextTest {
         final StudentServiceLocal testee = getInstance(StudentServiceLocal.class);
 
         final StudentPersonal saved = new StudentPersonal("1", "street", "city", "postcode", "religion");
-        when(studentBusiness.saveStudentPersonal(eq("1"), any(StudentPersonal.class))).thenReturn(saved);
+        when(studentBusiness.saveStudentPersonal(any(StudentPersonal.class))).thenReturn(saved);
 
         final StudentPersonal toSave = new StudentPersonal();
         assertNull(testee.saveStudentPersonal(null, toSave));
         assertNull(testee.saveStudentPersonal("1", null));
-        verify(studentBusiness, never()).saveStudentPersonal(anyString(), any(StudentPersonal.class));
+        verify(studentBusiness, never()).saveStudentPersonal(any(StudentPersonal.class));
 
         assertEquals(saved, testee.saveStudentPersonal("1", toSave));
-        verify(studentBusiness).saveStudentPersonal(eq("1"), eq(toSave));
+        verify(studentBusiness).saveStudentPersonal(eq(toSave));
     }
 
     @Test
@@ -155,16 +155,16 @@ public class StudentServiceBeanTest extends AbstractGuiceContextTest {
 
         final Student expected = new Student("1", "firstName", "lastName", new StudentPersonal(), new StudentMedical("1", "doctor"),
                 new StudentClass());
-        when(studentBusiness.getStudent("1")).thenReturn(expected);
+        when(studentBusiness.getStudent(eq(1L))).thenReturn(expected);
 
         assertNull(testee.getStudentMedical(null));
-        verify(studentBusiness, never()).getStudent(anyString());
+        verify(studentBusiness, never()).getStudent(anyLong());
 
         assertNull(testee.getStudentMedical("2"));
-        verify(studentBusiness).getStudent(eq("2"));
+        verify(studentBusiness).getStudent(eq(2L));
 
         assertEquals(expected.getStudentMedical(), testee.getStudentMedical("1"));
-        verify(studentBusiness).getStudent(eq("1"));
+        verify(studentBusiness).getStudent(eq(1L));
     }
 
     @Test
@@ -173,15 +173,15 @@ public class StudentServiceBeanTest extends AbstractGuiceContextTest {
         final StudentServiceLocal testee = getInstance(StudentServiceLocal.class);
 
         final StudentMedical saved = new StudentMedical("1", "doctor");
-        when(studentBusiness.saveStudentMedical(eq("1"), any(StudentMedical.class))).thenReturn(saved);
+        when(studentBusiness.saveStudentMedical(any(StudentMedical.class))).thenReturn(saved);
 
         final StudentMedical toSave = new StudentMedical();
         assertNull(testee.saveStudentMedical(null, toSave));
         assertNull(testee.saveStudentMedical("1", null));
-        verify(studentBusiness, never()).saveStudentMedical(anyString(), any(StudentMedical.class));
+        verify(studentBusiness, never()).saveStudentMedical(any(StudentMedical.class));
 
         assertEquals(saved, testee.saveStudentMedical("1", toSave));
-        verify(studentBusiness).saveStudentMedical(eq("1"), eq(toSave));
+        verify(studentBusiness).saveStudentMedical(eq(toSave));
     }
 
     @Test
@@ -191,16 +191,16 @@ public class StudentServiceBeanTest extends AbstractGuiceContextTest {
 
         final Student expected = new Student("1", "firstName", "lastName", new StudentPersonal(), new StudentMedical(), new StudentClass("1",
                 Arrays.asList("clazz1"), Arrays.asList("clazz2")));
-        when(studentBusiness.getStudent("1")).thenReturn(expected);
+        when(studentBusiness.getStudent(eq(1L))).thenReturn(expected);
 
         assertNull(testee.getStudentClasses(null));
-        verify(studentBusiness, never()).getStudent(anyString());
+        verify(studentBusiness, never()).getStudent(anyLong());
 
         assertNull(testee.getStudentClasses("2"));
-        verify(studentBusiness).getStudent(eq("2"));
+        verify(studentBusiness).getStudent(eq(2L));
 
         assertEquals(expected.getStudentClasses(), testee.getStudentClasses("1"));
-        verify(studentBusiness).getStudent(eq("1"));
+        verify(studentBusiness).getStudent(eq(1L));
     }
 
     @Test

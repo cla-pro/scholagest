@@ -9,8 +9,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
  * @since 0.13.0
  */
 public class Student extends Base {
-    private String firstName;
-    private String lastName;
+    private String firstname;
+    private String lastname;
     private StudentPersonal studentPersonal;
     private StudentMedical studentMedical;
     private StudentClass studentClasses;
@@ -22,34 +22,34 @@ public class Student extends Base {
     }
 
     public Student(final Student toCopy) {
-        this(toCopy.getId(), toCopy.firstName, toCopy.lastName, new StudentPersonal(toCopy.studentPersonal),
+        this(toCopy.getId(), toCopy.firstname, toCopy.lastname, new StudentPersonal(toCopy.studentPersonal),
                 new StudentMedical(toCopy.studentMedical), new StudentClass(toCopy.studentClasses));
     }
 
-    public Student(final String id, final String firstName, final String lastName, final StudentPersonal studentPersonal,
+    public Student(final String id, final String firstname, final String lastname, final StudentPersonal studentPersonal,
             final StudentMedical studentMedical, final StudentClass studentClasses) {
         super(id);
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.firstname = firstname;
+        this.lastname = lastname;
         this.studentPersonal = studentPersonal;
         this.studentMedical = studentMedical;
         this.studentClasses = studentClasses;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getFirstname() {
+        return firstname;
     }
 
-    public void setFirstName(final String firstName) {
-        this.firstName = firstName;
+    public void setFirstname(final String firstname) {
+        this.firstname = firstname;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getLastname() {
+        return lastname;
     }
 
-    public void setLastName(final String lastName) {
-        this.lastName = lastName;
+    public void setLastname(final String lastName) {
+        this.lastname = lastName;
     }
 
     public StudentPersonal getStudentPersonal() {
@@ -88,6 +88,6 @@ public class Student extends Base {
         }
 
         final Student other = (Student) that;
-        return new EqualsBuilder().append(getId(), other.getId()).append(firstName, other.firstName).append(lastName, other.lastName).isEquals();
+        return new EqualsBuilder().append(getId(), other.getId()).append(firstname, other.firstname).append(lastname, other.lastname).isEquals();
     }
 }

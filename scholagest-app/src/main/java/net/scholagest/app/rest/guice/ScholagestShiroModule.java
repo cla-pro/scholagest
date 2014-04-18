@@ -5,7 +5,7 @@ import net.scholagest.authorization.RealmAuthenticationAndAuthorization;
 import org.apache.shiro.guice.ShiroModule;
 
 /**
- * Configure via Guice the ShiroModule
+ * Configure the ShiroModule via Guice
  * 
  * @author CLA
  * @since 0.15.0

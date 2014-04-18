@@ -27,7 +27,7 @@ public interface StudentBusinessLocal {
      * @param id Used to find the student
      * @return The student
      */
-    public Student getStudent(final String id);
+    public Student getStudent(final Long id);
 
     /**
      * Create a new student.
@@ -40,27 +40,24 @@ public interface StudentBusinessLocal {
     /**
      * Update a student, the personal and medical parts are not updated.
      * 
-     * @param studentId The Id of the student to update
      * @param student The student's information to store
      * @return The updated student
      */
-    public Student saveStudent(final String studentId, final Student student);
+    public Student saveStudent(final Student student);
 
     /**
      * Update the student personal information.
      * 
-     * @param studentId The Id of the student to update
-     * @param student The student's personal information to store
+     * @param studentPersonal The student's personal information to store
      * @return The updated student personal information
      */
-    public StudentPersonal saveStudentPersonal(String studentId, StudentPersonal studentPersonal);
+    public StudentPersonal saveStudentPersonal(StudentPersonal studentPersonal);
 
     /**
      * Update the student medical information.
      * 
-     * @param studentId The Id of the student to update
-     * @param student The student's medical information to store
+     * @param studentMedical The student's medical information to store
      * @return The updated student medical information
      */
-    public StudentMedical saveStudentMedical(String studentId, StudentMedical studentMedical);
+    public StudentMedical saveStudentMedical(StudentMedical studentMedical);
 }

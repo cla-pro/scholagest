@@ -3,17 +3,18 @@
  */
 package net.scholagest.business;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import net.scholagest.converter.StudentEntityConverter;
+import net.scholagest.dao.StudentDaoLocal;
+import net.scholagest.db.entity.StudentEntity;
+import net.scholagest.db.entity.StudentMedicalEntity;
+import net.scholagest.db.entity.StudentPersonalEntity;
 import net.scholagest.object.Student;
-import net.scholagest.object.StudentClass;
 import net.scholagest.object.StudentMedical;
 import net.scholagest.object.StudentPersonal;
-import net.scholagest.utils.IdHelper;
+
+import com.google.inject.Inject;
 
 /**
  * Implementation of {@link StudentBusinessLocal}.
@@ -22,18 +23,26 @@ import net.scholagest.utils.IdHelper;
  * @since 0.13.0
  */
 public class StudentBusinessBean implements StudentBusinessLocal {
-    public static Map<String, Student> studentsMap = new HashMap<>();
+    // public static Map<String, Student> studentsMap = new HashMap<>();
+    //
+    // static {
+    // studentsMap.put(
+    // "student1",
+    // new Student("student1", "Elodie", "Lavanchy", new
+    // StudentPersonal("student1", "Route final du Verney 8", "Perly", "1242",
+    // "Protestant"), new StudentMedical("student1", null), new
+    // StudentClass("student1", new ArrayList<String>(), Arrays
+    // .asList("clazz1"))));
+    // studentsMap.put("student2",
+    // new Student("student2", "Thibaud", "Hottelier", new
+    // StudentPersonal("student2", "Post Street 711", "San Francisco", "1242",
+    // null),
+    // new StudentMedical("student2", null), new StudentClass("student2", new
+    // ArrayList<String>(), Arrays.asList("clazz1"))));
+    // }
 
-    static {
-        studentsMap.put(
-                "student1",
-                new Student("student1", "Elodie", "Lavanchy", new StudentPersonal("student1", "Route final du Verney 8", "Perly", "1242",
-                        "Protestant"), new StudentMedical("student1", null), new StudentClass("student1", new ArrayList<String>(), Arrays
-                        .asList("clazz1"))));
-        studentsMap.put("student2",
-                new Student("student2", "Thibaud", "Hottelier", new StudentPersonal("student2", "Post Street 711", "San Francisco", "1242", null),
-                        new StudentMedical("student2", null), new StudentClass("student2", new ArrayList<String>(), Arrays.asList("clazz1"))));
-    }
+    @Inject
+    private StudentDaoLocal studentDao;
 
     StudentBusinessBean() {}
 
@@ -42,27 +51,24 @@ public class StudentBusinessBean implements StudentBusinessLocal {
      */
     @Override
     public List<Student> getStudents() {
-        return copyStudents();
-    }
+        final StudentEntityConverter converter = new StudentEntityConverter();
+        final List<StudentEntity> studentEntityList = studentDao.getAllStudentEntity();
 
-    private List<Student> copyStudents() {
-        final List<Student> students = new ArrayList<>();
-
-        for (final Student student : studentsMap.values()) {
-            students.add(new Student(student));
-        }
-        return students;
+        return converter.convertToStudentList(studentEntityList);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Student getStudent(final String id) {
-        if (studentsMap.containsKey(id)) {
-            return new Student(studentsMap.get(id));
-        } else {
+    public Student getStudent(final Long id) {
+        final StudentEntity studentEntity = studentDao.getStudentEntityById(id);
+
+        if (studentEntity == null) {
             return null;
+        } else {
+            final StudentEntityConverter converter = new StudentEntityConverter();
+            return converter.convertToStudent(studentEntity);
         }
     }
 
@@ -72,61 +78,70 @@ public class StudentBusinessBean implements StudentBusinessLocal {
     @Override
     public Student createStudent(final Student student) {
         // TODO check existence first?
-        final String id = IdHelper.getNextId(studentsMap.keySet(), "student");
+        final StudentEntityConverter converter = new StudentEntityConverter();
 
-        final Student toStore = new Student(student);
-        toStore.setId(id);
-        toStore.getStudentPersonal().setId(id);
-        toStore.getStudentMedical().setId(id);
-        toStore.getStudentClasses().setId(id);
+        final StudentEntity studentEntity = converter.convertToStudentEntity(student);
+        final StudentEntity persisted = studentDao.persistStudentEntity(studentEntity);
 
-        studentsMap.put(id, toStore);
-
-        return toStore;
+        return converter.convertToStudent(persisted);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Student saveStudent(final String studentId, final Student student) {
-        // TODO check existence first?
-        final Student stored = studentsMap.get(studentId);
+    public Student saveStudent(final Student student) {
+        final StudentEntity studentEntity = studentDao.getStudentEntityById(Long.valueOf(student.getId()));
 
-        stored.setFirstName(student.getFirstName());
-        stored.setLastName(student.getLastName());
+        if (studentEntity == null) {
+            return null;
+        } else {
+            studentEntity.setFirstname(student.getFirstname());
+            studentEntity.setLastname(student.getLastname());
 
-        return new Student(stored);
+            final StudentEntityConverter converter = new StudentEntityConverter();
+            return converter.convertToStudent(studentEntity);
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public StudentPersonal saveStudentPersonal(final String studentId, final StudentPersonal studentPersonal) {
-        // TODO check existence first?
-        final Student stored = studentsMap.get(studentId);
-        final StudentPersonal storedPersonal = stored.getStudentPersonal();
+    public StudentPersonal saveStudentPersonal(final StudentPersonal studentPersonal) {
+        final StudentPersonalEntity studentPersonalEntity = studentDao.getStudentPersonalEntityById(Long.valueOf(studentPersonal.getId()));
 
-        storedPersonal.setStreet(studentPersonal.getStreet());
-        storedPersonal.setCity(studentPersonal.getCity());
-        storedPersonal.setPostcode(studentPersonal.getPostcode());
-        storedPersonal.setReligion(studentPersonal.getReligion());
+        if (studentPersonalEntity == null) {
+            return null;
+        } else {
+            studentPersonalEntity.setStreet(studentPersonal.getStreet());
+            studentPersonalEntity.setPostcode(studentPersonal.getPostcode());
+            studentPersonalEntity.setCity(studentPersonal.getCity());
+            studentPersonalEntity.setReligion(studentPersonal.getReligion());
 
-        return new StudentPersonal(storedPersonal);
+            final StudentEntityConverter converter = new StudentEntityConverter();
+            final StudentEntity studentEntity = studentPersonalEntity.getStudent();
+            final Student student = converter.convertToStudent(studentEntity);
+            return student.getStudentPersonal();
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public StudentMedical saveStudentMedical(final String studentId, final StudentMedical studentMedical) {
-        // TODO check existence first?
-        final Student stored = studentsMap.get(studentId);
-        final StudentMedical storedMedical = stored.getStudentMedical();
+    public StudentMedical saveStudentMedical(final StudentMedical studentMedical) {
+        final StudentMedicalEntity studentMedicalEntity = studentDao.getStudentMedicalEntityById(Long.valueOf(studentMedical.getId()));
 
-        storedMedical.setDoctor(studentMedical.getDoctor());
+        if (studentMedicalEntity == null) {
+            return null;
+        } else {
+            studentMedicalEntity.setDoctor(studentMedical.getDoctor());
 
-        return new StudentMedical(storedMedical);
+            final StudentEntityConverter converter = new StudentEntityConverter();
+            final StudentEntity studentEntity = studentMedicalEntity.getStudent();
+            final Student student = converter.convertToStudent(studentEntity);
+            return student.getStudentMedical();
+        }
     }
 }

@@ -19,7 +19,7 @@ public class TeacherEntityConverter {
     /**
      * Convenient method to convert a list of {@link TeacherEntity} to a list of {@link Teacher}
      *  
-     * @param teacherList The list to convert
+     * @param teacherEntityList The list to convert
      * @return The converted list
      */
     public List<Teacher> convertToTeacherList(final List<TeacherEntity> teacherEntityList) {
@@ -57,8 +57,8 @@ public class TeacherEntityConverter {
     /**
      * Convert a {@link Teacher} to the entity {@link TeacherEntity}. The {@link TeacherDetail} is converted as well.
      * 
-     * @param teacherEntity The teacher entity to convert
-     * @return The converted teacher
+     * @param teacher The teacher to convert
+     * @return The converted teacher entity
      */
     public TeacherEntity convertToTeacherEntity(final Teacher teacher) {
         final TeacherEntity teacherEntity = new TeacherEntity();
