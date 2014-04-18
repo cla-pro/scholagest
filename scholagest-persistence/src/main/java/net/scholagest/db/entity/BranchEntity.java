@@ -1,5 +1,6 @@
 package net.scholagest.db.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -60,7 +61,11 @@ public class BranchEntity {
     }
 
     public List<BranchPeriodEntity> getBranchPeriods() {
-        return branchPeriods;
+        if (branchPeriods == null) {
+            return new ArrayList<>();
+        } else {
+            return branchPeriods;
+        }
     }
 
     public void setBranchPeriods(final List<BranchPeriodEntity> branchPeriods) {

@@ -6,10 +6,14 @@ import java.util.List;
 import net.scholagest.converter.ClazzEntityConverter;
 import net.scholagest.dao.ClazzDaoLocal;
 import net.scholagest.dao.PeriodDaoLocal;
+import net.scholagest.dao.StudentDaoLocal;
+import net.scholagest.dao.TeacherDaoLocal;
 import net.scholagest.dao.YearDaoLocal;
 import net.scholagest.db.entity.BranchPeriodEntity;
 import net.scholagest.db.entity.ClazzEntity;
 import net.scholagest.db.entity.PeriodEntity;
+import net.scholagest.db.entity.StudentEntity;
+import net.scholagest.db.entity.TeacherEntity;
 import net.scholagest.db.entity.YearEntity;
 import net.scholagest.object.Clazz;
 
@@ -47,6 +51,12 @@ public class ClazzBusinessBean implements ClazzBusinessLocal {
     @Inject
     private YearDaoLocal yearDao;
 
+    @Inject
+    private TeacherDaoLocal teacherDao;
+
+    @Inject
+    private StudentDaoLocal studentDao;
+
     ClazzBusinessBean() {}
 
     /**
@@ -72,8 +82,9 @@ public class ClazzBusinessBean implements ClazzBusinessLocal {
         final ClazzEntityConverter clazzEntityConverter = new ClazzEntityConverter();
 
         final ClazzEntity clazzEntity = clazzEntityConverter.convertToClazzEntity(clazz);
-        final YearEntity yearEntity = yearDao.getYearEntityById(Long.valueOf(clazz.getId()));
+        final YearEntity yearEntity = yearDao.getYearEntityById(Long.valueOf(clazz.getYear()));
         clazzEntity.setYear(yearEntity);
+
         final ClazzEntity persistedClazzEntity = clazzDao.persistClazzEntity(clazzEntity);
 
         final List<PeriodEntity> periodEntityList = createPeriods(persistedClazzEntity);
@@ -119,20 +130,39 @@ public class ClazzBusinessBean implements ClazzBusinessLocal {
         if (clazzEntity == null) {
             return null;
         } else {
-            // updateStudentResults(stored, stored.getStudents(),
-            // clazz.getStudents());
-            // updateTeacherPermissions(stored.getTeachers(),
-            // clazz.getTeachers(), stored.getStudents(), clazz.getStudents());
+            // TODO remove all permissions, update the teachers and students and
+            // then insert the permissions
+            updateTeachers(clazzEntity, clazz);
+            updateStudents(clazzEntity, clazz);
 
             clazzEntity.setName(clazz.getName());
-            // stored.setStudents(new ArrayList<String>(clazz.getStudents()));
-            // stored.setTeachers(new ArrayList<String>(clazz.getTeachers()));
 
             final ClazzEntityConverter clazzEntityConverter = new ClazzEntityConverter();
             return clazzEntityConverter.convertToClazz(clazzEntity);
         }
     }
 
+    private void updateStudents(final ClazzEntity clazzEntity, final Clazz clazz) {
+        final List<StudentEntity> studentEntityList = new ArrayList<>();
+
+        for (final String studentId : clazz.getStudents()) {
+            final StudentEntity studentEntity = studentDao.getStudentEntityById(Long.valueOf(studentId));
+            studentEntityList.add(studentEntity);
+        }
+
+        clazzEntity.setStudents(studentEntityList);
+    }
+
+    private void updateTeachers(final ClazzEntity clazzEntity, final Clazz clazz) {
+        final List<TeacherEntity> teacherEntityList = new ArrayList<>();
+
+        for (final String teacherId : clazz.getTeachers()) {
+            final TeacherEntity teacherEntity = teacherDao.getTeacherEntityById(Long.valueOf(teacherId));
+            teacherEntityList.add(teacherEntity);
+        }
+
+        clazzEntity.setTeachers(teacherEntityList);
+    }
     // private void updateStudentResults(final Clazz clazz, final List<String>
     // oldStudentList, final List<String> newStudentList) {
     // if (areListDifferent(oldStudentList, newStudentList)) {

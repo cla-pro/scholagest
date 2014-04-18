@@ -1,11 +1,14 @@
 package net.scholagest.db.entity;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 
@@ -32,6 +35,9 @@ public class TeacherEntity {
 
     @OneToOne(mappedBy = "teacher", fetch = FetchType.EAGER)
     private TeacherDetailEntity teacherDetail;
+
+    @ManyToMany(mappedBy = "teachers")
+    private List<ClazzEntity> clazzes;
 
     public TeacherEntity() {}
 
@@ -62,6 +68,14 @@ public class TeacherEntity {
     public void setTeacherDetail(final TeacherDetailEntity teacherDetail) {
         this.teacherDetail = teacherDetail;
         teacherDetail.setTeacher(this);
+    }
+
+    public List<ClazzEntity> getClazzes() {
+        return clazzes;
+    }
+
+    public void setClazzes(final List<ClazzEntity> clazzes) {
+        this.clazzes = clazzes;
     }
 
     /**

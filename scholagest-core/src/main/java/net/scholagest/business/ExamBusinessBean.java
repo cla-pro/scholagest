@@ -1,8 +1,13 @@
 package net.scholagest.business;
 
 import net.scholagest.converter.ExamEntityConverter;
+import net.scholagest.dao.BranchPeriodDaoLocal;
 import net.scholagest.dao.ExamDaoLocal;
+import net.scholagest.dao.ResultDaoLocal;
+import net.scholagest.db.entity.BranchPeriodEntity;
 import net.scholagest.db.entity.ExamEntity;
+import net.scholagest.db.entity.ResultEntity;
+import net.scholagest.db.entity.StudentResultEntity;
 import net.scholagest.object.Exam;
 
 import com.google.inject.Inject;
@@ -37,6 +42,12 @@ public class ExamBusinessBean implements ExamBusinessLocal {
     @Inject
     private ExamDaoLocal examDao;
 
+    @Inject
+    private BranchPeriodDaoLocal branchPeriodDao;
+
+    @Inject
+    private ResultDaoLocal resultDao;
+
     ExamBusinessBean() {}
 
     @Override
@@ -55,47 +66,28 @@ public class ExamBusinessBean implements ExamBusinessLocal {
     public Exam createExam(final Exam exam) {
         final ExamEntityConverter examEntityConverter = new ExamEntityConverter();
 
+        final BranchPeriodEntity branchPeriodEntity = branchPeriodDao.getBranchPeriodEntityById(Long.valueOf(exam.getBranchPeriod()));
+
         final ExamEntity examEntity = examEntityConverter.convertToExamEntity(exam);
+        examEntity.setBranchPeriod(branchPeriodEntity);
+
         final ExamEntity persistedExamEntity = examDao.persistExamEntity(examEntity);
 
-        return examEntityConverter.convertToExam(persistedExamEntity);
+        branchPeriodEntity.getExams().add(persistedExamEntity);
+        createResults(examEntity, branchPeriodEntity);
 
-        // final String id = IdHelper.getNextId(examsMap.keySet(), "exam");
-        // exam.setId(id);
-        //
-        // examsMap.put(id, exam);
-        //
-        // final BranchPeriod branchPeriod = updateBranchPeriod(exam);
-        // createResults(exam, branchPeriod);
-        //
-        // return new Exam(exam);
+        return examEntityConverter.convertToExam(persistedExamEntity);
     }
 
-    // private void createResults(final Exam exam, final BranchPeriod
-    // branchPeriod) {
-    // for (final String studentResultId : branchPeriod.getStudentResults()) {
-    // final StudentResult studentResult =
-    // StudentResultBusinessBean.studentResultsMap.get(studentResultId);
-    //
-    // final String id =
-    // IdHelper.getNextId(ResultBusinessBean.resultsMap.keySet(), "result");
-    // final Result result = new Result();
-    // result.setId(id);
-    // result.setExam(exam.getId());
-    // result.setStudentResult(studentResultId);
-    //
-    // ResultBusinessBean.resultsMap.put(id, result);
-    // studentResult.getResults().add(id);
-    // }
-    // }
-    //
-    // private BranchPeriod updateBranchPeriod(final Exam exam) {
-    // final BranchPeriod branchPeriod =
-    // BranchPeriodBusinessBean.branchPeriodsMap.get(exam.getBranchPeriod());
-    // branchPeriod.getExams().add(exam.getId());
-    //
-    // return branchPeriod;
-    // }
+    private void createResults(final ExamEntity examEntity, final BranchPeriodEntity branchPeriodEntity) {
+        for (final StudentResultEntity studentResultEntity : branchPeriodEntity.getStudentResults()) {
+            final ResultEntity resultEntity = new ResultEntity();
+            resultEntity.setExam(examEntity);
+            resultEntity.setStudentResult(studentResultEntity);
+
+            resultDao.persistResultEntity(resultEntity);
+        }
+    }
 
     @Override
     public Exam saveExam(final Exam exam) {

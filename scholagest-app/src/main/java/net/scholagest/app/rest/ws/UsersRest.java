@@ -74,7 +74,7 @@ public class UsersRest {
             final List<Teacher> teachers = teacherService.getTeacher(Arrays.asList(user.getTeacher()));
             final List<TeacherJson> teachersJson = new TeacherJsonConverter().convertToTeacherJsonList(teachers);
             response.put("teachers", teachersJson);
-            response.put("class", getClazzJson("clazz1"));
+            // response.put("class", getClazzJson("clazz1"));
             // TODO class is null -> go get it
             // toReturn.put("class",
             // ClassesRest.classes.get(userJson.getClazz()));

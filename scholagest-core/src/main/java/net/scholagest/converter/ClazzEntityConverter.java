@@ -6,6 +6,8 @@ import java.util.List;
 import net.scholagest.db.entity.BranchEntity;
 import net.scholagest.db.entity.ClazzEntity;
 import net.scholagest.db.entity.PeriodEntity;
+import net.scholagest.db.entity.StudentEntity;
+import net.scholagest.db.entity.TeacherEntity;
 import net.scholagest.object.Clazz;
 
 /**
@@ -54,6 +56,18 @@ public class ClazzEntityConverter {
             periods.add("" + periodEntity.getId());
         }
         clazz.setPeriods(periods);
+
+        final List<String> teachers = new ArrayList<>();
+        for (final TeacherEntity teacherEntity : clazzEntity.getTeachers()) {
+            teachers.add("" + teacherEntity.getId());
+        }
+        clazz.setTeachers(teachers);
+
+        final List<String> students = new ArrayList<>();
+        for (final StudentEntity studentEntity : clazzEntity.getStudents()) {
+            students.add("" + studentEntity.getId());
+        }
+        clazz.setStudents(students);
 
         return clazz;
     }

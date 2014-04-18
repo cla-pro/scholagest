@@ -17,4 +17,12 @@ public interface StudentResultDaoLocal {
      * @return The student result if it exists, else null
      */
     public StudentResultEntity getStudentResultEntityById(long id);
+
+    /**
+     * Persist a new student result entity into the DB
+     * 
+     * @param studentResultEntity The student result entity to save
+     * @return The persisted student result entity (with its id)
+     */
+    public StudentResultEntity persistStudentResultEntity(StudentResultEntity studentResultEntity);
 }

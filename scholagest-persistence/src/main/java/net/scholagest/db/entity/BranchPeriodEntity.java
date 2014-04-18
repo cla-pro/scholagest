@@ -1,5 +1,6 @@
 package net.scholagest.db.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -63,7 +64,11 @@ public class BranchPeriodEntity {
     }
 
     public List<ExamEntity> getExams() {
-        return exams;
+        if (exams == null) {
+            return new ArrayList<>();
+        } else {
+            return exams;
+        }
     }
 
     public void setExams(final List<ExamEntity> exams) {
@@ -71,7 +76,11 @@ public class BranchPeriodEntity {
     }
 
     public List<StudentResultEntity> getStudentResults() {
-        return studentResults;
+        if (studentResults == null) {
+            return new ArrayList<>();
+        } else {
+            return studentResults;
+        }
     }
 
     public void setStudentResults(final List<StudentResultEntity> studentResults) {

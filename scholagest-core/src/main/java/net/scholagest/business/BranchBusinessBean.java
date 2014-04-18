@@ -12,6 +12,7 @@ import net.scholagest.db.entity.BranchPeriodEntity;
 import net.scholagest.db.entity.ClazzEntity;
 import net.scholagest.db.entity.ExamEntity;
 import net.scholagest.db.entity.PeriodEntity;
+import net.scholagest.db.entity.StudentResultEntity;
 import net.scholagest.object.Branch;
 
 import com.google.inject.Inject;
@@ -75,24 +76,6 @@ public class BranchBusinessBean implements BranchBusinessLocal {
         createAndPersistBranchPeriodAndStudentResult(persistedBranchEntity, clazzEntity);
 
         return branchEntityConverter.convertToBranch(persistedBranchEntity);
-
-        // final String id = IdHelper.getNextId(branchesMap.keySet(), "branch");
-        //
-        // branch.setId(id);
-        // branchesMap.put(id, branch);
-        //
-        // final Clazz clazz =
-        // ClazzBusinessBean.classesMap.get(branch.getClazz());
-        // final List<Period> periodList = getPeriodList(clazz);
-        //
-        // final List<BranchPeriod> branchPeriodList =
-        // createBranchPeriods(branch, periodList);
-        // createStudentResults(branchPeriodList, clazz.getStudents());
-        //
-        // updatePeriods(periodList, branchPeriodList);
-        // clazz.getBranches().add(id);
-        //
-        // return new Branch(branch);
     }
 
     // private void createStudentResults(final List<BranchPeriod>
@@ -199,10 +182,13 @@ public class BranchBusinessBean implements BranchBusinessLocal {
             branchPeriodEntity.setBranch(branchEntity);
             branchPeriodEntity.setPeriod(periodEntity);
             branchPeriodEntity.setExams(new ArrayList<ExamEntity>());
+            branchPeriodEntity.setStudentResults(new ArrayList<StudentResultEntity>());
 
             branchPeriodDao.persistBranchPeriodEntity(branchPeriodEntity);
 
             branchPeriodEntityList.add(branchPeriodEntity);
+            // TODO update period
+
             // TODO create and persist the student result
             // List<StudentResultEntity> studentResultEntityList =
             // createAndPersistStudentResult(branchPeriodEntity,

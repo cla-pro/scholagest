@@ -3,14 +3,25 @@ package net.scholagest.business;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import net.scholagest.ReflectionUtils;
+import net.scholagest.dao.BranchPeriodDaoLocal;
 import net.scholagest.dao.ExamDaoLocal;
+import net.scholagest.dao.ResultDaoLocal;
 import net.scholagest.db.entity.BranchPeriodEntity;
 import net.scholagest.db.entity.ExamEntity;
+import net.scholagest.db.entity.ResultEntity;
+import net.scholagest.db.entity.StudentResultEntity;
 import net.scholagest.object.Exam;
 
 import org.junit.Test;
@@ -31,6 +42,12 @@ public class ExamBusinessBeanTest {
     @Mock
     private ExamDaoLocal examDao;
 
+    @Mock
+    private BranchPeriodDaoLocal branchPeriodDao;
+
+    @Mock
+    private ResultDaoLocal resultDao;
+
     @InjectMocks
     private final ExamBusinessLocal testee = new ExamBusinessBean();
 
@@ -49,10 +66,12 @@ public class ExamBusinessBeanTest {
 
     @Test
     public void testCreateExam() {
-        final Exam exam = new Exam("2", "name", 3, null);
-        final ExamEntity examEntityMock = createExamEntity(2L, "name", 3);
+        final Exam exam = new Exam("2", "name", 3, "2");
+        final ExamEntity examEntity = createExamEntity(2L, "name", 3);
+        final BranchPeriodEntity branchPeriodEntity = createBranchPeriodEntity();
 
-        when(examDao.persistExamEntity(any(ExamEntity.class))).thenReturn(examEntityMock);
+        when(examDao.persistExamEntity(any(ExamEntity.class))).thenReturn(examEntity);
+        when(branchPeriodDao.getBranchPeriodEntityById(anyLong())).thenReturn(branchPeriodEntity);
 
         final Exam result = testee.createExam(exam);
 
@@ -60,6 +79,9 @@ public class ExamBusinessBeanTest {
         final ArgumentCaptor<ExamEntity> teacherCaptor = ArgumentCaptor.forClass(ExamEntity.class);
         verify(examDao).persistExamEntity(teacherCaptor.capture());
         assertNull(teacherCaptor.getValue().getId());
+
+        assertTrue(branchPeriodEntity.getExams().contains(examEntity));
+        verify(resultDao, times(branchPeriodEntity.getStudentResults().size())).persistResultEntity(any(ResultEntity.class));
     }
 
     @Test
@@ -83,5 +105,20 @@ public class ExamBusinessBeanTest {
         examEntity.setBranchPeriod(new BranchPeriodEntity());
 
         return examEntity;
+    }
+
+    private BranchPeriodEntity createBranchPeriodEntity() {
+        final BranchPeriodEntity branchPeriodEntity = new BranchPeriodEntity();
+        branchPeriodEntity.setExams(new ArrayList<ExamEntity>());
+        branchPeriodEntity.setStudentResults(Arrays.asList(createStudentResultEntity(), createStudentResultEntity()));
+
+        return branchPeriodEntity;
+    }
+
+    private StudentResultEntity createStudentResultEntity() {
+        final StudentResultEntity studentResultEntity = new StudentResultEntity();
+        studentResultEntity.setResults(new ArrayList<ResultEntity>());
+
+        return studentResultEntity;
     }
 }

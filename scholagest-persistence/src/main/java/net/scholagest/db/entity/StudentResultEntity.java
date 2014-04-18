@@ -1,5 +1,6 @@
 package net.scholagest.db.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -76,7 +77,11 @@ public class StudentResultEntity {
     }
 
     public List<ResultEntity> getResults() {
-        return results;
+        if (results == null) {
+            return new ArrayList<>();
+        } else {
+            return results;
+        }
     }
 
     public void setResults(final List<ResultEntity> results) {

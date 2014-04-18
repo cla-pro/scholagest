@@ -14,6 +14,8 @@ import net.scholagest.ReflectionUtils;
 import net.scholagest.db.entity.BranchEntity;
 import net.scholagest.db.entity.ClazzEntity;
 import net.scholagest.db.entity.PeriodEntity;
+import net.scholagest.db.entity.StudentEntity;
+import net.scholagest.db.entity.TeacherEntity;
 import net.scholagest.db.entity.YearEntity;
 import net.scholagest.object.Clazz;
 
@@ -59,6 +61,14 @@ public class ClazzEntityConverterTest {
         for (final PeriodEntity periodEntity : clazzEntity.getPeriods()) {
             assertTrue(converted.getPeriods().contains("" + periodEntity.getId()));
         }
+
+        for (final TeacherEntity teacherEntity : clazzEntity.getTeachers()) {
+            assertTrue(converted.getTeachers().contains("" + teacherEntity.getId()));
+        }
+
+        for (final StudentEntity studentEntity : clazzEntity.getStudents()) {
+            assertTrue(converted.getStudents().contains("" + studentEntity.getId()));
+        }
     }
 
     @Test
@@ -83,8 +93,24 @@ public class ClazzEntityConverterTest {
         clazzEntity.setYear(createSimpleYearEntity(3L));
         clazzEntity.setPeriods(Arrays.asList(createSimplePeriodEntity(4L), createSimplePeriodEntity(5L)));
         clazzEntity.setBranches(Arrays.asList(createSimpleBranchEntity(4L), createSimpleBranchEntity(5L)));
+        clazzEntity.setTeachers(Arrays.asList(createSimpleTeacherEntity(7L), createSimpleTeacherEntity(8L)));
+        clazzEntity.setStudents(Arrays.asList(createSimpleStudentEntity(9L), createSimpleStudentEntity(10L)));
 
         return clazzEntity;
+    }
+
+    private StudentEntity createSimpleStudentEntity(final long id) {
+        final StudentEntity studentEntity = new StudentEntity();
+        ReflectionUtils.setField(studentEntity, "id", Long.valueOf(id));
+
+        return studentEntity;
+    }
+
+    private TeacherEntity createSimpleTeacherEntity(final long id) {
+        final TeacherEntity teacherEntity = new TeacherEntity();
+        ReflectionUtils.setField(teacherEntity, "id", Long.valueOf(id));
+
+        return teacherEntity;
     }
 
     private PeriodEntity createSimplePeriodEntity(final long id) {
