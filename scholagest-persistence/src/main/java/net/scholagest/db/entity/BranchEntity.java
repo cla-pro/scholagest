@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,11 +32,14 @@ public class BranchEntity {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "numerical")
+    private boolean numerical;
+
     @JoinColumn(name = "class_id")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private ClazzEntity clazz;
 
-    @OneToMany(mappedBy = "branch")
+    @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
     private List<BranchPeriodEntity> branchPeriods;
 
     public BranchEntity() {}
@@ -50,6 +54,14 @@ public class BranchEntity {
 
     public void setName(final String name) {
         this.name = name;
+    }
+
+    public boolean isNumerical() {
+        return numerical;
+    }
+
+    public void setNumerical(final boolean numerical) {
+        this.numerical = numerical;
     }
 
     public ClazzEntity getClazz() {

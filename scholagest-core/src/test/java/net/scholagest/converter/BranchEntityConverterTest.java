@@ -65,6 +65,7 @@ public class BranchEntityConverterTest {
 
         assertNull(converted.getId());
         assertEquals(clazz.getName(), converted.getName());
+        assertEquals(clazz.isNumerical(), converted.isNumerical());
         assertNull(converted.getClazz());
         assertTrue(converted.getBranchPeriods().isEmpty());
     }

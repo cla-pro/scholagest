@@ -24,7 +24,7 @@ public class ResultEntity {
     @GeneratedValue(generator = "seq_result", strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Column(name = "active")
+    @Column(name = "grade")
     private String grade;
 
     @JoinColumn(name = "exam_id")

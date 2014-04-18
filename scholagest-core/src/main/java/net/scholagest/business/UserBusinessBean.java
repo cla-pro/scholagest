@@ -1,9 +1,18 @@
 package net.scholagest.business;
 
+import java.util.List;
+
+import net.scholagest.converter.ClazzEntityConverter;
+import net.scholagest.converter.TeacherEntityConverter;
 import net.scholagest.converter.UserEntityConverter;
 import net.scholagest.dao.UserDaoLocal;
+import net.scholagest.db.entity.ClazzEntity;
+import net.scholagest.db.entity.TeacherEntity;
 import net.scholagest.db.entity.UserEntity;
+import net.scholagest.object.Clazz;
+import net.scholagest.object.Teacher;
 import net.scholagest.object.User;
+import net.scholagest.object.UserBlock;
 
 import com.google.inject.Inject;
 
@@ -40,6 +49,32 @@ public class UserBusinessBean implements UserBusinessLocal {
         } else {
             final UserEntityConverter converter = new UserEntityConverter();
             return converter.convertToUser(userEntity);
+        }
+    }
+
+    @Override
+    public UserBlock getUserBlock(final Long id) {
+        final UserEntity userEntity = userDao.getUserEntityById(id);
+
+        if (userEntity == null) {
+            return null;
+        } else {
+            final TeacherEntity teacherEntity = userEntity.getTeacher();
+            final List<ClazzEntity> clazzEntityList = teacherEntity.getClazzes();
+
+            final UserEntityConverter userEntityConverter = new UserEntityConverter();
+            final TeacherEntityConverter teacherEntityConverter = new TeacherEntityConverter();
+            final ClazzEntityConverter clazzEntityConverter = new ClazzEntityConverter();
+
+            final User user = userEntityConverter.convertToUser(userEntity);
+            final Teacher teacher = teacherEntityConverter.convertToTeacher(teacherEntity);
+            final List<Clazz> clazzList = clazzEntityConverter.convertToClazzList(clazzEntityList);
+
+            if (!clazzList.isEmpty()) {
+                user.setClazz(clazzList.get(0).getId());
+            }
+
+            return new UserBlock(user, teacher, clazzList);
         }
     }
 

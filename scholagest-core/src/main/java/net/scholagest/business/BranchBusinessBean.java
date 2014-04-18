@@ -7,11 +7,13 @@ import net.scholagest.converter.BranchEntityConverter;
 import net.scholagest.dao.BranchDaoLocal;
 import net.scholagest.dao.BranchPeriodDaoLocal;
 import net.scholagest.dao.ClazzDaoLocal;
+import net.scholagest.dao.StudentResultDaoLocal;
 import net.scholagest.db.entity.BranchEntity;
 import net.scholagest.db.entity.BranchPeriodEntity;
 import net.scholagest.db.entity.ClazzEntity;
 import net.scholagest.db.entity.ExamEntity;
 import net.scholagest.db.entity.PeriodEntity;
+import net.scholagest.db.entity.StudentEntity;
 import net.scholagest.db.entity.StudentResultEntity;
 import net.scholagest.object.Branch;
 
@@ -41,6 +43,9 @@ public class BranchBusinessBean implements BranchBusinessLocal {
 
     @Inject
     private BranchPeriodDaoLocal branchPeriodDao;
+
+    @Inject
+    private StudentResultDaoLocal studentResultDao;
 
     BranchBusinessBean() {}
 
@@ -73,7 +78,10 @@ public class BranchBusinessBean implements BranchBusinessLocal {
 
         final BranchEntity persistedBranchEntity = branchDao.persistBranchEntity(branchEntity);
 
-        createAndPersistBranchPeriodAndStudentResult(persistedBranchEntity, clazzEntity);
+        final List<BranchPeriodEntity> branchPeriodEntityList = createAndPersistBranchPeriod(persistedBranchEntity, clazzEntity);
+        branchEntity.setBranchPeriods(branchPeriodEntityList);
+
+        createAndPersistStudentResult(branchPeriodEntityList, clazzEntity);
 
         return branchEntityConverter.convertToBranch(persistedBranchEntity);
     }
@@ -174,7 +182,25 @@ public class BranchBusinessBean implements BranchBusinessLocal {
     // return branchPeriodList;
     // }
 
-    private void createAndPersistBranchPeriodAndStudentResult(final BranchEntity branchEntity, final ClazzEntity clazzEntity) {
+    private void createAndPersistStudentResult(final List<BranchPeriodEntity> branchPeriodEntityList, final ClazzEntity clazzEntity) {
+        for (final BranchPeriodEntity branchPeriodEntity : branchPeriodEntityList) {
+            final List<StudentResultEntity> studentResultEntityList = new ArrayList<>();
+            for (final StudentEntity studentEntity : clazzEntity.getStudents()) {
+                final StudentResultEntity studentResultEntity = new StudentResultEntity();
+                studentResultEntity.setActive(true);
+                studentResultEntity.setBranchPeriod(branchPeriodEntity);
+                studentResultEntity.setStudent(studentEntity);
+
+                studentResultDao.persistStudentResultEntity(studentResultEntity);
+
+                studentResultEntityList.add(studentResultEntity);
+            }
+
+            branchPeriodEntity.setStudentResults(studentResultEntityList);
+        }
+    }
+
+    private List<BranchPeriodEntity> createAndPersistBranchPeriod(final BranchEntity branchEntity, final ClazzEntity clazzEntity) {
         final List<BranchPeriodEntity> branchPeriodEntityList = new ArrayList<>();
 
         for (final PeriodEntity periodEntity : clazzEntity.getPeriods()) {
@@ -187,6 +213,8 @@ public class BranchBusinessBean implements BranchBusinessLocal {
             branchPeriodDao.persistBranchPeriodEntity(branchPeriodEntity);
 
             branchPeriodEntityList.add(branchPeriodEntity);
+
+            periodEntity.getBranchPeriods().add(branchPeriodEntity);
             // TODO update period
 
             // TODO create and persist the student result
@@ -195,7 +223,7 @@ public class BranchBusinessBean implements BranchBusinessLocal {
             // clazzEntity.getS)
         }
 
-        branchEntity.setBranchPeriods(branchPeriodEntityList);
+        return branchPeriodEntityList;
     }
 
     /**

@@ -35,7 +35,7 @@ public class PeriodEntity {
     @ManyToOne
     private ClazzEntity clazz;
 
-    @OneToMany(mappedBy = "branch")
+    @OneToMany(mappedBy = "period")
     private List<BranchPeriodEntity> branchPeriods;
 
     public PeriodEntity() {}

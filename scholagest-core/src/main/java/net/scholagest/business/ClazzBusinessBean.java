@@ -135,6 +135,8 @@ public class ClazzBusinessBean implements ClazzBusinessLocal {
             updateTeachers(clazzEntity, clazz);
             updateStudents(clazzEntity, clazz);
 
+            // TODO create the student results
+
             clazzEntity.setName(clazz.getName());
 
             final ClazzEntityConverter clazzEntityConverter = new ClazzEntityConverter();

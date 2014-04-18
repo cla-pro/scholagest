@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -35,22 +36,25 @@ public class ClazzEntity {
     private String name;
 
     @JoinColumn(name = "year_id")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private YearEntity year;
 
-    @OneToMany(mappedBy = "clazz")
+    @OneToMany(mappedBy = "clazz", fetch = FetchType.LAZY)
     private List<BranchEntity> branches;
 
-    @OneToMany(mappedBy = "clazz")
+    @OneToMany(mappedBy = "clazz", fetch = FetchType.LAZY)
     private List<PeriodEntity> periods;
 
-    @ManyToMany(cascade = { CascadeType.ALL })
+    @ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
     @JoinTable(name = "class_teacher", joinColumns = { @JoinColumn(name = "class_id") }, inverseJoinColumns = { @JoinColumn(name = "teacher_id") })
+    // @OrderColumn(name = "teacher_id")
     private List<TeacherEntity> teachers;
 
-    @ManyToMany(cascade = { CascadeType.ALL })
-    @JoinTable(name = "class_student", joinColumns = { @JoinColumn(name = "class_id") }, inverseJoinColumns = { @JoinColumn(name = "student_id") })
-    private List<StudentEntity> students;
+    // @ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+    // @JoinTable(name = "class_student", joinColumns = { @JoinColumn(name =
+    // "class_id") }, inverseJoinColumns = { @JoinColumn(name = "student_id") })
+    // @OrderColumn(name = "student_id")
+    // private List<StudentEntity> students;
 
     public ClazzEntity() {}
 
@@ -111,15 +115,15 @@ public class ClazzEntity {
     }
 
     public List<StudentEntity> getStudents() {
-        if (students == null) {
-            return new ArrayList<>();
-        } else {
-            return students;
-        }
+        // if (students == null) {
+        return new ArrayList<>();
+        // } else {
+        // return students;
+        // }
     }
 
     public void setStudents(final List<StudentEntity> students) {
-        this.students = students;
+        // this.students = students;
     }
 
     /**

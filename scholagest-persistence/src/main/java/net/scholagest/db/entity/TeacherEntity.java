@@ -1,5 +1,6 @@
 package net.scholagest.db.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -36,7 +37,7 @@ public class TeacherEntity {
     @OneToOne(mappedBy = "teacher", fetch = FetchType.EAGER)
     private TeacherDetailEntity teacherDetail;
 
-    @ManyToMany(mappedBy = "teachers")
+    @ManyToMany(mappedBy = "teachers", fetch = FetchType.LAZY)
     private List<ClazzEntity> clazzes;
 
     public TeacherEntity() {}
@@ -71,7 +72,11 @@ public class TeacherEntity {
     }
 
     public List<ClazzEntity> getClazzes() {
-        return clazzes;
+        if (clazzes == null) {
+            return new ArrayList<>();
+        } else {
+            return clazzes;
+        }
     }
 
     public void setClazzes(final List<ClazzEntity> clazzes) {

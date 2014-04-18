@@ -1,6 +1,7 @@
 package net.scholagest.business;
 
 import net.scholagest.object.User;
+import net.scholagest.object.UserBlock;
 
 /**
  * Provides the methods to handle the users. This level is responsible to
@@ -33,4 +34,12 @@ public interface UserBusinessLocal {
      * @return The updated user
      */
     public User saveUser(final User user);
+
+    /**
+     * Get the user and the related objects (teacher, classes) identified by id.
+     * 
+     * @param id The user's id
+     * @return The user block information
+     */
+    public UserBlock getUserBlock(Long id);
 }

@@ -24,10 +24,10 @@ public class MeanEntity {
     @GeneratedValue(generator = "seq_mean", strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Column(name = "active")
+    @Column(name = "grade")
     private String grade;
 
-    @JoinColumn(name = "student_mean_id")
+    @JoinColumn(name = "student_result_id")
     @OneToOne
     private StudentResultEntity studentResult;
 

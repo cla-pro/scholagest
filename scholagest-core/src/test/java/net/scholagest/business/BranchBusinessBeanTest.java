@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import net.scholagest.ReflectionUtils;
@@ -21,6 +22,8 @@ import net.scholagest.db.entity.BranchEntity;
 import net.scholagest.db.entity.BranchPeriodEntity;
 import net.scholagest.db.entity.ClazzEntity;
 import net.scholagest.db.entity.PeriodEntity;
+import net.scholagest.db.entity.StudentEntity;
+import net.scholagest.db.entity.StudentResultEntity;
 import net.scholagest.object.Branch;
 
 import org.junit.Test;
@@ -82,6 +85,7 @@ public class BranchBusinessBeanTest {
         assertNull(teacherCaptor.getValue().getId());
 
         verify(branchPeriodDao, times(3)).persistBranchPeriodEntity(any(BranchPeriodEntity.class));
+        verify(studentResultDao, times(6)).persistStudentResultEntity(any(StudentResultEntity.class));
     }
 
     @Test
@@ -110,8 +114,16 @@ public class BranchBusinessBeanTest {
         final ClazzEntity clazzEntity = new ClazzEntity();
         ReflectionUtils.setField(clazzEntity, "id", Long.valueOf(id));
         clazzEntity.setPeriods(createPeriodEntityList(clazzEntity));
+        clazzEntity.setStudents(Arrays.asList(createSimpleStudentEntity(3L), createSimpleStudentEntity(4L)));
 
         return clazzEntity;
+    }
+
+    private StudentEntity createSimpleStudentEntity(final long id) {
+        final StudentEntity studentEntity = new StudentEntity();
+        ReflectionUtils.setField(studentEntity, "id", id);
+
+        return studentEntity;
     }
 
     private List<PeriodEntity> createPeriodEntityList(final ClazzEntity clazzEntity) {

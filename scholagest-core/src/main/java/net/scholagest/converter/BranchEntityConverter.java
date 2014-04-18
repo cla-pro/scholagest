@@ -60,6 +60,7 @@ public class BranchEntityConverter {
     public BranchEntity convertToBranchEntity(final Branch branch) {
         final BranchEntity branchEntity = new BranchEntity();
         branchEntity.setName(branch.getName());
+        branchEntity.setNumerical(branch.isNumerical());
         branchEntity.setBranchPeriods(new ArrayList<BranchPeriodEntity>());
 
         return branchEntity;

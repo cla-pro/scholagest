@@ -7,6 +7,7 @@ import net.scholagest.authorization.Permission;
 import net.scholagest.authorization.RolesAndPermissions;
 import net.scholagest.business.UserBusinessLocal;
 import net.scholagest.object.User;
+import net.scholagest.object.UserBlock;
 
 import com.google.inject.Inject;
 
@@ -35,5 +36,18 @@ public class UserServiceBean implements UserServiceLocal {
         }
 
         return userBusiness.getUser(Long.valueOf(id));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @RolesAndPermissions(roles = { "ADMIN" })
+    @Override
+    public UserBlock getUserBlock(@Permission final String id) {
+        if (id == null) {
+            return null;
+        }
+
+        return userBusiness.getUserBlock(Long.valueOf(id));
     }
 }
