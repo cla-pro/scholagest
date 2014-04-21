@@ -12,7 +12,7 @@ import java.util.List;
 import net.scholagest.ReflectionUtils;
 import net.scholagest.db.entity.MeanEntity;
 import net.scholagest.db.entity.StudentResultEntity;
-import net.scholagest.object.Result;
+import net.scholagest.object.Mean;
 
 import org.junit.Test;
 
@@ -30,7 +30,7 @@ public class MeanEntityConverterTest {
         final List<MeanEntity> toConvert = Arrays.asList(branchEntity1, branchEntity2);
 
         final MeanEntityConverter testee = spy(new MeanEntityConverter());
-        final List<Result> converted = testee.convertToMeanList(toConvert);
+        final List<Mean> converted = testee.convertToMeanList(toConvert);
 
         assertEquals(toConvert.size(), converted.size());
         for (final MeanEntity branchEntity : toConvert) {
@@ -43,17 +43,16 @@ public class MeanEntityConverterTest {
         final MeanEntity meanEntity = createMeanEntity(1L, "grade");
 
         final MeanEntityConverter testee = spy(new MeanEntityConverter());
-        final Result converted = testee.convertToMean(meanEntity);
+        final Mean converted = testee.convertToMean(meanEntity);
 
         assertEquals(meanEntity.getId().toString(), converted.getId());
         assertEquals(meanEntity.getGrade(), converted.getGrade());
         assertEquals("" + meanEntity.getStudentResult().getId(), converted.getStudentResult());
-        assertNull(converted.getExam());
     }
 
     @Test
     public void testConvertToMeanEntity() {
-        final Result result = new Result("3", "grade", "exam", "studentResult");
+        final Mean result = new Mean("3", "grade", "studentResult");
 
         final MeanEntityConverter testee = spy(new MeanEntityConverter());
         final MeanEntity converted = testee.convertToMeanEntity(result);

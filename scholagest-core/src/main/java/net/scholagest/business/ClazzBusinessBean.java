@@ -5,14 +5,21 @@ import java.util.List;
 
 import net.scholagest.converter.ClazzEntityConverter;
 import net.scholagest.dao.ClazzDaoLocal;
+import net.scholagest.dao.MeanDaoLocal;
 import net.scholagest.dao.PeriodDaoLocal;
+import net.scholagest.dao.ResultDaoLocal;
 import net.scholagest.dao.StudentDaoLocal;
+import net.scholagest.dao.StudentResultDaoLocal;
 import net.scholagest.dao.TeacherDaoLocal;
 import net.scholagest.dao.YearDaoLocal;
 import net.scholagest.db.entity.BranchPeriodEntity;
 import net.scholagest.db.entity.ClazzEntity;
+import net.scholagest.db.entity.ExamEntity;
+import net.scholagest.db.entity.MeanEntity;
 import net.scholagest.db.entity.PeriodEntity;
+import net.scholagest.db.entity.ResultEntity;
 import net.scholagest.db.entity.StudentEntity;
+import net.scholagest.db.entity.StudentResultEntity;
 import net.scholagest.db.entity.TeacherEntity;
 import net.scholagest.db.entity.YearEntity;
 import net.scholagest.object.Clazz;
@@ -56,6 +63,15 @@ public class ClazzBusinessBean implements ClazzBusinessLocal {
 
     @Inject
     private StudentDaoLocal studentDao;
+
+    @Inject
+    private StudentResultDaoLocal studentResultDao;
+
+    @Inject
+    private ResultDaoLocal resultDao;
+
+    @Inject
+    private MeanDaoLocal meanDao;
 
     ClazzBusinessBean() {}
 
@@ -132,16 +148,94 @@ public class ClazzBusinessBean implements ClazzBusinessLocal {
         } else {
             // TODO remove all permissions, update the teachers and students and
             // then insert the permissions
+            updateStudentResultState(clazzEntity, clazz);
+
             updateTeachers(clazzEntity, clazz);
             updateStudents(clazzEntity, clazz);
 
-            // TODO create the student results
+            createStudentResults(clazzEntity);
 
             clazzEntity.setName(clazz.getName());
 
             final ClazzEntityConverter clazzEntityConverter = new ClazzEntityConverter();
             return clazzEntityConverter.convertToClazz(clazzEntity);
         }
+    }
+
+    private void createStudentResults(final ClazzEntity clazzEntity) {
+        for (final PeriodEntity periodEntity : clazzEntity.getPeriods()) {
+            for (final BranchPeriodEntity branchPeriodEntity : periodEntity.getBranchPeriods()) {
+                createStudentResultsForBranchPeriod(branchPeriodEntity, clazzEntity.getStudents());
+            }
+        }
+    }
+
+    private void createStudentResultsForBranchPeriod(final BranchPeriodEntity branchPeriodEntity, final List<StudentEntity> studentEntityList) {
+        for (final StudentEntity studentEntity : studentEntityList) {
+            if (findStudentResultForStudent(studentEntity, branchPeriodEntity.getStudentResults()) == null) {
+                final StudentResultEntity studentResultEntity = new StudentResultEntity();
+                studentResultEntity.setActive(true);
+                studentResultEntity.setBranchPeriod(branchPeriodEntity);
+                studentResultEntity.setStudent(studentEntity);
+
+                final StudentResultEntity persistedStudentResultEntity = studentResultDao.persistStudentResultEntity(studentResultEntity);
+
+                final List<ResultEntity> resultEntityList = createAndPersistResultList(branchPeriodEntity.getExams(), persistedStudentResultEntity);
+                persistedStudentResultEntity.setResults(resultEntityList);
+
+                final MeanEntity meanEntity = createAndPersistMeanEntity(studentResultEntity);
+                studentResultEntity.setMean(meanEntity);
+            }
+        }
+    }
+
+    private MeanEntity createAndPersistMeanEntity(final StudentResultEntity studentResultEntity) {
+        final MeanEntity meanEntity = new MeanEntity();
+        meanEntity.setStudentResult(studentResultEntity);
+
+        final MeanEntity persistedMeanEntity = meanDao.persistMeanEntity(meanEntity);
+        return persistedMeanEntity;
+    }
+
+    private List<ResultEntity> createAndPersistResultList(final List<ExamEntity> examEntityList, final StudentResultEntity studentResultEntity) {
+        final List<ResultEntity> resultEntityList = new ArrayList<>();
+
+        for (final ExamEntity examEntity : examEntityList) {
+            final ResultEntity resultEntity = new ResultEntity();
+            resultEntity.setExam(examEntity);
+            resultEntity.setStudentResult(studentResultEntity);
+
+            final ResultEntity persistedResultEntity = resultDao.persistResultEntity(resultEntity);
+            resultEntityList.add(persistedResultEntity);
+        }
+
+        return resultEntityList;
+    }
+
+    private void updateStudentResultState(final ClazzEntity clazzEntity, final Clazz clazz) {
+        for (final StudentEntity studentEntity : clazzEntity.getStudents()) {
+            if (!clazz.getStudents().contains("" + studentEntity.getId())) {
+                setStudentResultsInactiveForStudent(studentEntity, clazzEntity);
+            }
+        }
+    }
+
+    private void setStudentResultsInactiveForStudent(final StudentEntity studentEntity, final ClazzEntity clazzEntity) {
+        for (final PeriodEntity periodEntity : clazzEntity.getPeriods()) {
+            for (final BranchPeriodEntity branchPeriodEntity : periodEntity.getBranchPeriods()) {
+                final StudentResultEntity studentResultEntity = findStudentResultForStudent(studentEntity, branchPeriodEntity.getStudentResults());
+                studentResultEntity.setActive(false);
+            }
+        }
+    }
+
+    private StudentResultEntity findStudentResultForStudent(final StudentEntity studentEntity, final List<StudentResultEntity> studentResultEntityList) {
+        for (final StudentResultEntity studentResultEntity : studentResultEntityList) {
+            if (studentEntity.getId().equals(studentResultEntity.getStudent().getId())) {
+                return studentResultEntity;
+            }
+        }
+        return null;
     }
 
     private void updateStudents(final ClazzEntity clazzEntity, final Clazz clazz) {

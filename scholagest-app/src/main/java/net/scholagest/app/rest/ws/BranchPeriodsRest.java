@@ -17,6 +17,7 @@ import net.scholagest.app.rest.ws.authorization.CheckAuthorization;
 import net.scholagest.app.rest.ws.converter.BranchJsonConverter;
 import net.scholagest.app.rest.ws.converter.BranchPeriodJsonConverter;
 import net.scholagest.app.rest.ws.converter.ExamJsonConverter;
+import net.scholagest.app.rest.ws.converter.MeanJsonConverter;
 import net.scholagest.app.rest.ws.converter.ResultJsonConverter;
 import net.scholagest.app.rest.ws.converter.StudentResultJsonConverter;
 import net.scholagest.app.rest.ws.objects.BranchJson;
@@ -27,11 +28,13 @@ import net.scholagest.app.rest.ws.objects.StudentResultJson;
 import net.scholagest.object.Branch;
 import net.scholagest.object.BranchPeriod;
 import net.scholagest.object.Exam;
+import net.scholagest.object.Mean;
 import net.scholagest.object.Result;
 import net.scholagest.object.StudentResult;
 import net.scholagest.service.BranchPeriodServiceLocal;
 import net.scholagest.service.BranchServiceLocal;
 import net.scholagest.service.ExamServiceLocal;
+import net.scholagest.service.MeanServiceLocal;
 import net.scholagest.service.ResultServiceLocal;
 import net.scholagest.service.StudentResultServiceLocal;
 
@@ -66,6 +69,9 @@ public class BranchPeriodsRest {
 
     @Inject
     private ResultServiceLocal resultService;
+
+    @Inject
+    private MeanServiceLocal meanService;
 
     @Inject
     private StudentResultServiceLocal studentResultService;
@@ -180,14 +186,14 @@ public class BranchPeriodsRest {
     }
 
     private List<ResultJson> getMeanJsonList(final List<StudentResultJson> studentResultJsonList) {
-        final ResultJsonConverter converter = new ResultJsonConverter();
+        final MeanJsonConverter converter = new MeanJsonConverter();
 
-        final List<Result> meanList = new ArrayList<>();
+        final List<Mean> meanList = new ArrayList<>();
         for (final StudentResultJson studentResultJson : studentResultJsonList) {
-            meanList.add(resultService.getResult(studentResultJson.getMean()));
+            meanList.add(meanService.getMean(studentResultJson.getMean()));
         }
 
-        return converter.convertToResultJsonList(meanList);
+        return converter.convertToMeanJsonList(meanList);
     }
 
     // @CheckAuthorization

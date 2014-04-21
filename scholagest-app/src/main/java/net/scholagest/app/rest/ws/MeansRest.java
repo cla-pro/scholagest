@@ -12,10 +12,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import net.scholagest.app.rest.ws.authorization.CheckAuthorization;
-import net.scholagest.app.rest.ws.converter.ResultJsonConverter;
+import net.scholagest.app.rest.ws.converter.MeanJsonConverter;
 import net.scholagest.app.rest.ws.objects.ResultJson;
-import net.scholagest.object.Result;
-import net.scholagest.service.ResultServiceLocal;
+import net.scholagest.object.Mean;
+import net.scholagest.service.MeanServiceLocal;
 
 import com.google.inject.Inject;
 
@@ -35,7 +35,7 @@ import com.google.inject.Inject;
 public class MeansRest {
 
     @Inject
-    private ResultServiceLocal resultService;
+    private MeanServiceLocal meanService;
 
     public MeansRest() {}
 
@@ -50,10 +50,10 @@ public class MeansRest {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Map<String, Object> getMean(@PathParam("id") final String id) {
-        final ResultJsonConverter converter = new ResultJsonConverter();
+        final MeanJsonConverter converter = new MeanJsonConverter();
 
-        final Result mean = resultService.getResult(id);
-        final ResultJson meanJson = converter.convertToResultJson(mean);
+        final Mean mean = meanService.getMean(id);
+        final ResultJson meanJson = converter.convertToMeanJson(mean);
 
         final Map<String, Object> response = new HashMap<>();
         response.put("result", meanJson);
@@ -74,14 +74,14 @@ public class MeansRest {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Map<String, Object> saveMean(@PathParam("id") final String id, final Map<String, ResultJson> payload) {
-        final ResultJsonConverter converter = new ResultJsonConverter();
+        final MeanJsonConverter converter = new MeanJsonConverter();
 
         final ResultJson meanJson = payload.get("mean");
-        final Result mean = converter.convertToResult(meanJson);
+        final Mean mean = converter.convertToMean(meanJson);
         mean.setId(id);
 
-        final Result updated = resultService.saveResult(mean);
-        final ResultJson updatedJson = converter.convertToResultJson(updated);
+        final Mean updated = meanService.saveMean(mean);
+        final ResultJson updatedJson = converter.convertToMeanJson(updated);
 
         final Map<String, Object> response = new HashMap<>();
         response.put("result", updatedJson);
