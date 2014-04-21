@@ -8,6 +8,9 @@
   <body>
     <release version="0.16.0">
       <action dev="clavanchy" type="add">
+        Implement the business logic for the object creation/saving
+      </action>
+      <action dev="clavanchy" type="add">
         Connection to the DB through DAO
       </action>
       <action dev="clavanchy" type="update">

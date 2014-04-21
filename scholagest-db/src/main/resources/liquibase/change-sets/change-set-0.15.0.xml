@@ -201,9 +201,7 @@
             <column name="id" type="int">
                 <constraints primaryKey="true" nullable="false" />
             </column>
-            <column name="grade" type="java.sql.Types.VARCHAR(50)">
-                <constraints nullable="false" />
-            </column>
+            <column name="grade" type="java.sql.Types.VARCHAR(50)" />
             <column name="exam_id" type="int">
                 <constraints nullable="false" />
             </column>
@@ -216,9 +214,7 @@
             <column name="id" type="int">
                 <constraints primaryKey="true" nullable="false" />
             </column>
-            <column name="grade" type="java.sql.Types.VARCHAR(50)">
-                <constraints nullable="false" />
-            </column>
+            <column name="grade" type="java.sql.Types.VARCHAR(50)" />
             <column name="student_result_id" type="int">
                 <constraints nullable="false" />
             </column>

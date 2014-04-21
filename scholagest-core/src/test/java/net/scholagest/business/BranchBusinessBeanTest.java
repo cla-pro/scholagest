@@ -17,10 +17,12 @@ import net.scholagest.ReflectionUtils;
 import net.scholagest.dao.BranchDaoLocal;
 import net.scholagest.dao.BranchPeriodDaoLocal;
 import net.scholagest.dao.ClazzDaoLocal;
+import net.scholagest.dao.MeanDaoLocal;
 import net.scholagest.dao.StudentResultDaoLocal;
 import net.scholagest.db.entity.BranchEntity;
 import net.scholagest.db.entity.BranchPeriodEntity;
 import net.scholagest.db.entity.ClazzEntity;
+import net.scholagest.db.entity.MeanEntity;
 import net.scholagest.db.entity.PeriodEntity;
 import net.scholagest.db.entity.StudentEntity;
 import net.scholagest.db.entity.StudentResultEntity;
@@ -31,7 +33,9 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
 /**
  * Teacher class for {@link BranchBusinessBean}
@@ -52,6 +56,9 @@ public class BranchBusinessBeanTest {
 
     @Mock
     private StudentResultDaoLocal studentResultDao;
+
+    @Mock
+    private MeanDaoLocal meanDao;
 
     @InjectMocks
     private final BranchBusinessLocal testee = new BranchBusinessBean();
@@ -76,6 +83,13 @@ public class BranchBusinessBeanTest {
 
         when(branchDao.persistBranchEntity(any(BranchEntity.class))).thenReturn(branchEntityMock);
         when(clazzDao.getClazzEntityById(eq(Long.valueOf(branch.getClazz())))).thenReturn(createClazzEntity(3L));
+        when(meanDao.persistMeanEntity(any(MeanEntity.class))).thenReturn(createSimpleMeanEntity(4L));
+        when(studentResultDao.persistStudentResultEntity(any(StudentResultEntity.class))).thenAnswer(new Answer<StudentResultEntity>() {
+            @Override
+            public StudentResultEntity answer(final InvocationOnMock invocation) throws Throwable {
+                return (StudentResultEntity) invocation.getArguments()[0];
+            }
+        });
 
         final Branch result = testee.createBranch(branch);
 
@@ -86,6 +100,7 @@ public class BranchBusinessBeanTest {
 
         verify(branchPeriodDao, times(3)).persistBranchPeriodEntity(any(BranchPeriodEntity.class));
         verify(studentResultDao, times(6)).persistStudentResultEntity(any(StudentResultEntity.class));
+        verify(meanDao, times(6)).persistMeanEntity(any(MeanEntity.class));
     }
 
     @Test
@@ -135,5 +150,11 @@ public class BranchBusinessBeanTest {
         }
 
         return periodEntityList;
+    }
+
+    private MeanEntity createSimpleMeanEntity(final long id) {
+        final MeanEntity meanEntity = new MeanEntity();
+        ReflectionUtils.setField(meanEntity, "id", Long.valueOf(id));
+        return meanEntity;
     }
 }

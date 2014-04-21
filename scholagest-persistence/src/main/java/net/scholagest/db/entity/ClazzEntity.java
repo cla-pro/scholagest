@@ -45,16 +45,15 @@ public class ClazzEntity {
     @OneToMany(mappedBy = "clazz", fetch = FetchType.LAZY)
     private List<PeriodEntity> periods;
 
-    @ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = { CascadeType.ALL })
     @JoinTable(name = "class_teacher", joinColumns = { @JoinColumn(name = "class_id") }, inverseJoinColumns = { @JoinColumn(name = "teacher_id") })
     // @OrderColumn(name = "teacher_id")
     private List<TeacherEntity> teachers;
 
-    // @ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
-    // @JoinTable(name = "class_student", joinColumns = { @JoinColumn(name =
-    // "class_id") }, inverseJoinColumns = { @JoinColumn(name = "student_id") })
+    @ManyToMany(cascade = { CascadeType.ALL })
+    @JoinTable(name = "class_student", joinColumns = { @JoinColumn(name = "class_id") }, inverseJoinColumns = { @JoinColumn(name = "student_id") })
     // @OrderColumn(name = "student_id")
-    // private List<StudentEntity> students;
+    private List<StudentEntity> students;
 
     public ClazzEntity() {}
 
@@ -115,15 +114,15 @@ public class ClazzEntity {
     }
 
     public List<StudentEntity> getStudents() {
-        // if (students == null) {
-        return new ArrayList<>();
-        // } else {
-        // return students;
-        // }
+        if (students == null) {
+            return new ArrayList<>();
+        } else {
+            return students;
+        }
     }
 
     public void setStudents(final List<StudentEntity> students) {
-        // this.students = students;
+        this.students = students;
     }
 
     /**

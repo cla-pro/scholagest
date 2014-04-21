@@ -281,24 +281,6 @@ public class ClassesRest {
     // return null;
     // }
 
-    private List<String> getStudentDifference(final List<String> oldStudents, final List<String> newStudents) {
-        final List<String> diff = new ArrayList<>();
-
-        for (final String id : oldStudents) {
-            if (!newStudents.contains(id)) {
-                diff.add(id);
-            }
-        }
-
-        for (final String id : newStudents) {
-            if (!oldStudents.contains(id)) {
-                diff.add(id);
-            }
-        }
-
-        return diff;
-    }
-
     private Map<String, Object> getLinkedData(final Clazz updated, final List<String> changedStudents) {
         final List<BranchPeriod> branchPeriodList = new ArrayList<>();
         final List<StudentResult> studentResultList = new ArrayList<>();
