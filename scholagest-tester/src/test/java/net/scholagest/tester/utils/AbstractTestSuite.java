@@ -66,9 +66,12 @@ public abstract class AbstractTestSuite {
         jettyServer.stop();
     }
 
-    protected <T> T persistInTransaction(final T entity) {
-        final TransactionalHelper transcationHelper = injector.getInstance(TransactionalHelper.class);
-        return transcationHelper.persistEntity(entity);
+    @SafeVarargs
+    protected final <T> void persistInTransaction(final T... entities) {
+        for (final T entity : entities) {
+            final TransactionalHelper transcationHelper = injector.getInstance(TransactionalHelper.class);
+            transcationHelper.persistEntity(entity);
+        }
     }
 
     protected ContentResponse callGET(final String url, final List<UrlParameter> parameters) throws Exception {

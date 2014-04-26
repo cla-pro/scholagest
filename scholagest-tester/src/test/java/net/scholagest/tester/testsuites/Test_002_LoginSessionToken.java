@@ -42,10 +42,7 @@ public class Test_002_LoginSessionToken extends AbstractTestSuite {
         expiredSessionEntity.setId(EXPIRED_SESSION_TOKEN);
         expiredSessionEntity.setUser(userEntity);
 
-        persistInTransaction(teacherEntity);
-        persistInTransaction(userEntity);
-        persistInTransaction(validSessionEntity);
-        persistInTransaction(expiredSessionEntity);
+        persistInTransaction(teacherEntity, userEntity, validSessionEntity, expiredSessionEntity);
     }
 
     @Test

@@ -30,8 +30,7 @@ public class Test_001_LoginUsernameTest extends AbstractTestSuite {
         userEntity.setPassword(VALID_PASSWORD);
         userEntity.setRole("admin");
 
-        persistInTransaction(teacherEntity);
-        persistInTransaction(userEntity);
+        persistInTransaction(teacherEntity, userEntity);
     }
 
     @Test
