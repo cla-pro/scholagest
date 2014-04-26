@@ -19,30 +19,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
-	<build>
-		<plugins>
-			<!-- <plugin> -->
-			<!-- <groupId>org.codehaus.mojo</groupId> -->
-			<!-- <artifactId>jaxb2-maven-plugin</artifactId> -->
-			<!-- <version>1.5</version> -->
-			<!-- <executions> -->
-			<!-- <execution> -->
-			<!-- <goals> -->
-			<!-- <goal>xjc</goal> -->
-			<!-- </goals> -->
-			<!-- </execution> -->
-			<!-- </executions> -->
-			<!-- <configuration> -->
-			<!-- The schema directory or xsd files. -->
-			<!-- <schemaDirectory>${basedir}/src/main/resources/xsd</schemaDirectory> -->
-			<!-- The package in which the source files will be generated. -->
-			<!-- <packageName>net.scholagest.tester.jaxb</packageName> -->
-			<!-- <outputDirectory>${project.build.directory}/generated-sources/jaxb</outputDirectory> -->
-			<!-- </configuration> -->
-			<!-- </plugin> -->
-		</plugins>
-	</build>
-
 	<dependencies>
 	    <dependency>
 	        <groupId>net.scholagest</groupId>
@@ -50,11 +26,18 @@
 	        <version>${project.version}</version>
 	        <scope>test</scope>
 	    </dependency>
-		<dependency>
-			<groupId>net.scholagest</groupId>
-			<artifactId>scholagest-app</artifactId>
-			<version>${version}</version>
-		</dependency>
+        <dependency>
+            <groupId>net.scholagest</groupId>
+            <artifactId>scholagest-app</artifactId>
+            <version>${version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.scholagest</groupId>
+            <artifactId>scholagest-test-util</artifactId>
+            <version>${version}</version>
+            <scope>test</scope>
+        </dependency>
 	    
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
@@ -66,16 +49,6 @@
 			<artifactId>log4j-core</artifactId>
 			<version>2.0-beta7</version>
 		</dependency>
-		<!-- <dependency> -->
-		<!-- <groupId>javax.xml.bind</groupId> -->
-		<!-- <artifactId>jaxb-api</artifactId> -->
-		<!-- <version>2.1</version> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>com.sun.xml.bind</groupId> -->
-		<!-- <artifactId>jaxb-impl</artifactId> -->
-		<!-- <version>2.2-promoted-b65</version> -->
-		<!-- </dependency> -->
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-server</artifactId>

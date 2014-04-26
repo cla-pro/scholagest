@@ -10,8 +10,10 @@ import liquibase.exception.LiquibaseException;
 import net.scholagest.authorization.AuthorizationInterceptor;
 import net.scholagest.authorization.RolesAndPermissions;
 import net.scholagest.test.util.H2Database;
+import net.scholagest.test.util.TransactionalHelper;
 
 import org.apache.shiro.subject.Subject;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -22,7 +24,6 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.binder.AnnotatedBindingBuilder;
 import com.google.inject.matcher.Matchers;
-import com.google.inject.persist.Transactional;
 import com.google.inject.persist.jpa.JpaPersistModule;
 
 public abstract class AbstractGuiceContextTest {
@@ -44,13 +45,12 @@ public abstract class AbstractGuiceContextTest {
     @BeforeClass
     public static void setUpClass() throws SQLException {
         h2database = new H2Database();
-        h2database.start();
     }
 
     @Before
     public void setUpContext() throws ClassNotFoundException, LiquibaseException, SQLException {
         if (useH2Database) {
-            h2database.initialize();
+            h2database.start();
         }
 
         final Module[] modules;
@@ -67,14 +67,18 @@ public abstract class AbstractGuiceContextTest {
         }
     }
 
-    @AfterClass
-    public static void tearDownClass() {
+    @After
+    public void tearDownContext() {
         h2database.stop();
     }
 
-    @Transactional
+    @AfterClass
+    public static void tearDownClass() {
+
+    }
+
     protected void executeInTransaction(final Runnable runnable) {
-        runnable.run();
+        getInstance(TransactionalHelper.class).executeInTransaction(runnable);
     }
 
     protected <T> T getInstance(final Class<T> clazz) {
@@ -105,6 +109,8 @@ public abstract class AbstractGuiceContextTest {
             requestInjection(authorizationInterceptor);
             bindInterceptor(Matchers.any(), Matchers.annotatedWith(RolesAndPermissions.class), authorizationInterceptor);
 
+            bind(TransactionalHelper.class);
+
             configureContext(this);
         }
 
@@ -112,6 +118,12 @@ public abstract class AbstractGuiceContextTest {
         @Override
         public <T> AnnotatedBindingBuilder<T> bind(final Class<T> clazz) {
             return super.bind(clazz);
+        }
+
+        // Do not remove because it is used inside the abstract method
+        @Override
+        public void requestInjection(final Object instance) {
+            super.requestInjection(instance);
         }
     }
 

@@ -2,9 +2,10 @@ package net.scholagest.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import net.scholagest.db.entity.TeacherDetailEntity;
+import net.scholagest.db.entity.TeacherEntity;
 import net.scholagest.utils.AbstractGuiceContextTest;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -23,7 +24,6 @@ public class TeacherDaoBeanTest extends AbstractGuiceContextTest {
         module.bind(TeacherDaoLocal.class).to(TeacherDaoBean.class);
     }
 
-    @Ignore
     @Test
     public void testGetAllTeacherEntity() {
         final TeacherDaoLocal testee = getInstance(TeacherDaoLocal.class);
@@ -38,7 +38,20 @@ public class TeacherDaoBeanTest extends AbstractGuiceContextTest {
         executeInTransaction(new Runnable() {
             @Override
             public void run() {
-                assertEquals(3, testee.getAllTeacherEntity().size());
+                final TeacherDetailEntity teacherDetailEntity = new TeacherDetailEntity();
+                final TeacherEntity teacherEntity = new TeacherEntity();
+                teacherEntity.setFirstname("firstname");
+                teacherEntity.setLastname("lastname");
+                teacherEntity.setTeacherDetail(teacherDetailEntity);
+
+                testee.persistTeacherEntity(teacherEntity);
+            }
+        });
+
+        executeInTransaction(new Runnable() {
+            @Override
+            public void run() {
+                assertEquals(1, testee.getAllTeacherEntity().size());
             }
         });
     }

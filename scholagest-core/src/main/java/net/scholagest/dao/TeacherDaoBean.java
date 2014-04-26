@@ -56,6 +56,7 @@ public class TeacherDaoBean implements TeacherDaoLocal {
         // Must be stored first otherwise, the reference is wrong
         entityManager.persist(teacherEntity);
         entityManager.persist(teacherEntity.getTeacherDetail());
+        entityManager.flush();
 
         return teacherEntity;
     }

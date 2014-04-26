@@ -13,12 +13,7 @@ import com.google.inject.persist.PersistService;
  */
 public class PersistInitializer {
     @Inject
-    public PersistInitializer(final PersistService persistService) { // , final
-                                                                     // org.apache.shiro.mgt.SecurityManager
-                                                                     // securityManager)
-                                                                     // {
+    public PersistInitializer(final PersistService persistService) {
         persistService.start();
-
-        // SecurityUtils.setSecurityManager(securityManager);
     }
 }
