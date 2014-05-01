@@ -9,6 +9,7 @@ import org.eclipse.jetty.client.api.ContentResponse;
 import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.client.util.StringContentProvider;
 import org.eclipse.jetty.http.HttpHeader;
+import org.eclipse.jetty.http.HttpMethod;
 
 /**
  * Utility class used to send requests to the in-memory server.
@@ -44,15 +45,18 @@ public class JettyClient {
         httpClient.stop();
     }
 
-    public ContentResponse callGET(final String url, final List<UrlParameter> parameters) throws Exception {
+    public ContentResponse callGET(final String url, final List<UrlParameter> parameters, final String token) throws Exception {
         final String fullUrl = createUrlWithParameters(url, parameters);
-        return httpClient.GET(fullUrl);
+        final Request request = httpClient.newRequest(fullUrl).method(HttpMethod.GET).header(HttpHeader.AUTHORIZATION, token);
+        return request.send();
     }
 
-    public ContentResponse callPOST(final String url, final String content) throws Exception {
+    public ContentResponse callPOST(final String url, final String content, final String token) throws Exception {
         final String fullUrl = createUrl(url);
         final Request postRequest = httpClient.POST(fullUrl).content(new StringContentProvider(content));
-        postRequest.header(HttpHeader.AUTHORIZATION, "");
+        if (token != null) {
+            postRequest.header(HttpHeader.AUTHORIZATION, token);
+        }
         return postRequest.send();
     }
 

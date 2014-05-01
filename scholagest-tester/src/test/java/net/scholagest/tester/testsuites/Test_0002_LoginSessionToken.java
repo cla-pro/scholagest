@@ -6,6 +6,9 @@ import net.scholagest.db.entity.TeacherEntity;
 import net.scholagest.db.entity.UserEntity;
 import net.scholagest.tester.utils.AbstractTestSuite;
 import net.scholagest.tester.utils.JsonObject;
+import net.scholagest.tester.utils.creator.SessionEntityCreator;
+import net.scholagest.tester.utils.creator.TeacherEntityCreator;
+import net.scholagest.tester.utils.creator.UserEntityCreator;
 import net.scholagest.tester.utils.matcher.UUIDMatcher;
 
 import org.eclipse.jetty.client.api.ContentResponse;
@@ -14,7 +17,7 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
-public class Test_002_LoginSessionToken extends AbstractTestSuite {
+public class Test_0002_LoginSessionToken extends AbstractTestSuite {
     private static final String VALID_SESSION_TOKEN = "validSessionToken";
     private static final String EXPIRED_SESSION_TOKEN = "expiredSessionToken";
 
@@ -22,32 +25,20 @@ public class Test_002_LoginSessionToken extends AbstractTestSuite {
 
     @Before
     public void setUpData() {
-        final TeacherEntity teacherEntity = new TeacherEntity();
-        teacherEntity.setFirstname("firstname");
-        teacherEntity.setLastname("lastname");
+        final TeacherEntity teacherEntity = TeacherEntityCreator.createTeacherEntity("firstname", "lastname", null);
+        userEntity = UserEntityCreator.createUserEntity("username", "password", "admin", teacherEntity);
 
-        userEntity = new UserEntity();
-        userEntity.setTeacher(teacherEntity);
-        userEntity.setUsername("username");
-        userEntity.setPassword("password");
-        userEntity.setRole("admin");
-
-        final SessionEntity validSessionEntity = new SessionEntity();
-        validSessionEntity.setExpirationDate(new DateTime().plusHours(2));
-        validSessionEntity.setId(VALID_SESSION_TOKEN);
-        validSessionEntity.setUser(userEntity);
-
-        final SessionEntity expiredSessionEntity = new SessionEntity();
-        expiredSessionEntity.setExpirationDate(new DateTime().minusHours(2));
-        expiredSessionEntity.setId(EXPIRED_SESSION_TOKEN);
-        expiredSessionEntity.setUser(userEntity);
+        final SessionEntity validSessionEntity = SessionEntityCreator.createSessionEntity(VALID_SESSION_TOKEN, new DateTime().plusHours(2),
+                userEntity);
+        final SessionEntity expiredSessionEntity = SessionEntityCreator.createSessionEntity(EXPIRED_SESSION_TOKEN, new DateTime().minusHours(2),
+                userEntity);
 
         persistInTransaction(teacherEntity, userEntity, validSessionEntity, expiredSessionEntity);
     }
 
     @Test
     public void testLoginSuccess() throws Exception {
-        final ContentResponse response = callPOST("/services/login", buildLoginJson(VALID_SESSION_TOKEN));
+        final ContentResponse response = callPOST("/services/login", buildLoginJson(VALID_SESSION_TOKEN), null);
         assertEquals(HttpStatus.OK_200, response.getStatus());
 
         final JsonObject jsonObject = new JsonObject("token", new UUIDMatcher(), "user", "" + userEntity.getId());
@@ -55,14 +46,20 @@ public class Test_002_LoginSessionToken extends AbstractTestSuite {
     }
 
     @Test
-    public void testLoginUnknownSession() throws Exception {
-        final ContentResponse response = callPOST("/services/login", buildLoginJson("unknownSession"));
+    public void testLoginUnknownSessionToken() throws Exception {
+        final ContentResponse response = callPOST("/services/login", buildLoginJson("unknownSession"), null);
         assertEquals(HttpStatus.UNAUTHORIZED_401, response.getStatus());
     }
 
     @Test
     public void testLoginExpiredSession() throws Exception {
-        final ContentResponse response = callPOST("/services/login", buildLoginJson(EXPIRED_SESSION_TOKEN));
+        final ContentResponse response = callPOST("/services/login", buildLoginJson(EXPIRED_SESSION_TOKEN), null);
+        assertEquals(HttpStatus.UNAUTHORIZED_401, response.getStatus());
+    }
+
+    @Test
+    public void testLoginMissingSessionToken() throws Exception {
+        final ContentResponse response = callPOST("/services/login", "{}", null);
         assertEquals(HttpStatus.UNAUTHORIZED_401, response.getStatus());
     }
 

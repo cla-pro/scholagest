@@ -1,6 +1,8 @@
 package net.scholagest.app.rest.ws.authorization;
 
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import net.scholagest.exception.ScholagestException;
 import net.scholagest.exception.ScholagestRuntimeException;
@@ -34,7 +36,9 @@ public class AuthorizationVerifier implements MethodInterceptor {
             final String sessionId = ScholagestThreadLocal.getSessionId();
 
             if (sessionId == null) {
-                throw new WebApplicationException(401);
+                final WebApplicationException webApplicationException = new WebApplicationException(buildUnauthorizedResponse());
+                webApplicationException.printStackTrace();
+                throw webApplicationException;
             }
 
             final SessionInfo sessionInfo = loginService.authenticateWithSessionId(sessionId);
@@ -43,11 +47,17 @@ public class AuthorizationVerifier implements MethodInterceptor {
 
             return invocation.proceed();
         } catch (final ScholagestException e) {
-            throw new WebApplicationException(401);
+            e.printStackTrace();
+            throw new WebApplicationException(buildUnauthorizedResponse());
         } catch (final ScholagestRuntimeException e) {
-            throw new WebApplicationException(401);
+            e.printStackTrace();
+            throw new WebApplicationException(buildUnauthorizedResponse());
         } finally {
             ScholagestThreadLocal.setSubject(null);
         }
+    }
+
+    private Response buildUnauthorizedResponse() {
+        return Response.status(Status.UNAUTHORIZED).header("WWW-Authenticate", "Basic realm=\"test\"").build();
     }
 }

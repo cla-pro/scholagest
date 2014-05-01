@@ -16,11 +16,12 @@ public class TransactionalHelper {
 
     @Transactional
     public <T> T persistEntity(final T entity) {
-        if (entityManager.contains(entity)) {
-            return entityManager.merge(entity);
-        } else {
-            entityManager.persist(entity);
-            return entity;
-        }
+        // if (entityManager.contains(entity)) {
+        // return entityManager.merge(entity);
+        // } else {
+        entityManager.persist(entity);
+        entityManager.flush();
+        return entity;
+        // }
     }
 }

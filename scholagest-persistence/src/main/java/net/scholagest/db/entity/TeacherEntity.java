@@ -12,7 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
 
 /**
  * Entity that model a teacher in the DB
@@ -20,9 +19,7 @@ import javax.persistence.Table;
  * @author CLA
  * @since 0.15.0
  */
-@Entity()
-// name = "teacher"
-@Table(name = "teacher")
+@Entity(name = "teacher")
 public class TeacherEntity {
     private final static String TOSTRING_FORMAT = "Teacher [id=%d, firstname=%s, lastname=%s, detail=%s]";
 

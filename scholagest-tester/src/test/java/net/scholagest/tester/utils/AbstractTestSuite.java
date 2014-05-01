@@ -68,18 +68,18 @@ public abstract class AbstractTestSuite {
 
     @SafeVarargs
     protected final <T> void persistInTransaction(final T... entities) {
+        final TransactionalHelper transcationHelper = injector.getInstance(TransactionalHelper.class);
         for (final T entity : entities) {
-            final TransactionalHelper transcationHelper = injector.getInstance(TransactionalHelper.class);
             transcationHelper.persistEntity(entity);
         }
     }
 
-    protected ContentResponse callGET(final String url, final List<UrlParameter> parameters) throws Exception {
-        return jettyClient.callGET(url, parameters);
+    protected ContentResponse callGET(final String url, final List<UrlParameter> parameters, final String token) throws Exception {
+        return jettyClient.callGET(url, parameters, token);
     }
 
-    protected ContentResponse callPOST(final String url, final String content) throws Exception {
-        return jettyClient.callPOST(url, content);
+    protected ContentResponse callPOST(final String url, final String content, final String token) throws Exception {
+        return jettyClient.callPOST(url, content, token);
     }
 
     private class JpaInitializerGuiceContext extends AbstractModule {
