@@ -1,12 +1,20 @@
 package net.scholagest.tester.utils;
 
 import java.util.List;
+import java.util.UUID;
 
+import net.scholagest.db.entity.SessionEntity;
+import net.scholagest.db.entity.TeacherEntity;
+import net.scholagest.db.entity.UserEntity;
 import net.scholagest.test.util.H2Database;
 import net.scholagest.test.util.TransactionalHelper;
+import net.scholagest.tester.utils.creator.SessionEntityCreator;
+import net.scholagest.tester.utils.creator.TeacherEntityCreator;
+import net.scholagest.tester.utils.creator.UserEntityCreator;
 import net.scholagest.utils.PersistInitializer;
 
 import org.eclipse.jetty.client.api.ContentResponse;
+import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -64,6 +72,18 @@ public abstract class AbstractTestSuite {
     @AfterClass
     public static void tearDownClass() throws Exception {
         jettyServer.stop();
+    }
+
+    protected String createAndGetSessionTokenForAdmin() {
+        final String sessionId = UUID.randomUUID().toString();
+
+        final TeacherEntity teacherEntity = TeacherEntityCreator.createTeacherEntity("Barack", "Avendre", null);
+        final UserEntity userEntity = UserEntityCreator.createUserEntity("bavendre", "", "admin", teacherEntity);
+        final SessionEntity sessionEntity = SessionEntityCreator.createSessionEntity(sessionId, new DateTime().plusHours(2), userEntity);
+
+        persistInTransaction(teacherEntity, userEntity, sessionEntity);
+
+        return sessionId;
     }
 
     @SafeVarargs

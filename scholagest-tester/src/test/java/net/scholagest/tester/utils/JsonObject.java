@@ -51,7 +51,7 @@ public class JsonObject {
                 matcher.matches(given);
             } else if (expected instanceof JsonObject) {
                 final JsonObject expectedJson = (JsonObject) expected;
-                expectedJson.assertEquals((String) given);
+                expectedJson.assertEquals(given.toString());
             } else {
                 Assert.assertEquals(expected, given);
             }
