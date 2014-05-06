@@ -109,8 +109,6 @@ public abstract class AbstractGuiceContextTest {
             requestInjection(authorizationInterceptor);
             bindInterceptor(Matchers.any(), Matchers.annotatedWith(RolesAndPermissions.class), authorizationInterceptor);
 
-            bind(TransactionalHelper.class);
-
             configureContext(this);
         }
 
@@ -130,6 +128,7 @@ public abstract class AbstractGuiceContextTest {
     private class JpaInitializerGuiceContext extends AbstractModule {
         @Override
         protected void configure() {
+            bind(TransactionalHelper.class);
             bind(PersistInitializer.class);
         }
     }

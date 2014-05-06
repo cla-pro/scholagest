@@ -1,6 +1,8 @@
 package net.scholagest.dao;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -41,7 +43,13 @@ public class UserDaoBean implements UserDaoLocal {
         final Root<UserEntity> userRoot = criteriaQuery.from(UserEntity.class);
         criteriaQuery.select(userRoot).where(criteriaBuilder.equal(userRoot.get("username"), username));
 
-        return entityManagerProvider.get().createQuery(criteriaQuery).getSingleResult();
+        try {
+            return entityManagerProvider.get().createQuery(criteriaQuery).getSingleResult();
+        } catch (final NoResultException e) {
+            return null;
+        } catch (final NonUniqueResultException e) {
+            return null;
+        }
     }
 
     /**

@@ -94,6 +94,7 @@ public class EntityContextSaver {
     private TeacherDetailEntity createAndPersistTeacherDetailEntity(final TransactionalHelper transactionalHelper) {
         teacherDetailEntity = new TeacherDetailEntity();
         teacherDetailEntity.setTeacher(teacherEntity);
+        teacherEntity.setTeacherDetail(teacherDetailEntity);
 
         return transactionalHelper.persistEntity(teacherDetailEntity);
     }
