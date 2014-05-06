@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project 
+  xmlns="http://maven.apache.org/POM/4.0.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  
+  <modelVersion>4.0.0</modelVersion>
+  
+  <parent>
+    <groupId>net</groupId>
+    <artifactId>scholagest</artifactId>
+    <version>0.15.0-SNAPSHOT</version>
+  </parent>
+ 
+  <groupId>net.scholagest</groupId>
+  <artifactId>scholagest-webapp</artifactId>
+  <name>Scholagest Web Application</name>
+  <packaging>js</packaging>
+  
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.codehaus.mojo</groupId>
+			<artifactId>jquery-amd</artifactId>
+			<version>1.7.1-alpha-1</version>
+			<type>js</type>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.mojo</groupId>
+			<artifactId>jquery-ui-amd</artifactId>
+			<version>1.8.16-alpha-1</version>
+			<type>js</type>
+		</dependency>
+	</dependencies>
+
+  <build>
+    <extensions>
+      <extension>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>javascript-maven-plugin</artifactId>
+        <version>2.0.0-alpha-1</version>
+      </extension>
+    </extensions>
+    <plugins>
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>jslint-maven-plugin</artifactId>
+            <configuration>
+                <predefinedVars>Scholagest,Ember,DS,$</predefinedVars>
+                <failOnIssues>false</failOnIssues>
+                <allowOneVarStatementPerFunction>false</allowOneVarStatementPerFunction>
+            </configuration>
+            <executions>
+                <execution>
+                </execution>
+            </executions>
+        </plugin>
+		  <plugin>
+			<groupId>org.codehaus.mojo</groupId>
+			<artifactId>webminifier-maven-plugin</artifactId>
+			<configuration>
+			  <jsCompressorType>YUI</jsCompressorType>
+			  <yuiJSObfuscate>false</yuiJSObfuscate>
+			</configuration>
+		  </plugin>
+    </plugins>
+  </build>
+
+    <repositories>
+        <repository>
+            <id>snapshots</id>
+            <url>https://nexus.codehaus.org/content/repositories/snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>snapshots</id>
+            <url>https://nexus.codehaus.org/content/repositories/snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+  
+</project>

@@ -71,7 +71,7 @@ public class TeacherDetailEntity {
         return teacher;
     }
 
-    void setTeacher(final TeacherEntity teacher) {
+    public void setTeacher(final TeacherEntity teacher) {
         this.teacher = teacher;
     }
 

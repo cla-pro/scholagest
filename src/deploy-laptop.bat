@@ -10,7 +10,7 @@
 @rmdir /s /q webapps\scholagest-app
 
 @ECHO "Deploy new version"
-@xcopy C:\Users\cla\workspaces\java-workspace\scholagest\app\target\scholagest-app.war webapps\
+@xcopy C:\Users\cla\workspaces\java-workspace\scholagest\scholagest-app\target\scholagest-app.war webapps\
 
 @ECHO "Start tomcat"
 @call bin\startup.bat

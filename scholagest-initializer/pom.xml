@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<project
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>net</groupId>
+        <artifactId>scholagest</artifactId>
+        <version>0.16.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>net.scholagest</groupId>
+    <artifactId>scholagest-initializer</artifactId>
+    <name>Scholagest Initializer</name>
+    <packaging>jar</packaging>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jaxb2-maven-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>xjc</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!-- The schema directory or xsd files. -->
+                    <schemaDirectory>${basedir}/src/main/xjb/xsd</schemaDirectory>
+                    <!-- The package in which the source files will be generated. -->
+                    <packageName>net.scholagest.initializer.jaxb</packageName>
+                    <!-- The working directory to create the generated java 
+                        source files. -->
+                    <outputDirectory>${project.build.directory}/generated-sources/jaxb</outputDirectory>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>net.scholagest</groupId>
+            <artifactId>scholagest-core</artifactId>
+            <version>${version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>2.2-promoted-b65</version>
+        </dependency>
+    </dependencies>
+</project>
