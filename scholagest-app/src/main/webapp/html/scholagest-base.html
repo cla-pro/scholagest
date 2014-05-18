@@ -110,7 +110,7 @@
         </table>
 	</script>
     <script type='text/x-handlebars' id="student">
-        <h2>{{firstName}} {{lastName}}</h2>
+        <h2>{{firstname}} {{lastname}}</h2>
         
         {{partial "studentPersonal"}}
  
@@ -134,9 +134,9 @@
                 <td>Prénom</td>
                 <td>
                     {{#if isEditionAllowed}}
-                        {{input value=firstName placeholder="Prénom"}}
+                        {{input value=firstname placeholder="Prénom"}}
                     {{else}}
-                        {{firstName}}
+                        {{firstname}}
                     {{/if}}
                 </td>
             </tr>
@@ -144,9 +144,9 @@
                 <td>Nom</td>
                 <td>
                     {{#if isEditionAllowed}}
-                        {{input value=lastName placeholder="Nom"}}
+                        {{input value=lastname placeholder="Nom"}}
                     {{else}}
-                        {{lastName}}
+                        {{lastname}}
                     {{/if}}
                 </td>
             </tr>
@@ -269,10 +269,10 @@
             
             <table>
                 <tr>
-                    <td>Prénom</td><td>{{focus-input value=firstName placeholder="Prénom"}}</td>
+                    <td>Prénom</td><td>{{focus-input value=firstname placeholder="Prénom"}}</td>
                 </tr>
                 <tr>
-                    <td>Nom</td><td>{{input value=lastName placeholder="Nom"}}</td>
+                    <td>Nom</td><td>{{input value=lastname placeholder="Nom"}}</td>
                 </tr>
             </table>
             
@@ -309,9 +309,9 @@
                 <td>Prénom</td>
                 <td>
                     {{#if isEditionAllowed}}
-                        {{input value=firstName placeholder="Prénom"}}
+                        {{input value=firstname placeholder="Prénom"}}
                     {{else}}
-                        {{firstName}}
+                        {{firstname}}
                     {{/if}}
                 </td>
             </tr>
@@ -319,9 +319,9 @@
                 <td>Nom</td>
                 <td>
                     {{#if isEditionAllowed}}
-                        {{input value=lastName placeholder="Nom"}}
+                        {{input value=lastname placeholder="Nom"}}
                     {{else}}
-                        {{lastName}}
+                        {{lastname}}
                     {{/if}}
                 </td>
             </tr>
@@ -367,10 +367,10 @@
 	        
 	        <table>
 	            <tr>
-	                <td>Prénom</td><td>{{focus-input value=firstName placeholder="Prénom"}}</td>
+	                <td>Prénom</td><td>{{focus-input value=firstname placeholder="Prénom"}}</td>
 	            </tr>
 	            <tr>
-	                <td>Nom</td><td>{{input value=lastName placeholder="Nom"}}</td>
+	                <td>Nom</td><td>{{input value=lastname placeholder="Nom"}}</td>
 	            </tr>
 	        </table>
 	       

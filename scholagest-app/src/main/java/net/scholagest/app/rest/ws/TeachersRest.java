@@ -13,6 +13,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import net.scholagest.app.rest.ws.authorization.CheckAuthorization;
 import net.scholagest.app.rest.ws.converter.TeacherJsonConverter;
@@ -65,7 +66,7 @@ public class TeachersRest {
     @CheckAuthorization
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, Object> getTeachers(@QueryParam("ids[]") final List<String> ids) {
+    public Response getTeachers(@QueryParam("ids[]") final List<String> ids) {
         final List<TeacherJson> teachersJson;
         if (ids == null || ids.isEmpty()) {
             teachersJson = getAllTeachers();
@@ -76,7 +77,7 @@ public class TeachersRest {
         final Map<String, Object> response = new HashMap<>();
         response.put("teachers", teachersJson);
 
-        return response;
+        return ResponseUtils.buildOkResponse(response);
     }
 
     private List<TeacherJson> getAllTeachers() {
@@ -109,15 +110,19 @@ public class TeachersRest {
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Map<String, TeacherJson> saveTeacher(@PathParam("id") final String id, final Map<String, TeacherJson> payload) {
+    public Response saveTeacher(@PathParam("id") final String id, final Map<String, TeacherJson> payload) {
         final TeacherJsonConverter converter = new TeacherJsonConverter();
 
         final TeacherJson teacherJson = payload.get("teacher");
         final Teacher teacher = converter.convertToTeacher(teacherJson);
 
-        teacherService.saveTeacher(id, teacher);
+        final Teacher updated = teacherService.saveTeacher(id, teacher);
+        final TeacherJson updatedJson = converter.convertToTeacherJson(updated);
 
-        return payload;
+        final Map<String, Object> response = new HashMap<>();
+        response.put("teacher", updatedJson);
+
+        return ResponseUtils.buildOkResponse(response);
     }
 
     /**
@@ -129,7 +134,7 @@ public class TeachersRest {
     @CheckAuthorization
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Map<String, Object> createTeacher(final Map<String, TeacherJson> payload) {
+    public Response createTeacher(final Map<String, TeacherJson> payload) {
         final TeacherJsonConverter converter = new TeacherJsonConverter();
 
         final TeacherJson receivedTeacherJson = payload.get("teacher");
@@ -142,6 +147,7 @@ public class TeachersRest {
         final Map<String, Object> response = new HashMap<>();
         response.put("teacher", createdTeacherJson);
         response.put("teacherDetail", createdTeacherDetailJson);
-        return response;
+
+        return ResponseUtils.buildOkResponse(response);
     }
 }

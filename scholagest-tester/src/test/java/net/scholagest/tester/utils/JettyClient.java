@@ -4,6 +4,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.core.MediaType;
+
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.ContentResponse;
 import org.eclipse.jetty.client.api.Request;
@@ -53,9 +55,20 @@ public class JettyClient {
 
     public ContentResponse callPOST(final String url, final String content, final String token) throws Exception {
         final String fullUrl = createUrl(url);
-        final Request postRequest = httpClient.POST(fullUrl).content(new StringContentProvider(content));
+        Request postRequest = httpClient.newRequest(fullUrl).method(HttpMethod.POST)
+                .content(new StringContentProvider(content), MediaType.APPLICATION_JSON);
         if (token != null) {
-            postRequest.header(HttpHeader.AUTHORIZATION, token);
+            postRequest = postRequest.header(HttpHeader.AUTHORIZATION, token);
+        }
+        return postRequest.send();
+    }
+
+    public ContentResponse callPUT(final String url, final String content, final String token) throws Exception {
+        final String fullUrl = createUrl(url);
+        Request postRequest = httpClient.newRequest(fullUrl).method(HttpMethod.PUT)
+                .content(new StringContentProvider(content), MediaType.APPLICATION_JSON);
+        if (token != null) {
+            postRequest = postRequest.header(HttpHeader.AUTHORIZATION, token);
         }
         return postRequest.send();
     }

@@ -14,6 +14,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import net.scholagest.app.rest.ws.authorization.CheckAuthorization;
 import net.scholagest.app.rest.ws.converter.StudentJsonConverter;
@@ -69,7 +70,7 @@ public class StudentsRest {
     @CheckAuthorization
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, Object> getStudents(@QueryParam("ids[]") final List<String> ids) {
+    public Response getStudents(@QueryParam("ids[]") final List<String> ids) {
         final Map<String, Object> response = new HashMap<>();
 
         final List<StudentJson> studentJsonList;
@@ -81,7 +82,7 @@ public class StudentsRest {
         }
         response.put("students", studentJsonList);
 
-        return response;
+        return ResponseUtils.buildOkResponse(response);
     }
 
     private List<StudentJson> getAllStudents() {
@@ -117,7 +118,7 @@ public class StudentsRest {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, Object> getStudent(@PathParam("id") final String id) {
+    public Response getStudent(@PathParam("id") final String id) {
         final StudentJsonConverter converter = new StudentJsonConverter();
         final Map<String, Object> response = new HashMap<>();
 
@@ -127,7 +128,7 @@ public class StudentsRest {
             response.put("student", studentJson);
         }
 
-        return response;
+        return ResponseUtils.buildOkResponse(response);
     }
 
     /**
@@ -142,7 +143,7 @@ public class StudentsRest {
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Map<String, Object> saveStudent(@PathParam("id") final String id, final Map<String, StudentJson> payload) {
+    public Response saveStudent(@PathParam("id") final String id, final Map<String, StudentJson> payload) {
         final StudentJsonConverter converter = new StudentJsonConverter();
         final StudentJson studentJson = payload.get("student");
         final Student student = converter.convertToStudent(studentJson);
@@ -153,7 +154,7 @@ public class StudentsRest {
         final Map<String, Object> response = new HashMap<>();
         response.put("student", updatedJson);
 
-        return response;
+        return ResponseUtils.buildOkResponse(response);
     }
 
     /**
@@ -166,7 +167,7 @@ public class StudentsRest {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, Object> createStudent(final Map<String, StudentJson> payload) {
+    public Response createStudent(final Map<String, StudentJson> payload) {
         final StudentJsonConverter converter = new StudentJsonConverter();
 
         final StudentJson studentJson = payload.get("student");
@@ -183,6 +184,6 @@ public class StudentsRest {
         result.put("studentMedical", createStudentMedicalJson);
         result.put("studentPersonal", createStudentPersonalJson);
 
-        return result;
+        return ResponseUtils.buildOkResponse(result);
     }
 }

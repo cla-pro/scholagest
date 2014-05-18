@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import net.scholagest.db.entity.SessionEntity;
+import net.scholagest.db.entity.TeacherDetailEntity;
 import net.scholagest.db.entity.TeacherEntity;
 import net.scholagest.db.entity.UserEntity;
 import net.scholagest.test.util.H2Database;
@@ -78,10 +79,13 @@ public abstract class AbstractTestSuite {
         final String sessionId = UUID.randomUUID().toString();
 
         final TeacherEntity teacherEntity = TeacherEntityCreator.createTeacherEntity("Barack", "Avendre", null);
-        final UserEntity userEntity = UserEntityCreator.createUserEntity("bavendre", "", "admin", teacherEntity);
+        final UserEntity userEntity = UserEntityCreator.createUserEntity("bavendre", "", "ADMIN", teacherEntity);
         final SessionEntity sessionEntity = SessionEntityCreator.createSessionEntity(sessionId, new DateTime().plusHours(2), userEntity);
 
         persistInTransaction(teacherEntity, userEntity, sessionEntity);
+
+        final TeacherDetailEntity teacherDetailEntity = TeacherEntityCreator.createTeacherDetailEntity(null, null, null, teacherEntity);
+        persistInTransaction(teacherDetailEntity);
 
         return sessionId;
     }
@@ -100,6 +104,10 @@ public abstract class AbstractTestSuite {
 
     protected ContentResponse callPOST(final String url, final String content, final String token) throws Exception {
         return jettyClient.callPOST(url, content, token);
+    }
+
+    protected ContentResponse callPUT(final String url, final String content, final String token) throws Exception {
+        return jettyClient.callPUT(url, content, token);
     }
 
     private class JpaInitializerGuiceContext extends AbstractModule {

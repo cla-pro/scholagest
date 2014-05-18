@@ -43,8 +43,8 @@ public class TeacherJsonConverterTest {
         final TeacherJson teacherJson = new TeacherJsonConverter().convertToTeacherJson(teacher);
 
         assertEquals(teacher.getId(), teacherJson.getId());
-        assertEquals(teacher.getFirstname(), teacherJson.getFirstName());
-        assertEquals(teacher.getLastname(), teacherJson.getLastName());
+        assertEquals(teacher.getFirstname(), teacherJson.getFirstname());
+        assertEquals(teacher.getLastname(), teacherJson.getLastname());
         assertEquals(teacher.getDetail().getId(), teacherJson.getDetail());
     }
 
@@ -65,8 +65,8 @@ public class TeacherJsonConverterTest {
         final Teacher teacher = new TeacherJsonConverter().convertToTeacher(teacherJson);
 
         assertEquals(teacherJson.getId(), teacher.getId());
-        assertEquals(teacherJson.getFirstName(), teacher.getFirstname());
-        assertEquals(teacherJson.getLastName(), teacher.getLastname());
+        assertEquals(teacherJson.getFirstname(), teacher.getFirstname());
+        assertEquals(teacherJson.getLastname(), teacher.getLastname());
         // A default empty teacher detail is created
         assertEquals(new TeacherDetail(), teacher.getDetail());
     }

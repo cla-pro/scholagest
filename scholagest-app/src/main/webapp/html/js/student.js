@@ -91,8 +91,8 @@ Scholagest.NewStudentController = Ember.ObjectController.extend({
         create: function(router, event) {
             var content = this.get('content');
             var student = this.store.createRecord('student', {
-                firstName: content.firstName,
-                lastName: content.lastName
+                firstname: content.firstname,
+                lastname: content.lastname
             });
             
             student.save();

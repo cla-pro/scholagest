@@ -75,6 +75,7 @@ public class StudentServiceBean implements StudentServiceLocal {
             return null;
         }
 
+        student.setId(studentId);
         return studentBusiness.saveStudent(student);
     }
 
@@ -106,6 +107,7 @@ public class StudentServiceBean implements StudentServiceLocal {
             return null;
         }
 
+        studentPersonal.setId(studentId);
         return studentBusiness.saveStudentPersonal(studentPersonal);
     }
 
@@ -137,6 +139,7 @@ public class StudentServiceBean implements StudentServiceLocal {
             return null;
         }
 
+        studentMedical.setId(studentId);
         return studentBusiness.saveStudentMedical(studentMedical);
     }
 

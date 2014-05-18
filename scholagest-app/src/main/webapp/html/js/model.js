@@ -26,15 +26,15 @@ Scholagest.StudentClass = DS.Model.extend({
     oldClasses: DS.hasMany('class', { async: true })
 });
 Scholagest.Student = DS.Model.extend({
-    firstName: DS.attr(),
-    lastName: DS.attr(),
+    firstname: DS.attr(),
+    lastname: DS.attr(),
     personal: DS.belongsTo('studentPersonal', { async: true }),
     medical: DS.belongsTo('studentMedical', { async: true }),
     classes: DS.belongsTo('studentClass', { async: true }),
     
     fullName: function() {
-        return this.get('firstName') + " " + this.get('lastName');
-    }.property('firstName', 'lastName')
+        return this.get('firstname') + " " + this.get('lastname');
+    }.property('firstname', 'lastname')
 });
 Scholagest.TeacherDetail = DS.Model.extend({
     address: DS.attr(),
@@ -42,13 +42,13 @@ Scholagest.TeacherDetail = DS.Model.extend({
     phone: DS.attr()
 });
 Scholagest.Teacher = DS.Model.extend({
-    firstName: DS.attr(),
-    lastName: DS.attr(),
+    firstname: DS.attr(),
+    lastname: DS.attr(),
     detail: DS.belongsTo('teacherDetail', { async: true }),
     
     fullName: function() {
-        return this.get('firstName') + " " + this.get('lastName');
-    }.property('firstName', 'lastName')
+        return this.get('firstname') + " " + this.get('lastname');
+    }.property('firstname', 'lastname')
 });
 
 Scholagest.Year = DS.Model.extend({

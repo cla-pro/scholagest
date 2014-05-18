@@ -25,11 +25,13 @@ public class TeacherEntityCreator {
         return teacherEntity;
     }
 
-    public static TeacherDetailEntity createTeacherDetailEntity(final String address, final String email, final String phone) {
+    public static TeacherDetailEntity createTeacherDetailEntity(final String address, final String email, final String phone,
+            final TeacherEntity teacherEntity) {
         final TeacherDetailEntity teacherDetailEntity = new TeacherDetailEntity();
         teacherDetailEntity.setAddress(address);
         teacherDetailEntity.setEmail(email);
         teacherDetailEntity.setPhone(phone);
+        teacherDetailEntity.setTeacher(teacherEntity);
 
         return teacherDetailEntity;
     }

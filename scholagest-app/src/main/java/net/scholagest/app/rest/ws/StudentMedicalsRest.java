@@ -9,6 +9,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import net.scholagest.app.rest.ws.authorization.CheckAuthorization;
 import net.scholagest.app.rest.ws.converter.StudentJsonConverter;
@@ -50,14 +51,14 @@ public class StudentMedicalsRest {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, StudentMedicalJson> getMedical(@PathParam("id") final String id) {
+    public Response getMedical(@PathParam("id") final String id) {
         final StudentMedical studentMedical = studentService.getStudentMedical(id);
         final StudentMedicalJson studentMedicalJson = new StudentJsonConverter().convertToStudentMedicalJson(studentMedical);
 
-        final Map<String, StudentMedicalJson> result = new HashMap<>();
-        result.put("studentMedical", studentMedicalJson);
+        final Map<String, StudentMedicalJson> response = new HashMap<>();
+        response.put("studentMedical", studentMedicalJson);
 
-        return result;
+        return ResponseUtils.buildOkResponse(response);
     }
 
     /**
@@ -71,7 +72,7 @@ public class StudentMedicalsRest {
     @PUT
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, StudentMedicalJson> saveStudentPersonal(@PathParam("id") final String id, final Map<String, StudentMedicalJson> payload) {
+    public Response saveStudentPersonal(@PathParam("id") final String id, final Map<String, StudentMedicalJson> payload) {
         final StudentJsonConverter converter = new StudentJsonConverter();
 
         final StudentMedicalJson studentMedicalJson = payload.get("studentMedical");
@@ -80,9 +81,9 @@ public class StudentMedicalsRest {
         final StudentMedical updated = studentService.saveStudentMedical(id, studentMedical);
         final StudentMedicalJson updatedJson = converter.convertToStudentMedicalJson(updated);
 
-        final Map<String, StudentMedicalJson> result = new HashMap<>();
-        result.put("studentMedical", updatedJson);
+        final Map<String, StudentMedicalJson> response = new HashMap<>();
+        response.put("studentMedical", updatedJson);
 
-        return result;
+        return ResponseUtils.buildOkResponse(response);
     }
 }

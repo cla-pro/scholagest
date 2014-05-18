@@ -29,8 +29,8 @@ public class Test_0003_SessionCheck extends AbstractTestSuite {
 
     @Before
     public void setUpData() {
-        final TeacherDetailEntity teacherDetailEntity = TeacherEntityCreator.createTeacherDetailEntity("", "", "");
         final TeacherEntity teacherEntity = TeacherEntityCreator.createTeacherEntity("firstname", "lastname", null);
+        final TeacherDetailEntity teacherDetailEntity = TeacherEntityCreator.createTeacherDetailEntity("", "", "", teacherEntity);
         userEntity = UserEntityCreator.createUserEntity("username", "password", "admin", teacherEntity);
 
         final SessionEntity validSessionEntity = SessionEntityCreator.createSessionEntity(VALID_SESSION_TOKEN, new DateTime().plusHours(2),

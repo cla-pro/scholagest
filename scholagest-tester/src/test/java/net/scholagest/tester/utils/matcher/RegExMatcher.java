@@ -1,5 +1,7 @@
 package net.scholagest.tester.utils.matcher;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.regex.Pattern;
 
 import org.hamcrest.BaseMatcher;
@@ -14,13 +16,9 @@ public class RegExMatcher extends BaseMatcher<String> {
 
     @Override
     public boolean matches(final Object item) {
-        if (item instanceof String) {
-            final String toMatch = (String) item;
-            final Pattern compiledRegex = Pattern.compile(regex);
-            return compiledRegex.matcher(toMatch).matches();
-        } else {
-            return false;
-        }
+        final Pattern compiledRegex = Pattern.compile(regex);
+        assertTrue(compiledRegex.matcher(item.toString()).matches());
+        return true;
     }
 
     @Override

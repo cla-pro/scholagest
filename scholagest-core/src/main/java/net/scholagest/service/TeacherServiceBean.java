@@ -111,6 +111,7 @@ public class TeacherServiceBean implements TeacherServiceLocal {
         }
 
         // TODO filter fields
+        teacherDetail.setId(teacherId);
         return teacherBusiness.saveTeacherDetail(teacherDetail);
     }
 }

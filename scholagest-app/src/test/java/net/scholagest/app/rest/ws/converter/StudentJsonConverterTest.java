@@ -51,8 +51,8 @@ public class StudentJsonConverterTest {
         final StudentJson converted = new StudentJsonConverter().convertToStudentJson(student);
 
         assertEquals(student.getId(), converted.getId());
-        assertEquals(student.getFirstname(), converted.getFirstName());
-        assertEquals(student.getLastname(), converted.getLastName());
+        assertEquals(student.getFirstname(), converted.getFirstname());
+        assertEquals(student.getLastname(), converted.getLastname());
         assertEquals(student.getStudentClasses().getId(), converted.getClasses());
         assertEquals(student.getStudentPersonal().getId(), converted.getPersonal());
         assertEquals(student.getStudentMedical().getId(), converted.getMedical());
@@ -64,8 +64,8 @@ public class StudentJsonConverterTest {
         final Student converted = new StudentJsonConverter().convertToStudent(studentJson);
 
         assertEquals(studentJson.getId(), converted.getId());
-        assertEquals(studentJson.getFirstName(), converted.getFirstname());
-        assertEquals(studentJson.getLastName(), converted.getLastname());
+        assertEquals(studentJson.getFirstname(), converted.getFirstname());
+        assertEquals(studentJson.getLastname(), converted.getLastname());
         assertEquals(studentJson.getPersonal(), converted.getStudentPersonal().getId());
         assertEquals(studentJson.getMedical(), converted.getStudentMedical().getId());
     }
