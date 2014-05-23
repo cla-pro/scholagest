@@ -6,7 +6,16 @@
     <author email="cedric.lavanchy.pro@gmail.com">Cédric Lavanchy</author>
   </properties>
   <body>
-    <release version="0.16.0" date="2014-06-05">
+    <release version="0.17.0" date="unknown">
+      <action dev="clavanchy" type="add">
+        The regression tests environment is ready
+      </action>
+      <action dev="clavanchy" type="update">
+        The authorization exception handling is improved by mappers
+      </action>
+    </release>
+    
+    <release version="0.16.0" date="2014-05-05">
       <action dev="clavanchy" type="add">
         Implement the business logic for the object creation/saving
       </action>
