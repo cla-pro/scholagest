@@ -2,7 +2,6 @@ package net.scholagest.app.rest.ws;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import net.scholagest.app.rest.ws.objects.LoginJson;
@@ -54,11 +53,6 @@ public class LoginRest {
         }
 
         final SessionJson sessionJson = new SessionJson(sessionInfo.getToken(), sessionInfo.getUser().getId());
-        return buildOk(sessionJson);
-    }
-
-    private Response buildOk(final SessionJson sessionJson) {
-        final String json = new Gson().toJson(sessionJson);
-        return Response.ok(json, MediaType.APPLICATION_JSON).build();
+        return ResponseUtils.build200OkResponse(sessionJson);
     }
 }
