@@ -12,6 +12,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import net.scholagest.app.rest.ws.authorization.CheckAuthorization;
 import net.scholagest.app.rest.ws.converter.BranchJsonConverter;
@@ -75,7 +76,7 @@ public class BranchesRest {
     @CheckAuthorization
     @Path("/{id}")
     @GET
-    public Map<String, Object> getBranch(@PathParam("id") final String id) {
+    public Response getBranch(@PathParam("id") final String id) {
         final BranchJsonConverter converter = new BranchJsonConverter();
 
         final Branch branch = branchService.getBranch(id);
@@ -84,7 +85,7 @@ public class BranchesRest {
         final Map<String, Object> response = new HashMap<>();
         response.put("branch", branchJson);
 
-        return response;
+        return ResponseUtils.build200OkResponse(response);
     }
 
     /**
@@ -105,7 +106,7 @@ public class BranchesRest {
     @CheckAuthorization
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, Object> getBranches(@QueryParam("ids[]") final List<String> ids) {
+    public Response getBranches(@QueryParam("ids[]") final List<String> ids) {
         final BranchJsonConverter converter = new BranchJsonConverter();
 
         final List<Branch> branchList = branchService.getBranches(ids);
@@ -114,7 +115,7 @@ public class BranchesRest {
         final Map<String, Object> response = new HashMap<>();
         response.put("branches", branchJsonList);
 
-        return response;
+        return ResponseUtils.build200OkResponse(response);
     }
 
     /**
@@ -127,7 +128,7 @@ public class BranchesRest {
     @CheckAuthorization
     @Path("/{id}")
     @PUT
-    public Map<String, Object> saveBranch(@PathParam("id") final String id, final Map<String, BranchJson> payload) {
+    public Response saveBranch(@PathParam("id") final String id, final Map<String, BranchJson> payload) {
         final BranchJsonConverter converter = new BranchJsonConverter();
 
         final BranchJson branchJson = payload.get("branch");
@@ -140,7 +141,7 @@ public class BranchesRest {
         final Map<String, Object> response = new HashMap<>();
         response.put("branch", savedJson);
 
-        return response;
+        return ResponseUtils.build200OkResponse(response);
     }
 
     /**
@@ -151,7 +152,7 @@ public class BranchesRest {
      */
     @CheckAuthorization
     @POST
-    public Map<String, Object> createBranch(final Map<String, BranchJson> payload) {
+    public Response createBranch(final Map<String, BranchJson> payload) {
         final BranchJsonConverter converter = new BranchJsonConverter();
 
         final BranchJson branchJson = payload.get("branch");
@@ -168,7 +169,7 @@ public class BranchesRest {
         response.put("branchPeriods", branchPeriodList);
         response.put("periods", periodJsonList);
 
-        return response;
+        return ResponseUtils.build200OkResponse(response);
     }
 
     private List<BranchPeriodJson> getBranchPeriods(final Branch branch) {

@@ -8,6 +8,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import net.scholagest.app.rest.ws.authorization.CheckAuthorization;
 import net.scholagest.app.rest.ws.converter.StudentJsonConverter;
@@ -48,13 +49,13 @@ public class StudentClassesRest {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, StudentClassJson> getStudentClasses(@PathParam("id") final String id) {
+    public Response getStudentClasses(@PathParam("id") final String id) {
         final StudentClass studentClasses = studentService.getStudentClasses(id);
         final StudentClassJson studentClassesJson = new StudentJsonConverter().convertToStudentClassJson(studentClasses);
 
-        final Map<String, StudentClassJson> result = new HashMap<>();
-        result.put("studentClass", studentClassesJson);
+        final Map<String, StudentClassJson> response = new HashMap<>();
+        response.put("studentClass", studentClassesJson);
 
-        return result;
+        return ResponseUtils.build200OkResponse(response);
     }
 }

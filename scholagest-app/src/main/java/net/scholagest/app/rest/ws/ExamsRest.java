@@ -11,6 +11,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import net.scholagest.app.rest.ws.authorization.CheckAuthorization;
 import net.scholagest.app.rest.ws.converter.BranchPeriodJsonConverter;
@@ -73,7 +74,7 @@ public class ExamsRest {
     @PUT
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, Object> saveExam(@PathParam("id") final String id, final Map<String, ExamJson> payload) {
+    public Response saveExam(@PathParam("id") final String id, final Map<String, ExamJson> payload) {
         final ExamJsonConverter converter = new ExamJsonConverter();
 
         final ExamJson examJson = payload.get("exam");
@@ -86,7 +87,7 @@ public class ExamsRest {
         final Map<String, Object> response = new HashMap<>();
         response.put("exam", updatedJson);
 
-        return response;
+        return ResponseUtils.build200OkResponse(response);
     }
 
     /**
@@ -99,7 +100,7 @@ public class ExamsRest {
     @CheckAuthorization
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, Object> createExam(final Map<String, ExamJson> payload) {
+    public Response createExam(final Map<String, ExamJson> payload) {
         final ExamJsonConverter converter = new ExamJsonConverter();
 
         final ExamJson examJson = payload.get("exam");
@@ -116,7 +117,7 @@ public class ExamsRest {
         response.put("studentResults", studentResultJsonList);
         response.put("branchPeriod", branchPeriodJson);
 
-        return response;
+        return ResponseUtils.build200OkResponse(response);
     }
 
     private BranchPeriodJson getBranchPeriodJson(final Exam exam) {

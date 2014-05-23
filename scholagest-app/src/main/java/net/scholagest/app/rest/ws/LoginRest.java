@@ -4,11 +4,11 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
 import net.scholagest.app.rest.ws.objects.LoginJson;
 import net.scholagest.app.rest.ws.objects.SessionJson;
-import net.scholagest.exception.ScholagestException;
+import net.scholagest.exception.AuthorizationScholagestException;
+import net.scholagest.exception.ScholagestExceptionErrorCode;
 import net.scholagest.object.SessionInfo;
 import net.scholagest.service.SessionServiceLocal;
 
@@ -37,52 +37,28 @@ public class LoginRest {
      * 
      * @param content The authentication information.
      * @return The session information
-     * @throws AuthenticationException with code 401 (Unauthorized) if the authentication information are incorrect
+     * @throws AuthorizationScholagestException If the login information are invalid
      */
     @POST
-    // @Produces(MediaType.APPLICATION_JSON)
     public Response login(final String content) {
         final LoginJson login = new Gson().fromJson(content, LoginJson.class);
 
+        final SessionInfo sessionInfo;
         if (login.hasToken()) {
-            try {
-                final SessionInfo sessionInfo = loginService.authenticateWithSessionId(login.getToken());
-                final SessionJson sessionJson = new SessionJson(sessionInfo.getToken(), sessionInfo.getUser().getId());
-                return buildOk(sessionJson);
-            } catch (final ScholagestException e) {
-                // throw new WebApplicationException(e, 401);
-                return buildUnauthorized();
-            }
-            // final String token = login.getToken();
-            // if (tokenUserMap.containsKey(token)) {
-            // final ServerSession serverSession = tokenUserMap.get(token);
-            // // TODO check expiration
-            // tokenUserMap.remove(token);
-            // return createSession(serverSession.getUserId());
-            // } else {
-            // throw new WebApplicationException(401);
-            // }
+            sessionInfo = loginService.authenticateWithSessionId(login.getToken());
         } else if (login.hasUsername()) {
-            try {
-                final SessionInfo sessionInfo = loginService.authenticateWithUsername(login.getUsername(), login.getPassword());
-                final SessionJson sessionJson = new SessionJson(sessionInfo.getToken(), sessionInfo.getUser().getId());
-                return buildOk(sessionJson);
-            } catch (final ScholagestException e) {
-                // throw new WebApplicationException(e, 401);
-                return buildUnauthorized();
-            }
+            sessionInfo = loginService.authenticateWithUsername(login.getUsername(), login.getPassword());
         } else {
-            // throw new WebApplicationException(401);
-            return buildUnauthorized();
+            throw new AuthorizationScholagestException(ScholagestExceptionErrorCode.INSUFFICIENT_PRIVILEGES,
+                    "At least one of the token or username/password must be specified");
         }
+
+        final SessionJson sessionJson = new SessionJson(sessionInfo.getToken(), sessionInfo.getUser().getId());
+        return buildOk(sessionJson);
     }
 
     private Response buildOk(final SessionJson sessionJson) {
         final String json = new Gson().toJson(sessionJson);
         return Response.ok(json, MediaType.APPLICATION_JSON).build();
-    }
-
-    private Response buildUnauthorized() {
-        return Response.status(Status.UNAUTHORIZED).header("WWW-Authenticate", "Basic realm=\"test\"").build();
     }
 }

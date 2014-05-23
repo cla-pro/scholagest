@@ -77,7 +77,7 @@ public class TeachersRest {
         final Map<String, Object> response = new HashMap<>();
         response.put("teachers", teachersJson);
 
-        return ResponseUtils.buildOkResponse(response);
+        return ResponseUtils.build200OkResponse(response);
     }
 
     private List<TeacherJson> getAllTeachers() {
@@ -122,7 +122,7 @@ public class TeachersRest {
         final Map<String, Object> response = new HashMap<>();
         response.put("teacher", updatedJson);
 
-        return ResponseUtils.buildOkResponse(response);
+        return ResponseUtils.build200OkResponse(response);
     }
 
     /**
@@ -148,6 +148,6 @@ public class TeachersRest {
         response.put("teacher", createdTeacherJson);
         response.put("teacherDetail", createdTeacherDetailJson);
 
-        return ResponseUtils.buildOkResponse(response);
+        return ResponseUtils.build200OkResponse(response);
     }
 }

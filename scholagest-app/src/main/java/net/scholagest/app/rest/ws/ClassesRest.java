@@ -1,6 +1,5 @@
 package net.scholagest.app.rest.ws;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,20 +12,15 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import net.scholagest.app.rest.ws.authorization.CheckAuthorization;
-import net.scholagest.app.rest.ws.converter.BranchPeriodJsonConverter;
 import net.scholagest.app.rest.ws.converter.ClazzJsonConverter;
 import net.scholagest.app.rest.ws.converter.PeriodJsonConverter;
-import net.scholagest.app.rest.ws.converter.ResultJsonConverter;
-import net.scholagest.app.rest.ws.converter.StudentResultJsonConverter;
 import net.scholagest.app.rest.ws.objects.ClazzJson;
 import net.scholagest.app.rest.ws.objects.PeriodJson;
-import net.scholagest.object.BranchPeriod;
 import net.scholagest.object.Clazz;
 import net.scholagest.object.Period;
-import net.scholagest.object.Result;
-import net.scholagest.object.StudentResult;
 import net.scholagest.service.BranchPeriodServiceLocal;
 import net.scholagest.service.ClazzServiceLocal;
 import net.scholagest.service.PeriodServiceLocal;
@@ -86,16 +80,16 @@ public class ClassesRest {
     @CheckAuthorization
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, Object> getClasses(@QueryParam("ids[]") final List<String> ids) {
+    public Response getClasses(@QueryParam("ids[]") final List<String> ids) {
         final ClazzJsonConverter converter = new ClazzJsonConverter();
 
         final List<Clazz> classList = clazzService.getClasses(ids);
         final List<ClazzJson> clazzJsonList = converter.convertToClazzJsonList(classList);
 
-        final Map<String, Object> toReturn = new HashMap<>();
-        toReturn.put("classes", clazzJsonList);
+        final Map<String, Object> response = new HashMap<>();
+        response.put("classes", clazzJsonList);
 
-        return toReturn;
+        return ResponseUtils.build200OkResponse(response);
     }
 
     /**
@@ -108,16 +102,16 @@ public class ClassesRest {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, Object> getClass(@PathParam("id") final String id) {
+    public Response getClass(@PathParam("id") final String id) {
         final ClazzJsonConverter converter = new ClazzJsonConverter();
 
         final Clazz clazz = clazzService.getClazz(id);
         final ClazzJson clazzJson = converter.convertToClazzJson(clazz);
 
-        final Map<String, Object> toReturn = new HashMap<>();
-        toReturn.put("class", clazzJson);
+        final Map<String, Object> response = new HashMap<>();
+        response.put("class", clazzJson);
 
-        return toReturn;
+        return ResponseUtils.build200OkResponse(response);
     }
 
     /**
@@ -130,7 +124,7 @@ public class ClassesRest {
     @CheckAuthorization
     @PUT
     @Path("/{id}")
-    public Map<String, Object> saveClass(@PathParam("id") final String id, final Map<String, ClazzJson> payload) {
+    public Response saveClass(@PathParam("id") final String id, final Map<String, ClazzJson> payload) {
         final ClazzJsonConverter converter = new ClazzJsonConverter();
 
         // final Clazz stored = clazzService.getClazz(id);
@@ -153,7 +147,7 @@ public class ClassesRest {
         response.put("class", updatedJson);
         // response.putAll(updatedObjects);
 
-        return response;
+        return ResponseUtils.build200OkResponse(response);
     }
 
     // private Map<String, Object> updateData(final ClazzJson base, final
@@ -281,48 +275,55 @@ public class ClassesRest {
     // return null;
     // }
 
-    private Map<String, Object> getLinkedData(final Clazz updated, final List<String> changedStudents) {
-        final List<BranchPeriod> branchPeriodList = new ArrayList<>();
-        final List<StudentResult> studentResultList = new ArrayList<>();
-        final List<Result> resultList = new ArrayList<>();
-        final List<Result> meanList = new ArrayList<>();
-
-        for (final String periodId : updated.getPeriods()) {
-            final Period period = periodService.getPeriod(periodId);
-
-            for (final String branchPeriodId : period.getBranchPeriods()) {
-                final BranchPeriod branchPeriod = branchPeriodService.getBranchPeriod(branchPeriodId);
-
-                for (final String studentResultId : branchPeriod.getStudentResults()) {
-                    final StudentResult studentResult = studentResultService.getStudentResult(studentResultId);
-
-                    if (changedStudents.contains(studentResult.getStudent())) {
-                        if (!branchPeriodList.contains(branchPeriod)) {
-                            branchPeriodList.add(branchPeriod);
-                        }
-
-                        studentResultList.add(studentResult);
-
-                        for (final String resultId : studentResult.getResults()) {
-                            final Result result = resultService.getResult(resultId);
-                            resultList.add(result);
-                        }
-
-                        final Result result = resultService.getResult(studentResult.getMean());
-                        meanList.add(result);
-                    }
-                }
-            }
-        }
-
-        final Map<String, Object> response = new HashMap<>();
-        response.put("branchPeriods", new BranchPeriodJsonConverter().convertToBranchPeriodJsonList(branchPeriodList));
-        response.put("studentResults", new StudentResultJsonConverter().convertToStudentResultJsonList(studentResultList));
-        response.put("results", new ResultJsonConverter().convertToResultJsonList(resultList));
-        response.put("means", new ResultJsonConverter().convertToResultJsonList(meanList));
-
-        return response;
-    }
+    // private Map<String, Object> getLinkedData(final Clazz updated, final
+    // List<String> changedStudents) {
+    // final List<BranchPeriod> branchPeriodList = new ArrayList<>();
+    // final List<StudentResult> studentResultList = new ArrayList<>();
+    // final List<Result> resultList = new ArrayList<>();
+    // final List<Result> meanList = new ArrayList<>();
+    //
+    // for (final String periodId : updated.getPeriods()) {
+    // final Period period = periodService.getPeriod(periodId);
+    //
+    // for (final String branchPeriodId : period.getBranchPeriods()) {
+    // final BranchPeriod branchPeriod =
+    // branchPeriodService.getBranchPeriod(branchPeriodId);
+    //
+    // for (final String studentResultId : branchPeriod.getStudentResults()) {
+    // final StudentResult studentResult =
+    // studentResultService.getStudentResult(studentResultId);
+    //
+    // if (changedStudents.contains(studentResult.getStudent())) {
+    // if (!branchPeriodList.contains(branchPeriod)) {
+    // branchPeriodList.add(branchPeriod);
+    // }
+    //
+    // studentResultList.add(studentResult);
+    //
+    // for (final String resultId : studentResult.getResults()) {
+    // final Result result = resultService.getResult(resultId);
+    // resultList.add(result);
+    // }
+    //
+    // final Result result = resultService.getResult(studentResult.getMean());
+    // meanList.add(result);
+    // }
+    // }
+    // }
+    // }
+    //
+    // final Map<String, Object> response = new HashMap<>();
+    // response.put("branchPeriods", new
+    // BranchPeriodJsonConverter().convertToBranchPeriodJsonList(branchPeriodList));
+    // response.put("studentResults", new
+    // StudentResultJsonConverter().convertToStudentResultJsonList(studentResultList));
+    // response.put("results", new
+    // ResultJsonConverter().convertToResultJsonList(resultList));
+    // response.put("means", new
+    // ResultJsonConverter().convertToResultJsonList(meanList));
+    //
+    // return response;
+    // }
 
     /**
      * Create a new class. The {@link PeriodJson}s are created within the same operation.
@@ -332,7 +333,7 @@ public class ClassesRest {
      */
     @CheckAuthorization
     @POST
-    public Map<String, Object> createClass(final Map<String, ClazzJson> payload) {
+    public Response createClass(final Map<String, ClazzJson> payload) {
         final ClazzJsonConverter clazzConverter = new ClazzJsonConverter();
         final PeriodJsonConverter periodConverter = new PeriodJsonConverter();
 
@@ -349,6 +350,6 @@ public class ClassesRest {
         response.put("class", createdJson);
         response.put("periods", periodJsonList);
 
-        return response;
+        return ResponseUtils.build200OkResponse(response);
     }
 }

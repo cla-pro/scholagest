@@ -58,7 +58,7 @@ public class StudentPersonalsRest {
         final Map<String, StudentPersonalJson> response = new HashMap<>();
         response.put("studentPersonal", studentPersonalJson);
 
-        return ResponseUtils.buildOkResponse(response);
+        return ResponseUtils.build200OkResponse(response);
     }
 
     /**
@@ -84,6 +84,6 @@ public class StudentPersonalsRest {
         final Map<String, StudentPersonalJson> response = new HashMap<>();
         response.put("studentPersonal", updatedJson);
 
-        return ResponseUtils.buildOkResponse(response);
+        return ResponseUtils.build200OkResponse(response);
     }
 }

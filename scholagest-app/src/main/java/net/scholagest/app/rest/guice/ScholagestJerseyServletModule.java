@@ -11,6 +11,7 @@ import net.scholagest.app.rest.ws.LoginRest;
 import net.scholagest.app.rest.ws.MeansRest;
 import net.scholagest.app.rest.ws.PeriodsRest;
 import net.scholagest.app.rest.ws.ResultsRest;
+import net.scholagest.app.rest.ws.ScholagestExceptionMapper;
 import net.scholagest.app.rest.ws.StudentClassesRest;
 import net.scholagest.app.rest.ws.StudentMedicalsRest;
 import net.scholagest.app.rest.ws.StudentPersonalsRest;
@@ -119,6 +120,7 @@ import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 public class ScholagestJerseyServletModule extends JerseyServletModule {
     @Override
     protected void configureServlets() {
+        bind(ScholagestExceptionMapper.class).in(Singleton.class);
         bind(AuthorizationFilter.class).in(Singleton.class);
         bind(TransactionFilter.class).in(Singleton.class);
 

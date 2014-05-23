@@ -10,6 +10,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import net.scholagest.app.rest.ws.authorization.CheckAuthorization;
 import net.scholagest.app.rest.ws.converter.MeanJsonConverter;
@@ -49,16 +50,16 @@ public class MeansRest {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, Object> getMean(@PathParam("id") final String id) {
+    public Response getMean(@PathParam("id") final String id) {
         final MeanJsonConverter converter = new MeanJsonConverter();
 
         final Mean mean = meanService.getMean(id);
         final ResultJson meanJson = converter.convertToMeanJson(mean);
 
         final Map<String, Object> response = new HashMap<>();
-        response.put("result", meanJson);
+        response.put("mean", meanJson);
 
-        return response;
+        return ResponseUtils.build200OkResponse(response);
     }
 
     /**
@@ -73,7 +74,7 @@ public class MeansRest {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, Object> saveMean(@PathParam("id") final String id, final Map<String, ResultJson> payload) {
+    public Response saveMean(@PathParam("id") final String id, final Map<String, ResultJson> payload) {
         final MeanJsonConverter converter = new MeanJsonConverter();
 
         final ResultJson meanJson = payload.get("mean");
@@ -84,8 +85,8 @@ public class MeansRest {
         final ResultJson updatedJson = converter.convertToMeanJson(updated);
 
         final Map<String, Object> response = new HashMap<>();
-        response.put("result", updatedJson);
+        response.put("mean", updatedJson);
 
-        return response;
+        return ResponseUtils.build200OkResponse(response);
     }
 }

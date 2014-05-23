@@ -12,6 +12,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import net.scholagest.app.rest.ws.authorization.CheckAuthorization;
 import net.scholagest.app.rest.ws.converter.BranchJsonConverter;
@@ -88,8 +89,9 @@ public class BranchPeriodsRest {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, Object> getBranchPeriod(@PathParam("id") final String id) {
-        return getBranchPeriodInformation(Arrays.asList(id));
+    public Response getBranchPeriod(@PathParam("id") final String id) {
+        final Map<String, Object> response = getBranchPeriodInformation(Arrays.asList(id));
+        return ResponseUtils.build200OkResponse(response);
     }
 
     /**
@@ -110,8 +112,9 @@ public class BranchPeriodsRest {
     @CheckAuthorization
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, Object> getBranchPeriods(@QueryParam("ids[]") final List<String> ids) {
-        return getBranchPeriodInformation(ids);
+    public Response getBranchPeriods(@QueryParam("ids[]") final List<String> ids) {
+        final Map<String, Object> response = getBranchPeriodInformation(ids);
+        return ResponseUtils.build200OkResponse(response);
     }
 
     private Map<String, Object> getBranchPeriodInformation(final List<String> ids) {

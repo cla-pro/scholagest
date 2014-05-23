@@ -82,7 +82,7 @@ public class StudentsRest {
         }
         response.put("students", studentJsonList);
 
-        return ResponseUtils.buildOkResponse(response);
+        return ResponseUtils.build200OkResponse(response);
     }
 
     private List<StudentJson> getAllStudents() {
@@ -128,7 +128,7 @@ public class StudentsRest {
             response.put("student", studentJson);
         }
 
-        return ResponseUtils.buildOkResponse(response);
+        return ResponseUtils.build200OkResponse(response);
     }
 
     /**
@@ -154,7 +154,7 @@ public class StudentsRest {
         final Map<String, Object> response = new HashMap<>();
         response.put("student", updatedJson);
 
-        return ResponseUtils.buildOkResponse(response);
+        return ResponseUtils.build200OkResponse(response);
     }
 
     /**
@@ -184,6 +184,6 @@ public class StudentsRest {
         result.put("studentMedical", createStudentMedicalJson);
         result.put("studentPersonal", createStudentPersonalJson);
 
-        return ResponseUtils.buildOkResponse(result);
+        return ResponseUtils.build200OkResponse(result);
     }
 }

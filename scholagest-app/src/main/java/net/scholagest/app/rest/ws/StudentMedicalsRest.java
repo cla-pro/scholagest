@@ -58,7 +58,7 @@ public class StudentMedicalsRest {
         final Map<String, StudentMedicalJson> response = new HashMap<>();
         response.put("studentMedical", studentMedicalJson);
 
-        return ResponseUtils.buildOkResponse(response);
+        return ResponseUtils.build200OkResponse(response);
     }
 
     /**
@@ -84,6 +84,6 @@ public class StudentMedicalsRest {
         final Map<String, StudentMedicalJson> response = new HashMap<>();
         response.put("studentMedical", updatedJson);
 
-        return ResponseUtils.buildOkResponse(response);
+        return ResponseUtils.build200OkResponse(response);
     }
 }

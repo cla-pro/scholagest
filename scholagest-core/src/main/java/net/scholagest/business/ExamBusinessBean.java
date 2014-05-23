@@ -86,6 +86,8 @@ public class ExamBusinessBean implements ExamBusinessLocal {
             resultEntity.setStudentResult(studentResultEntity);
 
             resultDao.persistResultEntity(resultEntity);
+
+            studentResultEntity.getResults().add(resultEntity);
         }
     }
 

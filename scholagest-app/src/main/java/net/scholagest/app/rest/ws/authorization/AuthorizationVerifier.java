@@ -1,11 +1,7 @@
 package net.scholagest.app.rest.ws.authorization;
 
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
-import net.scholagest.exception.ScholagestException;
-import net.scholagest.exception.ScholagestRuntimeException;
+import net.scholagest.exception.AuthorizationScholagestException;
+import net.scholagest.exception.ScholagestExceptionErrorCode;
 import net.scholagest.object.SessionInfo;
 import net.scholagest.service.SessionServiceLocal;
 import net.scholagest.utils.ScholagestThreadLocal;
@@ -36,9 +32,11 @@ public class AuthorizationVerifier implements MethodInterceptor {
             final String sessionId = ScholagestThreadLocal.getSessionId();
 
             if (sessionId == null) {
-                final WebApplicationException webApplicationException = new WebApplicationException(buildUnauthorizedResponse());
-                webApplicationException.printStackTrace();
-                throw webApplicationException;
+                // final WebApplicationException webApplicationException = new
+                // WebApplicationException(ResponseUtils.build401UnauthorizedResponse());
+                // webApplicationException.printStackTrace();
+                // throw webApplicationException;
+                throw new AuthorizationScholagestException(ScholagestExceptionErrorCode.INSUFFICIENT_PRIVILEGES, "The session token is missing");
             }
 
             final SessionInfo sessionInfo = loginService.authenticateWithSessionId(sessionId);
@@ -46,18 +44,8 @@ public class AuthorizationVerifier implements MethodInterceptor {
             ScholagestThreadLocal.setSubject(sessionInfo.getSubject());
 
             return invocation.proceed();
-        } catch (final ScholagestException e) {
-            e.printStackTrace();
-            throw new WebApplicationException(buildUnauthorizedResponse());
-        } catch (final ScholagestRuntimeException e) {
-            e.printStackTrace();
-            throw new WebApplicationException(buildUnauthorizedResponse());
         } finally {
             ScholagestThreadLocal.setSubject(null);
         }
-    }
-
-    private Response buildUnauthorizedResponse() {
-        return Response.status(Status.UNAUTHORIZED).header("WWW-Authenticate", "Basic realm=\"test\"").build();
     }
 }

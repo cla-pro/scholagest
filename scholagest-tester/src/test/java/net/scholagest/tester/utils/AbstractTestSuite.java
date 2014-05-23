@@ -92,10 +92,14 @@ public abstract class AbstractTestSuite {
 
     @SafeVarargs
     protected final <T> void persistInTransaction(final T... entities) {
-        final TransactionalHelper transcationHelper = injector.getInstance(TransactionalHelper.class);
+        final TransactionalHelper transcationHelper = getTransactionalHelper();
         for (final T entity : entities) {
             transcationHelper.persistEntity(entity);
         }
+    }
+
+    protected TransactionalHelper getTransactionalHelper() {
+        return injector.getInstance(TransactionalHelper.class);
     }
 
     protected ContentResponse callGET(final String url, final List<UrlParameter> parameters, final String token) throws Exception {

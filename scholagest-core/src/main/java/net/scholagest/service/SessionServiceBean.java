@@ -7,7 +7,7 @@ import net.scholagest.authorization.RealmAuthenticationAndAuthorization;
 import net.scholagest.authorization.SessionToken;
 import net.scholagest.authorization.UsernameToken;
 import net.scholagest.business.SessionBusinessLocal;
-import net.scholagest.exception.ScholagestException;
+import net.scholagest.exception.AuthorizationScholagestException;
 import net.scholagest.exception.ScholagestExceptionErrorCode;
 import net.scholagest.object.Session;
 import net.scholagest.object.SessionInfo;
@@ -37,7 +37,7 @@ public class SessionServiceBean implements SessionServiceLocal {
      * {@inheritDoc}
      */
     @Override
-    public SessionInfo authenticateWithUsername(final String username, final String password) throws ScholagestException {
+    public SessionInfo authenticateWithUsername(final String username, final String password) throws AuthorizationScholagestException {
         final UsernameToken token = new UsernameToken(username, password);
         final Subject subject = SecurityUtils.getSubject();
 
@@ -49,8 +49,7 @@ public class SessionServiceBean implements SessionServiceLocal {
 
             return new SessionInfo(session.getId(), subject, user);
         } catch (final AuthenticationException e) {
-            // TODO get the Scholagest exception within
-            throw new ScholagestException(ScholagestExceptionErrorCode.USER_NOT_FOUND, "authentication error", e);
+            throw new AuthorizationScholagestException(ScholagestExceptionErrorCode.USER_NOT_FOUND, "authentication error", e);
         }
     }
 
@@ -58,7 +57,7 @@ public class SessionServiceBean implements SessionServiceLocal {
      * {@inheritDoc}
      */
     @Override
-    public SessionInfo authenticateWithSessionId(final String sessionId) throws ScholagestException {
+    public SessionInfo authenticateWithSessionId(final String sessionId) throws AuthorizationScholagestException {
         final SessionToken token = new SessionToken(sessionId);
         final Subject subject = SecurityUtils.getSubject();
 
@@ -68,8 +67,7 @@ public class SessionServiceBean implements SessionServiceLocal {
             final User user = getUserFromSubject(subject);
             return new SessionInfo(sessionId, subject, user);
         } catch (final AuthenticationException e) {
-            // TODO get the Scholagest exception within
-            throw new ScholagestException(ScholagestExceptionErrorCode.USER_NOT_FOUND, "authentication error", e);
+            throw new AuthorizationScholagestException(ScholagestExceptionErrorCode.USER_NOT_FOUND, "authentication error", e);
         }
     }
 

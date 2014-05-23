@@ -8,6 +8,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import net.scholagest.app.rest.ws.authorization.CheckAuthorization;
 import net.scholagest.app.rest.ws.converter.ResultJsonConverter;
@@ -47,7 +48,7 @@ public class ResultsRest {
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Map<String, Object> saveResult(@PathParam("id") final String id, final Map<String, ResultJson> payload) {
+    public Response saveResult(@PathParam("id") final String id, final Map<String, ResultJson> payload) {
         final ResultJsonConverter converter = new ResultJsonConverter();
 
         final ResultJson resultJson = payload.get("result");
@@ -60,6 +61,6 @@ public class ResultsRest {
         final Map<String, Object> response = new HashMap<>();
         response.put("result", updatedJson);
 
-        return response;
+        return ResponseUtils.build200OkResponse(response);
     }
 }
