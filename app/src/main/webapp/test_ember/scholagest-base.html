@@ -7,7 +7,7 @@
             <img src="../html/images/scholagest-logo1-2-small.png" class="app-logo" />
             
             <div>
-                <span>{{#link-to "students"}}Elèves{{/link-to}}</span>
+                <span>{{#link-to "students"}}Etudiants{{/link-to}}</span>
                 <span>{{#link-to "teachers"}}Professeurs{{/link-to}}</span>
             </div>
         </header>
@@ -35,13 +35,45 @@
 
         {{outlet}}
 	</script>
-	<script type='text/x-handlebars' id="student">
+    <script type='text/x-handlebars' id="student">
         <h2>{{firstName}} {{lastName}}</h2>
         
-        {{input value=firstName}}
+        {{partial "studentPersonal"}}
+        {{partial "studentMedical"}}
+    </script>
+    <script type='text/x-handlebars' id="studentPersonal">
+        <h2>Informations personnelles</h2>
         
-        <button {{action "delete"}}>Delete</button>
-	</script>
+        <table>
+            <tr>
+                <td>Prénom</td><td>{{input value=firstName}}</td>
+            </tr>
+            <tr>
+                <td>Nom</td><td>{{input value=lastName}}</td>
+            </tr>
+            <tr>
+                <td>Rue</td><td>{{input value=personal.street}}</td>
+            </tr>
+            <tr>
+                <td>Code postal</td><td>{{input value=personal.postcode}}</td>
+            </tr>
+            <tr>
+                <td>Ville</td><td>{{input value=personal.city}}</td>
+            </tr>
+            <tr>
+                <td>Religion</td><td>{{input value=personal.religion}}</td>
+            </tr>
+        </table>
+    </script>
+    <script type='text/x-handlebars' id="studentMedical">
+        <h2>Informations personnelles</h2>
+        
+        <table>
+            <tr>
+                <td>Docteur</td><td>{{input value=medical.doctor}}</td>
+            </tr>
+        </table>
+    </script>
 	
 	<script type='text/x-handlebars' id="teachers">
         <h1>Teachers</h1>
@@ -60,73 +92,114 @@
         {{outlet}}
 	</script>
 	<script type='text/x-handlebars' id="teacher">
-        <h2>Teacher - {{firstName}} {{lastName}}</h2>
+        <h2>{{fullName}}</h2>
         
-        {{input value=firstName}}
+        <table>
+            <tr>
+                <td>Prénom</td><td>{{input value=firstName}}</td>
+            </tr>
+            <tr>
+                <td>Nom</td><td>{{input value=lastName}}</td>
+            </tr>
+            <tr>
+                <td>Email</td><td>{{input value=email}}</td>
+            </tr>
+            <tr>
+                <td>Adresse</td><td>{{input value=address}}</td>
+            </tr>
+            <tr>
+                <td>Téléphone</td><td>{{input value=phone}}</td>
+            </tr>
+        </table>
         
-        <button {{action "delete"}}>Delete</button>
 	</script>
-	
+	<!-- 
+        {{! {{#each attribute in metadata }}
+        {{!     {{attribute.name }}
+        {{!     {{! {{input value=attribute.value }}
+        {{!     {{view Scholagest.AutoTextField name=attribute.name }}
+        {{!     <br /> }}
+        {{! {{/each }}
+        
+        {{! <button {{action "delete"}}>Delete</button> }} -->
 	<script src='../jquery-1.10.2.js'></script>
 	<script src='../handlebars-1.1.2.js'></script>
 	<script src='../ember.js'></script>
 	<script src='../ember-data.js'></script>
 	<script type='text/javascript'>
 		   Scholagest = Ember.Application.create({
-			   LOG_TRANSITIONS: false
+			   LOG_TRANSITIONS: true
 		   });
 		   
-		   DS.RESTAdapter.reopen({
-			   host: 'http://localhost:8080',
-			   namespace: 'scholagest-app/services'
-		   });
+<!-- 		   Scholagest.AutoTextField = Ember.View.extend({ -->
+<!-- 		       name: null, -->
+<!-- 		       template: Ember.Handlebars.compile('{{input value=attribute.object.' + name + '}}') -->
+<!-- 		   }); -->
+<!-- 		   Scholagest.AutoTextField = Ember.ContainerView.extend({ -->
+<!-- 		       type: null, -->
+<!-- 		       name: null, -->
+<!-- 		       object: null, -->
+		
+<!-- 		       init: function() { -->
+<!-- 		           this._super(); -->
+<!-- 		           this.createChildView(); -->
+<!-- 		       }, -->
+<!-- 		       createChildView: function() { -->
+<!-- 		           var textField = Ember.TextField.create({ -->
+<!--                                valueBinding: this.get('object').get(this.get('name')) -->
+<!--                             }); -->
+<!--                    textField.addObserver('value', this, function(sender, key, value, rev) { -->
+<!--                        this.get('object').set(this.get('name'), value); -->
+<!--                    }); -->
+<!-- 		           this.set('currentView', textField);    -->
+<!-- 		       }.observes('name', 'object') -->
+<!-- 		   }); -->
+		   
 
-//            Scholagest.ApplicationAdapter = DS.FixtureAdapter;
            Scholagest.ApplicationAdapter = DS.RESTAdapter;
+           DS.RESTAdapter.reopen({
+               host: 'http://localhost:8080',
+               namespace: 'scholagest-app/services'
+           });
 		   
+           Scholagest.StudentPersonal = DS.Model.extend({
+               street: DS.attr(),
+               city: DS.attr(),
+               postcode: DS.attr(),
+               religion: DS.attr()
+           });
+           Scholagest.StudentMedical = DS.Model.extend({
+               doctor: DS.attr()
+           });
 		   Scholagest.Student = DS.Model.extend({
 			   //id: DS.attr(),
 			   firstName: DS.attr(),
 			   lastName: DS.attr(),
+			   personal: DS.belongsTo('studentPersonal', { async: true }),
+			   medical: DS.belongsTo('studentMedical', { async: true }),
 			   
 			   fullName: function() {
 				   return this.get('firstName') + " - " + this.get('lastName');
 			   }.property('firstName', 'lastName')
 		   });
-	       Scholagest.Teacher = DS.Model.extend({
-	           //id: DS.attr(),
-	           firstName: DS.attr(),
-	           lastName: DS.attr(),
-	           
-	           fullName: function() {
-	               return this.get('firstName') + " - " + this.get('lastName');
-	           }.property('firstName', 'lastName')
-	       });
-		   
-		   Scholagest.Student.FIXTURES = [{
-	           id: 1,
-	           firstName: 'Cédric',
-	           lastName: 'Lavanchy'
-	       }, {
-	           id: 2,
-	           firstName: 'Valérie',
-	           lastName: 'Parvex'
-	       }];
-// 	       Scholagest.Teacher.FIXTURES = [{
-// 	           id: 1,
-// 	           firstName: 'Elodie',
-// 	           lastName: 'Lavanchy'
-// 	       }, {
-// 	           id: 2,
-// 	           firstName: 'Thibaud',
-// 	           lastName: 'Hottelier'
-// 	       }];
+           Scholagest.Teacher = DS.Model.extend({
+               //id: DS.attr(),
+               firstName: DS.attr(),
+               lastName: DS.attr(),
+               email: DS.attr(),
+               address: DS.attr(),
+               phone: DS.attr(),
+               
+               fullName: function() {
+                   return this.get('firstName') + " - " + this.get('lastName');
+               }.property('firstName', 'lastName')
+           });
 		   
 		   Scholagest.Router.map(function() {
 	           this.resource('students', function() {
 	        	   this.resource('student', { path: '/:student_id' }, function() {});
 	           });
-	           this.resource('teachers', function() {
+               this.resource('teachers', function() {
 	               this.resource('teacher', { path: '/:teacher_id' }, function() {});
 	           });
 		   });

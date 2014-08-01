@@ -20,13 +20,11 @@ import com.google.inject.Inject;
 
 @Path("/teachers")
 public class TeachersRest extends AbstractService {
-    private static Map<String, Teacher> teachers = new HashMap<>();
+    public static Map<String, Teacher> teachers = new HashMap<>();
 
     static {
-        teachers.put("1", new Teacher("1", "Elodie", "Lavanchy"));
-        teachers.put("2", new Teacher("2", "Thibaud", "Hottelier"));
-        teachers.put("3", new Teacher("3", "Cédric", "Lavanchy"));
-        teachers.put("4", new Teacher("4", "Valérie", "Parvex"));
+        teachers.put("1", new Teacher("1", "Cédric", "Lavanchy"));
+        teachers.put("2", new Teacher("2", "Valérie", "Parvex"));
     }
 
     @Inject
@@ -36,7 +34,7 @@ public class TeachersRest extends AbstractService {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Teachers getTeachers(String param) {
+    public Teachers getTeachers() {
         return new Teachers(new ArrayList<Teacher>(teachers.values()));
     }
 
